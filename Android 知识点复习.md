@@ -12,10 +12,10 @@
 * [Android Messenger](###Android%20Messenger) 未完成
 * [Android AIDL](###Android%20AIDL) 未完成
 * [Android 消息](###Android%20消息) 未完成
-* [Android 事件响应](###Android%20事件响应) 未完成
-* [Android 函数响应式](###Android%20函数响应式) 未完成
 * [Android 数据存储](###Android%20数据存储) 未完成
 * [Android ORM](###Android%20ORM) 未完成
+* [Android 事件响应](###Android%20事件响应) 未完成
+* [Android 函数响应式](###Android%20函数响应式) 未完成
 * [Android 网络请求](###Android%20网络请求)
 * [Android 网络请求2](###Android%20网络请求2) 未完成
 * [Android 网络请求3](###Android%20网络请求3) 未完成
@@ -28,15 +28,15 @@
 * [Android 性能优化](###Android%20性能优化)
 * [Android 内存泄露](###Android%20内存泄露)
 * [Android 安全漏洞](###Android%20安全漏洞) 未完成
+* [Android 源码阅读](###Android%20源码阅读)
 <!-- GFM-TOC -->
 
 ### Android 基础知识
 
 1. **五种布局**: FrameLayout 、 LinearLayout 、 AbsoluteLayout 、 RelativeLayout 、 TableLayout 全都继承自ViewGroup，各自特点及绘制效率对比。
 2. **如何判断应用被强杀**: 在Application中定义一个static常量，赋值为－1，在欢迎界面改为0，如果被强杀，application重新初始化，在父类Activity判断该常量的值。
-3. **应用被强杀如何解决**: 如果在每一个Activity的onCreate里判断是否被强杀，冗余了，封装到Activity的父类中，如果被强杀，跳转回主界面，如果没有被强杀，执行Activity的初始化操作，
-    给主界面传递intent参数，主界面会调用onNewIntent方法，在onNewIntent跳转到欢迎页面，重新来一遍流程。
-4. **Json/XML有什么优劣势**: 
+3. **应用被强杀如何解决**: 如果在每一个Activity的onCreate里判断是否被强杀，冗余了，封装到Activity的父类中，如果被强杀，跳转回主界面，如果没有被强杀，执行Activity的初始化操作，给主界面传递intent参数，主界面会调用onNewIntent方法，在onNewIntent跳转到欢迎页面，重新来一遍流程。
+4. **Json/Xml有什么优劣势**: 
     1. xml: Extensible Markup Language，用于标记电子文件使其具有结构性的标记语言，可以用来标记数据、定义数据类型，是一种允许用户对自己的标记语言进行定义的源语言
     2. json: JavaScript Object Notation，轻量级的数据交换格式，具有良好的可读和便于快速编写的特性。可在不同平台之间进行数据交换。JSON采用兼容性很高的、完全独立于语言文本格式，同时也具备类似于C语言的习惯体系的行为。这些特性使JSON成为理想的数据交换语言。
     3. XML的优点
@@ -220,6 +220,37 @@
 12. App启动过程: https://www.jianshu.com/p/dab1fcf0109d
 13. HttpClient与HttpUrlConnection的区别: 
 14. java虚拟机和Dalvik虚拟机的区别: 
+
+### Android 基础知识3
+
+1. **解决android应用被强杀或应用被回收导致的空指针问题**: https://blog.csdn.net/lvzishen123/article/details/51519451
+2. **onSaveInstanceState**相关: 
+    - 任何使得activity变为StoppedState，大部分会调用onSaveInstanceState。
+    - 按了back或者调用finish导致的StoppedState，是不掉onSaveInstanceState，因为activity马上要销毁了，根本不需要恢复。
+    - 其他情况导致activity变为StoppedState都会调用onSaveInstanceState，如切换到其他activity，home，锁屏，旋转等等。该方法的调用频率远远高于onRestoreInstanceState
+    - onsaveinstance回调是在onpause之前，在Api11之后调整到了opause之后onstop之前
+    - 在onStart之后，onResume之前会调用一个onRestoreInstanceState，如果之前调用了onSaveInstanceState
+    - 序列化尽量使用Parcelable而不是Serializable，后者速度不如前者，而且可能会导致ClassNotFound
+    - onSaveInstanceState建议只用来恢复activity用，别把数据存储什么的放到这里来，数据存储可以放到onPause里，最好开线程保存。
+3. **前台进程永远不存在activity被回收的情况。如果内存不足了，宁愿抛出OOM**
+4. **activity恢复原则**: 
+    1. 单个activity:
+        1. 在创建时: onCreate -> onStart -> onResume
+        2. 点home键: onPause -> onSaveInstanceState -> onStop
+        3. 进程被杀死，很暴力的，不会有任何生命周期函数被调用
+        4. 从最近程序列表中打开刚才的进程，进程会再次启动，activity会恢复: onCreate -> onStart -> onRestoreInstanceState -> onResume
+        5. 从activity1跳到activity2时: 1onPause -> 2onCreate -> 2onStart -> 2onResume -> 1onSaveInstanceState -> 1onStop
+    2. 多个activity: 
+        1. 多个activity的进程被回收时，重启后只会恢复栈顶的activity，但是栈是恢复了的，在按backspace之后，会创建activity实例。
+        2. 如我们现在有MainActivity、SecondActivity、ThirdActivity三个activity，然后进程被回收，然后用户从最近列表点击，导致进程重启，activity恢复，第一步是恢复activity ThirdActivity(栈顶的): 3onCreate hasInstanceState=True -> 3onStart -> 3onRestoreInstanceState -> 4onResume
+        3. 此时只有activity3，1，2都没有。但是activity record里是有记录的，用adb shell dumpsys activity activities可以看到相关记录。可以看到此时ThirdActivity的state是RESUMED，而MainActivity、SecondActivity的state为DESTYOYED。
+        4. 此时点击back，会导致ThirdActivity结束，退回到SecondActivity，但是此时SecondActivity的实例都没有，所以会重新创建并恢复SecondActivity: 3onPause -> 2onCreate hasInstanceState=True -> 2onStart -> 2onRestoreInstance -> 2onResume -> 3onSaveInstanceState -> 3onStop -> 3onDestroy
+        5. 同理，在点击back，会导致MainActivity被恢复: 2onPause -> 1onCreate hasInstanceState=True -> 1onStart -> 1onRestoreInstanceState -> 1onResume -> 2onSaveInstanceState -> 2onStop -> 2onDestroy
+    3. **进程回收之后，再从历史程序里点击的时候，进程会重启，然后只恢复栈顶的activity，其他栈内的activity只有在需要的时候被恢复**
+    4. 刚才我们说的是由于系统内存不足而回收进程，导致进程死亡的，但是实际上导致进程死亡的还有崩溃（比如空指针），ddms杀进程。这2种方式杀进程之后的恢复和回收进程的不太一样。
+        1. 因为这2种方式导致进程死亡，此时进程一般是前台进程，前台进程死亡，然后恢复并不会恢复栈顶activity，而是恢复栈顶前面的那个activity。
+        2. 如果是崩溃导致进程死亡，那崩溃发生在栈顶的那个activity，此activity根本没调用 onSaveInstanceState，那怎么恢复？没法恢复，只能恢复上一个activity。
+        3. **前台进程死亡后恢复，恢复的是当前显示的activity的上一个activity，记住activity要想被恢复，必须是经历过onSaveInstanceState的activity**。
 
 ### Android Activity
 
