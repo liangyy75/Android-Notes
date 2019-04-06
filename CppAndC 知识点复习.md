@@ -646,7 +646,7 @@ class A1 : virtual public A{};
 //这里面加了virtual关键字
 class A2 : virtual public A{};
 class B : public A1, public A2{};
-int main(){
+int main() {
     B b;    
     // 如果程序不加virtual关键字就会导致二义性，系统无法辨识哪个类的name属性，会报错
     b.name = "Hensen";
@@ -1445,8 +1445,8 @@ int sem_post(sem_t *sem);
 // 该函数释放一个信号量，信号量的值加1。
 int sem_destory(sem_t *sem);
 // 该函数销毁信号量。
-// 例子：https://blog.csdn.net/lovecodeless/article/details/24919511
-// 采用信号量机制，解决苹果橙子问题：一个能放N（这里N设为3）个水果的盘子，爸爸只往盘子里放苹果，妈妈只放橙子，女儿只吃盘子里的橙子，儿子只吃苹果。
+// 例子: https://blog.csdn.net/lovecodeless/article/details/24919511
+// 采用信号量机制，解决苹果橙子问题: 一个能放N（这里N设为3）个水果的盘子，爸爸只往盘子里放苹果，妈妈只放橙子，女儿只吃盘子里的橙子，儿子只吃苹果。
 
 // 互斥能很好的处理共享资源访问的协调问题，是多线程同步必不可少的机制。互斥机制也有其缺陷，当线程在等待共享资源满足某个条件，互斥机制下，必须不断地加锁和解锁，
 // 其间查询共享资源是否满足条件，这将带来巨大的消耗。此时，需要新的机制来解决这个问题，即条件变量。
@@ -1458,20 +1458,20 @@ int sem_destory(sem_t *sem);
 int pthread_cond_init(pthread_cond_t *cond, pthread_condattr_t *cond_attr);
 // 条件变量指针; 条件变量属性指针（一般设为NULL）
 int pthread_cond_wait(pthread_cond_t *cond, pthread_mutex_t *mutex);
-// 无条件等待：条件变量指针; 互斥量指针
+// 无条件等待: 条件变量指针; 互斥量指针
 int pthread_cond_signal(pthread_cond_t *cond);
-// 通知一个线程：
+// 通知一个线程: 
 int pthread_cond_broadcast(pthread_cond_t *cond);
-// 通知所有线程：
+// 通知所有线程: 
 int pthread_cond_destroy(pthread_cond_t *cond);
-// 销毁条件变量：
+// 销毁条件变量: 
 // 例子: https://blog.csdn.net/lovecodeless/article/details/24929273
 // 共享资源i，线程1对i进行无限加1操作，并输出所有非5倍数的i值。当i的值为5的倍数时，通过条件变量机制，通知线程2，线程2输出此时的i值。
 
 // pthread读写锁把对共享资源的访问者分为读者和写者，读者只对共享资源进行读访问，写者只对共享资源进行写操作。在互斥机制，读者和写者都需要独立独占互斥量以独占共享资源，
 // 在读写锁机制下，允许同时有多个读者读访问共享资源，只有写者才需要独占资源。相比互斥机制，读写机制由于允许多个读者同时读访问共享资源，进一步提高了多线程的并发度。
-// 写者：写者使用写锁，如果当前没有读者，也没有其他写者，写者立即获得写锁；否则写者将等待，直到没有读者和写者。
-// 读者：读者使用读锁，如果当前没有写者，读者立即获得读锁；否则读者等待，直到没有写者。
+// 写者: 写者使用写锁，如果当前没有读者，也没有其他写者，写者立即获得写锁；否则写者将等待，直到没有读者和写者。
+// 读者: 读者使用读锁，如果当前没有写者，读者立即获得读锁；否则读者等待，直到没有写者。
 int pthread_rwlock_init(pthread_rwlock_t * rwlock, const pthread_rwlockattr_t *  attr); // 读写锁初始化
 int pthread_rwlock_rdlock(pthread_rwlock_t *rwlock);    // 加读锁
 int pthread_rwlock_wrlock(pthread_rwlock_t *rwlock);    // 加写锁
@@ -1494,6 +1494,24 @@ int pthread_key_delete(pthread_key_t key);      // 销毁线程私有数据
 
 [C++11 多线程](https://www.cnblogs.com/52why/p/7629290.html)<br>
 [C/C++ 多线程（程序猿面试重点）CodeBlocks-CB的pthreads使用](https://www.cnblogs.com/52why/p/7629285.html)<br>
+
+1. ``<atomic>``: 提供原子操作功能，该头文主要声明了两个类, std::atomic 和 std::atomic_flag，另外还声明了一套 C 风格的原子类型和与 C 兼容的原子操作的函数。
+2. ``<thread>``: 线程模型封装，该头文件主要声明了 std::thread 类，另外 std::this_thread 命名空间也在该头文件中。
+3. ``<mutex>``: 互斥量封装，该头文件主要声明了与互斥量(mutex)相关的类，包括 std::mutex 系列类，std::lock_guard, std::unique_lock, 以及其他的类型和函数。
+4. ``<condition_variable>``: 条件变量，该头文件主要声明了与条件变量相关的类，包括 std::condition_variable 和 std::condition_variable_any。
+5. ``<future>``: 实现了对指定数据提供者提供的数据进行异步访问的机制。该头文件主要声明了 std::promise, std::package_task 两个 Provider 类，以及 std::future 和 std::shared_future 两个 Future 类，另外还有一些与之相关的类型和函数，std::async() 函数就声明在此头文件中。
+
+```cpp
+#include <thread>
+void test1() { /* ... */ }
+void test2(int index) { /* ... */ }
+std::thread first(test1);
+std::thread second(test2, 0);
+first.join();
+first.detach();
+first.get_id();
+first.joinable();
+```
 
 #### 常用API
 
@@ -1545,6 +1563,17 @@ int pthread_key_delete(pthread_key_t key);      // 销毁线程私有数据
 
 #### 网络
 
-####
+### 常见问题
+
+#### 常见问题1
+
+1. new和malloc的区别: (将new看做方法，则需要看 头文件 参数 返回类型 分配失败 是否可重载 内存区域 自定义类型)
+    1. 属性: new/delete是C++关键字，需要编译器支持。malloc/free是库函数，需要头文件支持。
+    2. 参数: 使用new操作符申请内存分配时无须指定内存块的大小，编译器会根据类型信息自行计算。而malloc则需要显式地指出所需内存的尺寸。
+    3. 返回类型: new操作符内存分配成功时，返回的是对象类型的指针，类型严格与对象匹配，无须进行类型转换，故new是符合类型安全性的操作符。而malloc内存分配成功则是返回void * ，需要通过强制类型转换将void*指针转换成我们需要的类型。
+    4. 分配失败: new内存分配失败时，会抛出bac_alloc异常。malloc分配内存失败时返回NULL。
+    5. 自定义类型: new会先调用operator new函数，申请足够的内存(通常底层使用malloc实现)。然后调用类型的构造函数，初始化成员变量，最后返回自定义类型指针。delete先调用析构函数，然后调用operator delete函数释放内存(通常底层使用free实现)。malloc/free是库函数，只能动态的申请和释放内存，无法强制要求其做自定义类型对象构造和析构工作。
+    6. 重载: C++允许重载new/delete操作符，特别的，布局new的就不需要为对象分配内存，而是指定了一个地址作为内存起始区域，new在这段内存上为对象调用构造函数完成初始化工作，并返回此地址。而malloc不允许重载。
+    7. 内存区域: new操作符从自由存储区（free store）上为对象动态分配内存空间，而malloc函数从堆上动态分配内存。自由存储区是C++基于new操作符的一个抽象概念，凡是通过new操作符进行内存申请，该内存即为自由存储区。而堆是操作系统中的术语，是操作系统所维护的一块特殊内存，用于程序的内存动态分配，C语言使用malloc从堆上分配内存，使用free释放已分配的对应内存。自由存储区不等于堆，如上所述，布局new就可以不位于堆中。
 
 ### end

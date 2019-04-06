@@ -2,7 +2,7 @@
 [C++重写(覆盖)、重载、重定义、多态](https://www.cnblogs.com/DannyShi/p/4593735.html)
 [Java 泛型](https://www.cnblogs.com/1175429393wljblog/p/5865500.html)
 [浅谈JVM内存模型](https://blog.csdn.net/one_jachen/article/details/78157209)
-[（1）美团面试题：Hashmap的结构，1.7和1.8有哪些区别，史上最深入的分析](https://blog.csdn.net/qq_36520235/article/details/82417949)
+[(1)美团面试题：Hashmap的结构，1.7和1.8有哪些区别，史上最深入的分析](https://blog.csdn.net/qq_36520235/article/details/82417949)
 [Java集合框架概述](https://husteryp.github.io/2018/08/26/Java集合框架概述/)
 [Java中volatile关键字的最全总结](https://blog.csdn.net/u012723673/article/details/80682208)
 
@@ -124,7 +124,7 @@ private | √ | × | × | ×
 	当变量已在synchronized代码块中或者为常量时，不必使用。因为使用volatile屏蔽掉了VM中必要的代码优化，所以在效率上比较低，因此一定在必要时才使用此关键字。
 	- 直接使用volatile修饰的引用，操作对象的话，对象值的任何改变都是线程可见的，都会刷新主存，无效其他线程的缓存。
 - volatile与synchronized: 
-	- volatile本质是在告诉jvm当前变量在寄存器（工作内存）中的值是不确定的，需要从主存中读取； synchronized则是锁定当前变量，只有当前线程可以访问该变量，其他线程被阻塞住。
+	- volatile本质是在告诉jvm当前变量在寄存器(工作内存)中的值是不确定的，需要从主存中读取； synchronized则是锁定当前变量，只有当前线程可以访问该变量，其他线程被阻塞住。
 	- volatile仅能使用在变量级别；synchronized则可以使用在变量、方法、和类级别的
 	- volatile仅能实现变量的修改可见性，不能保证原子性；而synchronized则可以保证变量的修改可见性和原子性
 	- volatile不会造成线程的阻塞；synchronized可能会造成线程的阻塞。
@@ -260,6 +260,11 @@ Collection与Collections:
 2. **LinkedHashSet**: 
 	1. 特点: **非同步的；有序的，分别是插入顺序和访问顺序；继承于HashSet，内部基于LinkedHashMap实现的，也就是说LinkedHashSet和HashSet一样只存储一个值，LinkedHashSet和LinkedHashMap一样维护着一个运行于所有条目的双向链表**
 3. **TreeSet**: 
+	1. 特点: **有序的，基于TreeMap实现的，将对象存储在key中，不允许key重复的，value是固定的**
+	2. 源码: 
+		1. 实现了SortedSet接口，能自然的对数据排序，而且可以传入Comparator比较器
+	3. 和TreeMap区别: 
+		1. 
 4. **ConcurrentSkipListSet**: 
 
 ##### 集合深入了解(三) Map
@@ -290,7 +295,7 @@ Collection与Collections:
 		5. **容量**: 把hash值对数组长度取模运算，这样一来，元素的分布相对来说是比较均匀的。但是，“模”运算的消耗还是比较大的。所以在HashMap中是调用indexFor(int h, int length)方法来计算该对象应该保存在table数组的哪个索引处: return h & (length-1);<br>
 			这个方法非常巧妙，它通过 h & (table.length -1) 来得到该对象的保存位，而HashMap底层数组的长度总是 2 的 n 次方，这是HashMap在速度上的优化。<br>
 			table.length必须是2的n次方，然后table.length - 1所有位都是1了，然后可以利用到全部空间
-		6. **resize(rehash)**: 当HashMap中的元素个数超过（数组大小 *loadFactor）时，就会进行数组扩容，loadFactor指的是负载因子。默认数组大小16，负载因子0.75
+		6. **resize(rehash)**: 当HashMap中的元素个数超过(数组大小 *loadFactor)时，就会进行数组扩容，loadFactor指的是负载因子。默认数组大小16，负载因子0.75
 		7. 构造函数: HashMap() HashMap(int initialCapacity) HashMap(int initialCapacity, float loadFactor)
 		8. **fail-fast机制**: HashMap不是线程安全的，因此在使用迭代器的过程中有其他线程修改了map，那么将抛出 ConcurrentModificationException，这就是所谓 fail-fas机制，
 			fail-fast机制是 java 集合(Collection)中的一种错误机制，当多个线程对同一个集合的内容进行操作时，就可能会产生fail-fast事件。<br>
@@ -332,14 +337,14 @@ Collection与Collections:
 			<div class="align"><img src="./images/HashMap1_8And1_7.png" alt="扩容方式对比"/></div>
 			1. 在JDK1.7的时候是直接用hash值和需要扩容的二进制数进行&(这里就是为什么扩容的时候为啥一定必须是2的多少次幂的原因所在，因为如果只有2的n次幂的情况时最后一位二进制数才一定是1，这样能最大程度减少hash碰撞)(hash值 & length-1)
 			2. 而在JDK1.8的时候直接用了JDK1.7的时候计算的规律，也就是扩容前的原始位置+扩容的大小值=JDK1.8的计算方式，而不再是JDK1.7的那种异或的方法。但是这种方式就相当于只需要判断Hash值的新增参与运算的位是0还是1就直接迅速计算出了扩容后的储存方式。
-			3. 在计算hash值的时候，JDK1.7用了9次扰动处理=4次位运算+5次异或，而JDK1.8只用了2次扰动处理=1次位运算+1次异或。
+			3. 在计算hash值的时候，JDK1.7用了9次扰动处理=4次位运算+5次异或，而JDK1.8只用了2次扰动处理=1次位运算+1次异或:  Node 中: Objects.hashCode(key) ^ Objects.hashCode(value); HashMap中的hash方法中: (key == null) ? 0 : (h = key.hashCode()) ^ (h >>> 16)
 			4. JDK1.7的时候使用的是数组+ 单链表的数据结构。但是在JDK1.8及之后时，使用的是数组+链表+红黑树的数据结构(当链表的深度达到8的时候，也就是默认阈值，就会自动扩容把链表转成红黑树的数据结构来把时间复杂度从O(n)变成O(logN)提高了效率)
 3. **HashTable**: 加了synchronized的HashMap
 	1. 特点: **基于哈希表的Map接口的同步实现；key是唯一的，value值可重复；key和value不允许为null，如果遇到null，则返回NullPointerException；无序的；同步安全的**
 	2. 继承与实现: 继承于Dictionary(已过时)类，实现了Map, Cloneable, Serializable接口
 	3. 源码: 
 		1. 成员变量: 
-			1. table: 一个Entry[]数组类型，而Entry（在 HashMap 中有讲解过）就是一个单向链表。哈希表的”key-value键值对”都是存储在Entry数组中的
+			1. table: 一个Entry[]数组类型，而Entry(在 HashMap 中有讲解过)就是一个单向链表。哈希表的”key-value键值对”都是存储在Entry数组中的
 			2. count: Hashtable的大小，它是Hashtable保存的键值对的数量
 			3. threshold/loadFactor/modCount
 		2. 构造方法: Hashtable(int initialCapacity, float loadFactor) Hashtable(int initialCapacity) Hashtable() Hashtable(Map<? extends K, ? extends V> t)
@@ -375,7 +380,7 @@ Collection与Collections:
 	2. 通过把整个Map分为N个Segment，可以提供相同的线程安全，但是效率提升N倍，默认提升16倍。(读操作不加锁，由于HashEntry的value变量是volatile的，也能保证读取到最新的值。)
 	3. Hashtable的synchronized是针对整张Hash表的，即每次锁住整张表让线程独占，ConcurrentHashMap允许多个修改操作并发进行，其关键在于使用了锁分离技术
 	4. 有些方法需要跨段，比如size()和containsValue()，它们可能需要锁定整个表而而不仅仅是某个段，这需要按顺序锁定所有段，操作完毕后，又按顺序释放所有段的锁
-	5. **扩容**: 段内扩容（段内元素超过该段对应Entry数组长度的75%触发扩容，不会对整个Map进行扩容），插入前检测需不需要扩容，有效避免无效扩容
+	5. **扩容**: 段内扩容(段内元素超过该段对应Entry数组长度的75%触发扩容，不会对整个Map进行扩容)，插入前检测需不需要扩容，有效避免无效扩容
 	6. **锁分段技术**: 首先将数据分成一段一段的存储，然后给每一段数据配一把锁，当一个线程占用锁访问其中一个段数据的时候，其他段的数据也能被其他线程访问。
 7. **ConcurrentSkipListMap**: 
 
@@ -1195,7 +1200,7 @@ https://blog.csdn.net/one_jachen/article/details/78157209
 
 1. ArrayDeque: 数组双端队列
 2. PriorityQueue: 优先级队列
-4. DelayQueue: 延期阻塞队列）（阻塞队列实现了BlockingQueue接口
+4. DelayQueue: 延期阻塞队列)(阻塞队列实现了BlockingQueue接口
 9. SynchronousQueue: 并发同步阻塞队列
 5. ArrayBlockingQueue: 基于数组的并发阻塞队列
 8. PriorityBlockingQueue: 带优先级的无界阻塞队列
@@ -1203,22 +1208,22 @@ https://blog.csdn.net/one_jachen/article/details/78157209
 6. LinkedBlockingQueue: 基于链表的FIFO阻塞队列
 7. LinkedBlockingDeque: 基于链表的FIFO双端阻塞队列
 
-阻塞队列（Blocking queue）提供了可阻塞的put和take方法，它们与可定时的offer和poll是等价的。如果Queue已经满了，put方法会被阻塞直到有空间可用；如果Queue是空的，那么take方法会被阻塞，直到有元素可用。Queue的长度可以有限，也可以无限；无限的Queue永远不会充满，所以它的put方法永远不会阻塞。
+阻塞队列(Blocking queue)提供了可阻塞的put和take方法，它们与可定时的offer和poll是等价的。如果Queue已经满了，put方法会被阻塞直到有空间可用；如果Queue是空的，那么take方法会被阻塞，直到有元素可用。Queue的长度可以有限，也可以无限；无限的Queue永远不会充满，所以它的put方法永远不会阻塞。
 
-阻塞队列支持生产者-消费者设计模式。一个生产者-消费者设计分离了"生产产品"和"消费产品"。该模式不会发现一个工作便立即处理，而是把工作置于一个任务（"to do"）清单中，以备后期处理。生产者-消费者模式简化了开发，因为它解除了生产者和消费者之间相互依赖的代码。生产者和消费者以不同的或者变化的速度生产和消费数据，生产者-消费者模式将这些活动解耦，因而简化了工作负荷的管理。
+阻塞队列支持生产者-消费者设计模式。一个生产者-消费者设计分离了"生产产品"和"消费产品"。该模式不会发现一个工作便立即处理，而是把工作置于一个任务("to do")清单中，以备后期处理。生产者-消费者模式简化了开发，因为它解除了生产者和消费者之间相互依赖的代码。生产者和消费者以不同的或者变化的速度生产和消费数据，生产者-消费者模式将这些活动解耦，因而简化了工作负荷的管理。
 
 BlockingQueue可以使用任意数量的生产者和消费者，从而简化了生产者-消费者设计的实现。最常见的生产者-消费者设计是将线程池与工作队列相结合。
 
 虽然生产者-消费者模式可以把生产者和消费者的代码相互解耦合，但是它们的行为还是间接地通过共享队列耦合在一起了。
 
-类库中包含一些BlockingQueue的实现，其中LinkedBlockingQueue和ArrayBlockingQueue是FIFO队列，与LinkedList和ArrayList相似，但是却拥有比同步List更好的并发性能。PriorityBlockingQueue是一个按优先级顺序排序的队列，当你不希望按照FIFO的属性处理元素时，这个PriorityBolckingQueue是非常有用的。正如其他排序的容器一样，PriorityBlockingQueue可以比较元素本身的自然顺序（如果它们实现了Comparable），也可以使用一个 Comparator进行排序。
+类库中包含一些BlockingQueue的实现，其中LinkedBlockingQueue和ArrayBlockingQueue是FIFO队列，与LinkedList和ArrayList相似，但是却拥有比同步List更好的并发性能。PriorityBlockingQueue是一个按优先级顺序排序的队列，当你不希望按照FIFO的属性处理元素时，这个PriorityBolckingQueue是非常有用的。正如其他排序的容器一样，PriorityBlockingQueue可以比较元素本身的自然顺序(如果它们实现了Comparable)，也可以使用一个 Comparator进行排序。
 
-SynchronousQueue根本上不是一个真正的队列，因为它不会为队列元素维护任何存储空间。不过，它维护一个排队的线程清单，这些线程等待把元素加入（enqueue）队列或者移出（dequeue）队列。因为SynchronousQueue没有存储能力，所以除非另一个线程已经准备好参与移交工作，否则put和take会一直阻止。SynchronousQueue这类队列只有在消费者充足的时候比较合适，它们总能为下一个任务作好准备。
+SynchronousQueue根本上不是一个真正的队列，因为它不会为队列元素维护任何存储空间。不过，它维护一个排队的线程清单，这些线程等待把元素加入(enqueue)队列或者移出(dequeue)队列。因为SynchronousQueue没有存储能力，所以除非另一个线程已经准备好参与移交工作，否则put和take会一直阻止。SynchronousQueue这类队列只有在消费者充足的时候比较合适，它们总能为下一个任务作好准备。
 
 ##### 非阻塞算法
 
 基于锁的算法会带来一些活跃度失败的风险。如果线程在持有锁的时候因为阻塞I/O，页面错误，或其他原因发生延迟，很可能所有的线程都不能前进了。  
-一个线程的失败或挂起不应该影响其他线程的失败或挂起，这样的算法成为非阻塞（nonblocking）算法；如果算法的每一个步骤中都有一些线程能够继续执行，那么这样的算法称为锁自由（lock-free）算法。在线程间使用CAS进行协调，这样的算法如果能构建正确的话，它既是非阻塞的，又是锁自由的。非竞争的CAS总是能够成功，如果多个线程以一个CAS竞争，总会有一个胜出并前进。非阻塞算法堆死锁和优先级倒置有“免疫性”（但它们可能会出现饥饿和活锁，因为它们允许重进入）。
+一个线程的失败或挂起不应该影响其他线程的失败或挂起，这样的算法成为非阻塞(nonblocking)算法；如果算法的每一个步骤中都有一些线程能够继续执行，那么这样的算法称为锁自由(lock-free)算法。在线程间使用CAS进行协调，这样的算法如果能构建正确的话，它既是非阻塞的，又是锁自由的。非竞争的CAS总是能够成功，如果多个线程以一个CAS竞争，总会有一个胜出并前进。非阻塞算法堆死锁和优先级倒置有“免疫性”(但它们可能会出现饥饿和活锁，因为它们允许重进入)。
 
 非阻塞算法通过使用低层次的并发原语，比如比较交换，取代了锁。原子变量类向用户提供了这些底层级原语，也能够当做“更佳的volatile变量”使用，同时提供了整数类和对象引用的原子化更新操作。
 
@@ -1293,7 +1298,7 @@ ThreadLocal的作用是提供线程内的局部变量，这种变量在线程的
 	Collections.addAll(collection<? super T> c, T... a);	// 一种方便的方式，将所有指定元素添加到指定 collection 中。
 		// 如Collections.addAll(flavors, "Peaches 'n Plutonium", "Rocky Racoon");
 	Comparator<T> Collections.reverseOrder(Comparator<T> cmp);	// 返回一个比较器，它强行反转指定比较器的顺序。如果指定比较器为null，
-		// 则此方法等同于 reverseOrder()（换句话说，它返回一个比较器，该比较器将强行反转实现 Comparable 接口那些对象 collection 上的自然顺序）。
+		// 则此方法等同于 reverseOrder()(换句话说，它返回一个比较器，该比较器将强行反转实现 Comparable 接口那些对象 collection 上的自然顺序)。
 	```
 - Arrays: https://blog.csdn.net/goodbye_youth/article/details/81003817
 	```java

@@ -29,6 +29,7 @@
 * [Android 内存泄露](###Android%20内存泄露)
 * [Android 安全漏洞](###Android%20安全漏洞) 未完成
 * [Android 源码阅读](###Android%20源码阅读)
+* [Android Android NDK 与 Java JNI](###Android%20Android%20NDK%20与%20Java%20JNI)
 <!-- GFM-TOC -->
 
 ### Android 基础知识
@@ -36,6 +37,11 @@
 1. **五种布局**: FrameLayout 、 LinearLayout 、 AbsoluteLayout 、 RelativeLayout 、 TableLayout 全都继承自ViewGroup，各自特点及绘制效率对比。
 2. **如何判断应用被强杀**: 在Application中定义一个static常量，赋值为－1，在欢迎界面改为0，如果被强杀，application重新初始化，在父类Activity判断该常量的值。
 3. **应用被强杀如何解决**: 如果在每一个Activity的onCreate里判断是否被强杀，冗余了，封装到Activity的父类中，如果被强杀，跳转回主界面，如果没有被强杀，执行Activity的初始化操作，给主界面传递intent参数，主界面会调用onNewIntent方法，在onNewIntent跳转到欢迎页面，重新来一遍流程。
+4. **应用被强杀的原因**: 
+    1. 按了home键、系统内存不足
+    2. Android 6.0新特性中，在电源管理中新加了两个特性,导致挂在后台的应用更容易被回收: 
+        1. 应用待机(App standby) -- 检测：不充电，且没有直接或间接启动该应用; 退出：应用激活，或设备充电时
+        2. 休眠(Doze) -- 检测：不充电，且设备静止且灭屏一段时间; 特性：让系统进入一个休眠状态，周期性的进入一个窗口恢复正常工作，然后进入更长时间的休眠状态
 4. **Json/Xml有什么优劣势**: 
     1. xml: Extensible Markup Language，用于标记电子文件使其具有结构性的标记语言，可以用来标记数据、定义数据类型，是一种允许用户对自己的标记语言进行定义的源语言
     2. json: JavaScript Object Notation，轻量级的数据交换格式，具有良好的可读和便于快速编写的特性。可在不同平台之间进行数据交换。JSON采用兼容性很高的、完全独立于语言文本格式，同时也具备类似于C语言的习惯体系的行为。这些特性使JSON成为理想的数据交换语言。
@@ -57,7 +63,7 @@
         1. 没有XML格式这么推广的深入人心和喜用广泛，没有XML那么通用性；
         2. JSON格式目前在Web Service中推广还属于初级阶段。=
 5. **怎样退出终止App**: 
-    1. 建立一个全局容器，把所有的Activity存储起来，退出时循环遍历finish所有Activity: 这种方法比较简单， 但是可以看到activityStack持有这Activity的强引用，也就是说当某个Activity异常退出时，Activity 生命周期方法没有被执行，activityStack没有及时释放掉引用，就会导致内存问题。
+    1. 建立一个全局容器，把所有的Activity存储起来，退出时循环遍历finish所有Activity: 这种方法比较简单，但是可以看到activityStack持有这Activity的强引用，也就是说当某个Activity异常退出时，Activity生命周期方法没有被执行，activityStack没有及时释放掉引用，就会导致内存问题。
     2. 通过在BaseActivity中注册一个广播，当退出时发送一个广播，finish退出
     3. 通过直接杀死当前应用的进程来结束应用，非常简单粗暴，但是有很多问题。
         1. 杀进程: android.os.Process.killProcess(android.os.Process.myPid());
@@ -77,12 +83,12 @@
 8. **Android怎么加速启动Activity**: 分两种情况，启动应用和普通Activity启动应用:
     1. Application的构造方法，onCreate方法中不要进行耗时操作，数据预读取(例如init数据)放在异步中操作
     2. 启动普通的Activity: A启动B时不要在A的onPause中执行耗时操作。因为B的onResume方法必须等待A的onPause执行完成后才能运行
-9. **Bitmap的四种属性，与每种属性队形的大小**: 
-10. **View与View Group分类。自定义View过程: onMeasure()、onLayout()、onDraw()**: 
-11. **Android长连接，怎么处理心跳机制**: 
-12. **View树绘制流程**: 
-13. **下拉刷新实现原理**: 
-13. **你用过什么框架，是否看过源码，是否知道底层原理**: 
+9. **Bitmap的四种属性，与每种属性队形的大小**: <span style="color: red; font-style: bold;">???</span>
+10. **View与View Group分类。自定义View过程: onMeasure()、onLayout()、onDraw()**: <span style="color: red; font-style: bold;">???</span>
+11. **Android长连接，怎么处理心跳机制**: <span style="color: red; font-style: bold;">???</span>
+12. **View树绘制流程**: <span style="color: red; font-style: bold;">???</span>
+13. **下拉刷新实现原理**: <span style="color: red; font-style: bold;">???</span>
+13. **你用过什么框架，是否看过源码，是否知道底层原理**: <span style="color: red; font-style: bold;">???</span>
 13. **Android新特性**: 
     1. Android5.0新特性: 
         - MaterialDesign设计风格
@@ -124,19 +130,19 @@
     5. getScrapView 用于从废弃缓存中取出一个View，这些View是没有顺序可言的，因此getScrapView()方法就是直接从mCurrentScrap当中获取尾部的一个scrap view进行返回。
     6. Adapter当中可以重写一个getViewTypeCount()来表示ListView中有几种类型的数据项，而setViewTypeCount()方法的作用就是为每种类型的数据项都单独启用一个RecycleBin缓存机制。
 2. **RecyclerView和ListView的异同**
-    1. ListView中**ViewHolder**非必须，而RecyclerView中是必需的
-    2. ListView只能垂直**滚动**，而RecyclerView可以水平或垂直滚动
-    3. ListView通过ViewPropertyAnimator属性**动画**来实现动画，RecyclerView可以有动画，可以自己实现RecyclerView.ItemAnimator
-    4. ListView的**Adapter**: SimpleAdapter/ArrayAdapter/CursorAdapter/SimpleCursorAdapter，而RecyclerView.Adapter
-    5. ListView通过**AdapterView.OnItemClickListener**接口来探测点击事件。而RecyclerView则通过**RecyclerView.OnItemTouchListener**接口来探测触摸事件。它虽然增加了实现的难度，但是却给予开发人员拦截触摸事件更多的控制权限。
-    6. ListView可以设置**选择模式**，并添加MultiChoiceModeListener，而RecyclerView没有
+    1. ViewHolder: ListView中**ViewHolder**非必须，而RecyclerView中是必需的
+    2. 滚动: ListView只能垂直**滚动**，而RecyclerView可以水平或垂直滚动
+    3. 动画: ListView通过ViewPropertyAnimator属性**动画**来实现动画，RecyclerView可以有动画，可以自己实现RecyclerView.ItemAnimator
+    4. Adapter: ListView的**Adapter**: SimpleAdapter/ArrayAdapter/CursorAdapter/SimpleCursorAdapter，而RecyclerView.Adapter
+    5. OnItemClickListener: ListView通过**AdapterView.OnItemClickListener**接口来探测点击事件。而RecyclerView则通过**RecyclerView.OnItemTouchListener**接口来探测触摸事件。它虽然增加了实现的难度，但是却给予开发人员拦截触摸事件更多的控制权限。
+    6. 选择模式: ListView可以设置**选择模式**，并添加MultiChoiceModeListener，而RecyclerView没有
 3. **ANR**
     1. 类型: 
         1. KeyDispatchTimeout(5 seconds) --主要是类型按键或触摸事件在特定时间内无响应
         2. BroadcastTimeout(10 seconds) --BroadcastReceiver在特定时间内无法处理完成
         3. ServiceTimeout(20 secends) --小概率事件 Service在特定的时间内无法处理完成
     2. 示例: 
-        1. 主线程 (“事件处理线程” / “UI线程”) 在5秒内没有响应输入事件
+        1. 主线程 ("事件处理线程" / "UI线程") 在5秒内没有响应输入事件
         2. BroadcastReceiver 没有在10秒内完成返回 
         3. 在主线程内进行网络操作、高耗时的操作，如图像变换
         4. 在主线程内进行一些缓慢的磁盘操作(I/O操作或数据库操作)
@@ -152,6 +158,7 @@
             2. 处理完成之后，通过handler.sendMessage()传递处理结果
             3. 在handler的handleMessage()方法中更新UI
             4. 或者使用handler.post()方法将消息放到Looper中
+        3. 使用新线程执行耗时操作，然后使用runOnUiThread(Runnable)来执行更新
     5. 如何排查:
         1. 首先分析log
         2. 从trace.txt文件查看调用stack，adb pull data/anr/traces.txt ./mytraces.txt
@@ -205,21 +212,23 @@
     2. 接着回去根据我们设置的对应主题，来加载与之对应的布局文件并将其添加到DecorView中，然后找到该布局中id=content的ViewGroup赋值给mContentParent。
     3. 将我们要设置的Activity对应的布局添加到mContentParent中。
 9.  非UI线程是可以跟新UI的，当ViewRoot没有被实例化之前子线程是可以直接更新UI的，这是我的理解，只不过不建议这么做。???
-10. volatile与synchronized: 
-	- volatile本质是在告诉jvm当前变量在寄存器（工作内存）中的值是不确定的，需要从主存中读取；synchronized则是锁定当前变量，只有当前线程可以访问该变量，其他线程被阻塞住。
-	- volatile仅能使用在变量级别；synchronized则可以使用在变量、方法、和类级别的
-	- volatile仅能实现变量的修改可见性，不能保证原子性；而synchronized则可以保证变量的修改可见性和原子性
-	- volatile不会造成线程的阻塞；synchronized可能会造成线程的阻塞。
-	- volatile标记的变量不会被编译器优化；synchronized标记的变量可以被编译器优化
+10. **volatile与synchronized**: 
+	- 原理: volatile本质是在告诉jvm当前变量在寄存器（工作内存）中的值是不确定的，需要从主存中读取；synchronized则是锁定当前变量，只有当前线程可以访问该变量，其他线程被阻塞住。
+	- 范围: volatile仅能使用在变量级别；synchronized则可以使用在变量、方法、和类级别的
+	- 原子性: volatile仅能实现变量的修改可见性，不能保证原子性；而synchronized则可以保证变量的修改可见性和原子性
+	- 阻塞: volatile不会造成线程的阻塞；synchronized可能会造成线程的阻塞。
+	- 优化: volatile标记的变量不会被编译器优化；synchronized标记的变量可以被编译器优化
     - volatile原理:
         1. 保证可见性，不保证原子性(当写一个volatile变量时，JMM会把该线程本地内存中的变量强制刷新到主内存中去；这个写会操作会导致其他线程中的缓存无效)
         2. 禁止指令重排(重排序操作不会对存在数据依赖关系的操作进行重排序；)
-    - 而且volatile还不适合复合操作，当出现volatile修饰的变量最终的值依赖自身时，可能有并发问题，如多个线程调用volatile_num++这种。即它不具备操作的原子性。
+    - 复合操作: 而且volatile还不适合复合操作，当出现volatile修饰的变量最终的值依赖自身时，可能有并发问题，如多个线程调用volatile_num++这种，可以由读取、加、赋值3步组成。即它不具备操作的原子性。
 11. 单例模式的双重锁为什么要加volatile: https://blog.csdn.net/u012723673/article/details/80682208
     - ...
 12. App启动过程: https://www.jianshu.com/p/dab1fcf0109d
 13. HttpClient与HttpUrlConnection的区别: 
 14. java虚拟机和Dalvik虚拟机的区别: 
+15. java垃圾回收机制: https://blog.csdn.net/justloveyou_/article/details/71216049
+16. JVM内存模型解析: https://blog.csdn.net/justloveyou_/article/details/71189093
 
 ### Android 基础知识3
 
@@ -371,7 +380,7 @@
         2. 也可以直接在onDestroy()里startService
         3. 使用类似口口管家等第三方应用或是在setting里-应用-强制停止时，APP进程可能就直接被干掉了，onDestroy方法都进不来，所以还是无法保证
 9. **为何后台服务会被回收**: 因为**ANR**，主要注意以下几点会导致ANR的发生
-    1. 主线程 (“事件处理线程” / “UI线程”) 在5秒内没有响应输入事件
+    1. 主线程 ("事件处理线程" / "UI线程") 在5秒内没有响应输入事件
     2. BroadcastReceiver 没有在10秒内完成返回 
     3. 在主线程内进行网络操作
     4. 在主线程内进行一些缓慢的磁盘操作(I/O操作或数据库操作)
@@ -463,7 +472,7 @@
 
 ### Android ContentProvider
 
-
+https://blog.csdn.net/u011240877/article/details/72848608
 
 ### Android Fragment
 
@@ -582,11 +591,14 @@ https://github.com/francistao/LearningNotes/blob/master/Part1/Android/线程通�
 ### Android Messenger
 
 https://cloud.tencent.com/developer/article/1199115
+https://blog.csdn.net/lmj623565791/article/details/47017485
+https://blog.csdn.net/u011240877/article/details/72836178
 
 ### Android AIDL
 
 https://developer.android.google.cn/guide/components/aidl  
 https://www.jianshu.com/p/375e3873b1f4
+https://blog.csdn.net/u011240877/article/details/72765136
 
 ### Android 消息
 
@@ -956,7 +968,7 @@ Android 信息.md
         - 要记得创建对象的JavaBean类；要求json对象中的key的名称与Java对象的JavaBean类中的属性名要相同，否则解析不成功！
         - 将json字符串变为bean或者List<bean\>: Gson gson = new Gson(); MyBean b = gson.fromJson(jsonStr, MyBean.class); List<MyBean> bs = gson.fromJson(jsonStr, new TypeToken<List<MyBean>>(){}.getType());
         - Gson还可以将Java对象、Java对象的List转换为json字符串{}
-    3. **Fastjson**: 采用了一种“假定有序、快速匹配”的算法，把JSON Parse的性能提升到极致，是目前Java语言中最快的JSON库。
+    3. **Fastjson**: 采用了一种"假定有序、快速匹配"的算法，把JSON Parse的性能提升到极致，是目前Java语言中最快的JSON库。
         - 一样要bean，一样要求json对象中的key的名称与Java对象的JavaBean类中的属性名要相同
         - MyBean b = JSON.parseObject(jsonStr, MyBean.class); List<MyBean> bs = JSON.parseArray(jsonStr, MyBean.class);
 
@@ -1450,6 +1462,11 @@ Android 信息.md
         3. execute(Runnable): 使用默认的串行线程池来执行Runnable
     7. class InternalHandler/AsyncTaskResult/WorkerRunnable
 7. runOnUiThread: Thread.currentThread() != mUiThread ? mHandler.post(r) : r.run()
+
+### Android Android NDK 与 Java JNI
+
+http://www.runoob.com/w3cnote/jni-getting-started-tutorials.html
+https://www.jianshu.com/p/87ce6f565d37
 
 ### end
 
