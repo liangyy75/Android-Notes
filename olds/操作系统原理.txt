@@ -1,0 +1,295 @@
+第一部分 概述
+
+一、导论
+1.计算机系统大致可分为四个部分：硬件、操作系统、应用程序和用户。
+2.操作系统是资源分配者、控制程序
+3.操作系统是一直运行在计算机上的一个程序(通常称为内核)，其他程序则为系统程序或应用程序。
+4.bootstrap program(引导程序)
+5.控制寄存器、状态寄存器、数据寄存器
+6.存储程序与程序控制
+7.CPU的组成：寄存器组、运算器、控制器(指令寄存器IR、指令计数器PC)；CPU的任务：取指令并完成指令所规定的操作
+8.指令执行流程：取指令（fetch）、指令译码(decode)、执行指令(excute)、保存结果（store）、修改指令计数器（决定下一条指令）
+9.现代操作系统是中断驱动的
+10.中断指系统发生某个异步/同步事件后,处理机暂停正在执行的程序,转去执行处理该事件程序的过程、陷阱(trap陷入， exception异常)是由于出错或用户请求引起的
+	软件生成的中断。
+11.在处理另一个中断以防止丢失的中断时，将禁用传入中断
+12.同步(Synchronous)I/O、异步(Asynchronous)I/O、状态设备表
+13.Direct Memory Access Structure
+	用于高速I/O设备能够以接近存储器的速率传送信息
+	无须CPU的介入，设备控制器直接把数据块从缓冲区存储传送到主存
+	每数据块只要一个中断，而不是每个字节一个中断
+14.计算机系统的基本目的是执行用户程序井能更容易地解决用户问题
+15.现代通用计算机系统由一个或多个CPU和若干设备控制器通过共同的总线相连而成，该总线提供了对共享内存的访问
+16.随机访问内存(random access memory, RAM)、动态随机访问内存(dynamic random access memory, DRAM)、辅存(secondary storage)、磁盘(magnetic disk)、
+	易失存储(volatile storage)、非易失存储(nonvolatile storage)、电子磁盘(electronic disk)、DMA(direct memory access, 直接内存访问)、单处理器系统、
+	多处理器系统(并行系统parallel system、紧藕合系统tightly coupled system)、适应退化(graceful degradation)、容错(fault tolerant)、非对称处理(
+	asymmetric multiprocessing)、对称多处理(symmetric multiprocessing, SMP)、集群系统(clustered system)、高可用性(high availability)、非对称集群(
+	asymmetric clustering)、对称集群(symmetric clustering)、多道程序设计、分时系统、作业池(job pool)、作业调度(job scheduling)、CPU调度(CPU 
+	scheduling)、虚拟内存、用户模式(user mode)、监督程序模式(monitor mode)(管理模式supervisor mode、系统模式system mode、特权模式priviledged mode)、
+	三级存储(tertiary storage)、高速缓存一致性(cache coherency)。
+17.多处理器优点：增加吞吐量、规模经济、增加可靠性
+18.操作系统负责下述与进程管理相关的活动: .创建和删除用户进程和系统进程。 .挂起和重启进程。 .提供进程同步机制。.提供进程通信机制。 .提供死锁处理机制。
+19.操作系统负责下列有关文件管理的活动: 创建和删除文件。创建和删除目录来组织文件。提供操作文件和|目录的原语。将文件映射到二级存储上。在稳定存储介质上
+	备份文件。
+20.操作系统负责夏利有关硬盘管理的活动：空闲空间管理、存储空间分配、硬盘调度。
+
+二、操作系统结构
+
+1.Microkernel System Structure微内核结构、
+2.操作系统服务：用户界面(命令行界面、批界面、图像用户界面)、程序执行、I/O操作、文件系统操作、通信(共享内存、信息交换)、错误检测、资源分配、统计、
+	保护和安全。
+3.命令解释程序的主要作用是获取井执行用户指定的下一条命令
+4.系统调用(system cal l)提供了操作系统提供的有效服务界面。这些调用通常用C++编写，当然，对底层的任务(如必须直接访问的硬件)，可能以汇编语言指令的形
+	式提供。
+5.向操作系统传递参数有三种方法。最简单的是通过寄存器来传递参数。不过有时，参数数量会比寄存器多。这时，这些参数通常存在内存的块和表中，并将块的地址
+	通过寄存器来传递，0 Linux Solaris 就采用这种方法。参数也可通过程序放在或压入堆栈中，并通过操作系统弹出。有的系统采用块或堆栈方法，因为这些方法
+	并不限制所传递参数的数量或长度。
+6.系统调用大致可分成五大类:进程控制、文件管理、设备管理、信息维护和通信。
+	进程控制 O 结束，放弃 O 装入，执行 O 创建迸程，终止进程 O 取得进程属性，设置进程属性 O 等待时间 O 等待事件，唤醒事件 O 分配和释放内存
+	文件管理 O 创建文件，删除文件 O 打开，关闭 O 读、写、重定位 O 取得文件属性，设置文件属性
+	设备管理 O 请求设备，释放设备 O 读、写、重定位 O 取得设备属性，设置设备属性 O 逻辑连接或断开设备
+	信息维护 O 读取时间或日期，设置时间或日期 O 读取系统数据，设置系统数据 O 读取进程，文件或设备属性 O 设置进程，文件或设备属性
+	通信 O 创建，删除通信连接 O 发送，接受消息 O 传递状态消息 O 连接或断开远程设备
+7.消息传递对交换少量数据很有用，这是因为不必避免冲突。对于计算机间的通信，它也比共享内存更容易实现。共享内存允许最大速度地通信并且十分方便，这时因
+	为当通信发生在计算机内，它能以内存的速度进行。不过，在保护和同步方面，进程共享内存存在一些问题。
+8.系统程序除了一小部分是系统调用的简单接口，其他的可分为：文件管理、状态信息、文件修改、程序语言支持、程序装入执行、通信、应用程序。
+9.简单结构、分层方法(分层法)、微内核、模块
+10.虚拟机的基本思想是单个计算机(CPU 、内存、磁盘、网卡等)的硬件抽象为几个不同的执行部件，从而造成一种"幻觉"，仿佛每个独立的执行环境都在自己的计算机
+	上运行一样。
+
+第二部分 进程管理
+
+三、进程
+
+new:  The process is being created
+running:  Instructions are being executed
+waiting:  The process is waiting for some event to occur
+ready:  The process is waiting to be assigned to a process
+terminated:  The process has finished execution
+
+1.进程不只是程序代码，程序代码有时称为文本段(或代码段)。进程还包括当前活动，通过程序计数器的值和处理器寄存器的内容来表示。另外，进程通常还包括进程
+	堆栈段(包括临时数据，如函数参数、返回地址和局部变量)和数据段(包括全局变量)。进还可能包括堆(heap)，是在进程运行期间动态分配的内存。
+	文本段、数据段、堆栈段、堆；程序计数器、处理器寄存器
+2.进程状态：新的、运行、等待、就绪、终止。
+3.每个进程在操作系统内用进程控制块(process control block. PCB. 也称为任务控制块)来表示。它包含许多与一个特定进程相关的信息。
+	进程状态、程序计数器、CPU寄存器、CPU调度信息、内存管理信息、记账信息、I/O状态信息。
+4.长期调度程序Long-term scheduler、短期调度程序Short-term scheduler必须频繁地为CPU选择新进程、中期调度程序medium-term scheduler、I/O-bound process
+	(I/O型进程)、CPU-bound process(计算型进程)
+5.如果所有进程均是I/O为主的，那么就绪队列几乎为空，从而短期调度程序没有什么事情可做。如果所有进程均是CPU为主的，那么I/O等待队列将几乎总为空，从而几
+	乎不使用设备，因而系统会不平衡。为了达到最好性能，系统需要一个合理的I/O为主和 CPU 为主的组合进程。
+6.将CPU切换到另一个进程需要保存当前进程的状态并恢复另一个进程的状态，这一任务称为上下文切换(context switch)。
+7.父进程创建子进程，这些进程又创建其他进程，从而形成进程树。
+	资源共享：父母和孩子分享所有的资源、儿童共享父母资源的子集、父母和子女不共享资源
+	执行：父与子同时执行、家长等待直到孩子们终止
+	地址空间：父母子女副本、孩子有一个程序加载到它里面
+8.进程合作的优势：信息共享、计算加速、模块性、便利性
+9.Interprocess Communication(IPC)进程间通信
+	命名、同步、缓冲、直接通信、间接通信
+	send(P, message)– send a message to process P
+	receive(Q, message)– receive a message from process Q
+	send(A, message)– send a message to mailbox A
+	receive(A, message)– receive a message from mailbox A
+
+四、线程
+
+1.线程好处：Responsiveness响应能力、资源共享、经济性：进程创建所需的内存和资源的分配时代价高，线程要快、Utilization of MP Architectures充分利用多处
+	理器体系结构
+2.用户线程：
+	用户线程的维护由应用进程完成；
+	内核不了解用户线程的存在；
+	用户线程切换不需要内核特权；
+	用户线程调度算法可针对应用优化；
+	线程状态是与进程状态独立的
+3.内核线程：
+	内核维护进程和线程的上下文信息；
+	线程切换由内核完成；
+	一个线程发起系统调用而阻塞，不会影响其他线程的运行。
+	时间片分配给线程，所以多线程的进程获得更多CPU时间。
+4.多线程的3种实现方式
+	Many-to-One
+	One-to-One
+	Many-to-Many
+5.线程是CPU使用的基本单元，它由线程ID、程序计数器、寄存器集合和栈组成、私有存储区域。
+6.取消线程：Asynchronous cancellation异步取消、Deferred cancellation延迟取消。
+7.线程特定数据(thread-specific data)
+8.调度器激活(scheduler activation)、upcall
+9.windows xp:	The primary data structures of a thread include:
+	ETHREAD(executive thread block)
+	KTHREAD(kernel thread block)
+	TEB(thread environment block)
+
+五、CPU调度
+
+1.CPU区间、I/O区间(I/O burst)、短期调度程序(short-term scheduler)或CPU调度程序
+2.CPU调度发生条件：当一个进程从运行状态切换到等待状态；当一个进程从运行状态切换到就绪状态；当一个进程从等待状态切换到就绪状态；当一个进程终止时。
+3.非抢占的(nonpreemptive)、协作的(cooperative)、抢占的(preemptive)。
+4.分派程序(dispatcher)：切换上下文、切换到用户模式、跳转到用户程序的合适位置，以重新启动程序。分派程序停止一个进程而启动另一个所要花的时间称为分
+	派延迟(dispatch latency)
+5.CPU调度准则：CPU使用率、吞吐量、周转时间、等待时间、响应时间。
+6.先到先服务调度(first come first server, FCFS)；最短作业优先调度(shortest-job-first, SJF)；优先级调度；轮转法调度(round-robin, RR)；多级队列调度；
+	多级反馈队列调度(multilevel feedback queue)。	最短剩余时间优先调度(shortest-remaining-time-first)、无穷阻塞(indefinite blocking)或饥饿(star
+	vation)、老化(aging)、时间片(time quantum or time slice)、负载分配(load sharing)
+7.处理器亲和性，软亲和性(soft affinity)、硬亲和性(hard affinity)、对称多线程(SMT)/超线程(hyperthreading)
+8.进程竞争范围(process-contention scope, PCS)、系统竞争范围(system-contention scope, SCS)
+
+六、进程同步
+
+竞争条件(race condition)、临界区(critical section)、进入区(entry section)、退出区(exit section)、剩余区(remainder section)、互斥(mutual exclusion)
+、前进(progress)、有限等待(bounded waiting)、抢占内核(preemptive kernel)、非抢占内核(nonpreemptive kernel)、Peterson算法、TestAndSet()、Swap()、信
+号量(semaphore)、wait()、signal()、忙等待(busy waiting)、自旋锁(spinlock)、死锁(deadlocked)、无限期阻塞(indefinite blocking)、管程(monitor)、事务(
+transaction)
+
+1.多个进程并发访问和操作同一数据且执行结果与访问发生的特定顺序称为竞争条件(race condition)。
+2.假设某个系统有n个进程 {P0，… Pn-1}。每个进程有一个代码段称为临界区(critical section)，在该区中进程可能改变共同变量、更新一个表、写一个文件等。
+	这种系统的重要特征是当一个进程进入临界区，没有其他进程可被允许在临界区内执行，即没有两个进程可同时在临界区内执行。每个进程必须请求允许进入其临
+	界区。实现这一请求的代码段称为进入区(entry section)，临界区之后可有退出区(exit section)，其他代码为剩余区(remainder section)。
+3.临界区问题的解答必须满足如下三项要求: 
+	互斥(mutual exclusion): 如果进程 Pi 在其临界区内执行，那么其他进程都不能在其临界区内执行。
+	前进(progress): 如果没有进程在其临界区内执行且有进程需进入临界区，那么只有那些不在剩余区内执行的进程可参加选择，以确定谁能下一个进入临界区，且
+		这种选择不能无限推迟。
+	有限等待(bounded waiting): 从一个进程做出进入临界区的请求，直到该请求允许为止，其他进程允许进入其临界区的次数有上限。
+4.有两种方法用于处理操作系统内的临界区问题: 抢占内核(preemptive kernel)与非抢占内核(nonpreemptive kernel)。抢占内核允许处于内核模式的进程被抢占，
+	非抢占内核不允许处于内核模式的进程被抢占。处于内核模式运行的进程会一直运行，直到它退出内核模式、阻塞或自动退出CPU 的控制。显然，非抢占内核的内
+	核数据结构从根本上不会导致竞争条件，因为某个时刻只有一个进程处于内核模式。抢占内核需要认真设计以确保其内核数据结构不会导致竞争条件。
+5.计数信号量的值域不受限制，而二进制信号量的值只能为1或0，后者可以被称为互斥锁，因为可以提供互斥。
+6.自旋锁有其优点，进程在等待锁时不进行上下文切换，而上下文切换可能需要花费相当长的时间。
+7.有限缓冲问题、读者-写者问题、哲学家就餐问题。
+8.哲学家进餐问题的解决方法：
+	最多只允许4个哲学家同时坐在桌子上(共有5个)。
+	只有两只筷子都可用时才允许一个哲学家拿起它们(他必须在临界区内拿起两只筷子)。
+	使用非对称解决方法，即奇数哲学家先拿起左边的筷子，接着拿起右边的筷子，而偶数哲学家先拿起右边的筷子，接着拿起左边的筷子。
+9.非易失性存储、易失性存储、稳定性存储
+
+七、死锁
+
+死锁(deadlock)、死锁预防(deadlock prevention)、死锁避免(deadlock avoidance)
+
+1.死锁必要条件：
+	互斥:至少有一个资源必须处于非共享模式，即一次只有一个进程使用。如果另一进程申请该资源，那么申请进程必须等到该资源被释放为止。
+	占有并等待:一个进程必须占有至少一个资源，并等待另一资源，而该资源为其他进程所占有。
+	非抢占:资源不能被抢占，即资源只能在进程完成任务后自动释放。
+	循环等待:有一组等待进程{P0 P1 , …, Pn }。p0等待的资源为P1所占有，P1等待的资源为P2所占有，…… Pn-1等待的资源为Pn所占有,Pn等待的资源为P0所占有。
+2.系统资源分配图、节点集合V(系统进程集合P、系统资源集合R)、边集合E、申请边、分配边、圆点表示进程矩阵表示资源。
+3.有三种方法可处理死锁问题: 
+	可使用协议以预防或避免死锁，确保系统不会进入死锁状态。
+	可允许系统进入死锁状态，然后检测它，并加以恢复。
+	可忽视这个问题，认为死锁不可能在系统内发生。
+	第三种方法为绝大多数操作系统所采用，包括 UNIX Windows 。因此应用程序开发人员需要自己来处理死锁。
+4.死锁预防(deadlock prevention)确保至少一个必要条件不成立；
+	①每个进程在执行前申请并获得所有资源。
+	②进程在没有资源时才可申请资源。
+	③抢占资源(其他等待进程的)
+	④对所有资源类型进行完全排序，且要求每个进程按递增顺序来申请资源。
+	①和②的问题：低设备使用率和系统吞吐率、可能发生饥饿
+5.死锁避免(deadlock avoidance)算法动态地检测资源分配状态以确保循环等待条件不可能成立。
+6.如果系统能按某个顺序为每个进程分配资源(不超过其最大值)并能避免死锁，那么系统状态就是交全的。进程顺序 <P1, P2, P3 ... Pn>. 如果对于每个 Pi, Pi 仍
+	然可以申请的资源数小于当前可用资源加上所有进程Pj(其中 j<i)所占有的资源，那么这一顺序称为安全序列。死锁状态是不安全状态。然而，不是所有不安全
+	状态都能导致死锁状态
+7.资源分配图算法(n2)、需求边。
+	假设进程Pi申请资源Rj。只有在将申请边Pi变成分配边Pi而不会导致资源分配图形成环时，才允许申请。
+8.银行家算法(m·n2)：当新进程进入系统时，它必须说明其可能需要的每种类型资源实例的最大数量，这一数量不能超过系统资源的总和。当用户申请一组资源时，系统必须
+	确定这些资源的分配是否仍会使系统处于安全状态。如果是，就可分配资源:否则，进程必须等待直到某个其他进程释放足够资源为止。
+	设n为系统进程的个数，m为资源类型的种类。
+	Availabe: 长度为m的向量，表示每种资源的现有实例的数量。
+	Max: n×m矩阵，定义每个进程的最大需求。
+	Allocation: n×m矩阵，定义每个进程现在所分配的各种资源类型的实例数量。
+	Need: n×m 矩阵，表示每个进程还需要的剩余的资源。
+9.如果一个系统既不采用死锁预防算法也不采用死锁避免算法，那么系统应该提供死锁检测算法与死锁恢复算法。
+	等待图(n2)、
+	死锁检测算法：
+		Available: 长度为m的向量，表示各种资源的可用实例。
+		Allocation: n×m矩阵，表示当前各进程的资源分配情况。
+		Request: n×m矩阵，表示当前各进程的资源请求情况。
+	进程终止：
+		终止所有死锁进程。
+		一次只终止一个进程直到取消死锁循环为止。
+	资源抢占
+
+第三部分 内存管理
+
+八、内存管理
+
+基地址寄存器(base register)、界限地址寄存器(limit register)、内存管理单元(memory-management unit, MMU)、重定位寄存器(relocation register)、滚入(
+roll in)、滚出(roll out)、连续内存分配(contiguous memory allocation)、页表基寄存器(page-table base register, PTBR)、转换表缓冲区(translation look
+-aside buffer, TLB)、地址空间标识符(address-space identifier, ASID)、页表长度寄存器(page-table length register, PTLR)、向前映射页表(forward-mappe
+d page table)、段表(segment table)
+
+动态重定位：程序位置可变的，执行时决定。
+静态重定位：程序位置固定的，编译加载时已决定。
+静态加载是指在运行程序之前由操作系统的加载器将DLL和EXE一起加载到内存里。注意这里与程序的静态链接区别开来，静态链接发生在编译过程之中，而DLL的静态
+	加载是发生在程序运行之前
+动态加载是指在程序运行过程中程序自己完成对DLL的加载，主要用到LoadLibrary（加载DLL）、GetProcAddress（获得DLL中API函数的地址）FreeLibrary（释放DLL）
+	。我个人认为DLL的动态加载类似于读写文件，只不过文件时被读入文件流中，而DLL中的数据和代码是被读入到相应的数据区和代码区中
+静态链接是指在编译阶段直接把静态库加入到可执行文件中去，这样可执行文件会比较大。
+而动态链接则是指链接阶段仅仅只加入一些描述信息，而程序执行时再从系统中把相应动态库加载到内存中去。
+
+1.基地址寄存器(base register)含有最小的合法物理内存地址，而界限地址寄存器(limit register)决定了范围的大小。基地址寄存器和界限地址寄存器定义逻辑地
+	址空间。
+2.地址绑定：编译器通常将这些符号地址绑定(bind)在可重起位的地址(如"从本模块开始的第14 字节")。链接程序或加载程序再将这些可重定位的地址绑定成绝对地
+	址(如 74014)。
+	编译时：如果在编译时就知道进程将在内存中的驻留地址，那么可以生成绝对代码(absolute code)。
+	加载时：如果在编译时并不知道进程将驻留在内存的什么地方，那么编译器就必须生成可重定位代码(relocatable code)。
+	执行时：如果进程在执行时可以从一个内存段移到另一个内存段，那么绑定必须延迟到执行时才进行。
+3.CPU所生成的地址通常称为逻辑地址(logical address) ，而内存单元所看到的地址(即加载到内存地址寄存器(memory-address register)中的地址)通常称为物理地
+	址(physical address)。编译和加载时的地址绑定方法生成相同的逻辑地址和物理地址。但是，执行时的地址绑定方案导致不同的逻辑地址和物理地址，这时，称
+	逻辑地址为虚拟地址。。由程序所生成的所有逻辑地址的集合称为逻辑地址空间(logical address space)，与这些逻辑地址相对应的所有物理地址的集合称为物
+	理地址空间(physical address space)。
+4.内存管理单元(memory-management unit, MMU)、重定位寄存器(relocation register)
+5.滚入(roll in)、滚出(roll out)
+6.连续内存分配(contiguous memory allocation)、多分区方法(multiple-partition method)、可变分区(variable-partition)、首次适应(first-fit)、最佳适应(
+	best-fit)、最差适应(worst-fit)、外部碎片问题(external fragmentation)、内部碎片、紧缩(compaction)
+7.物理内存分为固定大小的块，称为帧(frame);逻辑内存也分为同样大小的块，称为页(page)、页号与页偏移、页表、页表基寄存器(page-table base register, PTBR)
+	、转换表缓冲区(translation look-aside buffer, TLB)、地址空间标识符(address-space identifier, ASID)、页表长度寄存器(page-table length register, 
+	PTLR)、向前映射页表(forward-mapped page table)、哈希页表(hashed page table)
+8.层次页表、哈希页表、反向页表
+9.群集页表(clustered page table) 类似于哈希页表，不过这种哈希页表的每一条目不只包括一页信息，而是包括多页。群集页表对于稀疏地址空间特别有用，稀疏地
+	址空间中的地址引用不连续，且分散在整个地址空间。
+
+九、虚拟内存
+
+按需调页(demand paging)、懒惰交换(lazy swapper)、页错误陷阱(page-fault trap)、纯粹按需调页(pure demand paging)、局部引用(locality of reference)、有
+效访问时间(effective access time)、页错误率、交换空间、写时复制(copy-on-write)、写时复制页、帧分配算法(frame-allocation algorithm)和页置换算法(page
+-replacement algorithm)、Belady异常(Belady's anomaly)、颠簸(thrashing)、预调页(prepaging)、
+
+1.FIFO页置换、最优页置换算法(optimal page-replacement algorithm, OPT/MIN)、LRU页置换、近似LRU页置换(附加引用位算法、二次机会页置换算法、增强型二次
+	机会算法)、基于计数的页置换(最不经常使用页置换算法(least frequently used (LFU) page-replacement algorithm)、最常使用页置换算法(most frequently
+	used (MFU) page-replacement algorithm))
+2.空闲帧池、空闲帧缓冲池
+3.帧分配：平均分配(equal allocation)、比例分配(proportional allocation)(进程大小、优先级)
+4.全局置换(global replacement)、局部置换(local replacement)、优先置换、局部模型、工作集合模型、页错误概率
+5.内核内存的分配：Buddy系统、slab分配
+
+第四部分 存储管理
+
+十、文件系统接口
+
+1.文件基本操作：创建、删除、读、写、重定位、截短
+2.强制(mandatory)或建议(advisory)加锁
+3.访问方法：顺序访问、直接访问、创建文件索引、多级索引
+4.目录结构：单层、双层、树状、无环图、通用图
+5.一致性语义：UNIX语义、会话语义、不可修改共享文件语义
+
+十一、文件系统实现
+
+1.文件系统分层：设备驱动程序、基本文件系统、文件组织模块、逻辑文件系统(包含文件控制块)
+2.目录实现：线性列表、哈希表
+3.分配方法：连续分配、链接分配(簇cluster)、索引分配(链接方案、多层索引、组合方案)、文件分配表(FAT)
+4.空闲空间管理：位向量、链表、组、计数
+
+十二、大容量存储器的结构
+
+1.旋转等待时间、寻道时间
+2.磁盘调度算法：FCFS调度、SSTF调度、SCAN调度、C-SCAN调度、LOOK调度、C-LOOK调度
+
+十三、I/O传输系统
+
+1.I/O端口四种寄存器：数据输入、数据输出、状态、控制
+2.轮询polling、中断interrupt、中断向量表(大开销)、中断链接(折中)、中断处理程序(低效率)、DMA
+3.总线、端口、控制器
+4.原始I/O、直接I/O
+5.I/O应用接口：块与字符设备、网络设备
+6.阻塞IO： 资源不可用时，IO请求一直阻塞，直到反馈结果（有数据或超时）。
+	非阻塞IO：资源不可用时，IO请求离开返回，返回数据标识资源不可用
+7.同步IO：应用阻塞在发送或接收数据的状态，直到数据成功传输或返回失败。
+	异步IO：应用发送或接收数据后立刻返回，数据写入OS缓存，由OS完成数据发送或接收，并返回成功或失败的信息给应用。
+8.缓冲buffer、高速缓存cache、假脱机(保存设备输出，spooling)

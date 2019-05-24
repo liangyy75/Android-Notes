@@ -1,0 +1,4 @@
+d:\knowledge\大三下\人工神经网络理论\高等数学.md
+d:\knowledge\大三下\人工神经网络理论\线性代数.md
+d:\knowledge\大三下\人工神经网络理论\人工神经网络理论_notes.md
+d:\knowledge\大三下\数据挖掘导论\数据挖掘导论_notes.md

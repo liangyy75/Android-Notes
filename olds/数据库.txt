@@ -1,0 +1,63 @@
+https://www.cnblogs.com/fudashi/p/7491039.html
+Mysql left join,right join,inner join的效率比较					https://blog.csdn.net/w348399060/article/details/70158125
+mysql view 														https://www.cnblogs.com/sker/p/5765042.html
+mysql 日期														http://www.cnblogs.com/sker/p/5765265.html
+
+二, 实体关系模型
+1.数据库设计步骤：①需求分析；②概念数据库分析；③逻辑数据库分析；④模式求精；⑤物理数据库设计；⑥安全性设计
+2.ER图, 实体, 实体集, 键, 候选键, 主键, 最小属性集, 关系, 关系集, 键约束, 参与约束, 弱实体, 部分键, 重叠约束, 覆盖约束, 聚集。
+
+二, 关系模型
+1.关系型数据库, 关系(概要, 实例), Cardinality, arity, Data Definition Language (DDL), Data Manipulation Language (DML), superkey, key, 外键
+	referential integrity(参照完整性)
+2.unique, foreign key, references, cascade, no action, set default, set null, on update/delete no action, 交叉乘积(cross-product)
+
+三, 代数
+1.关系代数Relational Algebra, 关系演算Relational Calculus, (关系代数5个基本操作：Selection ( σ ), Projection ( π ), Cross-product ( × ), 
+	Set-difference ( — ), Union ( ∪ )；Set intersection( ∩ ), Natural/Theta/Equi join).
+
+四, 演算
+1.元组关系演算(Tuple Relational Calculus (TRC)), 域关系演算(Domain Relational Calculus (DRC)), Conjunction(合取):∧, Disjunction(析取):∨, 
+	Universal quantification(全称量化)：∀, Existential quantification(存在量化): ∃。
+
+五, SQL
+1.DISTINCT, SELECT [DISTINCT] target-list FROM relation-list WHERE qualification, LIKE, ‘_’stands for any one character and ‘%’ stands for 0 
+	or more arbitrary characters, UNION, UNION ALL, INNER JOIN, LEFT JOIN, RIGHT JOIN, OUTER JOIN, NATURE JOIN, NATURA JOIN, NATURAL JOIN, 
+	CROSS JOIN, ON, USING, INTERSECT, EXCEPT, IN, NOT IN, EXISTS, NOT EXISTS, ANY, ALL, SOME, 
+	COUNT(*), COUNT([DISTINCT] A), SUM([DISTINCT] A), AVG([DISTINCT] A), MAX(A), MIN(A), 
+	CEIL(进一取整), DIV(整数除法), FLOOR(舍一取整), MOD, POWER(a,b)a的b次方, ROUND(保留小数点后一位), TRUNCATE(a,b)数字截取：a中保留b位小数，
+		且不四舍五入；如果b为负，规律一样。
+	GROUP BY, HAVING, ORDER BY, DESC, 
+2.对于union的前部分查询和后部分查询不能有GROUP BY,ORDER BY等字段,只有是在整个的最后才能有GROUP BY,ORDER BY等字段!
+3.实际上，在 MySQL 中（仅限于 MySQL） CROSS JOIN 与 INNER JOIN 的表现是一样的，在不指定 ON 条件得到的结果都是笛卡尔积，反之取得两个表完全匹配
+	的结果。INNER JOIN 与 CROSS JOIN 可以省略 INNER 或 CROSS 关键字。
+4.A LEFT/RIGHT JOIN B ON ... WHERE ... 先是on完后再where的。
+5.select过程：from->where->select->group by->having->order by->limit
+6.如果WHERE子句谓词的计算结果为未知，则将其视为false。
+7.drop database/table/view ... / drop database/table/view if exists ... / show create view/table view_name/table_name
+8.create view ... as select ...
+9.CREATE ALGORITHM VIEW 视图名称[(column_list)] AS SELECT 语句  WITH  [CASCADED|LOCAL] CHECK OPTION
+　　1)CASCADED 默认值，表示更新视图的时候，要满足视图和表的相关条件
+　　2)LOCAL：表示更新视图的时候，要满足该视图定义的一个条件即可
+	3)例：create view employee_view as SELECT * from employee WITH CASCADED CHECK OPTION;
+	4)with check option：对视图进行更新操作的时，需要检查更新后的值是否还是满足视图公式定义的条件。通俗点，就是所更新的结果是否还会在视图中存
+		在。如果更新后的值不在视图范围内，就不允许更新如果创建视图的时候，没有加上with check option，更新视图中的某项数据的话，mysql并不会进行
+		有效性检查。删掉了就删掉了。在视图中将看不到了。所以使用WHIT [CASCADED|LOCAL] CHECK OPTION选项可以保证数据的安全性。
+10.修改视图：CREATE OR REPLACE VIEW 视图名称 [(column_list)] AS SELECT 语句 / ALTER VIEW 视图名称 [(column_list)] AS SELECT 语句
+	create or replace view employee_view as select eid,ename,salary FROM employee;
+	alter view employee_view as SELECT * FROM employee;
+11.GRANT privileges ON object TO users [WITH GRANT OPTION]
+	Object can be a Table or a View
+	Privileges can be:
+	• Select
+	• Insert
+	• Delete
+	• References (cols) – allow to create a foreign key that references the specified column(s)
+	• All
+	例：grant select on sailors to U1, U2, U3, 	revoke select on boats from U1, U2, U3, 	grant select on sailors to Amit with grant option
+	允许Amit授权给别人
+12.域约束，主键约束，外键约束，一般约束
+13.CHECK, CONSTRAINT
+
+七, 文件与索引
+1.

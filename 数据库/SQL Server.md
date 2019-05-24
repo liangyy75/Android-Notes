@@ -1,0 +1,1 @@
+[SQL Server中identity(自增)的用法](https://blog.csdn.net/tswc_byy/article/details/81747159)
