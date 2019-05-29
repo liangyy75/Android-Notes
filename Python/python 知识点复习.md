@@ -124,6 +124,10 @@
         print(sys.getsizeof(float))  # 400
         ```
 
+## built-in
+
+1. [python项目中不同文件夹py源文件之间如何相互调用--Python import中相对路径的问题](https://blog.csdn.net/helloxiaozhe/article/details/76578096)
+
 ## pytorch
 
 ### start
@@ -193,3 +197,7 @@ plt.ion()   # interactive mode
 
 
 ```
+
+### end
+
+## end
