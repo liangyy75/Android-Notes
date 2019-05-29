@@ -10,7 +10,7 @@
 0. 链接
     0. [Android layout属性大全](https://blog.csdn.net/ican87/article/details/37566679)
 1. 从种类上看所有View:
-    1. View:
+    1. View implements Drawable.Callback, KeyEvent.Callback, AccessibilityEventSource:
         1. id/size: id / layout_height / layout_width / maxheight / minheight / maxwidth / minwidth / layout_margin / layout_padding
         2. 内容: 
             0. foregroundGravity / background / contentDescription / theme / tag / gravity / layout_gravity / saveEnabled(是否保存内容，需要设置id) / visibility
@@ -53,7 +53,7 @@
             5. 默认会显示选中的item为橙黄底色，有时候我们需要去掉这种效果: listSelector="@android:color/transparent"
             6. 在项目中，一进入一个页面, EditText默认就会自动获取焦点: 在EditText的父级控件中找一个，设置成android:focusable="true"; android:focusableInTouchMode="true"; 可以截断EditText默认的行为
     2. Common:
-        1. TextView extends View [Android 9.0关于字体的新特性](https://blog.csdn.net/u013894711/article/details/81532638)
+        1. TextView extends View implements ViewTreeObserver.OnPreDrawListener [Android 9.0关于字体的新特性](https://blog.csdn.net/u013894711/article/details/81532638)
             1. drawable: drawableBottom / drawableTop / drawableStart / drawableEnd / drawableRight / drawableLeft / drawablePadding
             2. style:
                 1. **textAllCaps**(自动将字符变为大写，但是Spannable就会失效???)

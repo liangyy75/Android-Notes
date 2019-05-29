@@ -126,6 +126,16 @@
 
 ## pytorch
 
+### link
+
+* [人人都能看懂的LSTM](https://zhuanlan.zhihu.com/p/32085405)
+* [人人都能看懂的GRU](https://zhuanlan.zhihu.com/p/32481747)
+* [机器学习算法与自然语言处理](https://zhuanlan.zhihu.com/qinlibo-ml)
+* [](https://github.com/BIGBALLON)
+* [](https://keras.io/zh/)
+* [AI算法工程师手册](http://www.huaxiaozhuan.com/)
+* []()
+
 ### start
 
 #### deep learning with pytorch: a 60 minute blitz

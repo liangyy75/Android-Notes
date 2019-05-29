@@ -88,6 +88,7 @@ Android源码设计模式解析与实战.pdf
 [算法大佬](https://blog.csdn.net/u014634338/article/details/40304391)<br>
 []()<br>
 
+* [《算法导论》第三版中算法的C++实现](https://github.com/huaxz1986/cplusplus-_Implementation_Of_Introduction_to_Algorithms)
 [24种NOIp常用的算法](https://blog.csdn.net/weixin_40676873/article/details/81166139)
 [二分图（三）——KM算法](https://blog.csdn.net/zxn0803/article/details/49999267)
 [匈牙利算法（二分图）](http://www.cnblogs.com/shenben/p/5573788.html)
@@ -114,7 +115,7 @@ https://studygolang.com/topics/8327#reply12 -- go
 [Effective C++笔记](https://blog.csdn.net/caoshangpa/article/category/7478576)
 [我的C++后台开发学习路线(秋招，C++后台，面经)](https://blog.csdn.net/linyacool/article/details/84560901)
 []()
-[]()
+[《UNIX环境高级编程》中文第三版笔记](https://github.com/huaxz1986/APUE_notes)
 []()
 
 #### 7.其他
@@ -151,6 +152,7 @@ https://studygolang.com/topics/8327#reply12 -- go
 [](http://www.paperweekly.site/)
 [复现一篇深度强化学习论文之后，我学到了什么](https://segmentfault.com/p/1210000014336936/read)
 []()
+[《learning python》中文第四版的学习笔记，由纸值文档转换而来](https://github.com/huaxz1986/python_learning_notes)
 []()
 
 #### 10.胶水语言--lua
