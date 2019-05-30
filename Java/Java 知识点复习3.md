@@ -652,3 +652,7 @@ Java9 提供了一个交互式环境，你不用再创建一个 project 或是�
 [Java9](https://www.cnblogs.com/IcanFixIt/tag/Java%209/default.html?page=4)
 
 [Module](https://www.cnblogs.com/IcanFixIt/p/7161615.html#top)
+
+## Java ElasticSearch
+
+[ElasticSearch系列](https://www.cnblogs.com/shaosks/category/1073135.html)
