@@ -186,3 +186,10 @@ https://golangcaff.com/ https://www.imooc.com/learn/1025
 []()
 
 #### 15.工具
+
+* [收藏！这款神器可以免费破解Adobe CC系列所有的软件](https://www.jianshu.com/p/422da3cca69f?open_source=weibo_search)
+
+#### 16.电脑
+
+* [完美解决win10家庭版本系统无法远程连接问题](https://blog.csdn.net/rainmaple20186/article/details/80913191)
+* []()
