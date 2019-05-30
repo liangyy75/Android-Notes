@@ -116,6 +116,7 @@ https://studygolang.com/topics/8327#reply12 -- go
 [我的C++后台开发学习路线(秋招，C++后台，面经)](https://blog.csdn.net/linyacool/article/details/84560901)
 []()
 [《UNIX环境高级编程》中文第三版笔记](https://github.com/huaxz1986/APUE_notes)
+[《算法导论》第三版中算法的C++实现](https://github.com/huaxz1986/cplusplus-_Implementation_Of_Introduction_to_Algorithms)
 []()
 
 #### 7.其他
