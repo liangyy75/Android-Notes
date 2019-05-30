@@ -116,8 +116,8 @@ Android Binder
     - Activity和Service以及Application的Context是不一样的，Activity继承自ContextThemeWraper，其他的继承自ContextWrapper
     - 每一个Activity和Service以及Application的Context都是一个新的ContextImpl对象
     - getApplication用来获取Application实例的，但是这个方法只有在Activity和Service中才能调用的到。那么在绝大多数情况下我们都是在Activity或者Service中使用Application的，
-        但在一些其它的场景，比如BroadcastReceiver中也想获得Application的实例，这时就可以借助getApplicationContext方法，它比getApplication方法的作用域会更广一些，
-        任何一个Context的实例，只要调用getApplicationContext()方法都可以拿到我们的Application对象。
+        - 但在一些其它的场景，比如BroadcastReceiver中也想获得Application的实例，这时就可以借助getApplicationContext方法，它比getApplication方法的作用域会更广一些，
+        - 任何一个Context的实例，只要调用getApplicationContext()方法都可以拿到我们的Application对象。
     - Activity在创建的时候会new一个ContextImpl对象并在attach方法中关联它，Application和Service也差不多。ContextWrapper的方法内部都是转调ContextImpl的方法
     - 创建对话框传入Application的Context是不可以的
     - 尽管Application、Activity、Service都有自己的ContextImpl，并且每个ContextImpl都有自己的mResources成员，但是由于它们的mResources成员都来自于唯一的ResourcesManager实例，所以它们看似不同的mResources其实都指向的是同一块内存
@@ -133,7 +133,7 @@ Android Binder
 20. **匿名共享内存，使用场景**: https://blog.csdn.net/goodlixueyong/article/details/53151959
     1. 什么是匿名共享内存(Ashmem)。Ashmem是一种共享内存机制，它利用Linux的mmap系统调用，将不同进程中的同一段物理内存映射到进程各自的虚拟地址空间，从而实现高效的进程间共享。
     2. 它以驱动程序的形式实现在内核空间。它有两个特点，一是能够辅助内存管理系统来有效地管理不再使用的内存块，二是它通过Binder进程间通信机制来实现进程间的内存共享。Ashmem的两个特点就是共享和高效。共享是指可以在不同进程间共享信息，高效则是因为不同进程都是直接进行的内存操作，相对于其他的进程间通信方式来讲，这种方式会更快一些。
-    3. 在Android中，主要提供了MemoryFile这个类来供应用使用匿名共享内存。在Android应用程序框架层，提供了一个MemoryFile接口来封装了匿名共享内存文件的创建和使用，通过JNI调用底层C++方法。
+    3. 在Android中，主要提供了**MemoryFile**这个类来供应用使用匿名共享内存。在Android应用程序框架层，提供了一个MemoryFile接口来封装了匿名共享内存文件的创建和使用，通过JNI调用底层C++方法。
     4. 使用Binder在进程间传递数据的时候，有时候会抛出TransactionTooLargeException这个异常，这个异常的产生是因为Binder驱动对内存的限制引起的。也就是说，我们不能通过Binder传递太大的数据。官方文档里有说明，最大通常限制为1M。 但是这个Binder的1M缓存是被当前进程中所有正在通过Binder传递数据的过程共享的，因此实际可用的大小要小于等于这个值。也就是说如果大于1M数据的话，就应该分开传。既然大数据不能通过Binder直接传递，我们就要想其他的办法。我们想到可以通过文件来跨进程传递数据，但是普通文件的效率太低，更优的方法是通过MemoryFile传递。
 21. **Socket和LocalSocket**: 
 22. **如何加载大图片**: 
