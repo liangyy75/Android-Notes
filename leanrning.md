@@ -192,4 +192,5 @@ https://golangcaff.com/ https://www.imooc.com/learn/1025
 #### 16.电脑
 
 * [完美解决win10家庭版本系统无法远程连接问题](https://blog.csdn.net/rainmaple20186/article/details/80913191)
+* [AndroidStudio：修改hosts文件，使用as内置sdk管理器在线下载](https://blog.csdn.net/qq_37443229/article/details/80956416)
 * []()

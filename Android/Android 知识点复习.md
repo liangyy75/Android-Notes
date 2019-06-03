@@ -1,6 +1,7 @@
 <!-- GFM-TOC -->
 * [Android 基础知识](###Android%20基础知识)
 * [Android 基础知识2](###Android%20基础知识2)
+* [Android 基础知识3](###Android%20基础知识3)
 * [Android Activity](###Android%20Activity)
 * [Android Service](###Android%20Service)
 * [Android BroadcastReceiver](###Android%20BroadcastReceiver)
@@ -11,6 +12,7 @@
 * [Android Binder](###Android%20Binder)
 * [Android Messenger](###Android%20Messenger) 未完成
 * [Android AIDL](###Android%20AIDL) 未完成
+* [Android 系统启动](###Android%20系统启动) 未完成
 * [Android 消息](###Android%20消息) 未完成
 * [Android 数据存储](###Android%20数据存储) 未完成
 * [Android ORM](###Android%20ORM) 未完成
@@ -20,6 +22,7 @@
 * [Android 网络请求2](###Android%20网络请求2) 未完成
 * [Android 网络请求3](###Android%20网络请求3) 未完成
 * [Android 图片请求](###Android%20图片请求) 未完成
+* [Android 消息通知](###Android%20消息通知) 未完成
 * [Android 视频音频](###Android%20视频音频) 未完成
 * [Android 依赖注入](###Android%20依赖注入) 未完成
 * [Android 动画](###Android%20动画) 未完成
@@ -31,6 +34,13 @@
 * [Android 源码阅读](###Android%20源码阅读)
 * [Android Android NDK 与 Java JNI](###Android%20Android%20NDK%20与%20Java%20JNI)
 * [Android Support Annotation Library](###Android%20Support%20Annotation%20Library)
+* [Androidx](###Androidx)
+* [Android 5678新特性](###Android%205678新特性)
+* [Android 新特性](###Android%20新特性)
+* [Android Groovy](###Android%20Groovy)
+* [Android Glide](###Android%20Glide)
+* [Android View](###Android%20View)
+* [Android 综合技术](###Android%20综合技术)
 <!-- GFM-TOC -->
 
 保活后台服务(priority persistent startForeground Android系统广播Intent.action_time_tick start_sticky ondestroy中重启)
@@ -278,7 +288,7 @@ Android Binder
 19. **Application类的作用**: https://www.jianshu.com/p/b0dee36af8d0
     1. 初始化资源
     2. 数据共享
-    3. 监听App所处状态，锁屏开屏，退到后台回到前台，手机内存状态，横竖屏切换，Activity的生命周期，退出应用（不稳定），这些都可以通过Application监听。
+    3. 监听App所处状态，锁屏开屏，退到后台回到前台，手机内存状态，横竖屏切换，Activity的生命周期，退出应用(不稳定)，这些都可以通过Application监听。
 20. **广播注册后不解除注册会有什么问题？**: 内存泄露，因为AMS等系统服务、管理器还持有广播的引用，所以不解除注册，广播是无法回收的，而且还会持有Activity，造成更大的内存泄露。
 21. **属性动画(Property Animation)和补间动画(Tween Animation)的区别，为什么在3.0之后引入属性动画**: 因为[调用简单](http://android-developers.blogspot.com/2011/05/introducing-viewpropertyanimator.html)，所以引入 ？？？
 22. **有没有使用过EventBus或者Otto框架，主要用来解决什么问题，内部原理**: 
@@ -1222,7 +1232,7 @@ https://blog.csdn.net/u011240877/article/details/72765136
             }
             ```
         3. 可以看到，显示和隐藏Toast都需要通过NMS来实现，TN是一个Binder类，当NMS处理Toast的显示或隐藏请求时会跨进程回调TN中的方法。由于TN运行在Binder线程池中，所以需要通过 Handler将其切换到当前线程中，这里的当前线程指的是发送Toast请求所在的线程。
-        4. enqueueToast方法内部将Toast请求封装为ToastRecord对象并将其添加到一个名为mToastQueue的队列中，对于非系统应用来说，mToastQueue中最多同时存在50个ToastRecord，用于防止DOS（Denial of Service 拒绝服务）。
+        4. enqueueToast方法内部将Toast请求封装为ToastRecord对象并将其添加到一个名为mToastQueue的队列中，对于非系统应用来说，mToastQueue中最多同时存在50个ToastRecord，用于防止DOS(Denial of Service 拒绝服务)。
         5. 当ToastRecord添加到mToastQueue中后，NMS就会通过showNextToastLocked方法来顺序显示Toast，但是Toast真正的显示并不是在NMS中完成的，而是由ToastRecord的callback来完成的。
         6. 从上面的分析，可以知道NMS只是起到了管理Toast队列及其延时的效果，Toast的显示和隐藏过程实际上是通过Toast的TN类来实现的，TN类的两个方法show和hide，是被NMS以跨进程的方式调用的，因此它们运行在Binder线程池中，为了将执行环境切换到Toast请求所在的线程，在它们内部使用了Handler。
         7. Toast毕竟是要在Window中实现的，因此它最终还是要依附于WindowManager。TN的handleShow/handleHide方法需要通过WindowManager来实现视图的移除
@@ -1271,7 +1281,7 @@ https://blog.csdn.net/u011240877/article/details/72765136
         1. android:name=".BaseApplication"
         2. **初始化资源**: 由于Application类是在APP启动的时候就启动，启动在所有Activity之前，所以可以使用它做资源的初始化操作，如图片资源初始化，WebView的预加载，推送服务的注册等等，注意不要执行耗时操作，会拖慢APP启动速度。
         3. **数据全局共享**: 可以设置一些全局的共享常量，可以设置一些全局使用的共享变量数据，可以设置一些静态方法来让其他类调用。
-        4. **监听App所处状态**: 锁屏开屏，退到后台回到前台，手机内存状态，横竖屏切换，Activity的生命周期，退出应用（不稳定），这些都可以通过Application监听。
+        4. **监听App所处状态**: 锁屏开屏，退到后台回到前台，手机内存状态，横竖屏切换，Activity的生命周期，退出应用(不稳定)，这些都可以通过Application监听。
 5. 
 
 ### Android 消息
@@ -2095,7 +2105,7 @@ Android 信息.md
 1. Eclipse MAT: https://blog.csdn.net/lc0817/article/details/67014499
     1. jstat -gc pid: 可以显示gc的信息，查看gc的次数，及时间。其中最后五项，分别是young gc的次数，young gc的时间，full gc的次数，full gc的时间，gc的总时间。
     2. jstat -gccapacity pid: 可以显示，VM内存中三代(young,old,perm)对象的使用和占用大小，如: PGCMN显示的是最小perm的内存使用量，PGCMX显示的是perm的内存最大使用量，
-        PGC是当前新生成的perm内存占用量，PC是但前perm内存占用量。其他的可以根据这个类推，OC是old内纯的占用量。
+        PGC是当前新生成的perm内存占用量，PC是但前perm内存占用量。��他的可以根据这个类推，OC是old内纯的占用量。
     3. jstat -gcutil pid: 统计gc信息统计。
     4. jstat -gcnew pid: 年轻代对象的信息。
     5. jstat -gcnewcapacity pid: 年轻代对象的信息及其占用量。
@@ -2260,16 +2270,392 @@ Android 信息.md
 
 ### Android Android NDK 与 Java JNI
 
-http://www.runoob.com/w3cnote/jni-getting-started-tutorials.html
-https://www.jianshu.com/p/87ce6f565d37
-[Android：JNI 与 NDK到底是什么？（含实例教学）](https://blog.csdn.net/carson_ho/article/details/73250163)
+* [Android：JNI 与 NDK到底是什么？(含实例教学，入门)](https://blog.csdn.net/carson_ho/article/details/73250163)
+* **[Oracle JNI系列](https://docs.oracle.com/javase/10/docs/specs/jni/index.html)**
+* **[JNI系列1](https://www.zybuluo.com/cxm-2016/note/566623)**
+* [JNI系列2](https://www.jianshu.com/p/87ce6f565d37)
+* [NDK系列1](https://blog.csdn.net/xyang81/column/info/blogjnindk)
+* [NDK系列2](https://www.cnblogs.com/skywang12345/archive/2013/05/23/3095013.html)
+* **[NDK系列3](https://github.com/googlesamples/android-ndk)**
+* []()
 
-1. NDK的用途和优点：
+0. Jni实例
+    1. 新建java文件
+        ```java
+        package jni;
+        public class JniTestOne {
+            public native void testHello();
+            public static void main(String[] args) {
+                System.loadLibrary("JniTestOne");
+                new JniTestOne().testHello();
+            }
+        }
+        ```
+    2. 在bin目录下通过命令 ``javah -classpath . -jni jni.JniTestOne`` 来为JniTestOne生成C++的h头文件: jni_JniTestOne.h，然后到jdk的include下找到 ./jni.h 和 ./win32/jni_mod.h，将它们放到新建的visual studio的DLL项目(项目名为JniTestOne)的头文件中。然后将JniTestOne.cpp修改为
+        ```cpp
+        #include <stdio.h>
+        #include <iostream>
+        #include "stdafx.h"
+        #include "jni_JniTestOne.h"
+
+        JNIEXPORT void JNICALL Java_jni_JniTestOne_testHello(JNIEnv * env, jobject obj) {
+            // 这里的 jobject 类型的obj相当于java对象的this指针，后面可以是该native方法的参数，如 jstring s, jint i
+            printf("this is C++ project.");
+        }
+        ```
+    3. 之后在菜单栏中将 "Debug" 一栏改为 "Release" ，将 "x86" 改为 "x64"，同时右键解决方案，选择属性，选择配置，将配置中的 "Debug" 和 "x86" 改为 "Release" 和 "x64" (这里是因为我的平台和jdk都是64位的)，然后右键项目(不是解决方案)，选择生成。之后在项目根目录的 x64/Release/ 文件夹下取 JniTestOne.dll 。
+    4. 现在将 JniTestOne.dll 放到项目根目录(或者是C:/windows/system32/目录)下，之后运行 JniTestOne.java 就行了。
+1. Jni基本知识
+    1. JNI是Java与C、C++、Objective-C、Objective-C++等静态编译语言以及汇编语言相交互的接口。尽管目前而言，Java提供了诸多运行时性能较高的运行时库，但是在很多方面，尤其是高性能计算领域，Java提供的高效库还不是很多，因此我们可以通过JNI接口将我们用静态语言以及汇编编译连接为动态库后给Java应用程序加载调用。而且
+        1. 有时候
+            1. 标准Java类库不支持应用程序所需的与平台相关的功能。
+            2. 您已经有一个用另一种语言编写的库，并希望通过JNI使其可以访问Java代码。
+            3. 您希望在较低级别的语言(如汇编语言)中实现一小部分时间关键代码。
+        2. 或者通过Jni
+            1. 创建，检查和更新Java对象(包括数组和字符串)。
+            2. 调用Java方法。
+            3. 捕获并抛出异常。
+            4. 加载类并获取类信息。
+            5. 执行运行时类型检查。
+    2. 类型
+        1. boolean <--> jboolean <--> unsigned 8 bits
+            1. ``#define JNI_FALSE  0``
+            2. ``#define JNI_TRUE   1``
+        2. byte <--> jbyte <--> char(signed 8 bits)
+        3. char <--> jchar <--> wchar_t(unsigned 16 bits)
+        4. short <--> jshort <--> short(signed 16 bits)
+        5. int <--> jint <--> int(signed 32 bits)
+            1. ``typedef jint jsize;``
+        6. long <--> jlong <--> long(signed 64 bits)
+        7. float <--> jfloat <--> float(32 bits)
+        8. double <--> jdouble <--> double(64 bits)
+        9. String <--> char*
+        10. void  <--> void <--> not appliable
+        11. jobject
+            1. jclass
+            2. jstring
+            3. jarray
+                1. jobjectArray (对象数组)
+                2. jbooleanArray(boolean数组)
+                3. jbyteArray(byte数组)
+                4. jcharArray(char数组)
+                5. jshortArray(short数组)
+                6. jintArray(int数组)
+                7. jlongArray(long数组)
+                8. jfloatArray(float数组)
+                9. jdoubleArray(double数组)
+            4. jthrowable(java.lang.Throwable对象)
+            5. 在C中，所有其他JNI引用类型都定义为与jobject相同。例如：``typedef jobject jclass;`` 。在C ++中，JNI引入了一组虚拟类来强制执行子类型关系。例如：
+                ```cpp
+                class _jobject {};
+                class _jclass : public _jobject {};
+                // ...
+                typedef _jobject *jobject;
+                typedef _jclass *jclass;
+                ```
+        12. 方法和字段ID是常规C指针类型
+            ```cpp
+            struct _jfieldID;              /* opaque structure */
+            typedef struct _jfieldID *jfieldID;   /* field IDs */
+            struct _jmethodID;              /* opaque structure */
+            typedef struct _jmethodID *jmethodID; /* method IDs */
+            ```
+        13. jvalue作为自变量阵列的元素类型。
+            ```cpp
+            typedef union jvalue {
+                jboolean z;
+                jbyte    b;
+                jchar    c;
+                jshort   s;
+                jint     i;
+                jlong    j;
+                jfloat   f;
+                jdouble  d;
+                jobject  l;
+            } jvalue;
+            ```
+        14. **类型签名**
+            ```cpp
+            Type Signature <--> Java Type
+            Z <--> boolean
+            B <--> byte
+            C <--> char
+            S <--> short
+            I <--> int
+            J <--> long
+            F <--> float
+            D <--> double
+            L fully-qualified-class ; <--> fully-qualified-class
+            [ type <--> type[]
+            ( arg-types ) ret-type <--> method type
+            // 如方法 long f(int n, String s, int[] arr); 拥有签名 "(ILjava/lang/String;[)J"
+            ```
+        15. https://docs.oracle.com/en/java/javase/11/docs/specs/jni/types.html#modified-utf-8-strings
+    3. jni_md.h提供了依赖于平台的头文件；jni.h提供了jni所需要的接口声明以及各种类型的定义。我们创建项目时应该将工程的输出目标设置为动态连接库(windows下为.dll，Unix-like下为.so，OS X下为.dylib)。
+2. Jni基本使用: 可以通过JNIEnv参数以固定偏移量访问每个函数。JNIEnv的类型是一个指向存储所有JNI函数指针的结构。它的定义如下：``typedef const struct JNINativeInterface *JNIEnv;`` 。VM初始化函数表，如以下代码示例所示。请注意，前三个条目保留用于将来与COM的兼容性。此外，我们在函数表的开头附近保留了许多附加NULL条目，因此，例如，可以在FindClass之后而不是在表的末尾添加与类相关的未来JNI操作。请注意，函数表可以在所有JNI接口指针之间共享。
+    1. class | reflected | extends
+        ```cpp
+        const struct JNINativeInterface ... = {
+            NULL,
+            NULL,
+            NULL,
+            NULL,
+            GetVersion,
+
+            DefineClass,
+            FindClass,
+            GetSuperclass,
+            IsAssignableFrom,
+            GetObjectClass,
+            IsInstanceOf,
+
+            FromReflectedMethod,  // jmethodID fromReflectedMethod(jobject method)
+            FromReflectedField,  // jfieldID fromReflectedField(jobject field)
+            ToReflectedMethod,  // jobject toReflectedMethod(jclass cls, jmethodID fieldId, bool isStatic)
+            ToReflectedField,  // jobject toReflectedField(jclass cls, jfieldID fieldId, bool isStatic)
+        ```
+    2. **error** | **alloc** | **ref**  https://docs.oracle.com/en/java/javase/11/docs/specs/jni/functions.html
+        ```cpp
+            Throw,
+            ThrowNew,
+            ExceptionOccurred,
+            ExceptionDescribe,
+            ExceptionClear,
+            ExceptionCheck,
+            FatalError,
+
+            EnsureLocalCapacity,
+            PushLocalFrame,  // Push/PopLocalFrame函数对提供了对局部引用的生命周期更方便的管理。你可以在本地函数的入口处调用PushLocalFrame，然后在出口处调用PopLocalFrame，这样的话，在两个函数之间任何位置创建的局部引用都会被释放。而且，这两个函数是非常高效的。如果你在函数的入口处调用了PushLocalFrame，那么一定要在函数返回时调用PopLocalFrame。注意PushLocalFrame用于申请可创建的引用数
+            PopLocalFrame,
+
+            NewGlobalRef,
+            DeleteGlobalRef,
+            NewWeakGlobalRef,
+            DeleteWeakGlobalRef,
+            NewLocalRef,
+            DeleteLocalRef,
+            IsSameObject,
+            GetObjectRefType,
+            
+            // JNIInvalidRefType    = 0
+            //  JNILocalRefType      = 1  // 局部引用是JVM负责的引用类型，其被JVM分配管理，并占用JVM的资源。局部引用在native方法返回后被自动回收。局部引用只在创建它们的线程中有效，不能跨线程传递。
+            //  JNIGlobalRefType     = 2  // 全局引用可以跨方法(本地方法返回后仍然有效)，跨线程使用，直到手动释放才会失效。该引用不会被GC回收。
+            //  JNIWeakGlobalRefType = 3  // 弱全局引用是一种特殊的全局引用。跟普通的全局引用不同的是，一个弱全局引用允许Java对象被垃圾回收器回收。当垃圾回收器运行的时候，如果一个对象仅被弱全局引用所引用，则这个引用将会被回收。一个被回收了的弱引用指向NULL，开发者可以将其与NULL比较来判定该对象是否可用。
+
+            AllocObject,
+            NewObject,
+            NewObjectV,
+            NewObjectA,
+            // jobject NewObject(jclass cls, jmethodID method, ...)
+            // jobject NewObjectA(jclass cls, jmethodID method, const jvalue *args)
+            // jobject NewObjectV(jclass cls, jmethodID method, va_list args)
+        ```
+    3. call_method | call_methodV | call_methodA | nonvirtual
+        ```cpp
+            GetMethodID,
+            Call<Type>Method
+            Call<Type>MethodV
+            Call<Type>MethodA
+            // Type分别有
+            //     Object
+            //     Boolean
+            //     Byte
+            //     Char
+            //     Short
+            //     Int
+            //     Long
+            //     Float
+            //     Double
+            //     Void
+            CallNonvirtual<Type>Method,
+            CallNonvirtual<Type>MethodV,
+            CallNonvirtual<Type>MethodA,
+
+            GetStaticMethodID,
+            CallStatic<Type>Method,
+            CallStatic<Type>MethodV,
+            CallStatic<Type>MethodA,
+        ```
+    4. get_field | set_field
+        ```cpp
+            GetFieldID,
+            Get<PrimitiveType>Field,
+            Set<PrimitiveType>Field,
+            // PrimitiveType是指除去了Void的Type
+
+            GetStaticFieldID,
+            GetStatic<PrimitiveType>Field,
+            SetStatic<PrimitiveType>Field,
+        ```
+    5. string
+        ```cpp
+            NewString,
+            NewStringUTF,
+            GetStringLength,
+            GetStringUTFLength,
+            GetStringChars,
+            GetStringUTFChars,
+            GetStringCritical,  // const jchar * GetStringCritical(JNIEnv *env, jstring string, jboolean *isCopy)  类似GetStringChars，但有很严重的限制
+            GetStringRegion,  // void GetStringRegion(jstring str, jsize start, jsize len, jchar *buf)  用于复制/如果是Set则是拷贝回来
+            GetStringUTFRegion,
+            ReleaseStringChars,
+            ReleaseStringUTFChars,  // void ReleaseStringUTFChars(jstring s, const char* strs)  拷贝回来
+            ReleaseStringCritical,
+        ```
+    6. array
+        ```cpp
+            GetArrayLength,
+            GetPrimitiveArrayCritical,
+            ReleasePrimitiveArrayCritical,
+
+            NewObjectArray,
+            GetObjectArrayElement,
+            SetObjectArrayElement,
+
+            New<PrimitiveType>Array,
+            Get<PrimitiveType>ArrayElements,
+            Release<PrimitiveType>ArrayElements,  // void releaseBooleanArrayElements(JNIEnv *env, ArrayType array, NativeType *elems, jint mode)  复制函数(其实不一定复制，看mode), mode分为
+            //     0    复制内容并释放elems缓冲区
+            //     JNI_COMMIT	复制内容但不释放elems缓冲区
+            //     JNI_ABORT	不复制内容但释放elems缓冲区
+            // 在某些情况下，我们需要原始数据指针来进行一些操作。调用GetPrimitiveArrayCritical可以获得一个指向原始数据的指针，但是在调用ReleasePrimitiveArrayCritical函数之前，我们要保证不能进行任何可能会导致线程阻塞的操作。由于GC的运行会打断线程，所以在此期间任何调用GC的线程都会被阻塞。
+            Get<PrimitiveType>Region,
+            Set<PrimitiveType>Region,
+        ```
+    7. others
+        ```cpp
+            RegisterNatives,  // jint RegisterNatives(jclass cls, const JNINativeMethod *methods, jint nMethods)  好处(https://blog.csdn.net/qiuxiaolong007/article/details/7860610)
+            // 1. 不用那么拘泥名字
+            // 2. 效率高
+            // 3. 运行时动态调整本地函数与Java函数值之间的映射关系，只需要多次call RegisterNatives()方法，并传入不同的映射表参数即可。
+            // 4. 为了使用RegisterNatives，我们需要了解JNI_OnLoad和JNI_OnUnload函数。JNI_OnLoad()函数在VM执行System.loadLibrary(xxx)函数时被调用，它有两个重要的作用：
+            //  4.1 指定JNI版本：告诉VM该组件使用那一个JNI版本(若未提供JNI_OnLoad()函数，VM会默认该使用最老的JNI 1.1版)，如果要使用新版本的JNI，则须由JNI_OnLoad()函数返回常量JNI_VERSION_1_4(该常量定义在jni.h中)来告知VM。
+            //  4.2 初始化设定，当VM执行到System.loadLibrary()函数时，会立即先呼叫JNI_OnLoad()方法，因此在该方法中进行各种资源的初始化操作最为恰当，RegisterNatives也在这里进行。
+            // 5. JNI_OnUnload()当VM释放该组件时被调用，JNI_OnUnload()函数的作用与JNI_OnLoad()对应，因此在该方法中进行善后清理，资源释放的动作最为合适。
+
+            // JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) { ; }
+            // JNIEXPORT void JNICALL JNI_OnUnLoad(JavaVM *vm, void *reserved) { ; }
+            UnregisterNatives,
+
+            MonitorEnter,  // jint MonitorEnter(jobject obj)  相当于 synchronized(obj) {
+            MonitorExit,  // 相当于 synchronized 后的 }
+
+            GetJavaVM,
+
+            GetModule,
+
+            NewDirectByteBuffer,  // NIO接口，比如这个 jobject NewDirectByteBuffer(void* address, jlong capacity)  可以返回java.nio.ByteBuffer对象的局部引用，当发生异常时返回NULL。
+            GetDirectBufferAddress,  // 返回直接缓冲区的地址指针，发生异常时返回NULL
+            GetDirectBufferCapacity,  // 返回缓冲区容量，发生异常时返回-1
+        };
+        ```
+    8. 常量
+        ```cpp
+        #define JNI_FALSE        0
+        #define JNI_TRUE         1
+        #define JNI_OK           0                 /* success */
+        #define JNI_ERR          (-1)              /* unknown error */
+        #define JNI_EDETACHED    (-2)              /* thread detached from the VM */
+        #define JNI_EVERSION     (-3)              /* JNI version error */
+        #define JNI_ENOMEM       (-4)              /* not enough memory */
+        #define JNI_EEXIST       (-5)              /* VM already created */
+        #define JNI_EINVAL       (-6)              /* invalid arguments */
+        ```
+    9. 版本
+        ```cpp
+        // 在JDK / JRE 1.1中，GetVersion()返回JNI_VERSION_1_1。
+        // 在JDK / JRE 1.2中，GetVersion()返回JNI_VERSION_1_2。
+        // 在JDK / JRE 1.4中，GetVersion()返回JNI_VERSION_1_4。
+        // 在JDK / JRE 1.6中，GetVersion()返回JNI_VERSION_1_6。
+        // 在JDK / JRE 1.8中，GetVersion()返回JNI_VERSION_1_8。
+        // 在JDK / JRE 9中，GetVersion()返回JNI_VERSION_9。
+        // 在JDK / JRE 10中，GetVersion()返回JNI_VERSION_10。
+        #define JNI_VERSION_1_1 0x00010001
+        #define JNI_VERSION_1_2 0x00010002
+        #define JNI_VERSION_1_4 0x00010004
+        #define JNI_VERSION_1_6 0x00010006
+        #define JNI_VERSION_1_8 0x00010008
+        #define JNI_VERSION_9   0x00090000
+        #define JNI_VERSION_10  0x000a0000
+        ```
+    10. registerNatives | unregisterNatives 实例
+        ```cpp
+        JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
+            char methodName[15] = "testParameter";
+            char methodSignature[24] = "(ILjava/lang/String;)D";
+            JNINativeMethod methods[] = {
+                {methodName, methodSignature, (void*)Java_jni_JniTestTwo_testParameter}
+            };
+
+            JNIEnv *env = nullptr;
+            if (vm->GetEnv((void**)&env, JNI_VERSION_1_8) != JNI_OK) {
+                return JNI_ERR;
+            }
+            jclass cls = env->FindClass("Ljni/JniTestTwo;");
+            if (cls == nullptr) {
+                return JNI_ERR;
+            }
+            int len = sizeof(methods) / sizeof(methods[0]);
+            if (env->RegisterNatives(cls, methods, len) < 0) {
+                return JNI_ERR;
+            }
+            return JNI_VERSION_1_8;
+        }
+        ```
+    11. JNI_OnLoad_<L> | JNI_OnUnLoad_<L> | ... https://docs.oracle.com/en/java/javase/11/docs/specs/jni/invocation.html#jni_onload_l
+    12. 多线程实现
+        ```cpp
+        // 1. 可以用原生cpp高效率实现
+        // 2. java的低效率调用
+        static jmethodID THREAD_WAIT;
+        static jmethodID THREAD_NOTIFY;
+        static jmethodID THREAD_NOTYFY_ALL;
+        void initThread(JNIEnv *env, jobject lock) {
+            jclass cls = env->GetObjectClass(lock);
+            THREAD_WAIT = env->GetMethodID(cls, "wait", "(J)V");
+            THREAD_NOTIFY = env->GetMethodID(cls, "notify", "(V)V");
+            THREAD_NOTYFY_ALL = env->GetMethodID(cls, "notifyAll", "(V)V");
+        }
+        void wait(JNIEnv *env, jobject lock, jlong timeout) {
+            env->CallVoidMethod(lock, THREAD_WAIT, timeout);
+        }
+        void notify(JNIEnv *env, jobject lock) {
+            env->CallVoidMethod(lock, THREAD_NOTIFY);
+        }
+        void notifyAll(JNIEnv *env, jobject lock) {
+            env->CallVoidMethod(lock, THREAD_NOTYFY_ALL);
+        }
+        ```
+    13. C++调用Java
+        ```cpp
+        #include <jni.h>       /* where everything is defined */
+        ...
+        JavaVM *jvm;       /* denotes a Java VM */
+        JNIEnv *env;       /* pointer to native method interface */
+        JavaVMOption* options = new JavaVMOption[1];
+        options[0].optionString = "-Djava.class.path=/usr/lib/java";
+        JavaVMInitArgs vm_args;  /* JDK/JRE 10 VM initialization arguments */
+        vm_args.version = JNI_VERSION_10;
+        vm_args.nOptions = 1;
+        vm_args.options = options;
+        vm_args.ignoreUnrecognized = false;
+        /* load and initialize a Java VM, return a JNI interface pointer in env */
+        JNI_CreateJavaVM(&jvm, (void**)&env, &vm_args);
+        delete options;
+        /* invoke the Main.test method using the JNI */
+        jclass cls = env->FindClass("Main");
+        jmethodID mid = env->GetStaticMethodID(cls, "test", "(I)V");
+        env->CallStaticVoidMethod(cls, mid, 100);  // 调用了Main类的test方法
+        /* We are done. */
+        jvm->DestroyJavaVM();
+        ```
+3. Jnative(对JNI技术的封装库)
+2. NDK的用途和优点：
     1. 代码的保护。由于apk的java层代码很容易被反编译，而C/C++库反汇难度较大。
     2. 可以方便地使用C/C++开源库。
-    3. 便于移植，用C/C++写的库可以方便在其他的嵌入式平台上再次使用
+    3. 便于移植，用C/C++写的库可以方便在其他的嵌入式平台上再次使用。NDK(Native Development Kit)是Google提供的一套工具，其中一个特性是提供了交叉编译，即C或者C++不是跨平台的，但通过NDK配置生成的动态库却可以兼容各个平台。
     4. 速度快
-2. 
+3. 
 
 ### Android Support Annotation Library
 

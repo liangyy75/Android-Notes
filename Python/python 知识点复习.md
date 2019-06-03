@@ -5,6 +5,8 @@
 ### link
 
 * [Selenium+phantomjs使用大全](https://www.cnblogs.com/shaosks/category/964915.html)
+* [Selenium大全](https://www.cnblogs.com/wanghaihong200/category/1088466.html)
+* [appnium大全](https://www.cnblogs.com/wanghaihong200/category/1095077.html)
 * [Scrapy爬虫](https://www.cnblogs.com/shaosks/category/976410.html)
 
 ## python2与python3
@@ -135,6 +137,9 @@
 
 1. [python项目中不同文件夹py源文件之间如何相互调用--Python import中相对路径的问题](https://blog.csdn.net/helloxiaozhe/article/details/76578096)
 2. [Python系列之反射、面向对象](https://www.cnblogs.com/yyyg/p/5554111.html)
+3. [python基础_格式化输出（%用法和format用法）](https://www.cnblogs.com/fat39/p/7159881.html)
+4. [Python format 格式化函数](https://www.runoob.com/python/att-string-format.html)
+5. f字符串
 
 ## pytorch
 
