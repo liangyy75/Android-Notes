@@ -2271,6 +2271,7 @@ Android 信息.md
 ### Android Android NDK 与 Java JNI
 
 * [Android：JNI 与 NDK到底是什么？(含实例教学，入门)](https://blog.csdn.net/carson_ho/article/details/73250163)
+* [Android: JNI 入门](https://www.cnblogs.com/rocomp/p/4892866.html)
 * **[Oracle JNI系列](https://docs.oracle.com/javase/10/docs/specs/jni/index.html)**
 * **[JNI系列1](https://www.zybuluo.com/cxm-2016/note/566623)**
 * [JNI系列2](https://www.jianshu.com/p/87ce6f565d37)
@@ -2280,31 +2281,120 @@ Android 信息.md
 * []()
 
 0. Jni实例
-    1. 新建java文件
-        ```java
-        package jni;
-        public class JniTestOne {
-            public native void testHello();
-            public static void main(String[] args) {
-                System.loadLibrary("JniTestOne");
-                new JniTestOne().testHello();
+    1. java 调用 c++
+        1. 新建java文件
+            ```java
+            package jni;
+            public class JniTestOne {
+                public native void testHello();
+                public static void main(String[] args) {
+                    System.loadLibrary("JniTestOne");
+                    new JniTestOne().testHello();
+                }
             }
-        }
-        ```
-    2. 在bin目录下通过命令 ``javah -classpath . -jni jni.JniTestOne`` 来为JniTestOne生成C++的h头文件: jni_JniTestOne.h，然后到jdk的include下找到 ./jni.h 和 ./win32/jni_mod.h，将它们放到新建的visual studio的DLL项目(项目名为JniTestOne)的头文件中。然后将JniTestOne.cpp修改为
-        ```cpp
-        #include <stdio.h>
-        #include <iostream>
-        #include "stdafx.h"
-        #include "jni_JniTestOne.h"
+            ```
+        2. 在bin目录下通过命令 ``javah -classpath . -jni jni.JniTestOne`` 来为JniTestOne生成C++的h头文件: jni_JniTestOne.h，然后到jdk的include下找到 ./jni.h 和 ./win32/jni_mod.h，将它们放到新建的visual studio的DLL项目(项目名为JniTestOne)的头文件中。然后将JniTestOne.cpp修改为
+            ```cpp
+            #include <stdio.h>
+            #include <iostream>
+            #include "stdafx.h"
+            #include "jni_JniTestOne.h"
 
-        JNIEXPORT void JNICALL Java_jni_JniTestOne_testHello(JNIEnv * env, jobject obj) {
-            // 这里的 jobject 类型的obj相当于java对象的this指针，后面可以是该native方法的参数，如 jstring s, jint i
-            printf("this is C++ project.");
-        }
-        ```
-    3. 之后在菜单栏中将 "Debug" 一栏改为 "Release" ，将 "x86" 改为 "x64"，同时右键解决方案，选择属性，选择配置，将配置中的 "Debug" 和 "x86" 改为 "Release" 和 "x64" (这里是因为我的平台和jdk都是64位的)，然后右键项目(不是解决方案)，选择生成。之后在项目根目录的 x64/Release/ 文件夹下取 JniTestOne.dll 。
-    4. 现在将 JniTestOne.dll 放到项目根目录(或者是C:/windows/system32/目录)下，之后运行 JniTestOne.java 就行了。
+            JNIEXPORT void JNICALL Java_jni_JniTestOne_testHello(JNIEnv * env, jobject obj) {
+                // 这里的 jobject 类型的obj相当于java对象的this指针，后面可以是该native方法的参数，如 jstring s, jint i
+                printf("this is C++ project.");
+            }
+            ```
+        3. 之后在菜单栏中将 "Debug" 一栏改为 "Release" ，将 "x86" 改为 "x64"，同时右键解决方案，选择属性，选择配置，将配置中的 "Debug" 和 "x86" 改为 "Release" 和 "x64" (这里是因为我的平台和jdk都是64位的)，然后右键项目(不是解决方案)，选择生成。之后在项目根目录的 x64/Release/ 文件夹下取 JniTestOne.dll 。
+        4. 现在将 JniTestOne.dll 放到项目根目录(或者是C:/windows/system32/目录)下，之后运行 JniTestOne.java 就行了。
+    2. c++ 调用 java
+        1. 在 /java/test/utils/ 下添加 JniDemo.java
+            ```java
+            package utils;
+
+            public class JniDemo {
+
+                public static int COUNT = 8;
+
+                public static String getHelloWorld() {
+                    return "Hello World: from java static method";
+                }
+
+                private String msg;
+                private int[] counts;
+
+                public JniDemo() {
+                    this("default constructor");
+                }
+
+                public JniDemo(String msg) {
+                    this.msg = msg;
+                    this.counts = null;
+                }
+
+                public String getMessage() {
+                    return this.msg + ": from java getter method";
+                }
+
+                public int[] getCounts() {
+                    return this.counts;
+                }
+
+                public void setCounts(int[] counts) {
+                    this.counts = counts;
+                }
+
+                public String append(String str, int i) {
+                    return str + i;
+                }
+            }
+            ```
+        2. 在 /cpp/test/jni/ 目录下添加 test.cpp
+            ```cpp
+            #include <iostream>
+            #include <string>
+            #include <cstdio>
+            #include <windows.h>
+            #include "jni.h"
+
+            using namespace std;
+
+            int main(int argc, char const *argv[]) {
+                JavaVM *jvm;
+                JNIEnv *env;
+                JavaVMOption *options = new JavaVMOption[3];
+                JavaVMInitArgs vm_args;
+
+                options[0].optionString = "-Djava.compiler=NONE";
+                options[1].optionString = "-Djava.class.path=.;..\\..\\..\\java\\test\\";
+                options[2].optionString = "-verbose:gc,class";
+
+                vm_args.version = JNI_VERSION_1_8;
+                vm_args.nOptions = 3;
+                vm_args.options = options;
+                vm_args.ignoreUnrecognized = JNI_FALSE;
+
+                HMODULE hLibModule = LoadLibrary("D:\\software\\Java\\jdk1.8.0_181\\jre\\bin\\server\\jvm.dll");
+                typedef jint(WINAPI * PFunCreateJavaVM)(JavaVM **, void **, void *);
+                PFunCreateJavaVM funCreateJavaVM = (PFunCreateJavaVM)GetProcAddress(hLibModule, "JNI_CreateJavaVM");
+                (*funCreateJavaVM)(&jvm, (void **)&env, &vm_args);
+                delete[] options;
+
+                jclass cls = env->FindClass("utils/JniDemo");
+                jobject obj = env->AllocObject(cls);
+                jmethodID appendMethodId = env->GetMethodID(cls, "append", "(Ljava/lang/String;I)Ljava/lang/String;");
+                const char *cstr = "from C: ";
+                jstring jstr = env->NewStringUTF(cstr);
+                jstring jmsg = (jstring)env->CallObjectMethod(obj, appendMethodId, jstr, 12);
+                const char *cmsg = env->GetStringUTFChars(jmsg, JNI_FALSE);  // 使用中文会有中文乱码
+                printf("%s\n", cmsg);
+
+                jvm->DestroyJavaVM();
+                FreeLibrary(hLibModule);
+            }
+            ```
+        3. 在 /java/test/ 目录下打开命令行，使用 ``javac -classpath . utils.JniDemo.java`` 生成 JniDemo.class ，然后使用 ``javap -s -p -classpath. .\utils\JniDemo.java`` 查看JniDemo中每个字段方法的签名，可以用在env->GetFieldId或者env->GetMethodId上。
+        4. 在 /cpp/test/jni/ 目录下打开命令行，使用 ``g++ test.cpp -o test.exe; .\test.exe`` 来执行c++程序。最后输出 ``from c: 12`` 。
 1. Jni基本知识
     1. JNI是Java与C、C++、Objective-C、Objective-C++等静态编译语言以及汇编语言相交互的接口。尽管目前而言，Java提供了诸多运行时性能较高的运行时库，但是在很多方面，尤其是高性能计算领域，Java提供的高效库还不是很多，因此我们可以通过JNI接口将我们用静态语言以及汇编编译连接为动态库后给Java应用程序加载调用。而且
         1. 有时候
