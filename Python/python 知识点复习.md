@@ -141,6 +141,14 @@
 4. [Python format 格式化函数](https://www.runoob.com/python/att-string-format.html)
 5. f字符串
 
+## tensorflow
+
+* [TensorFlow教程：TensorFlow快速入门教程（非常详细）](http://c.biancheng.net/tensorflow/)
+
+## sanic
+
+* [sanic教程](https://www.yuanrenxue.com/sanic)
+
 ## pytorch
 
 ### link

@@ -188,6 +188,7 @@ https://golangcaff.com/ https://www.imooc.com/learn/1025
 #### 15.工具
 
 * [收藏！这款神器可以免费破解Adobe CC系列所有的软件](https://www.jianshu.com/p/422da3cca69f?open_source=weibo_search)
+* [一个强大社区?](https://community.idera.com/)
 
 #### 16.电脑
 
