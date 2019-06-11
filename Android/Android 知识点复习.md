@@ -342,10 +342,10 @@ Android Binder
                 Log.e("gac","ANRService");
                 exception();
             }
-            private int lasttick,mTick;// 两次计数器的值
+            private int lasttick, mTick;// 两次计数器的值
             private Handler mHandler = new Handler();
             private boolean flag = true;
-            private void exception(){
+            private void exception() {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -357,7 +357,7 @@ Android Binder
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
-                            if(mTick == lasttick){
+                            if(mTick == lasttick) {
                                 flag = false;
                                 Log.e("gac","anr happned in here");
                                 handleAnrError();
@@ -367,7 +367,7 @@ Android Binder
                 }).start();
             }
             // 发生anr的时候，在此处写逻辑
-            private void handleAnrError(){}
+            private void handleAnrError() {}
             private final Runnable tickerRunnable = new Runnable() {
                 @Override public void run() {
                     mTick = (mTick + 1) % 10;
@@ -382,7 +382,7 @@ Android Binder
     1. 堆内存溢出: 查看报的是什么错误，查看出错的代码位置。 java.lang.OutOfMemoryError: Java heap space
     2. 方法区溢出: java.lang.OutOfMemoryError: PermGen space
     3. 栈溢出(虚拟机栈、本地方法栈): java.lang.StackOverflowError
-    4. 本地直接内存溢出(就是内存不足): 直接内存可以通过 -XX: MaxDirectMemorySize指定。如果本地直接内存溢出，我们可以发现堆转储快照中无明显异常指示，并且快照文件很小，而程序中又使用了NIO等技术，则可以检查是否直接内存溢出了。
+    4. 本地直接内存溢出(就是内存不足): 直接内存可以通过 -XX: MaxDirectMemorySize 指定。如果本地直接内存溢出，我们可以发现堆转储快照中无明显异常指示，并且快照文件很小，而程序中又使用了NIO等技术，则可以检查是否直接内存溢出了。
 8. **如何防止oom**: 
     1. 合理使用weekReference/softReference
     2. 记得释放申请的资源
@@ -906,6 +906,14 @@ Android Binder
 
 ### Android Fragment
 
+0. links
+    * **[《Android基础：Fragment，看这篇就够了》](https://cloud.tencent.com/developer/article/1071779)**
+    * **[Fragment全解析系列](https://www.jianshu.com/p/d9143a92ad94)**
+    * [Android系列之Fragment（一）----Fragment加载到Activity当中](https://www.cnblogs.com/smyhvae/p/3978989.html)
+    * [fragment清除页面数据（重新加载布局）](https://blog.csdn.net/yuzhiqiang_1993/article/details/76152454)
+    * [fragment重叠的完美解决方案](https://blog.csdn.net/yuzhiqiang_1993/article/details/75014591)
+    * [Android碎片Fragment之多标签切换效果（微信和QQ底部多标签切换）](https://www.jianshu.com/p/69a47152c3a2)
+    * [viewpager中彻底性动态添加、删除Fragment](https://www.cnblogs.com/zhujiabin/p/5382740.html)
 1. **为何产生**: 同时适配手机和平板、UI和逻辑的共享。
 2. **介绍**: 
     1. Fragment也会被加入回退栈中。
@@ -955,7 +963,8 @@ Android Binder
         detach()  //当fragment被加入到回退栈的时候，该方法与*remove()*的作用是相同的，反之，该方法只是将fragment从视图中移除，
             //之后仍然可以通过*attach()*方法重新使用fragment，而调用了*remove()*方法之后，不仅将Fragment从视图中移除，fragment还将不再可用。
         attach()  //重建view视图，附加到UI上并显示。
-        transatcion.commit()  //提交一个事务
+        transaction.commit()  //提交一个事务(异步)
+        transaction.commitNow()  //同步
         ```
 7. **管理Fragment回退栈**:
     1. 跟踪回退栈状态: 通过实现FragmentManager.OnBackStackChangedListener接口来实现回退栈状态跟踪。
@@ -966,6 +975,230 @@ Android Binder
         2. getSupportFragmentManager().getBackStackEntryCount() －获取回退栈中实体数量
         3. getSupportFragmentManager().popBackStack(String name, int flags) －根据name立刻弹出栈顶的fragment
         4. getSupportFragmentManager().popBackStack(int id, int flags) －根据id立刻弹出栈顶的fragment
+8. **注意点**
+    1. 如果在创建Fragment时要传入参数，必须要通过setArguments(Bundle bundle)方式添加，而不建议通过为Fragment添加带参数的构造函数，因为通过setArguments()方式添加，在由于内存紧张导致Fragment被系统杀掉并恢复（re-instantiate）时能保留这些数据。
+    2. inflate()的第三个参数是false，因为在Fragment内部实现中，会把该布局添加到container中，如果设为true，那么就会重复做两次添加，则会抛异常。
+    3. 我们可以在Fragment的onAttach()中通过getArguments()获得传进来的参数，并在之后使用这些参数。如果要获取Activity对象，不建议调用getActivity()，而是在onAttach()中将Context对象强转为Activity对象。
+    4. 在Activity中添加Fragment的方式有两种
+        1. 静态添加：在xml中通过的方式添加，缺点是一旦添加就不能在运行时删除。
+        2. 动态添加：运行时添加，这种方式比较灵活，因此建议使用这种方式。
+            ```java
+            public class Fragment1 extends Fragment{  
+            private static String ARG_PARAM = "param_key"; 
+                private String mParam; 
+                private Activity mActivity; 
+                public void onAttach(Context context) {
+                    mActivity = (Activity) context;
+                    mParam = getArguments().getString(ARG_PARAM);  //获取参数
+                }
+                public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+                    View root = inflater.inflate(R.layout.fragment_1, container, false);
+                    TextView view = root.findViewById(R.id.text);
+                    view.setText(mParam);
+                        return root;
+                }    
+                public static Fragment1 newInstance(String str) {
+                    Fragment1 frag = new Fragment1();
+                    Bundle bundle = new Bundle();
+                    bundle.putString(ARG_PARAM, str);
+                    fragment.setArguments(bundle);   //设置参数
+                    return fragment;
+                }
+            }
+            ```
+            ```java
+            if (bundle == null) {
+                getSupportFragmentManager().beginTransaction()
+                    .add(R.id.container, Fragment1.newInstance("hello world"), "f1")  // .addToBackStack("fname")
+                    .commit();
+            }
+            ```
+            ```xml
+            <FrameLayout
+                android:id="@+id/container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+            ```
+        3. 虽然Fragment能在XML中添加，但是这只是一个语法糖而已，Fragment并不是一个View，而是和Activity同一层次的。
+    5. Fragment有个常见的异常：java.lang.IllegalStateException: Can not perform this action after onSaveInstanceState。该异常出现的原因是：commit()在onSaveInstanceState()后调用。首先，onSaveInstanceState()在onPause()之后，onStop()之前调用。onRestoreInstanceState()在onStart()之后，onResume()之前。因此避免出现该异常的方案有：
+        1. 不要把Fragment事务放在异步线程的回调中，比如不要把Fragment事务放在AsyncTask的onPostExecute()，因此onPostExecute()可能会在onSaveInstanceState()之后执行。
+        2. 逼不得已时使用commitAllowingStateLoss()。
+    6. 生命周期。共有两个Fragment：F1和F2，F1在初始化时就加入Activity，点击F1中的按钮调用replace替换为F2。
+        ```java
+        // 当F1在Activity的onCreate()中被添加时，日志如下：
+        BasicActivity: [onCreate] BEGIN
+        BasicActivity: [onCreate] END
+        BasicActivity: [onStart] BEGIN
+        Fragment1: [onAttach] BEGIN 
+        Fragment1: [onAttach] END
+        BasicActivity: [onAttachFragment] BEGIN
+        BasicActivity: [onAttachFragment] END
+        Fragment1: [onCreate] BEGIN
+        Fragment1: [onCreate] END
+        Fragment1: [onCreateView]
+        Fragment1: [onViewCreated] BEGIN
+        Fragment1: [onViewCreated] END
+        Fragment1: [onActivityCreated] BEGIN
+        Fragment1: [onActivityCreated] END
+        Fragment1: [onStart] BEGIN
+        Fragment1: [onStart] END
+        BasicActivity: [onStart] END
+        BasicActivity: [onPostCreate] BEGIN
+        BasicActivity: [onPostCreate] END
+        BasicActivity: [onResume] BEGIN
+        BasicActivity: [onResume] END
+        BasicActivity: [onPostResume] BEGIN
+        Fragment1: [onResume] BEGIN
+        Fragment1: [onResume] END
+        BasicActivity: [onPostResume] END
+        BasicActivity: [onAttachedToWindow] BEGIN
+        BasicActivity: [onAttachedToWindow] END
+        ```
+        ```java
+        // 当点击F1的按钮，调用replace()替换为F2，且不加addToBackStack()时
+        Fragment2: [onAttach] BEGIN
+        Fragment2: [onAttach] END
+        BasicActivity: [onAttachFragment] BEGIN
+        BasicActivity: [onAttachFragment] END
+        Fragment2: [onCreate] BEGIN
+        Fragment2: [onCreate] END
+        Fragment1: [onPause] BEGIN
+        Fragment1: [onPause] END
+        Fragment1: [onStop] BEGIN
+        Fragment1: [onStop] END
+        Fragment1: [onDestroyView] BEGIN
+        Fragment1: [onDestroyView] END
+        Fragment1: [onDestroy] BEGIN
+        Fragment1: [onDestroy] END
+        Fragment1: [onDetach] BEGIN
+        Fragment1: [onDetach] END
+        Fragment2: [onCreateView]
+        Fragment2: [onViewCreated] BEGIN
+        Fragment2: [onViewCreated] END
+        Fragment2: [onActivityCreated] BEGIN
+        Fragment2: [onActivityCreated] END
+        Fragment2: [onStart] BEGIN
+        Fragment2: [onStart] END
+        Fragment2: [onResume] BEGIN
+        Fragment2: [onResume] END
+        ```
+        ```java
+        // 当点击F1的按钮，调用replace()替换为F2，且加addToBackStack()时
+        Fragment2: [onAttach] BEGIN
+        Fragment2: [onAttach] END
+        BasicActivity: [onAttachFragment] BEGIN
+        BasicActivity: [onAttachFragment] END
+        Fragment2: [onCreate] BEGIN
+        Fragment2: [onCreate] END
+        Fragment1: [onPause] BEGIN
+        Fragment1: [onPause] END
+        Fragment1: [onStop] BEGIN
+        Fragment1: [onStop] END
+        Fragment1: [onDestroyView] BEGIN
+        Fragment1: [onDestroyView] END
+        Fragment2: [onCreateView]
+        Fragment2: [onViewCreated] BEGIN
+        Fragment2: [onViewCreated] END
+        Fragment2: [onActivityCreated] BEGIN
+        Fragment2: [onActivityCreated] END
+        Fragment2: [onStart] BEGIN
+        Fragment2: [onStart] END
+        Fragment2: [onResume] BEGIN
+        Fragment2: [onResume] END
+        ```
+    7. FragmentTransaction有一些基本方法，下面给出调用这些方法时，Fragment生命周期的变化：
+        1. add(): onAttach()->…->onResume()。
+        2. remove(): onPause()->…->onDetach()。
+        3. replace(): 相当于旧Fragment调用remove()，新Fragment调用add()。
+        4. show(): 不调用任何生命周期方法，调用该方法的前提是要显示的Fragment已经被添加到容器，只是纯粹把Fragment UI的setVisibility为true。
+        5. hide(): 不调用任何生命周期方法，调用该方法的前提是要显示的Fragment已经被添加到容器，只是纯粹把Fragment UI的setVisibility为false。
+        6. detach(): onPause()->onStop()->onDestroyView()。UI从布局中移除，但是仍然被FragmentManager管理。
+        7. attach(): onCreateView()->onStart()->onResume()。
+    8. 回退栈的使用。共有三个Fragment：F1, F2, F3，F1在初始化时就加入Activity，点击F1中的按钮跳转到F2，点击F2的按钮跳转到F3，点击F3的按钮回退到F1。
+        ```java
+        // 在Activity的onCreate()中，将F1加入Activity中：
+        getSupportFragmentManager().beginTransaction().add(R.id.container, f1, "f1").addToBackStack(Fragment1.class.getSimpleName()).commit();
+        // F1按钮的onClick()内容如下：
+        getFragmentManager().beginTransaction().replace(R.id.container, f2, "f2").addToBackStack(Fragment2.class.getSimpleName()).commit();
+        // F2按钮的onClick()如下：
+        getFragmentManager().beginTransaction().replace(R.id.container, f3, "f3").addToBackStack(Fragment3.class.getSimpleName()).commit();
+        // F3按钮的onClick()如下：
+        getFragmentManager().popBackStack(Fragment2.class.getSimpleName(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        ```
+9. **FABridge** https://github.com/hongyangAndroid/FABridge
+10. **懒加载Fragment**
+    1. 懒加载主要依赖Fragment的setUserVisibleHint(boolean isVisible)方法，当Fragment变为可见时，会调用setUserVisibleHint(true)；当Fragment变为不可见时，会调用setUserVisibleHint(false)，且该方法调用时机：
+        1. onAttach()之前，调用setUserVisibleHint(false)。
+        2. onCreateView()之前，如果该界面为当前页，则调用setUserVisibleHint(true)，否则调用setUserVisibleHint(false)。
+        3. 界面变为可见时，调用setUserVisibleHint(true)。
+        4. 界面变为不可见时，调用setUserVisibleHint(false)。
+    2. 示例
+        ```java
+        public class LazyFragment extends Fragment {
+            private View mRootView;
+            private boolean mIsInited;
+            private boolean mIsPrepared;
+
+            @Override
+            public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+                mRootView = inflater.inflate(R.layout.fragment_lazy, container, false);
+                mIsPrepared = true;
+                lazyLoad();
+                return mRootView;
+            }
+                    
+            public void lazyLoad() {
+                if (getUserVisibleHint() && mIsPrepared && !mIsInited) {
+                    // mIsPrepared：表示UI是否准备好，因为数据加载后需要更新UI，如果UI还没有inflate，就不需要做数据加载，
+                    // 因为setUserVisibleHint()会在onCreateView()之前调用一次，如果此时调用，UI还没有inflate，因此不能加载数据。
+                    loadData();
+                    // mIsInited：表示是否已经做过数据加载，如果做过了就不需要做了。因为setUserVisibleHint(true)在界面可见时都会调用，
+                    // 如果滑到该界面做过数据加载后，滑走，再滑回来，还是会调用setUserVisibleHint(true)，此时由于mIsInited=true，因此不会再做一遍数据加载。
+                }
+            }
+                    
+            private void loadData() {
+                new Thread() {
+                public void run() {
+                        // 1. 加载数据
+                        // 2. 更新UI
+                        // 3. mIsInited = true
+                    }
+                }.start();
+            }   
+        
+            @Override
+            public void setUserVisibleHint(boolean isVisibleToUser) { 
+                super.setUserVisibleHint(isVisibleToUser);
+                if (isVisibleToUser)
+                    lazyLoad();
+            }
+        
+            public static LazyFragment newInstance() {
+                return new LazyFragment();
+            }
+        }
+        ```
+        ```xml
+        <!-- 布局XML主要分两个container，一个是初始显示的状态，即R.id.container_empty，当数据加载完成，就显示R.id.container -->
+        <RelativeLayout
+            android:id="@+id/container_empty"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="正在加载"/>
+        </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+            ...
+        </RelativeLayout>
+        ```
 
 ### Android Handler
 
