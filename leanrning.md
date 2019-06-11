@@ -30,7 +30,7 @@ Android源码设计模式解析与实战.pdf
 [Android/Java/Mysql/C++/nodejs](https://blog.csdn.net/u010142437)<br>
 [Android/ubuntu/Spring/Mongodb]()<br>
 [Akka/Idea/Github/MySQL](https://blog.csdn.net/qq_35246620)<br>
-[]()<br>
+[恺风的技术博客索引](https://blog.csdn.net/flowingflying/article/details/4547084)<br>
 []()<br>
 
 #### 2.工具包
@@ -67,6 +67,23 @@ Android源码设计模式解析与实战.pdf
 [Android源码系列](https://www.codercto.com/a/36074.html)<br>
 [Android博客网](http://android.jobbole.com/?utm_source=www.importnew.com&utm_medium=bottomText)<br>
 [Android开发相关的Blog推荐](https://blog.csdn.net/zhaokaiqiang1992/article/details/43731967)<br>
+[安卓社区1](https://www.wanandroid.com/)<br>
+[Android - 收藏集](https://www.jianshu.com/p/dad51f6c9c4d?utm_campaign=maleskine&utm_content=note&utm_medium=seo_notes&utm_source=recommendation)<br>
+[恺风（Wei）之Android专栏](https://blog.csdn.net/flowingflying/article/details/6212512)<br>
+<br>
+[Groovy脚本基础全攻略](https://www.cnblogs.com/chenxibobo/p/6402768.html)<br>
+[Groovy官方](http://www.groovy-lang.org/documentation.html)<br>
+[如何使用Android Studio开发Gradle插件](https://blog.csdn.net/sbsujjbcy/article/details/50782830)<br>
+[Groovy 和 Gradle (Android Studio)基础](https://blog.csdn.net/s402178946/article/details/54140325)<br>
+[Gradle核心思想（二）Gradle入门前奏](http://liuwangshu.cn/application/gradle/2-primer.html)<br>
+<br>
+[Scala 菜鸟](https://www.runoob.com/scala/scala-tutorial.html)<br>
+[Scala and Android](https://app.assembla.com/wiki/show/scala-ide/Developing_for_Android)<br>
+[Scala Programming for Android](https://stackoverflow.com/questions/476111/scala-programming-for-android)<br>
+<br>
+[开发工具总结（10）之Flutter从配置安装到填坑指南详解](https://www.jianshu.com/p/399c01657920)<br>
+[Flutter 官方](https://flutter.dev/docs/get-started/install/windows)<br>
+[Flutter 中文网](https://flutterchina.club/technical-overview/)<br>
 []()<br>
 
 #### 5.数据结构与算法
@@ -105,19 +122,19 @@ https://studygolang.com/topics/8327#reply12 -- go
 
 #### 6.C/C++系列
 
-[libaineu2004:C++高手](https://blog.csdn.net/libaineu2004)
-[C/C++常用头文件及函数汇总](https://www.jianshu.com/p/c93e8addb549)
-[C++ 资源大全](https://www.cnblogs.com/skyus/articles/8524408.html)
-[值得推荐的C/C++框架和库 (真的很强大)](https://blog.csdn.net/xiaoxiaoyeyaya/article/details/42541419)
-[C语言入门教程，C语言学习教程（非常详细）](http://c.biancheng.net/c/)
-[C++入门教程，C++基础教程（更新完毕）](http://c.biancheng.net/cplus/)
-[Shell脚本：Linux Shell脚本学习指南（超详细）](http://c.biancheng.net/shell/)
-[Effective C++笔记](https://blog.csdn.net/caoshangpa/article/category/7478576)
-[我的C++后台开发学习路线(秋招，C++后台，面经)](https://blog.csdn.net/linyacool/article/details/84560901)
-[]()
-[《UNIX环境高级编程》中文第三版笔记](https://github.com/huaxz1986/APUE_notes)
-[《算法导论》第三版中算法的C++实现](https://github.com/huaxz1986/cplusplus-_Implementation_Of_Introduction_to_Algorithms)
-[]()
+* [libaineu2004:C++高手](https://blog.csdn.net/libaineu2004)
+* [C/C++常用头文件及函数汇总](https://www.jianshu.com/p/c93e8addb549)
+* [C++ 资源大全](https://www.cnblogs.com/skyus/articles/8524408.html)
+* [值得推荐的C/C++框架和库 (真的很强大)](https://blog.csdn.net/xiaoxiaoyeyaya/article/details/42541419)
+* [C语言入门教程，C语言学习教程（非常详细）](http://c.biancheng.net/c/)
+* [C++入门教程，C++基础教程（更新完毕）](http://c.biancheng.net/cplus/)
+* [Shell脚本：Linux Shell脚本学习指南（超详细）](http://c.biancheng.net/shell/)
+* [Effective C++笔记](https://blog.csdn.net/caoshangpa/article/category/7478576)
+* [我的C++后台开发学习路线(秋招，C++后台，面经)](https://blog.csdn.net/linyacool/article/details/84560901)
+* []()
+* [《UNIX环境高级编程》中文第三版笔记](https://github.com/huaxz1986/APUE_notes)
+* [《算法导论》第三版中算法的C++实现](https://github.com/huaxz1986/cplusplus-_Implementation_Of_Introduction_to_Algorithms)
+* []()
 
 #### 7.其他
 
@@ -143,36 +160,43 @@ https://studygolang.com/topics/8327#reply12 -- go
 
 #### 9.深度学习--Python
 
-[目标检测(Object Detection)算法合集（持续更新ing）](https://blog.csdn.net/amusi1994/article/details/81042923)
-[目标检测-20种常用深度学习算法论文、复现代码汇总 ](http://www.sohu.com/a/300593166_787107)
-[Domain adaptive faster-rcnn for object detection in the wild 论文笔记](https://blog.csdn.net/qq_18882399/article/details/81188573)
-[Object Detection(目标检测神文)](https://blog.csdn.net/hw5226349/article/details/81906882)
-[Decoupled-Classification-Refinement](https://github.com/bowenc0221/Decoupled-Classification-Refinement)
-[Object Detection](https://handong1587.github.io/deep_learning/2015/10/09/object-detection.html)
-[深度学习模型复现难？看看这篇句子对模型的复现论文](https://blog.csdn.net/c9yv2cf9i06k2a9e/article/details/80732351)
-[](http://www.paperweekly.site/)
-[复现一篇深度强化学习论文之后，我学到了什么](https://segmentfault.com/p/1210000014336936/read)
-[]()
-[《learning python》中文第四版的学习笔记，由纸值文档转换而来](https://github.com/huaxz1986/python_learning_notes)
-[]()
+* [目标检测(Object Detection)算法合集（持续更新ing）](https://blog.csdn.net/amusi1994/article/details/81042923)
+* [目标检测-20种常用深度学习算法论文、复现代码汇总 ](http://www.sohu.com/a/300593166_787107)
+* [Domain adaptive faster-rcnn for object detection in the wild 论文笔记](https://blog.csdn.net/qq_18882399/article/details/81188573)
+* [Object Detection(目标检测神文)](https://blog.csdn.net/hw5226349/article/details/81906882)
+* [Decoupled-Classification-Refinement](https://github.com/bowenc0221/Decoupled-Classification-Refinement)
+* [Object Detection](https://handong1587.github.io/deep_learning/2015/10/09/object-detection.html)
+* [深度学习模型复现难？看看这篇句子对模型的复现论文](https://blog.csdn.net/c9yv2cf9i06k2a9e/article/details/80732351)
+* [](http://www.paperweekly.site/)
+* [复现一篇深度强化学习论文之后，我学到了什么](https://segmentfault.com/p/1210000014336936/read)
+* []()
+* [《learning python》中文第四版的学习笔记，由纸值文档转换而来](https://github.com/huaxz1986/python_learning_notes)
+* []()
 
-#### 10.胶水语言--lua
+#### 10.小语种1——lua/R/Rust/Haskell/Ruby/
+
+* [R语言开发环境安装配置](https://www.yiibai.com/r/r_environment_setup.html)
+* [R语言学习笔记](https://www.jianshu.com/p/36619ccdf00f)
+* [使用命令自动更新R语言软件版本](https://www.jianshu.com/p/6fde50672387)
+<br>
+* [安装rust](https://blog.csdn.net/andrewby/article/details/75139736)
+* [rust中文文档1](http://wiki.jikexueyuan.com/index.php/project/rust-primer/install/rustup.html)
+* [Rust中文文档2](https://rustlang-cn.org/)
+* []()
 
 #### 11.后台语言--go
 
-Go零基础编程入门教程
-https://www.bilibili.com/video/av23686676
-https://github.com/chai2010/advanced-go-programming-book
-https://github.com/avelino/awesome-go
-https://github.com/golang-china/gopl-zh
-
-Golang 中文学习资料 https://go.wuhaolin.cn/
-https://juejin.im/entry/58bfa8d244d90400696bbf96
-https://www.v2ex.com/t/476425#reply35
-https://golangcaff.com/ https://www.imooc.com/learn/1025
-
-《Go 学习笔记》 https://hacpai.com/article/1439194647152
-在线ide https://wide.b3log.org/login
+* Go零基础编程入门教程
+* https://www.bilibili.com/video/av23686676
+* https://github.com/chai2010/advanced-go-programming-book
+* https://github.com/avelino/awesome-go
+* https://github.com/golang-china/gopl-zh
+* Golang 中文学习资料 https://go.wuhaolin.cn/
+* https://juejin.im/entry/58bfa8d244d90400696bbf96
+* https://www.v2ex.com/t/476425#reply35
+* https://golangcaff.com/ https://www.imooc.com/learn/1025
+* 《Go 学习笔记》 https://hacpai.com/article/1439194647152
+* 在线ide https://wide.b3log.org/login
 
 #### 12.后台语言-node+前台语言js
 
