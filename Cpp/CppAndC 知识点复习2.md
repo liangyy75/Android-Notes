@@ -1224,8 +1224,87 @@
     1. link
         * [Linux三剑客之grep](https://blog.csdn.net/solaraceboy/article/details/79242650)
         * [grep官方](https://www.gnu.org/software/grep/manual/grep.html)
+        * [系统文件日志筛查总结--grep命令](https://blog.csdn.net/zzooeefly/article/details/85683478)
+        * [Linux grep命令](https://www.runoob.com/linux/linux-comm-grep.html)
     2. 知识1
+        1. 简介: grep（global search regular expression(RE) and print out the line，全面搜索正则表达式并把行打印出来）是一种强大的文本搜索工具，它能使用正则表达式搜索文本，并把匹配的行打印出来。egrep、fgrep是grep的别名。可以看看 ``alias | grep grep`` ``man grep`` 。但是，pgrep跟grep就有点区别了。
+        2. 示例
+            ```
+            ➜ cat2 .\testgrep
+            zsy test
+            zsythink
+
+            www.zsythink.net
+            TEST 123
+            Zsy's articles
+            grep Grep
+            abc
+            abc123abc
+            123zsy123
+            [www.zsythink.net]
+            ➜ grep "test" testgrep
+            zsy test
+            ```
+        3. 基本使用格式
+            1. ``grep [OPTIONS] PATTERN [FILE...]``
+            2. ``grep [OPTIONS] [-e PATTERN | -f FILE] [FILE...]``
+            3. 在每个 FILE 或是标准输入中查找 PATTERN。 默认的 PATTERN 是一个基本正则表达式(缩写为 BRE)。 例如: ``grep -i 'hello world' menu.h main.c``
     3. 知识2
+        1. 不熟悉的 -E -F -G -P -z -q -a -I --binary-files -D -R -T -Z
+        2. 了解的 -e -f -i -w -x -s -v -V --help -m -b -n --line-buffered -H -h --label=LABEL -o -d -r --include=FILE_PATTERN --exclude=FILE_PATTERN --exclude-from=FILE --exclude-dir=DIR -L -l -c -B -A -C -NUM --group-separator=SEP --no-group-separator --color[=WHEN] --colour[=WHEN] -U -u
+        3. 指令1: 正则表达式选择与解释
+            1. -E, --extended-regexp     PATTERN 是一个可扩展的正则表达式(缩写为 ERE) [BRE与ERE的区别](https://blog.csdn.net/huan_xiao/article/details/8424923)
+            2. -F, --fixed-strings       PATTERN 是一组由断行符分隔的定长字符串
+            3. -G, --basic-regexp        PATTERN 是一个基本正则表达式(缩写为 BRE)
+            4. -P, --perl-regexp         PATTERN 是一个 Perl 正则表达式
+            5. -e, --regexp=PATTERN      用 PATTERN 来进行匹配操作
+            6. -f, --file=FILE           从 FILE 中取得 PATTERN
+            7. -i, --ignore-case         忽略大小写
+            8. -w, --word-regexp         强制 PATTERN 仅完全匹配字词
+            9. -x, --line-regexp         强制 PATTERN 仅完全匹配一行
+            10. -z, --null-data          一个 0 字节的数据行，但不是空行
+        4. 指令2: 杂项
+            1. -s, --no-messages         suppress error messages（抑制错误信息）
+            2. -v, --invert-match        select non-matching lines（仅选择非匹配行）
+            3. -V, --version             display version information and exit
+            4. --help                display this help text and exit
+        5. 指令3: 输出控制
+            1.  -m, --max-count=NUM       NUM 次匹配后停止
+            2.  -b, --byte-offset         输出的同时打印字节偏移
+            3.  -n, --line-number         输出的同时打印行号
+            4.      --line-buffered       每行输出清空
+            5.  -H, --with-filename       为每一匹配项打印文件名
+            6.  -h, --no-filename         输出时不显示文件名前缀
+            7.      --label=LABEL         将LABEL 作为标准输入文件名前缀
+            8.  -o, --only-matching       show only the part of a line matching PATTERN（模式）
+            9.  -q, --quiet, --silent     suppress all normal output（抑制所有正常输出）
+            10.     --binary-files=TYPE   assume（假设） that binary files are TYPE; TYPE is 'binary', 'text', or 'without-match'
+            11. -a, --text                equivalent to（等价于） --binary-files=text
+            12. -I                        equivalent to（等价于） --binary-files=without-match
+            13. -d, --directories=ACTION  how to handle directories; ACTION is 'read', 'recurse（递归）', or 'skip'
+            14. -D, --devices=ACTION      how to handle devices, FIFOs and sockets; ACTION is 'read' or 'skip'
+            15. -r, --recursive           like --directories=recurse
+            16. -R, --dereference-recursive likewise, but follow all symlinks
+            17.     --include=FILE_PATTERN  search only files that match FILE_PATTERN
+            18.     --exclude=FILE_PATTERN  skip files and directories matching FILE_PATTERN
+            19.     --exclude-from=FILE     skip files matching any file pattern from FILE
+            20.     --exclude-dir=PATTERN   directories that match PATTERN will be skipped.
+            21. -L, --files-without-match print only names of FILEs containing no match
+            22. -l, --files-with-matches  print only names of FILEs containing matches
+            23. -c, --count               print only a count of matching lines per FILE
+            24. -T, --initial-tab         make tabs line up (if needed)
+            25. -Z, --null                print 0 byte after FILE name
+        6. 指令4: 文件控制
+            1. -B, --before-context=NUM  打印以文本起始的NUM行
+            2. -A, --after-context=NUM   打印以文本结尾的NUM行
+            3. -C, --context=NUM         打印输出文本NUM行
+            4. -NUM                      same as --context=NUM
+            5.     --group-separator=SEP use SEP as a group separator
+            6.     --no-group-separator  use empty string as a group separator
+            7.     --color[=WHEN],
+            8.     --colour[=WHEN]       use markers to highlight the matching strings; WHEN is 'always', 'never', or 'auto'
+            9. -U, --binary              do not strip CR characters at EOL (MSDOS/Windows)
+            10. -u, --unix-byte-offsets   report offsets as if CRs were not there (MSDOS/Windows)
     4. 知识3
 5. 
 
