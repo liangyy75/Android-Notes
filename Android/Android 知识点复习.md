@@ -1199,6 +1199,13 @@ Android Binder
             ...
         </RelativeLayout>
         ```
+11. **fragment重叠的完美解决方案** https://blog.csdn.net/yuzhiqiang_1993/article/details/75014591(**懒创建**)
+    1. 原因: 当我们旋转屏幕的时候，activity会被销毁并重新创建，并且在销毁之前执行了onSaveInstanceState(Bundle outState)这个方法。这个方法会保存activity的一些信息，其中就包括添加过的fragment，当activity被重新创建时，会初始化其中的变量，这个时候点击底部导航的话会重新去添加fragment，也就导致了重叠的问题。
+    2. 解决方案
+        1. 想办法不让activity保存信息。（不推荐）。如重写onSaveInstanceState，但不使用super
+        2. 旋转屏幕时不让activity走生命周期方法（推荐）。这个方法最简单也最省事，只需要在相应的activity中声明android:configChanges=“keyboardHidden|orientation|screenSize”> 即可。声明这个属性后，当我们切换屏幕时，也就不会在走activity的生命周期方法了，也就不会造成fragment重叠的问题了。
+        3. 还有一种可能也会造成fragment重叠的问题，就是当内存不足时activity被系统回收时，再次进入也会造成重叠的问题，原因也是因为onSaveInstanceState(outState);方法保存了activity的一些数据。因为是系统回收的activity，所以，我们就没法去控制activity不让他走生命周期方法，我们可以从另一个方面着手去解决。解决办法：在onSaveInstanceState(outState);中去保存fragment，当activity被恢复时，取出这些fragment即可。使用getSupportFragmentManager的putFragment方法。然后oncreate的时候判断一下savedInstanceState是为空，不为空的话就是有保存的fragment信息，使用getSupportFragmentManager的getFragment方法。
+12. [fragment清除页面数据（重新加载布局）](https://blog.csdn.net/yuzhiqiang_1993/article/details/76152454)
 
 ### Android Handler
 

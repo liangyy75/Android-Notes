@@ -1245,6 +1245,11 @@
 * [UETool](https://github.com/eleme/UETool)
 * [uiautomatorviewer](Android自带的工具吧，可以解析ui)
 
+## Android SDK
+
+* [Ping SDK](https://www.pingxx.com/docs/overview/)
+* [Share SDK](http://sharesdk.mob.com/)
+
 ## Android 大项目
 
 * [CloudReader仿网易云音乐](https://jingbin.me/CloudReader/)

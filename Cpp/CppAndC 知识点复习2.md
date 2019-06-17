@@ -587,6 +587,13 @@
 * [官方学习教程](https://docs.microsoft.com/zh-cn/powershell/scripting/getting-started/getting-started-with-windows-powershell?view=powershell-5.1)
 * []()
 
+## Windows BAT学习
+
+* [BAT 批处理脚本教程(详细篇脚本之家补充)](https://www.jb51.net/article/151923.htm)
+* [Windows注册表中修改UAC(用户账号控制)及批处理脚本](https://www.jb51.net/article/153225.htm)
+* [Windows CMD命令大全(值得收藏)](https://www.jb51.net/article/141568.htm)
+* [Windows命令行bat/cmd脚本,文件批处理教程](https://edu.51cto.com/course/11343.html)
+
 ## Linux学习
 
 * https://www.centos.org/download/

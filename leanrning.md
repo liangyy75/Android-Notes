@@ -70,6 +70,7 @@ Android源码设计模式解析与实战.pdf
 [安卓社区1](https://www.wanandroid.com/)<br>
 [Android - 收藏集](https://www.jianshu.com/p/dad51f6c9c4d?utm_campaign=maleskine&utm_content=note&utm_medium=seo_notes&utm_source=recommendation)<br>
 [恺风（Wei）之Android专栏](https://blog.csdn.net/flowingflying/article/details/6212512)<br>
+[Android最全开发资源](https://www.jianshu.com/p/0c36302e0ed0)<br>
 <br>
 [Groovy脚本基础全攻略](https://www.cnblogs.com/chenxibobo/p/6402768.html)<br>
 [Groovy官方](http://www.groovy-lang.org/documentation.html)<br>
@@ -171,7 +172,7 @@ https://studygolang.com/topics/8327#reply12 -- go
 * [复现一篇深度强化学习论文之后，我学到了什么](https://segmentfault.com/p/1210000014336936/read)
 * []()
 * [《learning python》中文第四版的学习笔记，由纸值文档转换而来](https://github.com/huaxz1986/python_learning_notes)
-* []()
+* [python开发大全、系列文章、精品教程](https://blog.csdn.net/luanpeng825485697/article/details/78347433)
 
 #### 10.小语种1——lua/R/Rust/Haskell/Ruby/
 
@@ -197,6 +198,7 @@ https://studygolang.com/topics/8327#reply12 -- go
 * https://golangcaff.com/ https://www.imooc.com/learn/1025
 * 《Go 学习笔记》 https://hacpai.com/article/1439194647152
 * 在线ide https://wide.b3log.org/login
+* [Carlosfu技术系列文章总目录](https://blog.csdn.net/carlosfu/article/details/84740077)
 
 #### 12.后台语言-node+前台语言js
 
@@ -219,3 +221,22 @@ https://studygolang.com/topics/8327#reply12 -- go
 * [完美解决win10家庭版本系统无法远程连接问题](https://blog.csdn.net/rainmaple20186/article/details/80913191)
 * [AndroidStudio：修改hosts文件，使用as内置sdk管理器在线下载](https://blog.csdn.net/qq_37443229/article/details/80956416)
 * []()
+
+#### 17.IOS
+
+* [iOS学习笔记系列](https://blog.csdn.net/tangren03/column/info/ryan-zone)
+* [iOS学习资源集合](https://www.jianshu.com/p/395d4a3ab331)
+* [iOS学习资源汇总(开源项目、第三方库、技术博客等等)](https://www.jianshu.com/p/b7c4a787a597)
+* [[置顶]iOS开发系列文章（持续更新。。。）](https://blog.csdn.net/kenshincui/article/details/47753247)
+* **[iOS开发专题分类大全（简书iOS学习资源大收录!）](https://www.jianshu.com/p/a40c04f1950a)**
+* [2018 iOS 面试题大全](https://www.jianshu.com/p/a092b3eac3fa)
+* [iOS面试题大全-点亮你iOS技能树](https://www.jianshu.com/p/403ee06a584e)
+* [iOS 学习资料整理](https://www.jianshu.com/p/dc81698a873c)
+* [自学 iOS - 三十天三十个 Swift 项目](https://www.jianshu.com/p/52032bc4cbe4)
+* [IOS学习历程](https://blog.csdn.net/qiwenmingshiwo/article/category/6675504/8?)
+* [系统学习iOS动画之零：说明和目录](https://www.jianshu.com/p/8e383db362f1)
+* **[Swift 基础](https://www.cnswift.org/the-basics)**
+* [](https://github.com/Tim9Liu9/TimLiu-iOS)
+* **[iOS 基础知识总结汇总](https://www.imooc.com/article/32476)**
+* **[](https://github.com/halfrost/Halfrost-Field)**
+* **[官网](https://developer.apple.com/documentation/)**
