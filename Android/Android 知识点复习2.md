@@ -653,7 +653,7 @@
     ```java
     ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.Callback() {
         /**
-         * 指定可以拖拽（drag）和滑动（swipe）的方向
+         * 指定可以拖拽(drag)和滑动(swipe)的方向
          * ItemTouchHelper.UP、ItemTouchHelper.DOWN、ItemTouchHelper.LEFT、ItemTouchHelper.RIGHT、ItemTouchHelper.START、ItemTouchHelper.END
          * 若返回0，表示不触发滑动or拖拽
          */
@@ -750,7 +750,7 @@
 3. FragmentPagerAdapter
 4. FragmentStatePagerAdapter
 5. 在support v13和support v4中都提供了FragmentPagerAdapter和FragmentStatePagerAdapter，区别在于：support v13中使用android.app.Fragment，而support v4使用android.support.v4.app.Fragment。一般都使用support v4中的FragmentPagerAdapter和FragmentStatePagerAdapter。
-6. 默认，ViewPager会缓存当前页相邻的界面，比如当滑动到第2页时，会初始化第1页和第3页的界面（即Fragment对象，且生命周期函数运行到onResume()），可以通过 setOffscreenPageLimit(count)设置离线缓存的界面个数。
+6. 默认，ViewPager会缓存当前页相邻的界面，比如当滑动到第2页时，会初始化第1页和第3页的界面(即Fragment对象，且生命周期函数运行到onResume())，可以通过 setOffscreenPageLimit(count)设置离线缓存的界面个数。
 7. **重写方法**。FragmentPagerAdapter和FragmentStatePagerAdapter需要重写的方法都一样，常见的重写方法如下：
     1. public FragmentPagerAdapter(FragmentManager fm): 构造函数，参数为FragmentManager。如果是嵌套Fragment场景，子 PagerAdapter的参数传入getChildFragmentManager()。
     2. Fragment getItem(int position): 返回第position位置的Fragment，必须重写。
@@ -760,8 +760,8 @@
     6. getItemPosition(Object object): object是Fragment对象，如果返回POSITION_UNCHANGED，则表示当前Fragment不刷新，如果返回POSITION_NONE，则表示当前Fragment需要调用destroyItem()和instantiateItem()进行销毁和重建。 默认情况下返回POSITION_UNCHANGED。
 8. **懒加载**
     1. 懒加载主要用于ViewPager且每页是Fragment的情况，场景为微信主界面，底部有4个tab，当滑到另一个tab时，先显示”正在加载”，过一会才会显示正常界面。默认情况，ViewPager会缓存当前页和左右相邻的界面。实现懒加载的主要原因是：用户没进入的界面需要有一系列的网络、数据库等耗资源、耗时的操作，预先做这些数据加载是不必要的。
-    2. 这里懒加载的实现思路是：用户不可见的界面，只初始化UI，但是不会做任何数据加载。等滑到该页，才会异步做数据加载并更新UI。这里就实现类似微信那种效果，整个UI布局为：底部用PagerBottomTabStrip(https://github.com/tyzlmjj/PagerBottomTabStrip)项目实现，上面是ViewPager，使用FragmentPagerAdapter。逻辑为：当用户滑到另一个界面，首先会显示正在加载，等数据加载完毕后（这里用睡眠1秒钟代替）显示正常界面。
-    3. ViewPager默认缓存左右相邻界面，为了避免不必要的重新数据加载（重复调用onCreateView()），因为有4个tab，因此将离线缓存的半径设置为3，即 setOffscreenPageLimit(3)。
+    2. 这里懒加载的实现思路是：用户不可见的界面，只初始化UI，但是不会做任何数据加载。等滑到该页，才会异步做数据加载并更新UI。这里就实现类似微信那种效果，整个UI布局为：底部用PagerBottomTabStrip(https://github.com/tyzlmjj/PagerBottomTabStrip)项目实现，上面是ViewPager，使用FragmentPagerAdapter。逻辑为：当用户滑到另一个界面，首先会显示正在加载，等数据加载完毕后(这里用睡眠1秒钟代替)显示正常界面。
+    3. ViewPager默认缓存左右相邻界面，为了避免不必要的重新数据加载(重复调用onCreateView())，因为有4个tab，因此将离线缓存的半径设置为3，即 setOffscreenPageLimit(3)。
     4. 
 
 ## Android 性能优化2
@@ -819,6 +819,22 @@
 2. ListView
 
 ## Android 热更新/热修复
+
+0. link
+    * **[Android热更新系列](https://www.jianshu.com/nb/35349338)**
+    * [Android架构设计](https://www.jianshu.com/nb/36120611)
+    * [Android热更新技术的研究与实现(一)](https://www.jianshu.com/p/4ecd611383e6)
+    * [atlas](https://github.com/alibaba/atlas/tree/master/atlas-docs)
+1. 基础技术
+    1. 类加载机制1
+        1. 每个类编译后产生一个Class对象，存储在.class文件中，JVM使用类加载器(Class Loader)来加载类的字节码文件(.class)，类加载器实质上是一条类加载器链，一般的，我们只会用到一个原生的类加载器，它只加载Java API等可信类，通常只是在本地磁盘中加载，这些类一般就够我们使用了。如果我们需要从远程网络或数据库中下载.class字节码文件，那就需要我们来挂载额外的类加载器。
+        2. 一般来说，类加载器是按照树形的层次结构组织的，每个加载器都有一个父类加载器。另外，每个类加载器都支持代理模式，即可以自己完成Java类的加载工作，也可以代理给其它类加载器。类加载器的加载顺序有两种：
+            1. 父类优先策略是比较一般的情况(如JDK采用的就是这种方式)，这时，类在加载某个Java类之前，会尝试代理给其父类加载器，只有当父类加载器找不到时，才尝试自己去加载。
+            2. 自己优先的策略与父类优先相反，它会首先尝试子自己加载，找不到的时候才要父类加载器去加载，这种在web容器(如tomcat)中比较常见。
+        3. 
+        4. 
+    2. 反射
+    3. 类加载机制2
 
 ## Android 自定义View
 
@@ -1255,6 +1271,6 @@
 * [CloudReader仿网易云音乐](https://jingbin.me/CloudReader/)
     * [github](https://github.com/youlookwhat/CloudReader)
     * [《云阅》一个仿网易云音乐UI，使用Gank.Io及豆瓣Api开发的开源项目](https://www.jianshu.com/p/69a229fb6e1d)
-    * [Android 关于WebView全方面的使用（项目应用篇）](https://www.jianshu.com/p/163d39e562f0)
+    * [Android 关于WebView全方面的使用(项目应用篇)](https://www.jianshu.com/p/163d39e562f0)
     * [Android - 仿网易云音乐歌单详情页](https://www.jianshu.com/p/1995b7135073)
     * [Android 水波纹效果的探究](https://www.jianshu.com/p/13eb4574e988)
