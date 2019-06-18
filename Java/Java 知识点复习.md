@@ -64,6 +64,9 @@
 
 - javac HelloWorld.java: 编译HelloWorld.java文件，生成class字节码文件。
 - java HelloWorld: 运行HelloWorld.class文件，注意指令后面不需要添加.class命令。
+- javah
+- javap
+- ...
 
 ### Java语言的特点
 
@@ -720,7 +723,7 @@ Java中提供这四种引用类型主要有两个目的: 第一是可以让程�
     也就是说，一旦SoftReference保存了对一个Java对象的软引用后，在垃圾线程对这个Java对象回收前，SoftReference类所提供的get()方法返回Java对象的强引用。
     另外，一旦垃圾线程回收该Java对象之后，get()方法将返回null。
     ```java
-    MyObject aRef = new  MyObject();
+    MyObject aRef = new MyObject();
     SoftReference aSoftRef = new SoftReference(aRef);
     // 此时，对于这个MyObject对象，有两个引用路径，一个是来自SoftReference对象的软引用，一个来自变量aReference的强引用，所以这个MyObject对象是强可及对象。随即，我们可以结束aReference对这个MyObject实例的强引用:
     aRef = null;
@@ -1046,7 +1049,6 @@ RTTI是在编译时打开和检查.class文件，而反射机制是在运行时�
     f.invoke(...参数);
     ```
 
-
 #### ClassLoader
 
 1. ClassLoader顾名思义就是类加载器，**ClassLoader作用**: 
@@ -1068,9 +1070,9 @@ RTTI是在编译时打开和检查.class文件，而反射机制是在运行时�
     // 然后调用defineClass方法生成类的Class对象，如果你想在类被加载到JVM时就被链接，那么可以接着调用另一个resolveClass方法，当然你也可以选择让JVM来解决什么时候才链接这个类。
     ```
 3. **ClassLoader 的等级加载机制**: Java默认提供的三个ClassLoader
-    1. BootStrap ClassLoader，启动类加载器，是Java类加载层次中最顶层的类加载器，负责加载JDK中的核心类库，如：rt.jar、resources.jar、charsets.jar等，这个ClassLoader完全是JVM自己控制的，需要加载哪个类，怎么加载都是由JVM自己控制，别人也访问不到这个类，所以BootStrap ClassLoader不遵循委托机制(后面再阐述什么是委托机制)，没有子加载器。查看BootStrap ClassLoader加载的文件: System.out.println(System.getProperty("sun.boot.class.path"));
-    2. ExtClassLoader，扩展类加载器，负责加载Java的扩展类库，Java虚拟机的实现会提供一个扩展库目录，该类加载器在此目录里面查找并加载 Java 类。默认加载JAVA_HOME/jre/lib/ext/目下的所有jar。System.out.println(System.getProperty("java.ext.dirs"));
-    3. AppClassLoader，系统类加载器，负责加载应用程序classpath目录下的所有jar和class文件。一般来说，Java应用的类都由它来完成加载。可通过 ClassLoader.getSystemClassLoader()来获取它。我们可以通过System.getProperty("java.class.path")来查看classpath。
+    1. **BootStrap ClassLoader**，启动类加载器，是Java类加载层次中最顶层的类加载器，负责加载JDK中的核心类库，如：rt.jar、resources.jar、charsets.jar等，这个ClassLoader完全是JVM自己控制的，需要加载哪个类，怎么加载都是由JVM自己控制，别人也访问不到这个类，所以BootStrap ClassLoader不遵循委托机制(后面再阐述什么是委托机制)，没有子加载器。查看BootStrap ClassLoader加载的文件: ``System.out.println(System.getProperty("sun.boot.class.path"));``
+    2. **ExtClassLoader**，扩展类加载器，负责加载Java的扩展类库，Java虚拟机的实现会提供一个扩展库目录，该类加载器在此目录里面查找并加载 Java 类。默认加载JAVA_HOME/jre/lib/ext/目下的所有jar。``System.out.println(System.getProperty("java.ext.dirs"));``
+    3. **AppClassLoader**，系统类加载器，负责加载应用程序classpath目录下的所有jar和class文件。一般来说，Java应用的类都由它来完成加载。可通过 ClassLoader.getSystemClassLoader()来获取它。我们可以通过``System.getProperty("java.class.path")``来查看classpath。
     4. 除了引导类加载器(BootStrap ClassLoader)之外，所有的类加载器都有一个父类加载器，对于系统提供的类加载器来说，系统类加载器(如：AppClassLoader)的父类加载器是扩展类加载器(EtxClassLoader)，而扩展类加载器的父类加载器是引导类加载器；对于开发人员编写的类加载器来说，其父类加载器是加载此类加载器 Java 类的类加载器。因为类加载器 Java 类如同其它的 Java 类一样，也是要由类加载器来加载的。一般来说，开发人员编写的类加载器的父类加载器是系统类加载器。类加载器通过这种方式组织起来，形成树状结构。树的根节点就是引导类加载器。
 4. **ClassLoader加载类的原理**: 双亲委托机制 
     1. 双亲委托模型:
@@ -1154,6 +1156,7 @@ RTTI是在编译时打开和检查.class文件，而反射机制是在运行时�
                             Object foo = cls.newInstance();
                             Method m = foo.getClass().getMethod("sayHi", new Class[] {});
                             m.invoke(foo, new Object[] {});
+                            // 因为每次都是重新声明一个customClassLoader，所以每次都会重新(加载-链接-初始化)jvm.classLoader.Foo这个类
                         } catch (Exception ex) {
                             ex.printStackTrace();
                         }

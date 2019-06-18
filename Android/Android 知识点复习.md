@@ -435,6 +435,15 @@ Android Binder
 14. **Android 控件显示在最上层的方法**: 
     1. 在XML文件中，可以使用FramLayout或RelativeLayout来布局，每个控件都是覆盖显示的，后加进来的控件覆盖前面的控件。可以把控件写在最后，从而实现显示在最上层的效果。
     2. view.bringToFront() 可以将布局在下层的控件放到上层，不被其他控件挡住。
+15. **Android中build target，minSdkVersion，targetSdkVersion，maxSdkVersion概念区分** https://blog.csdn.net/zhangjg_blog/article/details/17142395
+    1. **api level** : android的系统版本和API level之间并不是一一对应的，比如Android 2.3， Android 2.3.1， Android 2.3.2对应API level 9， 而Android 2.3.3， Android 2.3.4对应API level 10。API level是Android向开发者提供的一套Framework(android.jar)的代号，可能发布了新的系统版本，但是这一套接口并没有变化，所以就不必提供新的Framework开发包，所以API level也不必改变。由此可知Android系统版本和API level是多对一的关系。由于API level就是发布的android.jar(一套接口)的代号，所以API level和sdk中platforms目录中的各个android.jar是一一对应的。说白了，**Android系统版本是给Android用户看的，而API level是给应用程序开发者看的**。 https://developer.android.com/guide/topics/manifest/uses-sdk-element.html#provisional
+    2. **build target** : build target并不存在于manifest文件中，而是存在于项目根目录中的project.properties文件中。如果使用Eclipse构建项目的话，那么每个项目的根目录下都会有一个project.properties文件，这个文件中的内容用于告诉构建系统，怎样构建这个项目。打开这个文件，除了注释之外，还有以下一行：``target=android-18``。每当修改了build target，就会将另一个android.jar加入到build path中替换原来的jar。一般情况下，应该使用最新的API level作为build target。这也是eclipse生成项目时的默认行为。
+    3. **android:minSdkVersion** : 指明应用程序运行所需的最小API level。如果不指明的话，默认是1。也就是说该应用兼容所有的android版本。我们应该总是声明这个属性。如果系统的API level低于android:minSdkVersion设定的值，那么android系统会阻止用户安装这个应用。如果指明了这个属性，并且在项目中使用了高于这个API level的API， 那么会在编译时报错。将build target设为最新的android-19，那么就会使用最新的android-19下的android.jar来编译项目。将minSdkVersion设置为8。在使用的android.jar中，肯定会有和ActionBar相关的API， 但是在项目中调用ActionBar API， 项目会报错。因为minSdkVersion指明的API level 8中不存在ActionBar相关的API。如果没有设置minSdkVersion这个属性，那么默认是1。表明程序兼容所有的Android系统，能够在所有Android系统上运行。
+    4. **android:targetSdkVersion** : 标明应用程序目标API Level的一个整数。如果不设置，默认值和minSdkVersion相同。这个属性通知系统，你已经针对这个指定的目标版本测试过你的程序，系统不必再使用兼容模式来让你的应用程序向前兼容这个目标版本。应用程序仍然能在低于targetSdkVersion的系统上运行。由于Android不断向着更新的版本进化，一些行为甚至是外观可能会改变。然而，如果平台的API Level高于你的应用程序中的targetSdkVersion属性指定的值，系统会开启兼容行为来确保你的应用程序继续以期望的形式来运行。你可以通过指定targetSdkVersion来匹配运行程序的平台的 API level来禁用这种兼容性行为。举例来说，设置这个值为11或更高，当你的应用运行在Android3.0或更高的系统上时，系统会为你的应用使用新的默认主题(Holo主题)，并且当运行在大屏幕的设备上时会禁用屏幕兼容模式(screen compatibility mode)，因为支持了 API level 11就暗示了支持大屏幕。为了让你的应用程序支持每个Android版本，你应当提高targetSdkVersion的值到最新的API level，然后在对应的平台上彻底的测试你的应用。从上面的论述可知，targetSdkVersion这个属性是在程序运行时期起作用的，系统根据这个属性决定要不要以兼容模式运行这个程序。
+    5. 
+16. **awesome adb** https://blog.csdn.net/u010610691/article/details/77663770
+17. **Instant run** https://www.jianshu.com/p/2e23ba9ff14b
+18. **android 签名** 
 
 ### Android Activity
 
@@ -909,10 +918,10 @@ Android Binder
 0. links
     * **[《Android基础：Fragment，看这篇就够了》](https://cloud.tencent.com/developer/article/1071779)**
     * **[Fragment全解析系列](https://www.jianshu.com/p/d9143a92ad94)**
-    * [Android系列之Fragment（一）----Fragment加载到Activity当中](https://www.cnblogs.com/smyhvae/p/3978989.html)
-    * [fragment清除页面数据（重新加载布局）](https://blog.csdn.net/yuzhiqiang_1993/article/details/76152454)
+    * [Android系列之Fragment(一)----Fragment加载到Activity当中](https://www.cnblogs.com/smyhvae/p/3978989.html)
+    * [fragment清除页面数据(重新加载布局)](https://blog.csdn.net/yuzhiqiang_1993/article/details/76152454)
     * [fragment重叠的完美解决方案](https://blog.csdn.net/yuzhiqiang_1993/article/details/75014591)
-    * [Android碎片Fragment之多标签切换效果（微信和QQ底部多标签切换）](https://www.jianshu.com/p/69a47152c3a2)
+    * [Android碎片Fragment之多标签切换效果(微信和QQ底部多标签切换)](https://www.jianshu.com/p/69a47152c3a2)
     * [viewpager中彻底性动态添加、删除Fragment](https://www.cnblogs.com/zhujiabin/p/5382740.html)
 1. **为何产生**: 同时适配手机和平板、UI和逻辑的共享。
 2. **介绍**: 
@@ -976,7 +985,7 @@ Android Binder
         3. getSupportFragmentManager().popBackStack(String name, int flags) －根据name立刻弹出栈顶的fragment
         4. getSupportFragmentManager().popBackStack(int id, int flags) －根据id立刻弹出栈顶的fragment
 8. **注意点**
-    1. 如果在创建Fragment时要传入参数，必须要通过setArguments(Bundle bundle)方式添加，而不建议通过为Fragment添加带参数的构造函数，因为通过setArguments()方式添加，在由于内存紧张导致Fragment被系统杀掉并恢复（re-instantiate）时能保留这些数据。
+    1. 如果在创建Fragment时要传入参数，必须要通过setArguments(Bundle bundle)方式添加，而不建议通过为Fragment添加带参数的构造函数，因为通过setArguments()方式添加，在由于内存紧张导致Fragment被系统杀掉并恢复(re-instantiate)时能保留这些数据。
     2. inflate()的第三个参数是false，因为在Fragment内部实现中，会把该布局添加到container中，如果设为true，那么就会重复做两次添加，则会抛异常。
     3. 我们可以在Fragment的onAttach()中通过getArguments()获得传进来的参数，并在之后使用这些参数。如果要获取Activity对象，不建议调用getActivity()，而是在onAttach()中将Context对象强转为Activity对象。
     4. 在Activity中添加Fragment的方式有两种
@@ -1202,10 +1211,10 @@ Android Binder
 11. **fragment重叠的完美解决方案** https://blog.csdn.net/yuzhiqiang_1993/article/details/75014591(**懒创建**)
     1. 原因: 当我们旋转屏幕的时候，activity会被销毁并重新创建，并且在销毁之前执行了onSaveInstanceState(Bundle outState)这个方法。这个方法会保存activity的一些信息，其中就包括添加过的fragment，当activity被重新创建时，会初始化其中的变量，这个时候点击底部导航的话会重新去添加fragment，也就导致了重叠的问题。
     2. 解决方案
-        1. 想办法不让activity保存信息。（不推荐）。如重写onSaveInstanceState，但不使用super
-        2. 旋转屏幕时不让activity走生命周期方法（推荐）。这个方法最简单也最省事，只需要在相应的activity中声明android:configChanges=“keyboardHidden|orientation|screenSize”> 即可。声明这个属性后，当我们切换屏幕时，也就不会在走activity的生命周期方法了，也就不会造成fragment重叠的问题了。
+        1. 想办法不让activity保存信息。(不推荐)。如重写onSaveInstanceState，但不使用super
+        2. 旋转屏幕时不让activity走生命周期方法(推荐)。这个方法最简单也最省事，只需要在相应的activity中声明android:configChanges=“keyboardHidden|orientation|screenSize”> 即可。声明这个属性后，当我们切换屏幕时，也就不会在走activity的生命周期方法了，也就不会造成fragment重叠的问题了。
         3. 还有一种可能也会造成fragment重叠的问题，就是当内存不足时activity被系统回收时，再次进入也会造成重叠的问题，原因也是因为onSaveInstanceState(outState);方法保存了activity的一些数据。因为是系统回收的activity，所以，我们就没法去控制activity不让他走生命周期方法，我们可以从另一个方面着手去解决。解决办法：在onSaveInstanceState(outState);中去保存fragment，当activity被恢复时，取出这些fragment即可。使用getSupportFragmentManager的putFragment方法。然后oncreate的时候判断一下savedInstanceState是为空，不为空的话就是有保存的fragment信息，使用getSupportFragmentManager的getFragment方法。
-12. [fragment清除页面数据（重新加载布局）](https://blog.csdn.net/yuzhiqiang_1993/article/details/76152454)
+12. [fragment清除页面数据(重新加载布局)](https://blog.csdn.net/yuzhiqiang_1993/article/details/76152454)
 
 ### Android Handler
 

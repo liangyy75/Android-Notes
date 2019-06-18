@@ -826,15 +826,112 @@
     * [Android热更新技术的研究与实现(一)](https://www.jianshu.com/p/4ecd611383e6)
     * [atlas](https://github.com/alibaba/atlas/tree/master/atlas-docs)
 1. 基础技术
-    1. 类加载机制1
+    1. 类加载过程
         1. 每个类编译后产生一个Class对象，存储在.class文件中，JVM使用类加载器(Class Loader)来加载类的字节码文件(.class)，类加载器实质上是一条类加载器链，一般的，我们只会用到一个原生的类加载器，它只加载Java API等可信类，通常只是在本地磁盘中加载，这些类一般就够我们使用了。如果我们需要从远程网络或数据库中下载.class字节码文件，那就需要我们来挂载额外的类加载器。
         2. 一般来说，类加载器是按照树形的层次结构组织的，每个加载器都有一个父类加载器。另外，每个类加载器都支持代理模式，即可以自己完成Java类的加载工作，也可以代理给其它类加载器。类加载器的加载顺序有两种：
-            1. 父类优先策略是比较一般的情况(如JDK采用的就是这种方式)，这时，类在加载某个Java类之前，会尝试代理给其父类加载器，只有当父类加载器找不到时，才尝试自己去加载。
-            2. 自己优先的策略与父类优先相反，它会首先尝试子自己加载，找不到的时候才要父类加载器去加载，这种在web容器(如tomcat)中比较常见。
-        3. 
-        4. 
+            1. **父类优先策略**是比较一般的情况(如JDK采用的就是这种方式)，这时，类在加载某个Java类之前，会尝试代理给其父类加载器，只有当父类加载器找不到时，才尝试自己去加载。
+            2. **自己优先的策略**与父类优先相反，它会首先尝试子自己加载，找不到的时候才要父类加载器去加载，这种在web容器(如tomcat)中比较常见。
+        3. 类的加载和初始化: 需要区分加载和初始化的区别，加载了一个类的.class文件，不意味着该Class对象被初始化，事实上，一个类的初始化包括3个步骤
+            1. **加载**(Loading)，由类加载器执行，查找字节码，并创建一个Class对象(只是创建)；**动态加载**: 不管使用什么样的类加载器，类，都是在第一次被用到时，动态加载到JVM的。这句话有两层含义
+                1. Java程序在运行时并不一定被完整加载，只有当发现该类还没有加载时，才去本地或远程查找类的.class文件并验证和加载；
+                2. 当程序创建了第一个对类的**静态成员**的引用(如类的静态变量、静态方法、构造方法——构造方法也是静态的)时，才会加载该类。Java的这个特性叫做：动态加载。
+            2. **链接**(Linking)，验证字节码，为静态域分配存储空间(只是分配，并不初始化该存储空间)，解析该类创建所需要的对其它类的应用；Java在加载了类之后，需要进行链接的步骤，链接简单地说，就是将已经加载的java二进制代码组合到JVM运行状态中去。
+                1. **验证**(Verification)，验证是保证二进制字节码在**结构上的正确性**，具体来说，工作包括检测类型正确性，接入属性正确性(public、private)，检查final class没有被继承，检查静态变量的正确性等。
+                2. **准备**(Preparation)，准备阶段主要是创建**静态域**，分配空间，给这些域设默认值，需要注意的是两点：一个是在准备阶段不会执行任何代码，仅仅是设置默认值，二个是这些默认值是这样分配的，原生类型全部设为0，如：float:0f,int 0, long 0L, boolean:0(布尔类型也是0)，其它引用类型为null。
+                3. **解析**(Resolution)，解析的过程就是对类中的接口、类、方法、变量的符号引用进行解析并定位，解析成**直接引用**(**符号引用**就是编码是用字符串表示某个变量、接口的位置，直接引用就是根据符号引用翻译出来的地址)，并保证这些类被正确的找到。解析的过程可能导致其它的类被加载。需要注意的是，根据不同的解析策略，这一步不一定是必须的，有些解析策略在解析时递归的把所有引用解析，这是early resolution，要求所有引用都必须存在；还有一种策略是late resolution，这也是Oracle 的JDK所采取的策略，即在类只是被引用了，还没有被真正用到时，并不进行解析，只有当真正用到了，才去加载和解析这个类。
+            3. **初始化**(Initialization)，首先执行静态初始化块static{}，初始化静态变量，执行静态方法(如构造方法)。根据java虚拟机规范，所有java虚拟机实现必须在每个类或接口被java程序首次主动使用时才初始化。
+                1. 创建类的实例
+                2. 访问某个类或者接口的静态变量，或者对该静态变量赋值(如果访问静态编译时常量(即编译时可以确定值的常量)不会导致类的初始化)
+                3. 调用类的静态方法
+                4. 反射(Class.forName(xxx.xxx.xxx))
+                5. 初始化一个类的子类(相当于对父类的主动使用)，不过直接通过子类引用父类元素，不会引起子类的初始化
+                6. Java虚拟机被标明为启动类的类(包含main方法的)
+        4. **类与接口的初始化不同**，如果一个类被初始化，则其父类或父接口也会被初始化，但如果一个接口初始化，则不会引起其父接口的初始化。
     2. 反射
-    3. 类加载机制2
+        1. **运行时类型信息(RTTI)**
+            1. 并不是所有的Class都能在编译时明确，因此在某些情况下需要在运行时再发现和确定类型信息(比如：基于构建编程)，这就是RTTI(Runtime Type Information，运行时类型信息)。
+            2. 在java中，有两种RTTI的方式，
+                1. 一种是传统的，即假设在编译时已经知道了所有的类型；
+                2. 还有一种，是利用反射机制，在运行时再尝试确定类型信息。
+            3. 严格的说，反射也是一种形式的RTTI，不过，一般的文档资料中把RTTI和反射分开，因为一般的，大家认为RTTI指的是传统的RTTI，通过继承和多态来实现，在运行时通过调用超类的方法来实现具体的功能(超类会自动实例化为子类，或使用instance of)。
+        2. **反射及实现方式**
+            1. Java不允许在运行时改变程序结构或类型变量的结构，但它允许在运行时去探知、加载、调用在编译期完全未知的class，可以在运行时加载该class，生成实例对象(instance object)，调用method，或对field赋值。这种类似于“看透”了class的特性被称为反射(Reflection)，我们可以将反射直接理解为：可以看到自己在水中的倒影，这种操作与直接操作源代码效果相同，但灵活性高得多。
+            2. 需要注意的有几点：
+                1. 在java的反射机制中，getDeclaredMethod得到的是全部方法，getMethod得到的是公有方法；
+                2. 反射机制的setAccessible可能会破坏封装性，可以任意访问私有方法和私有变量；
+                3. setAccessible并不是将private改为public，事实上，public方法的accessible属性也是false的，setAccessible只是取消了安全访问控制检查，所以通过设置setAccessible，可以跳过访问控制检查，执行的效率也比较高。参考：
+        3. **反射的性能** https://blog.csdn.net/l_serein/article/details/6219897
+        4. **反射与设计模式** 反射的一个很重要的作用，就是在设计模式中的应用，包括在工厂模式和代理模式中的应用。
+            1. 动态代理
+                ```java
+                // TODO
+                ```
+            2. 工厂模式
+    3. 类加载机制
+        1. 我们知道Android系统也是仿照java搞了一个虚拟机，不过它不叫JVM，它叫Dalvik/ART VM。Dalvik/ART VM 虚拟机加载类和资源也是要用到ClassLoader，不过Jvm通过ClassLoader加载的class字节码，而Dalvik/ART VM通过ClassLoader加载则是dex。Android的类加载器分为两种,PathClassLoader和DexClassLoader，两者都继承自BaseDexClassLoader。
+            1. **PathClassLoader** 代码位于libcore\dalvik\src\main\Java\dalvik\system\PathClassLoader.java 。用来**加载系统类和应用类**。
+            2. **DexClassLoader** 代码位于libcore\dalvik\src\main\java\dalvik\system\DexClassLoader.java 。用来**加载jar、apk、dex文件**，加载jar、apk也是最终抽取里面的Dex文件进行加载。
+            3. **BaseDexClassLoader** 代码位于libcore\dalvik\src\main\java\dalvik\system\BaseDexClassLoader.java 。
+            4. **ClassLoader** 代码位于java/lang/ClassLoader.java 。被BaseDexClassLoader所加载。
+        2. **Dalvik虚拟机类加载流程**
+            1. Dalvik虚拟机毕竟不算是标准的Java虚拟机，因此在类加载机制上，Dalvik虚拟机与Java虚拟机有许多不同之处，例如，在使用标准Java虚拟机时，我们经常自定义继承自ClassLoader的类加载器。然后通过defineClass方法来从一个二进制流中加载Class。然而，这在Dalvik虚拟机上是行不通的。
+            2. Dalvik虚拟机类加载流程如下图所示：![Dalvik虚拟机类加载流程](https://upload-images.jianshu.io/upload_images/12972541-b2f0739d340718d7?imageMogr2/auto-orient/strip%7CimageView2/2/w/784/format/webp)
+        3. **Dalvik虚拟机类加载器源码分析**
+            1. Android的类加载器主要有两个PathClassLoader和DexClassLoader，其中PathClassLoader是默认的类加载器，下面我们就来说说两者的区别与联系。
+                1. PathClassLoader：支持加载DEX或者已经安装的APK(因为存在缓存的DEX)。
+                2. DexClassLoader：支持加载APK、DEX和JAR，也可以从SD卡进行加载。
+            2. DexClassLoader和PathClassLoader都属于符合双亲委派模型的类加载器（因为它们没有重载loadClass方法）。也就是说，它们在加载一个类之前，回去检查自己以及自己以上的类加载器是否已经加载了这个类。如果已经加载过了，就会直接将之返回，而不会重复加载。
+            3. 要加载一个类，必须先初始化一个类加载器实例，我们拿DexClassLoader来举例，它的构造方法如下所示
+                ```java
+                public DexClassLoader(String dexPath, String optimizedDirectory, String libraryPath, ClassLoader parent) {
+                    super(dexPath, new File(optimizedDirectory), libraryPath, parent);
+                    // dexPath 是加载APK、DEX和JAR的路径。这个类可以用于Android动态加载DEX/JAR。
+                    // optimizedDirectory 是DEX的输出路径。
+                    // libraryPath 加载DEX的时候需要用到的lib库，libraryPath一般包括/vendor/lib和/system/lib。
+                    // parent DEXClassLoader指定的父类加载器
+                }
+                ```
+            4. 关于DexClassLoader，除了它的构造函数以外，它的源码注释里还提到以下三点：
+                1. 这个类加载器加载的文件是.jar或者.apk文件，并且这个.jar或.apk中是包含classes.dex这个入口文件的，主要是用来执行那些没有被安装的一些可执行文件的。
+                2. 这个类加载器需要一个属于应用的私有的，可以的目录作为它自己的缓存优化目录，其实这个目录也就作为下面，这个构造函数的第二个参数，至于怎么实现，注释中也已经给出了答案；
+                3. 不要把上面第二点中提到的这个缓存目录设为外部存储，因为外部存储容易收到代码注入的攻击。
+            5. 通过DexClassLoader的构造函数，我们可以发现DexClassLoader的构造函数会调用父类的构造函数进行初始化，DexClassLoader的父类就是BaseDexXClassLoader，我们继续来看一下BaseDexClassLoader的构造函数
+                ```java
+                public BaseDexClassLoader(String dexPath, File optimizedDirectory, String libraryPath, ClassLoader parent) {
+                    super(parent);
+                    this.pathList = new DexPathList(this, dexPath, libraryPath, optimizedDirectory);
+                }
+                // 通过ClassLoader的构造函数源码可以发现，BaseDexClassLoader里的parentLoader对象经过层层传递，传递给了parent对象，parent对象是ClassLoader类里的私有变量。
+                ```
+            6. 这一步做完以后，BaseDexClassLoader的构造函数紧接着就初始化了一个DexPathList对象，这是一个描述DEX文相关资源文件的条目列表。可以看到DexPathList里比较重要dexElements也是在这里被初始化，热修复就是倒腾这个东东做到修复bug的。
+                ```java
+                public DexPathList(ClassLoader definingContext, String dexPath, String libraryPath, File optimizedDirectory) {
+                    if (definingContext == null) {
+                        throw new NullPointerException("definingContext == null");
+                    }
+                    if (dexPath == null) {
+                        throw new NullPointerException("dexPath == null");
+                    }
+                    if (optimizedDirectory != null) {
+                        if (!optimizedDirectory.exists())  {
+                            throw new IllegalArgumentException("optimizedDirectory doesn't exist: " + optimizedDirectory);
+                        }
+                        if (!(optimizedDirectory.canRead() && optimizedDirectory.canWrite())) {
+                            throw new IllegalArgumentException("optimizedDirectory not readable/writable: "  + optimizedDirectory);
+                        }
+                    }
+                    this.definingContext = definingContext;
+                    ArrayList<IOException> suppressedExceptions = new ArrayList<IOException>();
+                    this.dexElements = makeDexElements(splitDexPath(dexPath), optimizedDirectory, suppressedExceptions);
+                    if (suppressedExceptions.size() > 0) {
+                        this.dexElementsSuppressedExceptions = suppressedExceptions.toArray(new IOException[suppressedExceptions.size()]);
+                    } else {
+                        dexElementsSuppressedExceptions = null;
+                    }
+                    this.nativeLibraryDirectories = splitLibraryPath(libraryPath);
+                }
+                ```
+3. 
 
 ## Android 自定义View
 
