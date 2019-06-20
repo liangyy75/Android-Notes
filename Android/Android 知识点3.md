@@ -1973,10 +1973,71 @@
                 3. mainfest 文件类似，会合并起来。
             6. **依赖**: 每个构建类型都可以有自己的依赖，Gradle会自动为每个构建添加新的依赖位置。
         3. **product flavor**
-            1. 
-            2. 
-            3. 
-        4. 
+            1. 与被用来配置相同App或Library的不同构建类型相反，product flavor被用来创建不同的版本。典型的例子是一个应用有免费和付费的。
+            2. **创建**: 通过在 productFlavor 中添加
+                ```groovy
+                android {
+                    productFlavors {
+                        red {
+                            applicationId 'com.gradleforandroid.red'
+                            versionCode 3
+                        }
+                        blue {
+                            applicationId 'com.gradleforandroid.blue'
+                            minSdkVersion 14
+                            versionCode 4
+                        }
+                    }
+                }
+                ```
+            3. **源集**: product flavor 也可以有与构建类型类似的源集。而且该源集的文件夹命令应与 product flavor 一样，而且可以与构建类型组合，如 blueRelease 。合并文件夹的组合将比构建类型文件夹和 product flavor 文件夹拥有更高优先级。
+            4. **多种定制的版本**: 可以有更多的组合。
+                ```groovy
+                android {
+                    flavorDimensions "color", "price"
+                    productFlavor {
+                        red { flavorDimension "color" }
+                        blue { flavorDimension "color" }
+                        free { flavorDimension "price" }
+                        paid { flavorDimension "price" }
+                    }  // 现在可以组合出 redFree / blueFree / redPaid / bluePaid 四种 Product Flavor 了。加上构建类型，总共有 8 种 构建Variant了。
+                }
+                ```
+        4. **构建Variant**
+            1. 构建Variant是构建类型与ProductFlavor结合的结果，无论添加构建类型还是添加ProductFlavor，都会有新的Variant被创建。
+            2. **任务**: Gradle的Android插件会为你配置的每个构建Variant创建任务。一个新的Android应用默认有debug或release两种构建类型，可以用assembleDebug和assembleRelease创建两个apk，即用单个assemble创建两个apk。当添加flavor时，新的任务系统也会被创建。如assembleBlueDebug和assembleRed(可以同时创建debug和release版本)。
+            3. **源集**
+            4. **源集合并资源和Mainfest**
+                1. Gradle的Android插件在打包前将main源集和构建类型源集合并在一起。
+                2. library项目也可以提供额外的资源，这些也需要合并。这同样适合于manifest文件。
+                3. 如你在debug variant中需要额外的Android权限来存储log文件，但不想在main源集中申请该权限(避免吓跑潜在用户)，就可以在debug构建类型的源集中额外添加一个manifest文件来申请额外的权限。
+                4. 资源和manifest的**优先顺序**: buildType > flavor > main > dependencies 。在library项目中申明的资源通常具有最低的优先级。
+            5. **variant过滤器**: 在app或library的根目录下的build.gradle文件添加
+                ```groovy
+                android.variantFilter { variant ->
+                    if (variant.buildType.name.equals('release')) {
+                        variant.getFlavors().each() { flavor ->
+                            if (flavor.name.equals('blue')) {
+                                variant.getIgnore(true)
+                            }
+                        }
+                    }
+                }
+                ```
+            6. **签名配置**: 将应用发布到Google Play或任何其他应用商店前需要私钥给它签名。如果你有一个付费版和免费版或针对不同用户的不同应用，就需要为每个flavor使用不同的私钥签名了，这就是签名配置出现的原因。签名配置如下
+                ```groovy
+                android {
+                    signingConfigs {
+                        staging.initWith(signingConfigs.debug)
+                        release {
+                            storeFile file("release.keystore")
+                            storePassword "secretPassword"
+                            keyAlias "gradleforandroid"
+                            keyPassword "secretPassword"
+                        }
+                    }
+                }
+                ```
         5. 
     5. **管理多模块创建**
         1. 
@@ -2008,7 +2069,7 @@
         3. 
         4. 
         5. 
-8. others
+9. others
     1. **Android Debug与Release环境切换**
         1. 在Android开发中，通常会有Debug和Release环境，比如：Debug环境用测试接口，Release环境用正式接口；Debug环境打印Log，Release环境不打印Log等等。
         2. **BuildConfig文件**: BuildConfig文件是项目编译后自动生成的，它存在于module的 \build\generated\source\buildConfig 文件夹下面。
@@ -2084,6 +2145,11 @@
                 }
                 ```
     2. 
+10. gradle
+    ```groovy
+    // 顶层的 build.gradle
+    
+    ```
 
 ## Adb等工具
 
