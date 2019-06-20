@@ -20,6 +20,7 @@
             * [语法基础——Gradle语法基础](https://blog.csdn.net/qq_30379689/article/details/81432291) finished
             * [深入理解Android之Gradle](http://blog.csdn.net/Innost/article/details/48228651)
             * [Gradle构建最佳实践](http://www.figotan.org/2016/04/01/gradle-on-android-best-practise/)
+            * [Gradle从入门到实战 - Groovy基础](https://blog.csdn.net/singwhatiwanna/article/details/76084580)
         * 参考文档
             * [Gradle User Manual](https://docs.gradle.org/current/userguide/userguide.html)
             * [Gradle Build Language Reference：Gradle DSL 参考，重点的几个 DSL 过一下，其他的用到再查](https://docs.gradle.org/current/dsl/)
@@ -34,8 +35,14 @@
         * [语法基础——Proguard语法基础](https://blog.csdn.net/qq_30379689/article/details/81589428) finished
         * [Android混淆机制](https://juejin.im/post/58c39774da2f605609693761) finished
         * [Android混淆机制](http://www.voidcn.com/article/p-kiqaofhe-bsc.html) finished
-    4. 最终配置
+    4. Gradle配置
         * [Android local.properties配置文件的使用](https://www.jianshu.com/p/f891fa3eadd8)
+        * [Android Studio3.0中dependencies依赖由compile变为implementation的区别](https://blog.csdn.net/silenceoo/article/details/78735687) finished
+        * [Android依赖导入全攻略](https://juejin.im/post/5acd6daaf265da238a30ca73) finished
+        * [Gradle依赖排除](https://www.zhyea.com/2018/02/08/gradle-exclude-dependencies.html) finished
+        * [Gradle依赖项学习总结，dependencies、transitive、force、exclude的使用与依赖冲突解决](http://www.paincker.com/gradle-dependencies)
+        * [教你如何使用android studio发布release 版本（完整版）](https://blog.csdn.net/to_perfect/article/details/69048419)
+        * [Gradle Kotlin DSL迁移指南](https://juejin.im/post/5c4190276fb9a049fe3570b6)
 1. 简介
     1. **构建工具——Gradle**: Gradle是一个**构建工具**，它是用来**帮助我们构建app**的，**构建包括编译、打包等过程**。我们可以为Gradle指定构建规则，然后它就会根据我们的"命令"自动为我们构建app。Android Studio中默认就使用Gradle来完成应用的构建。有些同学可能会有疑问："我用AS不记得给Gradle指定过什么构建规则呀，最后不还是能搞出来个apk。" 实际上，app的构建过程是大同小异的，有一些过程是"通用"的，也就是每个app的构建都要经历一些公共步骤。因此，在我们在创建工程时，Android Studio自动帮我们生成了一些通用构建规则，很多时候我们甚至完全不用修改这些规则就能完成我们app的构建。
     2. **自定义——Groovy**: 有些时候，我们会有一些个性化的构建需求，比如我们引入了第三方库，或者我们想要在通用构建过程中做一些其他的事情，这时我们就要自己在系统默认构建规则上做一些修改。这时候我们就要自己向Gradle"下命令"了，这时候我们就**需要用Gradle能听懂的话了，也就是Groovy。Groovy是一种基于JVM的动态语言**。
@@ -1693,7 +1700,390 @@
             4. 常见的混淆的方式有两种， **Proguard (免费)和 DexGuard (要钱)**。DexGuard 是基于 ProGuard 的。这就是为什么它是如此的原因很容易升级到DexGuard。但是这两种产品提供广泛不同的功能。ProGuard的是Java字节码通用的优化，同时 DexGuard 提供了先进的 Android 应用程序的保护。在这篇博客中，你会发现 ProGuard，并将 DexGuard 之间的差别的概述。
         2. C/C++层的混淆: native层混淆并没有统一的标准方案，常见的方法是使用**花指令**。使得native层在被反编译时出错。
         3. 资源文件的混淆: 和native层一样并没有统一的标准方案，目前有两个方案，美团和微信两种。微信的已开源 [AndResGuard](https://github.com/shwenzhang/AndResGuard/blob/master/README.zh-cn.md)
-7. 
+7. Gradle深入学习
+    1. Gradle不单单是一个配置脚本，它的背后是几门语言，如果硬让我说，我认为是三门语言。
+        1. Groovy Language
+        2. Gradle DSL
+        3. Android DSL
+        4. DSL的全称是Domain Specific Language，即领域特定语言，或者直接翻译成"特定领域的语言"，算了，再直接点，其实就是这个语言不通用，只能用于特定的某个领域，俗称"小语言"。因此DSL也是语言。
+    2. 介绍
+        1. 一个像 Ant 一样的非常灵活的通用构建工具 
+        2. 一种可切换的, 像 maven 一样的基于合约构建的框架 
+        3. 支持强大的多工程构建 
+        4. 支持强大的依赖管理(基于 ApacheIvy ) 
+        5. 支持已有的 maven 和 ivy 仓库 
+        6. 支持传递性依赖管理, 而不需要远程仓库或者 pom.xml 或者 ivy 配置文件 
+        7. 优先支持 Ant 式的任务和构建 
+        8. 基于 groovy 的构建脚本 
+        9. 有丰富的领域模型来描述你的构建
+    3. 如果你本地安装了Gradle，那么你就可以使用gradle命令来直接构建。如果本地没有安装，那么可以通过gradle wrapper来构建，Linux和MAC使用./gradlew，而Windows上面则使用gradlew，还可以在 gradle/gradle-wrapper.properties 中配置 Gradle 版本。
+    4. doLast还有一个等价的操作leftShift，leftShift还可以缩写为<<。通过@TaskAction操作符也可以指定一个Task执行时要做的事情，它区别于doFirst和doLast，不过@TaskAction平时用的较少。
+8. Gradle for Android 读书笔记
+    1. Gradle和AS入门
+    2. 基本自定义构建
+    3. **依赖管理**
+        1. 如果项目中有个依赖，而且它有自己的依赖，则Gradle会自己处理，这个称为**传递依赖**
+        2. 依赖仓库可以看做是文件的集合，Gradle支持三种不同的依赖仓库: **maven / ivy 和 静态文件或文件夹**。
+            ```groovy
+            repositories {
+                maven {
+                    url "https://repo..."
+                    credentials {
+                        username 'user'
+                        password '...'
+                    }
+                }
+                ivy { url "http://repo..." } // 也可以使用 credentials
+                flatDir { dirs 'arrs' }
+            }
+            ```
+        3. 一个依赖通常由 **group name version** 指定。如
+            ```groovy
+            dependencies {
+                compile 'com.google.code.gson:gson:2.3'
+                compile group: 'com.squareup.retrofit', name: 'retrofit', version: '1.9.0'
+            }
+            ```
+        4. 为了方便，Gradle预定义了三个Maven仓库: **JCenter / Maven Central / 本地Maven仓库**。
+            ```groovy
+            repositories {
+                mavenCentral()
+                jcenter()
+                mavenLocal()
+            }
+            ```
+        5. **文件依赖**
+            ```groovy
+            dependencies {
+                compile fileTree(dirs: 'libs', include: ['*.jar'])
+                compile files('libs/dem.jar')
+            }
+            ```
+        6. **原生依赖**: 即C++/C写的依赖库，通常包含几个.so文件，可用于所有平台。
+            1. Android插件默认支持原生依赖库，只要在**模块层创建一个jniLibs文件夹(默认位置)**。然后为每个平台创建子文件夹，添加.so文件到适当位置即可。
+            2. 使用**脚本添加**
+                ```groovy
+                android {
+                    sourceSets.main {
+                        // jniLibs.srcDir 'src/main/libs'
+                        jniLibs.srcDirs=['src/main/libs']
+                    }
+                }
+                ```
+            3. aar包里面也可以包含so文件，但依赖这种包含so文件的aar包时不需要做特定的配置，编译时so文件会自动包含到引用AAR压缩包的APK中。
+            4. 比较特殊的一点是，so文件需要放到**具体的ABI目录**(如 arm64-v8a / armeabi / x86)下，不能直接放libs目录下。所有的x86/x86_64/armeabi-v7a/arm64-v8a设备都支持armeabi架构的so文件。所以为了减小包体积，为了减小apk体积，可以只保留armeabi一个文件夹。但如果你想引入多个平台的，那么需要保持so文件的数量一致，就是说armeabi文件下的每个so文件都要在armeabi-v7a下找到对应的so文件，但这样apk包的体积就会增大。
+            5. 还有一种做法是生成指定ABI版本的APK，然后按需上传到应用商店，让用户自己选择下载适合自己手机的版本，这个可能更多的用在安卓游戏APP上，build.gradle配置如下：
+                ```groovy
+                android {
+                    ...
+                    splits {
+                        abi {
+                            enable true  // 启用ABI拆分机制
+                            reset()  // 重置ABI列表为只包含一个空字符串
+                            include 'x86', 'x86_64', 'armeabi-v7a', 'arm64-v8a'  // 与include一起使用来可以表示要使用哪一个ABI
+                            universalApk true  // 是否打包一个通用版本(包含所有的ABI)。默认值为 false。
+                        }
+                    }
+                    // ABI的code码
+                    project.ext.versionCodes = ['armeabi': 1, 'armeabi-v7a': 2, 'arm64-v8a': 3, 'mips': 5, 'mips64': 6, 'x86': 8, 'x86_64': 9]
+                    android.applicationVariants.all { variant ->
+                        // 最终标记
+                        variant.outputs.each { output ->
+                            output.versionCodeOverride = project.ext.versionCodes.get(output.getFilter(com.android.build.OutputFile.ABI), 0) * 1000000 + android.defaultConfig.versionCode
+                        }
+                    }
+                }
+                ```
+        7. **依赖项目**: 类似于应用项目，可使用相同的任务来构建和测试依赖项目，且它们有不同的构建Variants，不同之处在于输出，一个是apk，另一个则是aar(可直接被Android应用项目用作依赖库)。
+            1. 创建: ``apply plugin 'com.android.library'``
+            2. 使用: 一种是在项目中做一个模块(这种叫依赖库)，另一种是创建一个可以在多个应用中复用的aar文件。
+            3. **依赖库的使用**
+                ```groovy
+                include ':app' ':library'
+                ```
+                ```groovy
+                dependencies {
+                    compile project(':library')
+                }
+                ```
+            4. **aar使用** 路径声明和依赖引入 ``repositories.flatDir.dirs: 'aars'`` ``compile(name: 'libraryname', ext: 'aar')`` 。如果aar包有很多，也可以一样象jar包统一添加一个文件夹下的所有包。
+                ```groovy
+                repositories {
+                    flatDir {
+                        dirs: 'app/libs'
+                    }
+                }
+                def dir = new File('app/libs')
+                dir.traverse(nameFilter: ~/.*\.aar/) { file ->
+                    def name = file.getName().replace('.aar', '')
+                    implementation(name: name, ext: 'aar')
+                }
+                ```
+            5. 当一个library类型的module需要引用aar文件时，也要在所在模块的build.gradle文件中加入上面的话，但是当其他Module引用此library的module时，也需要在他的build.gradle中加入如下配置，否则会提示找不到文件。
+                ```groovy
+                repositories {
+                    flatDir {
+                        dirs 'libs', '../包含aar包的模块名/libs'
+                    }
+                }
+                ```
+            6. 即如果当前Module需要一个aar包内容，不论aar包是不是在当前Module中，都需要在build.gradle中声明它所在的路径。如果项目中这样的Module比较多，每个都需要声明路径，不便于管理的话，推荐在项目的根build.gradle中统一添加,将所有包含aar包的模块名列出，这样不论是本Module或其他Module都不需要单独配置路径了。
+                ```groovy
+                allprojects {
+                    repositories {
+                        jcenter()
+                        google()
+                        flatDir {
+                            dirs: "../moudle-A/libs,../moudle-B/libs,../moudle-C/libs".split(",")
+                        }
+                    }
+                }
+                ```
+        8. **依赖配置**: 括号中是3.0版本的依赖方式
+            1. **compile(api)**: 默认配置，编译主应用时包含的依赖，不仅会将依赖添加至类路径，而且会生成对应的apk。
+            2. **apk(runtimeOnly)**: 只会被打包到apk，不会添加到类路径。只在生成apk的时候参与打包，编译时不会参与，很少用。
+            3. **provide(compileOnly)**: 依赖只会添加到类路径，不会打包到对应的apk。只在编译时有效，不会参与打包，可以在自己的moudle中使用该方式依赖。比如com.android.support，gson这些使用者常用的库，避免冲突。。apk与provided配置只适用于jar依赖。
+            5. **testCompile(testImplementation)**: 只在单元测试代码的编译以及最终打包测试apk时有效。
+            6. **androidTestCompile**: ...
+            7. **implementation**: 使用了该命令编译的依赖，对该项目有依赖的项目将无法访问到使用该命令编译的依赖中的任何程序，也就是将该依赖隐藏在内部，而不对外部公开。比如我在一个libiary中使用implementation依赖了gson库，然后我的主项目依赖了libiary，那么，我的主项目就无法访问gson库中的方法。这样的好处是编译速度会加快，推荐使用implementation的方式去依赖，如果你需要提供给外部访问，那么就使用api依赖即可。在Google IO 相关话题的中提到了一个建议，就是依赖首先应该设置为implementation的，如果没有错，那就用implementation，如果有错，那么使用api指令，这样会使编译速度增快。
+            8. 此外，Android插件为每个构建variant生成一份配置，如**debugCompile(debugImplementation)**(只在debug模式的编译和最终的debug apk打包时有效)/releaseProvided。
+        9. **语义化版本**: 版本数字的格式一般为 **major.minor.patch**。
+            1. 做不兼容的api变化时，major版本添加。
+            2. 以向后兼容的方式添加功能时，minor版本添加。
+            3. 修复一些bug时，patch版本添加。
+        10. **动态化版本**: 构建应用或依赖时能获取最新的依赖。
+            ```groovy
+            compile 'com.android.support: supprot-v4:22.2.+'  // 获取最新的 patch 版本
+            compile 'com.android.support: appcompact-v7:22.2+'  // 获取最新的 minor 版本，且最低是 2
+            compile 'com.android.support: recyclerview-v7:+'  // 获取最新依赖
+            ```
+        11. **others**
+            1. **force / exclude / transitive**: 同样的配置下的版本冲突，会自动使用最新版；而不同配置(如debug和release或者test与非test)下的版本冲突，gradle同步时会直接报错。可使用exclude、force解决冲突。
+                ```groovy
+                implementation 'commons-lang:commons-lang:2.6'
+                implementation group: 'com.google.code.guice', name: 'guice', version: '1.0'
+                implementation('org.hibernate:hibernate:3.1') {
+                    // 不同版本同时被依赖时，那么强制依赖这个版本的，默认false
+                    force = true
+                    // exclude可以设置不编译指定的模块，有三种写法:
+                    exclude module: 'cglib' 
+                    exclude group: 'org.jmock' 
+                    exclude group: 'org.unwanted', module: 'iAmBuggy' 
+                    // 禁止依赖的传递，gradle自动添加子依赖项(依赖包所需的依赖)，设置为false，则需要手动添加每个子依赖项，默认为true。
+                    transitive = false
+                }
+                ```
+                ```groovy
+                // or
+                configurations {
+                    compile.exclude module: 'cglib'
+                    all*.exclude group:'org.unwanted', module: 'iAmBuggy'
+                }
+                configurations.all {
+                    transitive = false
+                    resolutionStrategy {
+                        force 'org.hamcrest:hamcrest-core:1.3'
+                    }
+                }
+                ```
+            2. 除了可以用exclude、force解决外，也**可以自己统一为所有依赖指定support包的版本**，不需要为每个依赖单独排除了：
+                ```groovy
+                configurations.all {
+                    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+                        def requested = details.requested
+                        if (requested.group == 'com.android.support') {
+                            if (!requested.name.startsWith("multidex")) {
+                                details.useVersion '26.1.0'
+                            }
+                        }
+                    }
+                }
+                ```
+            3. **编译期注解的依赖--annotationProcessor**: 用过butterknife或者Dagger的同学可能对这种annotationProcessor引入方式有所印象，这种方式是只在编译的时候执行依赖的库，但是库最终不打包到apk中。**结合编译期注解的作用，他是用来生成代码的，本身在运行时是不需要的**。
+        12. **问题和小结**
+            1. **aar包中的资源文件重复了**: 资源文件重复了，主工程的资源文件会直接覆盖aar包中的文件，并且不会有任何报错或者提示，最终aar包中也会直接用主工程的资源文件，所以需要注意命名方式。暂时没有更好的解决方法。
+            2. **AndroidManifest合并错误**: 同样也是发生在aar包上， Android Studio 项目每个module中都可以有一个AndroidManifest.xml文件，但最终的APK 文件只能包含一个 AndroidManifest.xml 文件。在构建应用时，Gradle 构建会将所有清单文件合并到一个封装到 APK 的清单文件中。aar包的清单文件和我们的app清单文件属性冲突时：用tools:replace="属性名"解决。
+            3. **annotationProcessor与compileOnly的区别**: 上文说了annotationProcessor与compileOnly都是只编译并不打入apk中，他俩到底有什么区别呢？扮演的角色不一样，annotationProcessor作用是编译时生成代码，编译完真的就不需要了，compileOnly是有重复的库，为的是剃除只保留一个库，最终还是需要的。
+            4. **重复的aar包**: 如果本地同时存在两个不同的jar包，或者本地已有jar包，再去远程依赖不同版本的jar包，就会报错。**解决方式**：将其中的一个采用compileOnly替换implementation。顾名思义，compileOnly只在编译时起作用，不会包含到APK里面，在运行时也就避免找到重复的类了。
+            5. **模块的依赖分析**: 如果我们的项目如果间接依赖了相同库的不同版本，在编译时就直接会报错。**解决方法**很简单，用exclude就行了，但我们并不知道哪两个依赖他们依赖了相同库的不同版本，该把exclude放到哪里呢？这就可以用到一个命令 ``.\gradlew -q <模块名>:dependencies`` 就能打印出该模块所有的依赖树信息。
+    4. **创建构建Variant**
+        1. 引入
+            1. 一个应用可以有 debug 和 release 版，也可以有 免费版 和 付费版。这样的组合就有四种了，甚至还可以有更多的版本组合更多的配置。不同版本的不同配置会让项目变的复杂。
+            2. Gradle中有一些便捷和可扩展的概念可用来定位这些问题。首先第一个概念是每个由AS创建的新项目都会生成 **debug 和 release** 版本的构建类型。另一个概念是 **product flavor(不同定制的产品)** 。构建类型与product flavor通常一起使用，可以容易的处理测试和生产应用的免费和付费版本。构建类型与product_flavor的结合结果被称为**构建variant**。
+        2. **构建类型**
+            1. 新模块默认build.gradle配置了一个构建类型release，用于禁用无用的资源(通过设置minifyEnabled为false)和定义默认Proguard配置文件的位置。
+            2. 默认情况下每个模块也有debug构建类型，且是默认构建类型。但可以将其包含到buildTypes代码块，然后覆写任何你想改变的属性来修改配置。
+            3. **创建**: 默认的构建类型不够用时，拉下面在staging自定义构建类型
+                ```groovy
+                android {
+                    buildTypes {
+                        staging {
+                            applicationIdSuffix ".staging"  // 针对 applicationID 定义了一个新的后缀，使其和debug与release版本的applicationID不一样，即可以同时安装release版本与staging版本。
+                            versionNameSuffix "-staging"   // 
+                            buildConfigField "String", "API_URL", "\"https://staging.example.com/api\""  // 使用了构建配置变量
+                        }
+                        // 还可以通过另一个构建类型的属性来初始化该构建类型
+                        staging2.initWith(buildTypes.debug)  // 复制已有构建类型的所有属性
+                        staging2 {
+                            applicationIdSuffix ".staging"
+                            versionNameSuffix "-staging"
+                            debuggable = false
+                        }
+                    }
+                }
+                ```
+            4. **源集**: 创建新构建时，Gradle也会创建新源集。源集目录名称默认和构建类型相同。该目录不是在定义新构建类型时自动创建的，需要手动创建。如
+                ```
+                app
+                    src
+                        debug
+                            java
+                                com.package
+                                    Constants.java
+                            res
+                                layout
+                                    activity_main.java
+                            AndroidManifest.xml
+                        main
+                            java
+                                com.package
+                                    MainActivity.java
+                            res
+                                drawable
+                                layout
+                                    activity_main.java
+                            AndroidManifest.xml
+                        staging
+                            java
+                                com.package
+                                    Constants.java
+                            res
+                                layout
+                                    activity_main.java
+                            AndroidManifest.xml
+                        release
+                            java
+                                com.package
+                                    Constants.java
+                            AndroidManifest.xml
+                ```
+            5. **main**: 各个构建类型共享 main 源集。使用不同源集时，资源处理也不一样。
+                1. drawables 和 layout 将覆盖 main源集 中同名资源。
+                2. values 文件夹中的文件将合并。(如果有相同id的则其他源集的优先)
+                3. mainfest 文件类似，会合并起来。
+            6. **依赖**: 每个构建类型都可以有自己的依赖，Gradle会自动为每个构建添加新的依赖位置。
+        3. **product flavor**
+            1. 
+            2. 
+            3. 
+        4. 
+        5. 
+    5. **管理多模块创建**
+        1. 
+        2. 
+        3. 
+        4. 
+        5. 
+    6. **运行测试**
+        1. 
+        2. 
+        3. 
+        4. 
+        5. 
+    7. **创建任务和插件**
+        1. 
+        2. 
+        3. 
+        4. 
+        5. 
+    8. **设置持续集成**
+        1. 
+        2. 
+        3. 
+        4. 
+        5. 
+    9. **高级自定义创建**
+        1. 
+        2. 
+        3. 
+        4. 
+        5. 
+8. others
+    1. **Android Debug与Release环境切换**
+        1. 在Android开发中，通常会有Debug和Release环境，比如：Debug环境用测试接口，Release环境用正式接口；Debug环境打印Log，Release环境不打印Log等等。
+        2. **BuildConfig文件**: BuildConfig文件是项目编译后自动生成的，它存在于module的 \build\generated\source\buildConfig 文件夹下面。
+            1. 其实BuildConfig文件是一个java类，在debug中是这样的：
+                ```java
+                public final class BuildConfig {
+                    public static final boolean DEBUG = Boolean.parseBoolean("true");
+                    public static final String APPLICATION_ID = "com.wj.study";
+                    public static final String BUILD_TYPE = "debug";
+                    public static final String FLAVOR = "";
+                    public static final int VERSION_CODE = 1;
+                    public static final String VERSION_NAME = "1.0";
+                }
+                ```
+            2. 在release中是这样的
+                ```java
+                public final class BuildConfig {
+                    public static final boolean DEBUG = false;
+                    public static final String APPLICATION_ID = "com.wj.study";
+                    public static final String BUILD_TYPE = "release";
+                    public static final String FLAVOR = "";
+                    public static final int VERSION_CODE = 1;
+                    public static final String VERSION_NAME = "1.0";
+                }
+                ```
+            3. 默认有六个参数，其中boolean值的DEBUG参数标志了debug包与release包的区别。在debug包中DEBUG=true,release包中DEBUG=false。那么，在module中就可以通过**BuildConfig.DEBUG**的值来区分debug和release。当然，如果要添加额外的参数来区分debug和release也是可以的，在module的build.gradle文件中添加
+                ```groovy
+                buildTypes {
+                    debug {
+                        buildConfigField "Boolean", "DEBUG_MODE", "true"
+                    }
+                    release {
+                        buildConfigField "Boolean", "DEBUG_MODE", "false"
+                    }
+                }
+                ```
+            4. 编译后，在debug和release的BuildConfig.java中会自动添加一行
+                ```java
+                /* debug的BuildConfig.java */
+                // Fields from build type: debug
+                public static final Boolean DEBUG_MODE = false;
+                /* release的BuildConfig.java */
+                // Fields from build type: release
+                public static final Boolean DEBUG_MODE = true;
+                ```
+            5. 从上面可以看出，编译自动生成的BuildConfig文件可以区分debug和release包，但如果在项目中有多个module(通常有很多个module)，每个module都会生成自己的BuildConfig文件，那么就需要每个module自己各行处理debug和release的区别。这样就导致不统一，比如打开和关闭打印Log，就得各自管理。现在在项目的非主module "Lib module base"中建立一个打印Log的类LogUtil：
+                ```java
+                public class LogUtil {
+                    private final static boolean DEBUG = BuildConfig.DEBUG;
+                    public static void d(String tag, String msg) {
+                        Log.d(tag, "d-->DEBUG=" + DEBUG);
+                        if (DEBUG) { Log.d(tag, msg); }
+                    }
+                }
+                ```
+            6. 再在主module中引用这个LogUtil类，从实际的测试结果上看，无论是debug包还是release包，结果LogUtil.DEBUG的值都是false。因为编译时被依赖的 module 默认会提供 Release 版给其它 module 或工程使用，这就导致该 BuildConfig.DEBUG 会始终为 false。接下来用Application的FLAG_DEBUGGABLE来解决这个问题。
+        3. **通过Application的FLAG_DEBUGGABLE来判断**: 元素application有一个属性debuggable，在debug构建的时候会设置成false，在release构建的时候会设置成ture。这些都是自动设置，并不需要在元素application中设置android:debuggable="false|true"。
+            1. 所以可以这样写：
+                ```java
+                public static void init(Context context) {
+                    DEBUG = context.getApplicationInfo() != null &&
+                            (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0;
+                }
+                ```
+            2. 但在调用的时候要在Application的onCreate方法中调用：
+                ```java
+                public class Study extends Application {
+                    @Override
+                    public void onCreate() {
+                        super.onCreate();
+                        LogUtil.init(getApplicationContext());
+                    }
+                }
+                ```
+    2. 
 
 ## Adb等工具
 

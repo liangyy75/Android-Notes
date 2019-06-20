@@ -2531,6 +2531,7 @@ Android 信息.md
 * [NDK系列2](https://www.cnblogs.com/skywang12345/archive/2013/05/23/3095013.html)
 * **[NDK系列3](https://github.com/googlesamples/android-ndk)**
 * []()
+* [Android NDK开发之引入第三方库](https://juejin.im/post/5b3588976fb9a00e36427131)
 
 0. Jni实例
     1. java 调用 c++
