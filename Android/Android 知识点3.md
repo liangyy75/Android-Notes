@@ -43,6 +43,7 @@
         * [Gradle依赖项学习总结，dependencies、transitive、force、exclude的使用与依赖冲突解决](http://www.paincker.com/gradle-dependencies)
         * [教你如何使用android studio发布release 版本（完整版）](https://blog.csdn.net/to_perfect/article/details/69048419)
         * [Gradle Kotlin DSL迁移指南](https://juejin.im/post/5c4190276fb9a049fe3570b6)
+        * [Gradle基础 构建生命周期和Hook技术](https://juejin.im/post/5afec54951882542715001f2)
 1. 简介
     1. **构建工具——Gradle**: Gradle是一个**构建工具**，它是用来**帮助我们构建app**的，**构建包括编译、打包等过程**。我们可以为Gradle指定构建规则，然后它就会根据我们的"命令"自动为我们构建app。Android Studio中默认就使用Gradle来完成应用的构建。有些同学可能会有疑问："我用AS不记得给Gradle指定过什么构建规则呀，最后不还是能搞出来个apk。" 实际上，app的构建过程是大同小异的，有一些过程是"通用"的，也就是每个app的构建都要经历一些公共步骤。因此，在我们在创建工程时，Android Studio自动帮我们生成了一些通用构建规则，很多时候我们甚至完全不用修改这些规则就能完成我们app的构建。
     2. **自定义——Groovy**: 有些时候，我们会有一些个性化的构建需求，比如我们引入了第三方库，或者我们想要在通用构建过程中做一些其他的事情，这时我们就要自己在系统默认构建规则上做一些修改。这时候我们就要自己向Gradle"下命令"了，这时候我们就**需要用Gradle能听懂的话了，也就是Groovy。Groovy是一种基于JVM的动态语言**。
@@ -791,10 +792,16 @@
             duck.fly()
             duck.walk()
             ```
+        4. 字符串插值
+            ```groovy
+            def method = 'toString'
+            new Date()."$method"()  // 因为只包含一个变量，所以占位符表达式可以只有$前缀，而没有花括号包裹
+            ```
+        5. 方法的最后一行通常默认返回，即使没有使用return关键字
 5. Gradle语法基础
     1. 生命周期: Gradle的构建依次会执行下面的三个生命周期
-        1. 初始化阶段(Initialization)：解析整个工程中的所有Project，构建出所有的project对象
-        2. 配置阶段(Configuration)：解析所有的projects对象中的task，构建好所有task的拓扑图
+        1. 初始化阶段(Initialization)：解析整个工程中的所有Project，构建出所有的project对象。主要是依靠settings.gradle。
+        2. 配置阶段(Configuration)：解析所有的projects对象中的task，构建好所有task的拓扑图。执行各项目下的build.gradle脚本，完成Project的配置，并且构造Task任务依赖关系图以便在执行阶段按照依赖关系执行Task。另外一点，无论执行Gradle的任何命令，初始化阶段和配置阶段的代码都会被执行。
         3. 执行阶段(Execution)：执行具体的task及其依赖task
     2. 生命周期监听
         1. 在项目的build.gradle中，监听配置阶段和执行阶段的生命周期
@@ -1057,15 +1064,19 @@
     9. task对象
         1. 定义: 由于task运行于配置阶段中，因此在gradle文件中，只要执行其中一个task，则其他task都会执行一遍
             ```groovy
-            //第一种定义方式
+            // 第一种定义方式
             task helloword(group: 'hensen', description :'hello'){
-                println "Hello Word"
+                println "Hello World"
             }
-            //第二种定义方式
+            // 第二种定义方式
             this.tasks.create(name: 'helloword'){
                 setGroup('hensen')
                 setDescription('hello')
                 println "Hello Word"
+            }
+            // 第三种
+            task('hello') << {
+                println 'Hello World'
             }
             ```
         2. 时序
@@ -2024,39 +2035,285 @@
                     }
                 }
                 ```
-            6. **签名配置**: 将应用发布到Google Play或任何其他应用商店前需要私钥给它签名。如果你有一个付费版和免费版或针对不同用户的不同应用，就需要为每个flavor使用不同的私钥签名了，这就是签名配置出现的原因。签名配置如下
-                ```groovy
-                android {
-                    signingConfigs {
-                        staging.initWith(signingConfigs.debug)
-                        release {
-                            storeFile file("release.keystore")
-                            storePassword "secretPassword"
-                            keyAlias "gradleforandroid"
-                            keyPassword "secretPassword"
+            6. **签名配置**: 将应用发布到Google Play或任何其他应用商店前需要私钥给它签名。如果你有一个付费版和免费版或针对不同用户的不同应用，就需要为每个flavor使用不同的私钥签名了，这就是签名配置出现的原因。
+                1. 签名配置定义如下
+                    ```groovy
+                    android {
+                        signingConfigs {
+                            staging.initWith(signingConfigs.debug)
+                            release {
+                                storeFile file("release.keystore")  // 制定了keystore文件位置
+                                storePassword "secretPassword"
+                                keyAlias "gradleforandroid"  // 密码别名
+                                keyPassword "secretPassword"
+                            }
+                            // Android插件使用一个通用keystore和一个已知密码自动创建了debug配置，所以没必要为该构建类型创建一个签名配置了。
                         }
+                    }
+                    ```
+                2. 在构建配置文件中存储凭证不是一个好主意，更好的方式是使用Gradle配置文件。
+                3. 构建类型和flavor都有一个叫signingConfig的属性，签名配置使用如下
+                    ```groovy
+                    android { buildTypes { release { signingConfig signingConfigs.release } } }
+                    android { productFlavors { blue { signingConfig signingConfigs.release } } }  // productFlavor的signingConfig会覆盖buildTypes的
+                    android { buildTypes { release {
+                        productFlavors.red.signingConfig signingConfigs.red
+                        productFlavors.blue.signingConfig signingConfigs.blue  // 但可以这样组合
+                    } } }
+                    ```
+    5. **管理多模块创建**
+        1. **解析多模块构建**
+            1. 通常一个多模块项目有一个根目录，在其子文件夹中包含所有模块，这时需要settings.gradle。而每个模块可以提供自己的build.gradle文件。如果有一个library并不位于根目录，而是在根目录的libraries文件夹下，那么就需要在setting.gralde中: ``include ':app', ':libraries:library1'``。冒号是替换目录中的斜线。当在一个子目录中添加一个模块作为另一个模块的依赖时，应该总是从根目录引用它。即如果app模块依赖library1，则app的build.gradle中: ``dependencies { compile project(':libraries:library1') }``
+            2. 可以通过切换到对应模块目录下来执行../gradlew taskName来执行任务(那么其他模块即使有同名任务也不会执行了)。当然也可以通过gradlew :wear:assembleDebug来只执行wear模块的assembleDebug任务。
+        2. **将模块添加到项目**
+            1. java依赖库
+                ```groovy
+                // java依赖模块的build.gradle下
+                apply plugin 'java'
+                dependencies { compile fileTree(dir: 'libs', include: ['*.jar']) }
+                // app下
+                dependencies { compile project(':javalib') }
+                ```
+            2. android依赖库
+                ```groovy
+                // android依赖模块的build.gradle下
+                apply plugin 'com.android.library'
+                // app下
+                dependencies { compile project(':androidlib') }  // 可以在app中使用该依赖库的所有类和资源了
+                ```
+            3. android wear
+                ```groovy
+                // 与常规的android app模块相比，build.gradle唯一的不同是依赖配置
+                dependencies {
+                    compile fileTree(dir: 'libs', include: ['*.jar'])
+                    compile 'com.google.android.support:wearable:1.1.0'
+                    compile 'com.google.android.gms:play-services-wearable:6.5.87'
+                }
+                // 为了在android引用中使用android wear应用，需要和app一起打包。可以通过添加依赖来做到
+                dependencies { wearApp project(':wear') }
+                ```
+            4. google app engine  // TODO
+        3. **提示和最佳实践**
+            1. Gradle工具窗
+            2. 加速多模块构建: gradle.properties中配置 parallel 属性: ``org.gradle.parallel = true``
+        4. **模块耦合**
+    6. **运行测试**
+        1. **单元测试**
+            1. JUnit
+                ```groovy
+                dependencies {
+                    testCompile 'junit:junit:4.12'
+                    testPaidCompile 'junit:junit:4.12'
+                }
+                ```
+                ```
+                app
+                    src
+                        main
+                            java
+                                com.example.app
+                        test
+                            java
+                                com.example.app
+                然后只要运行gradlew test即可运行所有测试了。也可以针对某个variant: gradlew testDebug。
+                为了避免一个测试案例失败使得整个终止，可以使用指令 gradlew test -continue。
+                如果只想运行特定测试类，也可以: gradlew testDebug --tests="*.LogicTest"
+                ```
+            2. Robolectric: 可以测试Android SDK的功能，不需要设备或模拟器，而Junit不能
+                ```groovy
+                apply plugin 'org.robolectric'
+                dependencies {
+                    compile fileTree(dir: 'libs', includes: ['*.jar'])
+                    compile 'com.android.support:appcompact-v7:22.2.0'
+                    testCompile 'junit:junit:4.12'
+                    testCompile 'org.robolectric:robolectirc:3.0'
+                    testCompile 'org.robolectric:shadows-support:3.0'
+                }
+                ```
+                ```java
+                // 也是可以在 app/src/test/java/com.example.app下的测试类下
+                @RunWith(RobolectricTestRunner.class)
+                @Config(mainfest = "app/src/main/AndroidManifest.xml", sdk = 18)
+                public class MainActivityTest {
+                    @Test
+                    public void clickingButtonShouldChangeText() {
+                        AppCompactActivity activity = Robolectric.buildActivity(MainActivity.class).create().get();
+                        Button button = (Button)activity.findViewById(R.id.button);
+                        TextView text = (TextView)activity.findViewById(R.id.textview);
+                        button.performClick();
+                        assertThat(text.getText().toString(), equalTo(activity.getString(R.string.hello_robolectric)));
                     }
                 }
                 ```
-        5. 
-    5. **管理多模块创建**
-        1. 
-        2. 
-        3. 
-        4. 
-        5. 
-    6. **运行测试**
-        1. 
-        2. 
-        3. 
-        4. 
-        5. 
+        2. **功能测试**
+            1. Espresso
+                ```groovy
+                dependencies {
+                    compile fileTree(dir: 'libs', includes: ['*.jar'])
+                    compile 'com.android.support:appcompact-v7:22.2.0'
+                    androidTestCompile 'com.android.support.test:runner:0.3'
+                    androidTestCompile 'com.android.support.test:rules:0.3'
+                    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2'
+                    androidTestCompile 'com.android.support.test.espresso:espresso-contrib:2.2'  // androidTestCompile用于功能测试，而testCompile用于单元测试
+                }  // 1. 设置依赖
+                defaultConfig { testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner" }  // 2. 设置测试执行器
+                android { packagingOptions { exclude 'LICENSE.txt' } }  // 3. 去除去可证描述
+                // 4. 测试目录改为 src/AndroidTest/java/com.example.app 。
+                ```
+                ```java
+                // 5. 测试类示例
+                @RunWith(AndroidJUnit4.class)
+                @SmallTest
+                public class TestingEspressoMainActivityTest {
+                    @Rule
+                    public ActivityTestRule<MainActivity> mActivityRelu = new ActivityTestRule<>(MainActivity.class);
+                    @Test
+                    public void testHelloWorldIsShown() {
+                        onView(withText("hello world!")).check(matches(isDisplayed));
+                    }
+                }
+                ```
+                ```groovy
+                // 6. 执行测试
+                gradlew connectedCheck  // 会执行connectedAndroidTest和createDebugConverageReport两个任务
+                ```
+        3. **测试覆盖率**
+            1. Jacoco  // TODO
     7. **创建任务和插件**
-        1. 
-        2. 
-        3. 
-        4. 
-        5. 
+        1. **Gradle中的Groovy**
+            1. Android插件被应用到构建时: ``apply plugin: 'com.android.application'`` 这段代码完全是Groovy的简写。完整版是 ``project.apply([plugin: 'com.android.application'])``
+            2. dependencies代码块: ``dependencies { compile 'com.google.code.gson:gson:2.3' }`` -> ``project.denpendies({ add('compile', 'com.google.code.gson:gson:2.3'), { // configuration statements } })``
+        2. **任务入门**
+            1. 单纯使用task来创建任务，则是设置了任务的配置，任务会在配置阶段执行，即使执行了其他任务，该任务也会执行。
+                ```groovy
+                task hello {
+                    println 'Hello, world!'
+                }
+                ```
+            2. 为了避免在配置阶段执行，而是在执行阶段执行，可以
+                ```groovy
+                task hello << {
+                    println 'Hello, world!'
+                }
+                ```
+            3. 多个doFirst和多个doLast是可以并存的，每个doFirst都尽量将动作添加到task的最前面，而doLast都尽量将动作添加到task的最后面。所以越需要前面的doFirst action越要写在下面，而越需要在后面的doLast action越要写在下面。
+            4. mustRunAfter(注意只是执行顺序，没有真实依赖的) / dependsOn 可以用于构建依赖关系图。
+            5. 使用任务优化后的签名
+                ```groovy
+                task getReleasePassword << {
+                    def password = ''
+                    if (rootProject.file('private.properties').exists()) {
+                        Properties properties = new Properties();
+                        properties.load(rootProject.file('private.properties').newDataInputStream());
+                        password = properties.getProperty('release.password');
+                    }
+                    // 如果密码仍为空则可以访问控制台
+                    if (!password?.trim()) {
+                        password = new String(System.console().readPassword("\nWhat's the secret password? "))  // readPassword返回的是字符数组
+                    }
+                    // 现在可以配置了
+                    android.signingConfigs.release.storePassword = password
+                    android.signingConfigs.release.keyPassword = password
+                }
+                // 在build.gradle中添加
+                tasks.whenTaskAdded { task ->
+                    if (task.name.equals('packageRelease')) {
+                        task.dependsOn "getReleasePassword"
+                    }
+                }
+                ```
+        3. **Hook到Android插件**
+            1. 方式一
+                ```groovy
+                android.applicationVariants.all { variant ->  /* do something */ }
+                // 如果想要对Android依赖库使用相同逻辑，请使用 libraryVariants 来代替 applicationVariants
+                ```
+            2. 应用一: 自动重命名APK
+                ```groovy
+                android.applicationVariants.all { variant ->
+                    variant.outputs.each { output ->
+                        def file = output.outputFile
+                        output.outputFile = new File(file.parent, file.name.replace(".apk", "-${variant.versionName}.apk"))
+                    }
+                }
+                ```
+            3. 应用二: 动态创建新的任务
+                ```groovy
+                android.applicationVariants.all { variant ->
+                    if (variant.install) {
+                        tasks.create(name: "run${variant.name.capitalize()}", dependsOn: variant.install) {
+                            description "Installs the ${variant.description} and run the main launcher activity."
+                } } }
+                ```
+            4. // TODO
+        4. **创建自己的插件**
+            1. **创建**
+                ```groovy
+                class RunPlugin implements Plugin<Project> {
+                    void apply(Project project) {
+                        project.android.applicationVariants.all { variant ->
+                            if (variant.install) {
+                                project.tasks.create(name: "run${variant.name.capitalize()}", dependsOn: variant.install) { /* Task definition */ }
+                } } } }
+                ```
+            2. 使用
+                ```groovy
+                apply plugin: 'RunPlugin'
+                ```
+            3. **分发插件**: 为了分发插件，并与他人分享，需要将它转移到独立模块中，该模块会产生一个包含插件类和属性的jar文件。
+                1. build.gradle文件配置
+                    ```groovy
+                    apply plugin 'groovy'
+                    dependencies {
+                        compile gradleApi()
+                        compile localGroovy()
+                    }
+                    group = ...
+                    version = ...
+                    // 如果想把插件推到maven仓库，需要
+                    apply plugin 'maven'
+                    uploadArchives {
+                        repositories {
+                            mavenDeployer {
+                                repository { url: uri('...') }
+                    } } }
+                    ```
+                2. 文件结构
+                    ```
+                    src
+                        main
+                            groovy
+                                com
+                                    package
+                                        name
+                            resources
+                                META-INF
+                                    gradle-plugins/com.gradleforandroid.run.properties
+                    ```
+                3. com.gradleforandroid.run.properties文件: 为了使得Gradle能找到该插件
+                    ```properties
+                    implementation-class=com.gradleforandroid.RunPlugin
+                    ```
+                4. 在包目录下创建一个叫 RunPlugin.groovy 的文件
+                    ```groovy
+                    package com.gradleforandroid
+                    import org.gradle.api.Project
+                    import org.gradle.api.Plugin
+                    class RunPlugin implements Plugin<Project> {
+                        void apply(Project p) {
+                            p.android.applicationVariant.all { variant ->
+                            // Task code
+                    } } }
+                    ```
+                5. 使用自定义插件
+                    ```groovy
+                    buildscript {
+                        repositories { flatDir { dirs 'build_libs' } }
+                        dependencies { classpath 'com.gradleforandroid:plugin' }
+                    }
+                    // 或者在插件上传到maven/ivy后有所不同
+                    apply plugin: com.gradleforandroid.RunPlugin
+                    ```
     8. **设置持续集成**
         1. 
         2. 
@@ -2153,6 +2410,10 @@
 
 ## Adb等工具
 
+0. links
+    1. ddms
+        * [在Android Studio下使用Hierarchy Viewer](https://www.jianshu.com/p/e9e05ce5b0c9)
+        * [Android UI性能优化详解](http://mrpeak.cn/android/2016/01/11/android-performance-ui)
 1. 一般指令
     1. adb version
     2. adb help
@@ -2204,7 +2465,7 @@
     reverse --remove REMOTE  remove specific reverse socket connection
     reverse --remove-all     remove all reverse socket connections from device
     ```
-100. adb help
+10. adb help
     ```
     file transfer:
     push [--sync] LOCAL... REMOTE
@@ -2304,6 +2565,68 @@
     $ANDROID_LOG_TAGS        tags to be used by logcat (see logcat --help)
     $ADB_LOCAL_TRANSPORT_MAX_PORT max emulator scan port (default 5585, 16 emus)
     ```
+11. git help
+    ```
+    usage: git [--version] [--help] [-C <path>] [-c <name>=<value>]
+            [--exec-path[=<path>]] [--html-path] [--man-path] [--info-path]
+            [-p | --paginate | -P | --no-pager] [--no-replace-objects] [--bare]
+            [--git-dir=<path>] [--work-tree=<path>] [--namespace=<name>]
+            <command> [<args>]
+
+    These are common Git commands used in various situations:
+
+    start a working area (see also: git help tutorial)
+    clone      Clone a repository into a new directory
+    init       Create an empty Git repository or reinitialize an existing one
+
+    work on the current change (see also: git help everyday)
+    add        Add file contents to the index
+    mv         Move or rename a file, a directory, or a symlink
+    reset      Reset current HEAD to the specified state
+    rm         Remove files from the working tree and from the index
+
+    examine the history and state (see also: git help revisions)
+    bisect     Use binary search to find the commit that introduced a bug
+    grep       Print lines matching a pattern
+    log        Show commit logs
+    show       Show various types of objects
+    status     Show the working tree status
+
+    grow, mark and tweak your common history
+    branch     List, create, or delete branches
+    checkout   Switch branches or restore working tree files
+    commit     Record changes to the repository
+    diff       Show changes between commits, commit and working tree, etc
+    merge      Join two or more development histories together
+    rebase     Reapply commits on top of another base tip
+    tag        Create, list, delete or verify a tag object signed with GPG
+
+    collaborate (see also: git help workflows)
+    fetch      Download objects and refs from another repository
+    pull       Fetch from and integrate with another repository or a local branch
+    push       Update remote refs along with associated objects
+    ```
+12. git help -g
+    ```
+    The common Git guides are:
+    attributes          Defining attributes per path
+    cli                 Git command-line interface and conventions
+    core-tutorial       A Git core tutorial for developers
+    cvs-migration       Git for CVS users
+    diffcore            Tweaking diff output
+    everyday            A useful minimum set of commands for Everyday Git
+    glossary            A Git Glossary
+    hooks               Hooks used by Git
+    ignore              Specifies intentionally untracked files to ignore
+    modules             Defining submodule properties
+    namespaces          Git namespaces
+    repository-layout   Git Repository Layout
+    revisions           Specifying revisions and ranges for Git
+    tutorial            A tutorial introduction to Git
+    tutorial-2          A tutorial introduction to Git: part two
+    workflows           An overview of recommended workflows with Git
+    ```
+20. layout inspector
 
 ## Android权限系统
 
@@ -2319,3 +2642,6 @@
     * []()
 
 * [Jenkins中文网](https://jenkins.io/zh/)
+* [Android Jenkins+Git+Gradle持续集成-实在太详细](https://www.jianshu.com/p/38b2e17ced73)
+* [（2.2.11.1）Android全新CI平台——Jenkins构建入门](https://blog.csdn.net/fei20121106/article/details/73810802)
+* [android版本列表](https://zh.wikipedia.org/wiki/Android%E7%89%88%E6%9C%AC%E5%88%97%E8%A1%A8)
