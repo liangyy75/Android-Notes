@@ -1,6 +1,20 @@
+* [Kotlin](##Kotlin)
+* [Scala](##Scala)
+* [React Native](##React%20Native)
+* [Flutter/Dart](##Flutter%2fDart)
 * [Gradle](##Gradle)
 * [Adb等工具](##Adb等工具)
 * [Android权限系统](##Android权限系统)
+
+## Kotlin
+
+
+
+## Scala
+
+## React Native
+
+## Flutter/Dart
 
 ## Gradle
 
@@ -2315,17 +2329,92 @@
                     apply plugin: com.gradleforandroid.RunPlugin
                     ```
     8. **设置持续集成**
-        1. 
-        2. 
-        3. 
-        4. 
-        5. 
+        1. jenkins / teamcity / travis ci
     9. **高级自定义创建**
-        1. 
-        2. 
-        3. 
-        4. 
-        5. 
+        1. **减小apk大小**
+            ```groovy
+            android {
+                buildTypes { release {
+                    minifyEnabled true  // 混淆资源
+                    proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+                    shrinkResources true  // 缩减资源: 自动缩减(可能有意外，移除了过多资源，甚至移除了动态使用(现在不使用以后使用)的资源，为了避免，可以在res/raw/keep.xml中定义一些例外)
+                }
+                defaultConfig { resConfigs "en", "da", "nl"  // 自己手动缩减，这里是只保留 英语/丹麦语/荷兰语 的字符串。
+                // 也可以处理密度集合 resConfigs "hdpi", "xhdpi", "xxhdpi", "xxxhdpi"
+            } } }
+            ```
+            ```xml
+            <!-- keep.xml示例，keep.xml最终也会从结果中剔除 -->
+            <?xml version="1.0" encoding="utf-8"?>
+            <resources xmlns:tools="http://..." tools:keep="@layout/keep_me,@layout/also_used_*">
+            ```
+        2. **加速构建**
+            1. 修改参数
+                ```groovy
+                // 在gradle.properties中添加
+                org.gradle.parallel=true  // 并行构建
+                org.gradle.daemon=true  // 启动并复用守护线程(android studio中默认开启，但命令行中默认关闭)
+                org.gradle.jvmargs=-Xms256m -Xmx1024m  // 设置初始内存大小与最大内存大小，单位有 k/m/g
+                org.gradle.configureondemand=true  // 在多模块项目中有用，可以忽略不需要的模块
+                ```
+            2. 通过Andoid Studio配置: Settings -> Build,Execution,Deployment -> Compiler 就能找到相关参数了
+            3. Profiling: gradle [taskName\] --profile 可以指出构建中速度变慢的具体位置。会生成一份报告到 build/reports/profile 下。
+            4. Jack和Jill: Jack为新的Android构建工具，可直接编译java源码为Android Dalvik的可执行格式，有自己的.jack依赖库格式，也采用了打包和缩减。Jill可以将.aar和.jar文件转换成.jack依赖库。2016年的时候还是实验阶段。只要设置了jack就不能通过proguard来缩小和混淆了。但proguardfiles依然可以用来指定某些规则与异常。
+                ```groovy
+                android {
+                    buildToolsRevison '22.0.1'
+                    defaultConfig { useJack = true }
+                    productFlavors {  // 也可以这样
+                        f1 { useJack = false }
+                        f2 { useJack = true }
+                    }
+                }
+                ```
+        3. **忽略Lint**
+            1. Lint是静态代码分析工具，执行release构建时默认执行Lint检查，会在布局和java代码中标记潜在bug。某些时候会阻塞构建过程(其实相当于pylint等等，并非必须)，如果以前没有用过Lint的项目迁移到Gradle可能有一堆错误，这时需要禁用它。但只是临时方案，因为忽略Lint检查可能导致一些问题，如缺失翻译会导致应用崩溃。当然，更平滑的方式是在Gradle中使用ant。
+                ```groovy
+                android { lintOptions { abortOnError false } }
+                ```
+        4. **Gradle中使用Ant**
+            1. **在Gradle中运行Ant任务**: 直接在任务名称前面加上ant.即可。
+                ```groovy
+                task archive << {
+                    ant.echo "Ant is archiving..."
+                    ant.zip(destfile: "archive.zip") { fileset(dir: 'zipme') }
+                }
+                // 当然如果足够了解Gradle，则可以
+                task gradleArchive(type: Zip) << {
+                    from 'zipme/'
+                    archiveName 'grarchive.zip'
+                }
+                ```
+            2. **导入整个Ant脚本**: 如果已经创建了一个ant脚本来创建应用了，则可以通过ant.importBuild来导入整个构建配置。所有目标ant会自动转化为Gradle任务。这时甚至可以使用doLast和doFirst来扩展它。甚至dependsOn / mustRunAfter 之类的。
+                ```xml
+                <!-- ant脚本示例 -->
+                <project> <target name="hello"> <echo>Hello, Ant</echo> </target> </project>
+                ```
+                ```groovy
+                ant.importBuild 'build.xml'
+                ```
+                ```shell
+                $ gradlew hello
+                :hello
+                [ant:echo] Hello, Ant
+                ```
+            3. **属性**: Gradle和Ant不仅可以共享Task，而且可以在Gradle定义属性，以便在Ant构建文件中使用。
+                ```xml
+                <target name="appVersion"><echo>${version}</echo></target>
+                ```
+                ```groovy
+                ant.version = '1.0'
+                ```
+                ```shell
+                $ gradlew appVersion
+                :appVersion
+                [ant:echo] 1.0
+                ```
+        5. **高级应用部署**
+            1. 分割apk  // TODO
 9. others
     1. **Android Debug与Release环境切换**
         1. 在Android开发中，通常会有Debug和Release环境，比如：Debug环境用测试接口，Release环境用正式接口；Debug环境打印Log，Release环境不打印Log等等。
@@ -2405,7 +2494,7 @@
 10. gradle
     ```groovy
     // 顶层的 build.gradle
-    
+    // 模块中的 build.gradle
     ```
 
 ## Adb等工具
@@ -2627,6 +2716,14 @@
     workflows           An overview of recommended workflows with Git
     ```
 20. layout inspector
+21. [深入理解Android Instant Run运行机制](http://www.androidchina.net/6714.html)
+22. [Android APK反编译就这么简单 详解（图文详解）](http://www.androidchina.net/6974.html) [2018年支持java8的Java反编译工具汇总](https://blog.csdn.net/yannqi/article/details/80847354)
+23. [快速集成Android最常用八种加密算法](http://www.androidchina.net/7137.html)
+24. [使用Android Studio Lint静态分析](http://www.androidchina.net/9919.html)
+25. [Android:你好,androidX！再见,android.support](https://www.jianshu.com/p/41de8689615d)
+26. [如何下载Android源码](https://github.com/foxleezh/AOSP/issues/1) https://mirrors.tuna.tsinghua.edu.cn/help/AOSP/ [windows环境下repo下载Android源代码](https://segmentfault.com/a/1190000015279330)
+27. [How to Install Python Anaconda 5 on Arch Linux 2017](https://linoxide.com/linux-how-to/install-python-anaconda-5-arch-linux-4-11-7-1/)
+28. [常用android资源](https://huangtianyu.gitee.io/%E8%B5%84%E6%BA%90/)
 
 ## Android权限系统
 

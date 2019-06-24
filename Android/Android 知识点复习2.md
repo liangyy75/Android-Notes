@@ -1,3 +1,10 @@
+<style>
+img {
+    margin:0 auto;
+    display:block;
+}
+</style>
+
 * [Android Flutter](##Android%20Flutter)
 
 [你还在被触摸事件困扰吗？看看这篇吧](https://www.jianshu.com/p/06574d8f10bf)
@@ -759,7 +766,7 @@
     5. void destroyItem(ViewGroup container, int position, Object object): container是ViewPager对象，object是Fragment对象。
     6. getItemPosition(Object object): object是Fragment对象，如果返回POSITION_UNCHANGED，则表示当前Fragment不刷新，如果返回POSITION_NONE，则表示当前Fragment需要调用destroyItem()和instantiateItem()进行销毁和重建。 默认情况下返回POSITION_UNCHANGED。
 8. **懒加载**
-    1. 懒加载主要用于ViewPager且每页是Fragment的情况，场景为微信主界面，底部有4个tab，当滑到另一个tab时，先显示”正在加载”，过一会才会显示正常界面。默认情况，ViewPager会缓存当前页和左右相邻的界面。实现懒加载的主要原因是：用户没进入的界面需要有一系列的网络、数据库等耗资源、耗时的操作，预先做这些数据加载是不必要的。
+    1. 懒加载主要用于ViewPager且每页是Fragment的情况，场景为微信主界面，底部有4个tab，当滑到另一个tab时，先显示"正在加载"，过一会才会显示正常界面。默认情况，ViewPager会缓存当前页和左右相邻的界面。实现懒加载的主要原因是：用户没进入的界面需要有一系列的网络、数据库等耗资源、耗时的操作，预先做这些数据加载是不必要的。
     2. 这里懒加载的实现思路是：用户不可见的界面，只初始化UI，但是不会做任何数据加载。等滑到该页，才会异步做数据加载并更新UI。这里就实现类似微信那种效果，整个UI布局为：底部用PagerBottomTabStrip(https://github.com/tyzlmjj/PagerBottomTabStrip)项目实现，上面是ViewPager，使用FragmentPagerAdapter。逻辑为：当用户滑到另一个界面，首先会显示正在加载，等数据加载完毕后(这里用睡眠1秒钟代替)显示正常界面。
     3. ViewPager默认缓存左右相邻界面，为了避免不必要的重新数据加载(重复调用onCreateView())，因为有4个tab，因此将离线缓存的半径设置为3，即 setOffscreenPageLimit(3)。
     4. 
@@ -855,7 +862,7 @@
                 2. 还有一种，是利用反射机制，在运行时再尝试确定类型信息。
             3. 严格的说，反射也是一种形式的RTTI，不过，一般的文档资料中把RTTI和反射分开，因为一般的，大家认为RTTI指的是传统的RTTI，通过继承和多态来实现，在运行时通过调用超类的方法来实现具体的功能(超类会自动实例化为子类，或使用instance of)。
         2. **反射及实现方式**
-            1. Java不允许在运行时改变程序结构或类型变量的结构，但它允许在运行时去探知、加载、调用在编译期完全未知的class，可以在运行时加载该class，生成实例对象(instance object)，调用method，或对field赋值。这种类似于“看透”了class的特性被称为反射(Reflection)，我们可以将反射直接理解为：可以看到自己在水中的倒影，这种操作与直接操作源代码效果相同，但灵活性高得多。
+            1. Java不允许在运行时改变程序结构或类型变量的结构，但它允许在运行时去探知、加载、调用在编译期完全未知的class，可以在运行时加载该class，生成实例对象(instance object)，调用method，或对field赋值。这种类似于"看透"了class的特性被称为反射(Reflection)，我们可以将反射直接理解为：可以看到自己在水中的倒影，这种操作与直接操作源代码效果相同，但灵活性高得多。
             2. 需要注意的有几点：
                 1. 在java的反射机制中，getDeclaredMethod得到的是全部方法，getMethod得到的是公有方法；
                 2. 反射机制的setAccessible可能会破坏封装性，可以任意访问私有方法和私有变量；
@@ -880,7 +887,7 @@
             1. Android的类加载器主要有两个PathClassLoader和DexClassLoader，其中PathClassLoader是默认的类加载器，下面我们就来说说两者的区别与联系。
                 1. PathClassLoader：支持加载DEX或者已经安装的APK(因为存在缓存的DEX)。
                 2. DexClassLoader：支持加载APK、DEX和JAR，也可以从SD卡进行加载。
-            2. DexClassLoader和PathClassLoader都属于符合双亲委派模型的类加载器（因为它们没有重载loadClass方法）。也就是说，它们在加载一个类之前，回去检查自己以及自己以上的类加载器是否已经加载了这个类。如果已经加载过了，就会直接将之返回，而不会重复加载。
+            2. DexClassLoader和PathClassLoader都属于符合双亲委派模型的类加载器(因为它们没有重载loadClass方法)。也就是说，它们在加载一个类之前，回去检查自己以及自己以上的类加载器是否已经加载了这个类。如果已经加载过了，就会直接将之返回，而不会重复加载。
             3. 要加载一个类，必须先初始化一个类加载器实例，我们拿DexClassLoader来举例，它的构造方法如下所示
                 ```java
                 public DexClassLoader(String dexPath, String optimizedDirectory, String libraryPath, ClassLoader parent) {
@@ -931,6 +938,273 @@
                     this.nativeLibraryDirectories = splitLibraryPath(libraryPath);
                 }
                 ```
+    4. 热修复机制
+        1. 之前已经了解了Android类加载机制，知道在DexPathList里有个dexElements的数组源码中官方注释。热修复就是利用dexElements的顺序来做文章，当一个补丁的patch.dex放到了dexElements的第一位，那么当加载一个bug类时，发现在patch.dex中，则直接加载这个类，原来的bug类可能就被覆盖了。看下PathClassLoader代码
+            ```java
+            public class PathClassLoader extends BaseDexClassLoader {
+                public PathClassLoader(String dexPath, ClassLoader parent) {
+                    super(dexPath, null, null, parent);
+                }
+                public PathClassLoader(String dexPath, String libraryPath, ClassLoader parent) {
+                    super(dexPath, null, libraryPath, parent);
+                }
+            }
+            ```
+        2. DexClassLoader代码
+            ```java
+            public class DexClassLoader extends BaseDexClassLoader {
+                public DexClassLoader(String dexPath, String optimizedDirectory, String libraryPath, ClassLoader parent) {
+                    super(dexPath, new File(optimizedDirectory), libraryPath, parent);
+                }
+            }
+            ```
+        3. BaseDexClassLoader
+            ```java
+            public class BaseDexClassLoader extends ClassLoader {
+                private final DexPathList pathList;
+                public BaseDexClassLoader(String dexPath, File optimizedDirectory, String libraryPath, ClassLoader parent) {
+                    super(parent);
+                    this.pathList = new DexPathList(this, dexPath, libraryPath, optimizedDirectory);
+                }
+                @Override
+                protected Class<?> findClass(String name) throws ClassNotFoundException {
+                    List<Throwable> suppressedExceptions = new ArrayList<Throwable>();
+                    Class c = pathList.findClass(name, suppressedExceptions);
+                    if (c == null) {
+                        ClassNotFoundException cnfe = new ClassNotFoundException("Didn't find class \"" + name + "\" on path: " + pathList);
+                        for (Throwable t : suppressedExceptions) {
+                            cnfe.addSuppressed(t);
+                        }
+                        throw cnfe;
+                    }
+                    return c;
+                }
+                // ...
+            }
+            ```
+        4. 在BaseDexClassLoader 构造函数中创建一个DexPathList类的实例,这个DexPathList的构造函数会创建一个dexElements 数组
+            ```java
+            public DexPathList(ClassLoader definingContext, String dexPath, String libraryPath, File optimizedDirectory) {
+                // ... 
+                this.definingContext = definingContext;
+                ArrayList<IOException> suppressedExceptions = new ArrayList<IOException>();
+                // 创建一个数组
+                this.dexElements = makeDexElements(splitDexPath(dexPath), optimizedDirectory, suppressedExceptions);
+                // ... 
+            }
+            ```
+        5. 然后BaseDexClassLoader 重写了findClass方法,调用了pathList.findClass，跳到DexPathList类中.
+            ```java
+            public Class findClass(String name, List<Throwable> suppressed) {
+                for (Element element : dexElements) {
+                    // 初始化DexFile
+                    DexFile dex = element.dexFile;
+                    if (dex != null) {
+                        // 调用DexFile类的loadClassBinaryName方法返回Class实例
+                        Class clazz = dex.loadClassBinaryName(name, definingContext, suppressed);
+                        if (clazz != null) {
+                            return clazz;
+                        }
+                    }
+                }       
+                return null;
+            }
+            ```
+        6. ClassLoader会遍历这个数组,然后加载这个数组中的dex文件。而ClassLoader在加载到正确的类之后,就不会再去加载有Bug的那个类了,我们把这个正确的类放在Dex文件中,让这个Dex文件排在dexElements数组前面即可。
+        7. **CLASS_ISPREVERIFIED问题** 根据QQ空间谈到的在虚拟机启动的时候，在verify选项被打开的时候，如果static方法、private方法、构造函数等，其中的直接引用(第一层关系)到的类都在同一个dex文件中，那么该类就会被打上CLASS_ISPREVERIFIED标志，且一旦类被打上CLASS_ISPREVERIFIED标志其他dex就不能再去替换这个类。所以一定要想办法去阻止类被打上CLASS_ISPREVERIFIED标志。为了阻止类被打上CLASS_ISPREVERIFIED标志，QQ空间开发团队提出了一个方法是先将一个预备好的hack.dex加入到dexElements的第一项，让后面的dex的所有类都引用hack.dex其中的一个类，这样原来的class1.dex、class2.dex、class3.dex中的所有类都引用了hack.dex的类，所以其中的都不会打上CLASS_ISPREVERIFIED标志。
+        8. Qzon团队的[安卓App热补丁动态修复技术介绍]()(这个一定要看!!!他是热修复元老级文章,也是本文重点抄袭对象😂😂😂)
+    5. 四大热修复方案对比分析
+        1. 实现套路
+            1. 底层替换方案: 限制颇多，但时效性最好，加载轻快，立即见效。阿里系的AndFix、Sophix。
+            2. 类加载方案: 时效性差，需要重新冷启动才能见效，但修复范围广，限制少。QZone超级补丁、微信Tinker。
+        2. 分析方案对比: 虽然热修复的主要套路有两种，但是，由这两种套路延伸出来的各种不同的帮派有很多，其中闻名天下的有四大门派。QZone超级补丁、微信Tinker、阿里AndFix、美团Robust。综合他们的优劣进行对比如下。
+
+            支撑/方案 | Tinker | QZone | AndFix | Robust
+            :-|:-|:-|:-|:-
+            类替换 | yes | yes | no | no
+            So替换 | yes | no | no | no
+            资源替换 | yes | yes | no | no
+            全平台支持 | yes | yes | yes | yes
+            即时生效 | no | no | yes | yes
+            性能损耗 | 较小 | 较大 | 较小 | 较小
+            补丁包大小 | 较小 | 较大 | 一般 | 一般
+            开发透明 | yes | yes | no | no
+            复杂度 | 较低 | 较低 | 复杂 | 复杂
+            gradle支持 | yes | no | no | no
+            Rom体积 | 较大 | 较小 | 较小 | 较小
+            成功率 | 较高 | 较高 | 一般 | 最高
+        3. 总的来说
+            1. AndFix作为native解决方案，首先面临的是稳定性与兼容性问题，更重要的是它无法实现类替换，它是需要大量额外的开发成本的；
+            2. Robust兼容性与成功率较高，但是它与AndFix一样，无法新增变量与类只能用做的bugFix方案；
+            3. Qzone方案可以做到发布产品功能，但是它主要问题是插桩带来Dalvik的性能问题，以及为了解决Art下内存地址问题而导致补丁包急速增大的。
+            4. 特别是在Android N之后，由于混合编译的inline策略修改，对于市面上的各种方案都不太容易解决。而Tinker热补丁方案不仅支持类、So以及资源的替换，它还是2.X－8.X(1.9.0以上支持8.X)的全平台支持。利用Tinker我们不仅可以用做bugfix,甚至可以替代功能的发布。Tinker已运行在微信的数亿Android设备上，那么为什么你不使用Tinker呢？
+    6. Qzone热更新原理 https://www.jianshu.com/p/248e3efa2233
+        1. 超级补丁技术基于DEX分包方案，使用了多DEX加载的原理，大致的过程就是：把BUG方法修复以后，放到一个单独的DEX里，插入到dexElements数组的最前面，让虚拟机去加载修复完后的方法。当patch.dex中包含Test.class时就会优先加载，在后续的DEX中遇到Test.class的话就会直接返回而不去加载，这样就达到了修复的目的。
+        2. 但是有一个问题是，当两个调用关系的类不在同一个DEX时，就会产生异常报错。我们知道，在APK安装时，虚拟机需要将classes.dex优化成odex文件，然后才会执行。在这个过程中，会进行类的verify操作，如果调用关系的类都在同一个DEX中的话就会被打上CLASS_ISPREVERIFIED的标志，然后才会写入odex文件。所以，为了可以正常地进行打补丁修复，必须避免类被打上CLASS_ISPREVERIFIED标志，具体的做法就是单独放一个类在另外DEX中，让其他类调用。
+        3. 我们来逆向手机QQ空间APK看一下具体的实现: 先进入程序入口QZoneRealApplication，在attachBaseContext中进行了两步操作：修复CLASS_ISPREVERIFIED标志导致的unexpected DEX problem异常、加载修复的DEX。
+        4. **修复Unexpected DEX Problem异常**：可以看到，这里是要加载一个libs目录下的dalvikhack.jar。在项目的assets/libs找到该文件，解压得到’classes.dex’文件，逆向打开该DEX文件，通过不同的DEX加载进来，然后在每一个类的构造方法中引用其他DEX中的唯一类AnitLazyLoad，避免类被打上CLASS_ISPREVERIFIED标志。在无修复的情况下，将DO_VERIFY_CLASSES设置为false，以提高性能。只有在需要修复的时候，才设置为true。
+        5. **加载修复的DEX**：从loadPatchDex()方法进入，经过几次跳转，到达核心的代码段，SystemClassLoaderInjector.c()。由于进行了混淆和多次方法的跳转，于是将核心代码段做了如下整理：修复的步骤为：
+            1. 可以看出是通过获取到当前应用的Classloader，即为BaseDexClassloader
+            2. 通过反射获取到他的DexPathList属性对象pathList
+            3. 通过反射调用pathList的dexElements方法把patch.dex转化为Element[]
+            4. 两个Element[]进行合并，把patch.dex放到最前面去
+            5. 加载Element[]，达到修复目的
+        6. 整体的流程图如下：<br>![手机QQ空间超级补丁技术流程图](https://upload-images.jianshu.io/upload_images/12972541-b2ae7f760b7b5577.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/540/format/webp)
+        7. **优势**: 没有合成整包(和微信Tinker比起来)，产物比较小，比较灵活。可以实现类替换，兼容性高。(某些三星手机不起作用)
+        8. **不足**: 
+            1. 不支持即时生效，必须通过重启才能生效。
+            2. 为了实现修复这个过程，必须在应用中加入两个dex!dalvikhack.dex中只有一个类，对性能影响不大，但是对于patch.dex来说，修复的类到了一定数量，就需要花不少的时间加载。对手淘这种航母级应用来说，启动耗时增加2s以上是不能够接受的事。
+            3. 在ART模式下，如果类修改了结构，就会出现内存错乱的问题。为了解决这个问题，就必须把所有相关的调用类、父类子类等等全部加载到patch.dex中，导致补丁包异常的大，进一步增加应用启动加载的时候，耗时更加严重。
+    7. Tinker热更新原理 https://www.jianshu.com/p/076afb5cdd55
+        1. 微信针对QQ空间超级补丁技术的不足提出了一个提供DEX差量包，整体替换DEX的方案。主要的原理是与QQ空间超级补丁技术基本相同，区别在于不再将patch.dex增加到elements数组中，而是差量的方式给出patch.dex，然后将patch.dex与应用的classes.dex合并，然后整体替换掉旧的DEX文件，以达到修复的目的。
+        2. 整体的流程如下：<br>![微信Tinker流程图](https://upload-images.jianshu.io/upload_images/12972541-f2cb858b7be646e7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/540/format/webp)
+        3. **优势**：
+            1. 合成整包，不用在构造函数插入代码，防止verify，verify和opt在编译期间就已经完成，不会在运行期间进行。
+            2. 性能提高。兼容性和稳定性比较高。
+            3. 开发者透明，不需要对包进行额外处理。
+        4. **不足**：
+            1. 与超级补丁技术一样，不支持即时生效，必须通过重启应用的方式才能生效。
+            2. 需要给应用开启新的进程才能进行合并，并且很容易因为内存消耗等原因合并失败。
+            3. 合并时占用额外磁盘空间，对于多DEX的应用来说，如果修改了多个DEX文件，就需要下发多个patch.dex与对应的classes.dex进行合并操作时这种情况会更严重，因此合并过程的失败率也会更高。
+    8. AndFix热更新原理 https://www.jianshu.com/p/343fed808714
+        1. 阿里百川推出的热修复HotFix服务，相对于QQ空间超级补丁技术和微信Tinker来说，定位于紧急BUG修复的场景下，能够最及时的修复BUG，下拉补丁立即生效无需等待。<br><img src="https://upload-images.jianshu.io/upload_images/12972541-f0d54182a73637ed.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1000/format/webp" alt="HotFix与AndFix的关系"/>
+        2. AndFix实现原理：AndFix不同于QQ空间超级补丁技术和微信Tinker通过增加或替换整个DEX的方案，提供了一种运行时在Native修改Filed指针的方式，实现方法的替换，达到即时生效无需重启，对应用无性能消耗的目的。原理图如下: <br>![AndFix原理图](https://upload-images.jianshu.io/upload_images/12972541-28a13845c55a8c4f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1000/format/webp)
+        3. AndFix实现过程：对于实现方法的替换，需要在Native层操作，经过三个步骤：
+            1. setup: 打开链接库获取操作句柄，获取Native层内部函数，得到ClassObject对象。
+            2. setFieldFlag: 修改访问权限为public。
+            3. replaceMethod: 得到新旧方法的指针。新方法指向目标方法，实现方法的替换。
+        4. 接下来以Dalvik设备为例，来分析具体的实现过程：
+            1. setup: 对于Dalvik来说，遵循JIT即时编译机制，需要在运行时装载libdvm.so动态库，获取以下内部函数：
+                1. dvmThreadSelf()：查询当前的线程；
+                2. dvmDecodeIndirectRef()：根据当前线程获得ClassObject对象。
+            2. setFieldFlag: 该操作的目的：把 private、protected的方法和字段都改为public，这样才可被动态库看见并识别，因为动态库会忽略非public属性的字段和方法。
+            3. replaceMethod: 核心步骤，替换流程如下: <br>![replaceMethod流程图](https://upload-images.jianshu.io/upload_images/12972541-99a9bf7ca652c87f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1000/format/webp)
+        5. AndFix对ART设备同样支持，具体的过程与Dalvik相似，这里不再赘述。
+        6. **优点**：
+            1. BUG修复的即时性
+            2. 补丁包同样采用差量技术，生成的PATCH体积小
+            3. 对应用无侵入，几乎无性能损耗
+        7. **缺点**：
+            1. 不支持新增字段，以及修改<init\>方法，也不支持对资源的替换。
+            2. 由于厂商的自定义ROM，对少数机型暂不支持。
+    9. Robust热更新原理 https://www.jianshu.com/p/07209d40dd0c
+        1. Robust是美团点评团队在2017年3月开源的热修复框架，和阿里的AndFix不同，Robust不用依赖JNI层，直接通过Java层代码就可以实现热修复。相比于其他热修复框架，官方给出Robust的优势有以下几点
+            1. 支持Android2.3-7.X版本
+            2. 高兼容性、高稳定性，修复成功率高达三个九
+            3. 补丁下发立即生效，不需要重新启动
+            4. 支持方法级别的修复，包括静态方法
+            5. 支持增加方法和类
+            6. 支持ProGuard的混淆、内联、优化等操作
+        2. 不接触JNI层，Robust是如何添加方法与类、立即生效其补丁的呢？Robust一共分为四个模块，分别为：
+            1. autopatchbase(热补丁基类)
+            2. gradle-plugin(负责apk包的插桩)
+            3. auto-patch-plugin(负责提取制作patch包)
+            4. patch(负责补丁包的补丁工作)
+        3. **AutoPatchBase**: 作为热补丁的基类，主要类是有几个：
+            1. 2个注解分别为@Add（添加新的类）和@Modify（修改当前类的方法）；
+            2. 一个Constant类用来保存固定的字符串；
+            3. 一个ChangeQuickRedirect接口，用来给plugin确认当前类是否需要patch
+        4. **Gradle-Plugin**: 用于插桩的工具。首先进行对Apk检查防止包被篡改，然后在RobustTransform.groovy中
+            1. 执行apply(...)方法，读取项目目录下的robust.xml加载热补丁的配置
+            2. 进入transform(...)方法，依次读取bootClasspath下的所有class文件并加入ClassPool中
+            3. 进入insertRobustCode方法，然后做了以下几件微小的工作：
+                1. 将class设置为public
+                2. 当class为接口/无方法类时，执行5
+                3. 给class插入一个public static的ChangeQuickRedirect对象
+                4. 对所有方法使用Javassist插入代码：当该方法的changeQuickRedirect不为空时，直接将参数直接传入PatchProxy的accessDispatchVoid/accessDispatch方法并返回，这样做跳过了原方法后面的代码，从而实现了方5. 法的替换
+                6. 写入原来的class文件中
+                7. 打包压缩生成apk
+        5. **Auto-Patch-Plugin**: 制作patch包的工具。主要逻辑在AutoPatchTransform.groovy中，
+            1. 执行apply(…)方法，初始化参数
+            2. 跳到transform(…)中，又做了细微的工作
+                1. 复制项目中的LIB_NAME_ARRAY中的3个jar包到./robust/文件夹下(unknown why)
+                2. 读取bootClasspath路径下的class文件并转换为CtClass对象数组
+                3. 执行打包autoPatch(…)
+                    1. 首先执行ReadAnnonation(…)去读取CtClass数组中的注解，然后把注解的方法/类放在Config中保存
+                    2. 执行ReadMapping.initMappingInfo()，读取mapping.txt将被ProGuard混淆了的类的对象还原成原来的类
+                    3. 通过InlineClassFactory构造新加的类
+                    4. 处理super的方法调用
+                    5. 针对每一个有补丁方法的类，使用PatchesFactory.createPatch构造出Patch实现类
+                    6. 使用PatchesControlFactory.createPatchesControl构造PatchControl类
+                    7. 使用PatchesInfoFactory.createPatchesInfo构造PatchInfo类
+                    8. 重新打包，优化smali
+        6. **Patch**:
+            1. 在activity中，通过执行以下代码运行了补丁
+                ```java
+                new PatchExecutor(getApplicationContext(), new PatchManipulateImp(), new Callback()).start();
+                ```
+            2. PatchExecutor是一个Thread的子类，通过PatchManipulateImp指定的路径去读patch文件，然后给DexClassLoader加载并读取PatchInfo，然后通过PatchInfo中的信息获得需要补丁的类，通过反射修改其changeQuickRedirect对象的值，做到修改函数运行的路径。
+        7. **总结**
+            1. 原理图: <br>![robust原理图](https://upload-images.jianshu.io/upload_images/12972541-28b797ef08251e81.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/600/format/webp)
+            2. 当然原理看起来简单，其中还是有很多难点在其中，例如
+                1. 如何解决patch中涉及到的包访问权限
+                2. 如何解决super的问题
+                3. …
+            3. 各位对具体实现有兴趣的，可以通过解压官方demo中的补丁包，用JD-GUI来看看patch包中各种patchInfo、patchControl是如何处理的
+    10. 自己写一个Android热修复 https://www.jianshu.com/p/b65e5da3dff2
+        1. 根据原理，我们先来写一个热修复的核心类：有了上面的原理分析，这个类也肯定不会太复杂，主要用到的是Java的反射以及ClassLoader(DexClassLoader以及PathClassLoader)。
+            ```java
+            public final class HotFix {
+                private static void injectDexToClassLoader(Context context, String fixDexFilePath)  // fixDexFilePath是要修复的文件的路径
+                        throws ClassNotFoundException, NoSuchFieldException, IllegalAccessException {
+                    //读取 baseElements
+                    PathClassLoader pathClassLoader = (PathClassLoader) context.getClassLoader();
+                    Object basePathList = getPathList(pathClassLoader);
+                    Object baseElements = getDexElements(basePathList);
+                    //读取 fixElements
+                    String baseDexAbsolutePath = context.getDir("dex", 0).getAbsolutePath();
+                    DexClassLoader fixDexClassLoader = new DexClassLoader(
+                            fixDexFilePath, baseDexAbsolutePath, fixDexFilePath, context.getClassLoader());
+                    Object fixPathList = getPathList(fixDexClassLoader);
+                    Object fixElements = getDexElements(fixPathList);
+                    //合并两份Elements
+                    Object newElements = combineArray(baseElements, fixElements);
+                    //一定要重新获取，不要用basePathList，会报错
+                    Object basePathList2 = getPathList(pathClassLoader);
+                    //新的dexElements对象重新设置回去
+                    setField(basePathList2, basePathList2.getClass(), "dexElements", newElements);
+                }
+                private static Object getPathList(Object obj) throws ClassNotFoundException, NoSuchFieldException, IllegalAccessException {
+                    return getField(obj, Class.forName("dalvik.system.BaseDexClassLoader"), "pathList");
+                }
+                private static Object getDexElements(Object obj) throws NoSuchFieldException, IllegalAccessException {
+                    return getField(obj, obj.getClass(), "dexElements");
+                }
+                private static Object getField(Object obj, Class cls, String str) throws NoSuchFieldException, IllegalAccessException {
+                    Field declaredField = cls.getDeclaredField(str);
+                    declaredField.setAccessible(true);
+                    return declaredField.get(obj);
+                }
+                private static void setField(Object obj, Class cls, String str, Object obj2) throws NoSuchFieldException, IllegalAccessException {
+                    Field declaredField = cls.getDeclaredField(str);
+                    declaredField.setAccessible(true);
+                    declaredField.set(obj, obj2);
+                }
+                private static Object combineArray(Object baseElements, Object fixElements) {
+                    // 合拼dexElements ,并确保 fixElements 在 baseElements 之前
+                    Class componentType = fixElements.getClass().getComponentType();
+                    int length = Array.getLength(fixElements);
+                    int length2 = Array.getLength(baseElements) + length;
+                    Object newInstance = Array.newInstance(componentType, length2);
+                    for (int i = 0; i < length2; i++) {
+                        if (i < length) {
+                            Array.set(newInstance, i, Array.get(fixElements, i));
+                        } else {
+                            Array.set(newInstance, i, Array.get(baseElements, i - length));
+                        }
+                    }
+                    return newInstance;
+                }
+            }
+            ```
+        2. 
+        3. 
+        4. 
+        5. 
+    11. links:
+        * [Android学习——手把手教你实现Android热修复](https://blog.csdn.net/u013132758/article/details/80954639) finished
+        * [Android热修复手动实现](https://blog.csdn.net/Small_Lee/article/details/80770450)
+2. 
 3. 
 
 ## Android 自定义View
@@ -992,7 +1266,7 @@
                 0. fontFamily
             3. text1:
                 0. editable | enable | lastBaselineToBottomHeight | inputType | marqueenRepeatLimit | maxEms | minEms | maxLength
-                1. **digits**(设置允许输入哪些字符，如“1234567890.+-*/% ()”)
+                1. **digits**(设置允许输入哪些字符，如"1234567890.+-*/% ()")
                 2. **editorExtras**(设置文本的额外的输入数据)
                 3. **ellipsize**(start(省略号位置)/end/middle/marquee(跑马灯) 当文字过长时,该控件该如何显示)
                 4. **ems**(将对应的控件宽度设为指定个数字符的宽度)
@@ -1003,7 +1277,7 @@
                 0. hint | text | textColor | textColorHint | textColorLink | textSize | textStyle | textCursorDrawable | textIsSelectable | textScaleX
                 1. **freezesText**(设置保存文本的内容以及光标的位置)
                 2. **numeric**(如果被设置，该TextView有一个数字输入法。此处无用，设置后唯一效果是TextView有点击效果)
-                3. **password**(以小点”.”显示文本)
+                3. **password**(以小点"."显示文本)
                 4. **phoneNumber**(设置为电话号码的输入方式)
                 5. **selectAllOnFocus**(如果文本是可选择的，让他获取焦点而不是将光标移动为文本的开始位置或者末尾位置。 TextView中设置后无效果)
                 6. **textColorHighlight**(被选中文字的底色，默认为蓝色)
