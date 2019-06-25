@@ -2742,3 +2742,341 @@
 * [Android Jenkins+Git+Gradle持续集成-实在太详细](https://www.jianshu.com/p/38b2e17ced73)
 * [（2.2.11.1）Android全新CI平台——Jenkins构建入门](https://blog.csdn.net/fei20121106/article/details/73810802)
 * [android版本列表](https://zh.wikipedia.org/wiki/Android%E7%89%88%E6%9C%AC%E5%88%97%E8%A1%A8)
+
+## Android KLog
+
+1. Environment类是一个提供访问环境变量的类。
+    1. **getExternalStorageState()**: 返回String 获取外部存储设备的当前状态。返回值如下表
+		1. Environment.MEDIA_BAD_REMOVAL : 表明 SDCard 被卸载前己被移除 
+		2. Environment.MEDIA_CHECKING : 表明对象正在磁盘检查。 
+		3. Environment.MEDIA_MOUNTED : 表明对象是否存在并具有读/写权限 
+		4. Environment.MEDIA_MOUNTED_READ_ONLY : 表明对象权限为只读 
+		5. Environment.MEDIA_NOFS : 表明对象为空白或正在使用不受支持的文件系统。
+		6. Environment.MEDIA_SHARED : 如果 SDCard 未安装 ，并通过 USB 大容量存储共享
+		7. Environment.MEDIA_UNMOUNTABLE : SDCard 不可被安装 如果 SDCard 是存在但不可以被安装
+		8. Environment.MEDIA_UNMOUNTED : SDCard 已卸掉如果 SDCard 是存在但是没有被安装 
+		9. Environment.MEDIA_REMOVED : 不存在 SDCard
+    2. **getExternalStoragePublicDirectory(String type)**: 返回 File ，获取一个公用的外部存储器目录（标准目录）来摆放某些类型的文件 。参数type值如下：
+        1. Environment.DIRECTORY_MUSIC : 音乐存放  
+		2. Environment.DIRECTORY_PODCASTS : 系统广播
+		3. Environment.DIRECTORY_RINGTONES : 系统铃声
+		4. Environment.DIRECTORY_ALARMS : 系统提醒铃声
+		5. Environment.DIRECTORY_NOTIFICATIONS : 系统通知铃声
+		6. Environment.DIRECTORY_PICTURES : 图片存放
+		7. Environment.DIRECTORY_MOVIES : 电影存放
+		8. Environment.DIRECTORY_DOWNLOADS : 下载
+		9. Environment.DIRECTORY_DCIM : 相机拍摄照片和视频
+    3. **getDataDirectory()**: 返回 File ，获取 Android 数据目录。即data的目录 (/data) 
+    4. **getDownloadCacheDirectory()**: 返回 File ，获取 Android 下载/缓存内容目录。即 (/cache)
+    5. **getExternalStorageDirectory()**:返回 File ，获取外部存储目录即 SDCard (/storage/sdcard)
+    6. **getRootDirectory()**: 返回 File ，获取 Android 的根目录 即系统主目录 (/system)
+2. java.text.SimpleDateFormat: 它允许格式化（日期→文本），解析（文本→日期）和规范化。
+    1. pattern
+        | Letter | Date or Time Component                           | Presentation       | Examples                                    |
+        | ------ | ------------------------------------------------ | ------------------ | ------------------------------------------- |
+        | `G`    | Era designator                                   | Text               | `AD`                                        |
+        | `y`    | Year                                             | Year               | `1996`; `96`                                |
+        | `Y`    | Week year                                        | Year               | `2009`; `09`                                |
+        | `M`    | Month in year (context sensitive)                | Month              | `July`; `Jul`; `07`                         |
+        | `L`    | Month in year (standalone form)                  | Month              | `July`; `Jul`; `07`                         |
+        | `w`    | Week in year                                     | Number             | `27`                                        |
+        | `W`    | Week in month                                    | Number             | `2`                                         |
+        | `D`    | Day in year                                      | Number             | `189`                                       |
+        | `d`    | Day in month                                     | Number             | `10`                                        |
+        | `F`    | Day of week in month                             | Number             | `2`                                         |
+        | `E`    | Day name in week                                 | Text               | `Tuesday`; `Tue`                            |
+        | `u`    | Day number of week (1 = Monday, ..., 7 = Sunday) | Number             | `1`                                         |
+        | `a`    | Am/pm marker                                     | Text               | `PM`                                        |
+        | `H`    | Hour in day (0-23)                               | Number             | `0`                                         |
+        | `k`    | Hour in day (1-24)                               | Number             | `24`                                        |
+        | `K`    | Hour in am/pm (0-11)                             | Number             | `0`                                         |
+        | `h`    | Hour in am/pm (1-12)                             | Number             | `12`                                        |
+        | `m`    | Minute in hour                                   | Number             | `30`                                        |
+        | `s`    | Second in minute                                 | Number             | `55`                                        |
+        | `S`    | Millisecond                                      | Number             | `978`                                       |
+        | `z`    | Time zone                                        | General time zone  | `Pacific Standard Time`; `PST`; `GMT-08:00` |
+        | `Z`    | Time zone                                        | RFC 822 time zone  | `-0800`                                     |
+        | `X`    | Time zone                                        | ISO 8601 time zone | `-08`; `-0800`; `-08:00`                    |
+    2. getDateTimeInstance / getTimeInstance / getDateInstance
+    3. examples
+        | Date and Time Pattern            | Result                                 |
+        | -------------------------------- | -------------------------------------- |
+        | `"yyyy.MM.dd G 'at' HH:mm:ss z"` | `2001.07.04 AD at 12:08:56 PDT`        |
+        | `"EEE, MMM d, ''yy"`             | `Wed, Jul 4, '01`                      |
+        | `"h:mm a"`                       | `12:08 PM`                             |
+        | `"hh 'o''clock' a, zzzz"`        | `12 o'clock PM, Pacific Daylight Time` |
+        | `"K:mm a, z"`                    | `0:08 PM, PDT`                         |
+        | `"yyyyy.MMMMM.dd GGG hh:mm aaa"` | `02001.July.04 AD 12:08 PM`            |
+        | `"EEE, d MMM yyyy HH:mm:ss Z"`   | `Wed, 4 Jul 2001 12:08:56 -0700`       |
+        | `"yyMMddHHmmssZ"`                | `010704120856-0700`                    |
+        | `"yyyy-MM-dd'T'HH:mm:ss.SSSZ"`   | `2001-07-04T12:08:56.235-0700`         |
+        | `"yyyy-MM-dd'T'HH:mm:ss.SSSXXX"` | `2001-07-04T12:08:56.235-07:00`        |
+        | `"YYYY-'W'ww-u"`                 | `2001-W27-3`                           |
+    4. 
+10. Log: 定义了 LogImpl 接口与日志等级，内部有默认实现的LogImpl的实例，有方法可以控制日志等级以及打印日志，还可以获取系统信息。
+    1. 字段
+        1. private static final String TAG = "mars.xlog.log";
+        2. log level
+            * public static final int LEVEL_VERBOSE = 0;
+            * public static final int LEVEL_DEBUG = 1;
+            * public static final int LEVEL_INFO = 2;
+            * public static final int LEVEL_WARNING = 3;
+            * public static final int LEVEL_ERROR = 4;
+            * public static final int LEVEL_FATAL = 5;
+            * public static final int LEVEL_NONE = 6;
+        3. private static int level = LEVEL_NONE;  // 默认日志等级
+        4. public static Context toastSupportContext = null;
+        5. private static LogImp logImp = debugLog;  // 默认LogImp
+        6. private static final String SYS_INFO;  // 系统信息，有一个static块用于初始化它
+    2. 内部接口 public interface LogImp
+        * void logV(String tag, String filename, String funcname, int line, int pid, long tid, long maintid, String log);
+        * void logI(String tag, String filename, String funcname, int line, int pid, long tid, long maintid, String log);
+        * void logD(String tag, String filename, String funcname, int line, int pid, long tid, long maintid, String log);
+        * void logW(String tag, String filename, String funcname, int line, int pid, long tid, long maintid, String log);
+        * void logE(String tag, String filename, String funcname, int line, int pid, long tid, long maintid, String log);
+        * void logF(String tag, String filename, String funcname, int line, int pid, long tid, long maintid, String log);
+        * int getLogLevel();
+        * void appenderClose();  // ???
+        * void appenderFlush(boolean isSync);  // ???
+    3. 内部实现类实例 private static LogImp debugLog = new LogImp() { ... }
+        * private Handler handler = new Handler(Looper.getMainLooper());
+        * LogImp的实现中是使用android.util.Log来打印 tag 和 log 的。
+    4. 方法
+        1. setLogImp / getImpl
+        2. appenderClose / appenderFlush  // ???
+        3. getLogLevel / setLevel
+        4. 打印1: 调用对应的打印2中的方法
+            * public static void v(final String tag, final String msg)
+            * public static void d(final String tag, final String msg)
+            * public static void i(final String tag, final String msg)
+            * public static void w(final String tag, final String msg)
+            * public static void e(final String tag, final String msg)
+            * public static void f(final String tag, final String msg)
+        5. 打印2: 调用logImp的logXXX方法
+            * public static void v(String tag, final String format, final Object... obj)
+            * public static void d(String tag, final String format, final Object... obj)
+            * public static void i(String tag, final String format, final Object... obj)
+            * public static void w(String tag, final String format, final Object... obj)
+            * public static void e(String tag, final String format, final Object... obj)
+            * public static void f(String tag, final String format, final Object... obj)
+        6. public static void printErrStackTrace(String tag, Throwable tr, final String format, final Object... obj)
+        7. private static final String SYS_INFO;
+11. XLog implements Log.LogImpl: native层实现的Log.LogImpl，被 KLog 与 XLogProxy 使用。
+    1. 字段
+        1. 日志等级
+            * public static final int LEVEL_ALL = 0;
+            * public static final int LEVEL_VERBOSE = 0;
+            * public static final int LEVEL_DEBUG = 1;
+            * public static final int LEVEL_INFO = 2;
+            * public static final int LEVEL_WARNING = 3;
+            * public static final int LEVEL_ERROR = 4;
+            * public static final int LEVEL_FATAL = 5;
+            * public static final int LEVEL_NONE = 6;
+        2. AppednerMode
+            * public static final int AppednerModeAsync = 0;
+	        * public static final int AppednerModeSync = 1;
+    2. 内部类 static class XLoggerInfo
+		* public int level;
+		* public String tag;
+		* public String filename;
+		* public String funcname;
+		* public int line;
+		* public long pid;
+		* public long tid;
+		* public long maintid;
+    3. 方法
+        1. public static void open(boolean isLoadLib, int level, int mode, String cacheDir, String logDir, String nameprefix)  // System.loadLibrary("marsxlog");
+        2. private static String decryptTag(String tag)  // ???
+        3. 使用 native 层方法 logWrite2 实现的日志打印
+            * public void logV(String tag, String filename, String funcname, int line, int pid, long tid, long maintid, String log)
+            * public void logD(String tag, String filename, String funcname, int line, int pid, long tid, long maintid, String log)
+            * public void logI(String tag, String filename, String funcname, int line, int pid, long tid, long maintid, String log)
+            * public void logW(String tag, String filename, String funcname, int line, int pid, long tid, long maintid, String log)
+            * public void logE(String tag, String filename, String funcname, int line, int pid, long tid, long maintid, String log)
+            * public void logF(String tag, String filename, String funcname, int line, int pid, long tid, long maintid, String log)
+    4. native:
+        * public native int getLogLevel();
+        * public static native void setLogLevel(int logLevel);
+        * public static native void setAppenderMode(int mode);
+        * public static native void setConsoleLogOpen(boolean isOpen);
+        * public static native void setErrLogOpen(boolean isOpen);
+        * public static native void appenderOpen(int level, int mode, String cacheDir, String logDir, String nameprefix);
+        * public native void appenderClose();
+        * public native void appenderFlush(boolean isSync);
+        * public static native void logWrite(XLoggerInfo logInfo, String log);
+        * public static native void logWrite2(int level, String tag, String filename, String funcname, int line, int pid, long tid, long maintid, String log);
+12. KLog: 综合日志类，可以打印日志以及写入日志文件
+    1. 字段
+        1. public static int LOG_LEVEL = Log.INFO;
+        2. public static String TAG = "kiwi";
+        3. private static final String DEBUG_TAG = "ARK_DEBUG";
+        4. public static boolean sLineNumEnabled = false;  // 是否带行号
+        5. public static int sPid = 0;  // 本进程pid
+        6. public static boolean isStoreExist = Environment.getExternalStorageState().equalsIgnoreCase(Environment.MEDIA_MOUNTED);  // 表明外部存储设备是否存在并具有读/写权限
+        7. private static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm:ss.SSS");  // 时时:分分:秒秒.毫秒x3
+        8. 超时限制
+            * public static long sPauseDelay = Long.MAX_VALUE;  // 最长暂停时间
+            * private static volatile int pauseLogState = 0;  // 暂停日志的开关,支持重入,不支持多线程。值>=0
+            * private static long sPauseStartedTime = 0;  // 开始暂停时间
+        9. public static boolean mLogEnable = true;  // 是否允许打印日志
+        10. private static long msMaxWait = 3000;  // 
+    2. 方法
+        1. private
+            * nativeLogLevel(int level)
+            * static void doLog(final int logLevel, Object tag, final String message, final Throwable t, boolean needStackTrace)
+            * static String getLogInfo(Object tag, String message, Throwable t)
+            * static String objClassName(Object obj)
+            * static String getLogInfo(Object tag, String message, Throwable t, boolean needStackTrace)
+            * static String msgForTextLog(Object tag, String filename, int line, String msg, Throwable t, boolean needStackTrace)
+            * static void logByLevel(final int logLevel, final String msg)  // 被 logEmptyMsg 和 doLog 使用
+            * static void logByLevel(final LogInfo info)  // 被 flushToDisk 和 doLog 使用
+        2. setTag
+        3. setIsStorageExist
+        4. isLogEnable / setLogEnable
+        5. setLogLevel / getLogLevel / isLogLevelEnabled(int logLevel)
+        6. setSysLogEnabled
+        7. public static void pause()  // 暂停打印日志，暂存到缓存中 && public static void resume()  // 恢复打印日志。恢复写入等操作
+        8. 日志打印/写入
+            * public static void verbose(String msg)  // verbose / debug / info / warning / error / fatal
+            * public static void verbose(Object tag, String format)
+            * public static void verbose(Object tag, String format, Object... args)
+            * public static void verbose(Object tag, String message, Throwable t)
+            * public static void verbose(Object tag, Throwable t)
+            * public static void log(int logLevel, Object tag, String message, Throwable t, boolean needStackTrace)
+            * public static void uncaughtException(Throwable t)
+        9. public static void flushToDisk()
+        10. public static void logEmptyMsg()  // app启动时触发一下xlog初始化
+13. LogProxy: 代理类，被 KLog 使用
+    1. 内部接口与类
+        1. interface Logger
+            * void logByLevel(int type, String msg, String TAG, String fileName);
+        2. static class XLogger implements Logger
+            * logByLevel  // 内部调用了 XLogProxy.logByLevel ，而 XLogProxy 内部是调用了 XLog 。
+    2. 字段
+        1. public static boolean sIsSnapshot = false;
+        2. private static Logger mLog = new XLogger();
+        3. private static final Handler mLogHandler;  // 默认的handler，是一个HandlerThread的
+        4. private static Handler sDispatcherHandler;
+        5. private static Queue<LogInfo> sLogCacheQueue = new LinkedList<>();
+    3. 方法
+        1. public static: 初始化与设置/获取日志路径/文件名
+            * void init(boolean mainProcess, String processName)
+            * void resetRoot(File root)  // XLogProxy 与 LogToES 相关
+            * void resetLogPath(String path)  // XLogProxy 与 LogToES 相关
+            * void resetLogName(String name)  // XLogProxy 相关
+            * void setSysLogEnabled(boolean b)  // XLogProxy 相关
+            * String getLogPath()  // XLogProxy 相关
+            * String getLogName()  // XLogProxy 相关
+            * File getRoot()  // XLogProxy 相关
+            * String getFullLogName()  // XLogProxy 相关
+            * String getLastLogName()  // XLogProxy 相关
+            * String getFullUELogName()  // LogToES 相关
+            * String getUELogName()  // LogToES 相关
+            * String[] getFullLogNames(int logCount)  // XLogProxy 与 LogToES 相关
+            * String[] getFullLogNamesByTime(long logBeginTime, long logEndTime)
+            * List<File> getRenamedLogFiles()
+            * List<File> getRenamedXLogFiles()
+            * List<File> getRenamedNonXLogFiles()
+        2. public static Handler getDispatcher()
+        3. public static void offer(LogInfo log) / public static LogInfo poll() / public static boolean isCacheEmpty()  // 与 sLogCacheQueue 相关
+        4. public static void flushToDisk()  // XLogProxy 相关
+        5. private static List<File> getFiles(String folderDir, FilenameFilter filenameFilter)
+        6. public static void close()  // XLogProxy 相关
+        7. static void logByLevel(int type, String msg, String TAG, String fileName)  // 调用 mLog(->XLogger.logByLevel->XLogProxy.logByLevel->XLog.xxx) 的 logByLevel() 方法
+        8. static void uncaughtException(String msg, String TAG, String fileName) throws IOException  // 调用 LogToES 的 writeLogToFileReal 方法
+14. XLogProxy: 代理类，调用了XLog作为Native层，被 LogProxy 使用
+    1. 字段
+        1. public static int MAX_FILE_SIZE = 4;  // MB
+        2. private static final
+            * int MAX_ONCE_DELETE_FILE_COUNT = 10;  // 每次最多可以删除MAX_ONCE_DELETE_FILE_COUNT个重命名的xlog文件
+            * int DELETE_SCHEDULE_DELAY = 5000;  // 如果有超过MAX_ONCE_DELETE_FILE_COUNT个重命名的xlog文件，文件将分成组，每DELETE_SCHEDULE_DELAY ms删除一个组 
+            * int SNAPSHOT_MIN_KEEP_COUNT = 20;  // 最少在kiwi/logs/中保存的日志数量
+            * int NONSNAPSHOT_MIN_KEEP_COUNT = 3;
+            * int SNAPSHOT_DELETE_FILE_THRESHOLD = 30;  // 触发删除的阈值
+            * int NONSNAPSHOT_DELETE_FILE_THRESHOLD = 10;
+            * String XLOG = ".xlog";
+        3. private static int currentRenamedFileCount = 0;
+        4. public static File sRootDir;
+        5. 一些相关设置  // rewrite in App
+            * public static String sLogPath = "/kiwi/logs";
+            * public static String LOG_NAME = "logs";
+            * public static String LOG_PATH = LOG_NAME + XLOG;
+            * public static String LAST_LOG_NAME = "logs-last";
+            * public static String LAST_LOG_PATH = LAST_LOG_NAME + XLOG;
+            * public static boolean sysLogEnabled = true;
+            * public static Handler mHandler = null;
+        6. private static long msMaxWait = 3000;
+        7. private static final int msMaxCount = 4000;  // 当日志长度超过4k时，Xlog将丢弃日志，因此我们需要拆分日志。
+        8. private volatile static String mCurrentLog = null;
+        9. private volatile static boolean isFilesDeleting = false;
+    2. 方法
+        1. private
+            * static void switchOutputFile(String file)
+            * static void renameFileIfNeed()  // make sure logs.xlog is less than 3MB
+            * static void renameReal(File file)
+            * static void deleteOldFileIfNeed()  // 如果是 Snapshot 版本：删除后，只保留20个oldRenameXLog文件；如果是 非Snapshot 版本：删除后，只保留3个oldRenameXLog文件
+            * static void closeIfNeed()
+            * static boolean isOverThreshold()
+        2. static void loadLibrary()  // 三次尝试加载库(stlport_shared / marsxlog)
+        3. static void logByLevel(final int type, final String msg, final String TAG, final String fileName)
+        4. static void logByLevelReal(int type, String msg, String TAG)
+        5. public static boolean copyFile(String inFileName, String outFileName)
+        6. public static void flushToDisk()
+        7. public static void close()
+15. LogToES: 将日志写入文件，可以控制路径和文件名，被 LogProxy 使用，现在相当于被抛弃了，应该使用 XLogProxy 的
+    1. 字段
+        1. public static final int MAX_FILE_SIZE = 2;  // M bytes
+        2. 文件路径  // can overwrite this path by ark.config(ark.common.path)
+            * public static File sRootDir;
+            * public static String sLogPath = "/kiwi/logs";
+            * public static final String UE_LOG_NAME = "uncaught_exception.txt";
+        3. public static Handler mLogHandler;
+        4. private
+            * static final SimpleDateFormat LOG_FORMAT = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss.SSS");
+            * static final long DAY_DELAY = 5 * 24 * 60 * 60 * 1000;
+    2. 方法
+        1. private
+            * private synchronized static void writeLogToFileReal(String path, String fileName, String msg, Date date, boolean immediately) throws IOException
+            * static void deleteOldLogs()
+        2. public synchronized static void writeLogToFileReal(String path, String fileName, String msg) throws IOException  // 调用了 private 的 writeLogToFileReal
+        3. public static File getRootDir()
+16. LogInfo: 日志信息结构，被 KLog 和 LogProxy 引用
+    1. String msg;
+    2. int logLevel;
+17. LogFileWriter: 有缓存机制的日志文件写入器，被 LogToES 使用
+    1. 内部类
+        1. private static class Buffer
+            * public final StringBuilder buffer;
+            * public int current = 0;
+    2. 字段
+        1. private static Map<String, Buffer> mBuffer = new HashMap<>();
+        2. protected static int mBufferCount = 15;
+        3. private String mFileName;
+    3. 方法
+        1. public LogFileWriter(String file)  // 将file加入mBuffer
+        2. public void write(StringBuffer msg) throws IOException
+        3. public void write(String msg) throws IOException
+        4. public void flush() throws IOException
+        5. private static void flush(String name) throws IOException
+        6. public static void flushAll() throws IOException
+18. RenamedLogFilenameFilter implements FilenameFilter: 用于过滤日志名称(符合固定长度、开头、结尾)，找到对应的日志，如XLog和非XLog日志，被 LogProxy 使用
+    1. 字段
+        1. private String startLable = null;
+        2. private String endLable = null;
+        3. private int length = 0;
+    2. 方法
+        1. public boolean accept(File dir, String name)
+        2. setLength / setEndLable / setStartLable
+19. public class LogFileComparator implements Comparator<File>: 文件名比较器，被使用在 LogProxy 和 XLogProxy 中
+    1. 字段
+        * public static final int ASC_SORT_BY_LAST_MODIFIED_TIME = 0;  // 顺序
+        * public static final int DESC_SORT_BY_LAST_MODIFIED_TIME = 1;  // 逆序
+    2. 方法
+        1. compare
+20. Tags: 被 KLog 使用
+    1. public final Object[] mTags;
+    2. public Tags(Object... tags)
+    3. toString
+
+## Android buildSrc
+

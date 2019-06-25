@@ -71,6 +71,9 @@ Android源码设计模式解析与实战.pdf
 [Android - 收藏集](https://www.jianshu.com/p/dad51f6c9c4d?utm_campaign=maleskine&utm_content=note&utm_medium=seo_notes&utm_source=recommendation)<br>
 [恺风（Wei）之Android专栏](https://blog.csdn.net/flowingflying/article/details/6212512)<br>
 [Android最全开发资源](https://www.jianshu.com/p/0c36302e0ed0)<br>
+[[Android]如何做一个崩溃率少于千分之三噶应用app--章节列表](https://www.jianshu.com/p/94a05b996d78)<br>
+[Android热更新系列](https://www.jianshu.com/nb/35349338)<br>
+[[Android]你不知道的Android进程化(1)--进程信息](https://xiaozhuanlan.com/topic/3105679428)<br>
 <br>
 [Groovy脚本基础全攻略](https://www.cnblogs.com/chenxibobo/p/6402768.html)<br>
 [Groovy官方](http://www.groovy-lang.org/documentation.html)<br>
