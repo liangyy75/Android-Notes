@@ -3080,3 +3080,38 @@
 
 ## Android buildSrc
 
+## Android firstpublish
+
+1. public class FirstPublishPlugin implements Plugin<Project>: 主要就是调用了 Repack
+    1. void apply(Project project)
+    2. private static void generateFirstPublishApk(Project project)
+2. class Repack
+    1. private static String findLogoPath(File unzipDir)
+    2. private static void replaceLogo(String tempPath, String channelName)
+    3. static void copyFile(String name, String destPath) throws IOException
+    4. private static final int BUFFER = 8192
+    5. private static void zipFile(String tempOutDir, File resFile, ZipOutputStream zipout, String rootpath, HashMap<String, Integer> compressData) throws IOException
+    6. static void zipFiles(String tempOutDir, Collection<File> resFileList, File zipFileOutput, HashMap<String, Integer> compressData) throws IOException
+    7. private static String getSignPropertiesFile()
+    8. private static void signApk(String dir, String baseFileName)
+    9. private static byte[] readContents(final File file) throws IOException
+    10. private static void zipFirstPublishApk(String srcDir, String targetFilePath, String baseFileName)
+    11. private static void zipAlignFirstPublishApk(String dir, String baseFileName)
+    12. static void generateFirstPublishApk(Project project)
+    13. private static void _generateFirstPublishApk(String apkSrcfilePath, String channelName)
+    14. static HashMap<String, Integer> unZipAPk(String fileName, String filePath) throws IOException
+    15. private static String getZipAlignPath()
+    16. private static void packerNg(String dir, String baseFileName, String channelName)
+3. public class FirstPublishPacker
+    1. main
+
+## Android dexknife
+
+## Android build-timer
+
+## Android hysignal
+
+## Android AndroidShell
+
+public static CommandResult run(@NonNull String shell, @NonNull String... commands)
+public static CommandResult run(@NonNull String shell, @NonNull String[] commands, @Nullable String[] env)
