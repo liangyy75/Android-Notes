@@ -8,7 +8,173 @@
 
 ## Kotlin
 
-
+0. links
+    * [Kotlin 知识梳理(1) - Kotlin 基础](https://www.jianshu.com/p/f9e78d6c54bd)
+    * [Kotlin学习资料汇总(持续更新...)](https://juejin.im/post/5aa64556f265da238c3a51d3)
+    * [语法基础——Kotlin语法基础](https://blog.csdn.net/qq_30379689/article/details/81984443) finished
+    * [Kotlin 易百](https://www.yiibai.com/kotlin)
+1. 基础
+    1. 基础
+        1. 主函数
+            ```kt
+            fun main(args: Array<String>) {
+                println("Hello World")
+            }
+            ```
+        2. 可以省略分号
+        3. val声明时可以不带类型，因为有自动类型转换
+        4. 注释
+            1. 单行: //
+            2. 多行: /**/，而且支持嵌套
+    2. 变量
+        1. 常量: val修饰常量，编译器规定常量必须初始化，若不想初始化，可用by lazy{}对常量进行懒加载
+            ```kt
+            val a: Int = 1                     // 强类型常量
+            val b = 2                          // 弱类型常量
+            const val c = "Hello"              // 编译器常量
+            val a: String by lazy{"lazy init"} // 懒加载常量
+            ```
+        2. 变量: var修饰变量，编译器规定变量必须初始化，若不想初始化，可用lateinit关键字限制报错。注意，这是2018的版本，现在这个lateinit好像不行。
+            ```kt
+            lateinit var a                       // 未初始化变量
+            var x = 5                            // 初始化变量
+            var x1 = "x is $x"                   // 获取变量的值：$变量 
+            var x2 = "${x1.replace("is","was")}" // 内嵌表达式：${表达式}
+            var str = """<html>
+                    <a href="">go</a>
+                </html>"""                       // 段落
+            ```
+        3. 空值检测
+            ```kt
+            fun main(args: Array<String>) {
+                println(args?.size)                //if not null
+                println(args?.size ?: "empty")     //if not null and else
+                val value = "str"
+                println(value.firstOrNull() ?: "")  //if not null and get first
+                val a : Int = 1
+                val b : Int = 2
+                val values : Map<String, String> = HashMap<String, String>()
+                values.plus(Pair<String, String>("key", "value"))
+                println(values["key"] ?: a + b)     //if not null and else + 表达式
+                value?.let{ }                       //if not null + 代码块
+                value!!.let{ }                      //告诉编译器不需要判空
+            }
+            ```
+        4. 字符串比较
+            * ==：在kt中相当于java的equals()
+            * ===：在kt中相当于java的==
+    3. 数组
+        1. 定义
+            ```kt
+            // 每种基本类型都有对应的数组创建方法，类似于定制版
+            var array:IntArray = intArrayOf(1,3,5,7)
+            var array:CharArray = charArrayOf('H','E','L','L','O')
+            // 基于泛性的创建方法，泛型也可省略，类似于通用版
+            var array:Array<Char> = arrayOf('H','E','L','L','O')
+            ```
+        2. 数组和字符串转换
+            ```kt
+            // 第一种形式
+            var array:Array<Char> = arrayOf('H','E','L','L','O')
+            println(array.joinToString(""))
+            // 第二种形式
+            var array:CharArray = charArrayOf('H','E','L','L','O')
+            println(String(array))
+            ```
+        3. 数组遍历
+            ```kt
+            // 第一种形式
+            array.forEach{println(": $it")}
+            // 第二种形式
+            // array.forEach{::println}  // error: overload resolution ambiguity
+            // 第三种形式
+            for((index,value) in array.withIndex()){
+                println("$index -> $value")
+            }
+            ```
+    4. 函数
+        1. 有返回值的函数
+            ```kt
+            //第一种形式
+            fun sum1(a: Int, b: Int): Int {return a + b}
+            //第二种形式
+            fun sum2(a: Int, b: Int) = println("a + b = ${a + b}")  // return 不允许出现在 = 的函数中
+            //第三种形式
+            fun sum3(a: Int, b: Int) = a + b
+            fun main(args: Array<String>) {
+                println(sum1(10, 20))
+                println(sum2(10, 20))
+                println(sum3(10, 20))
+            }
+            ```
+        2. 无返回值的函数
+            ```kt
+            fun printSum(a: Int, b: Int): Unit { /**/ }
+            fun printSum(a: Int, b: Int) { /**/ }  // 只要里面没有return就是Uint了，相当于java的void
+            ```
+        3. 默认参数的函数
+            ```kt
+            fun foo(a: Int = 0, b: String = "") { /**/ }
+            ```
+        4. 变长参数的函数: 变长参数由vararg关键字决定，数组参数可通过*方式传参，第一个参数可以不使用名字指定，最后个参数必须使用具名参数
+            ```kt
+            fun say(double: Double, vararg ints: Int, string: String) { /**/ }
+            val array = intArrayOf(1, 3, 4, 5)
+            say(2.0, *array, string = "Hi")
+            ```
+        5. 扩展函数: 你可以给父类添加一个方法，这个方法将可以在所有子类中使用
+            ```kt
+            fun Activity.toast(message: CharSequence, duration: Int = Toast.LENGTH_SHORT) {
+                Toast.makeText(this, message, duration).show()
+            }
+            ```
+        6. 智能类型推测: 判断一个对象是否为一个类的实例，可以使用is关键字与Java中的instanceof关键字类似，但在Kotlin中如果已经确定了一个对象的类型，可以在接下来的代码块中直接作为这个确定类型使用
+            ```kt
+            fun getStringLength(obj: Any): Int? {
+                if (obj is String) { return obj.length }   // 类型判断后，obj会被系统自动转换为String类型
+                if (obj !is String) {  }                    // 同时还可以使用!is，来取反
+                return null                              // 代码块外部的obj仍然是Any类型的引用
+            }
+            ```
+        7. 复合函数
+            ```kt
+            infix fun <P1, P2, R> Function1<P1, P2>.andThen(function: Function1<P2, R>): Function1<P1, R>{
+                return fun(p1: P1): R{
+                    return function.invoke(this.invoke(p1))
+                }
+            }
+            var add = {i: Int -> i + 5}
+            var plus = {i: Int -> i * 2}
+            var addAndPlus = add andThen plus
+            println(addAndPlus(8))  // (8 + 5) * 2 = 26
+            ```
+        8. 函数的科理化: 指的是函数中传递的多个参数可转换为多个函数来进行链接
+            ```kt
+            //科理化前的函数
+            fun log(tag: String, target: OutputStream, message: Any?){
+                target.write("$tag $message\n".toByteArray())
+            }
+            log("Hensen",System.out,"HelloWorld")
+            //科理化后的函数
+            fun log(tag: String)
+                = fun(target: OutputStream)
+                = fun(message: Any?)
+                = target.write("$tag $message\n".toByteArray())
+            log("Hensen")(System.out)("HelloWorld")
+            ```
+    5. lambda表达式
+    6. 表达式
+    7. 闭包
+    8. 运算符
+    9. 区间语句
+    10. 集合
+    11. 映射
+    12. 构造方法
+    13. 类与对象
+    14. 常用操作符
+    15. 特性
+    16. Android相关
+2. 深入
 
 ## Scala
 

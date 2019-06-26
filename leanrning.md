@@ -84,6 +84,7 @@ Android源码设计模式解析与实战.pdf
 [Scala 菜鸟](https://www.runoob.com/scala/scala-tutorial.html)<br>
 [Scala and Android](https://app.assembla.com/wiki/show/scala-ide/Developing_for_Android)<br>
 [Scala Programming for Android](https://stackoverflow.com/questions/476111/scala-programming-for-android)<br>
+[Akka 中文指南](https://blog.csdn.net/qq_35246620/column/info/14666)<br>
 <br>
 [开发工具总结（10）之Flutter从配置安装到填坑指南详解](https://www.jianshu.com/p/399c01657920)<br>
 [Flutter 官方](https://flutter.dev/docs/get-started/install/windows)<br>
@@ -218,6 +219,8 @@ https://studygolang.com/topics/8327#reply12 -- go
 
 * [收藏！这款神器可以免费破解Adobe CC系列所有的软件](https://www.jianshu.com/p/422da3cca69f?open_source=weibo_search)
 * [一个强大社区?](https://community.idera.com/)
+* [史上最简单的 GitHub 教程](https://blog.csdn.net/qq_35246620/article/details/66973794)
+* [史上最简单的 IntelliJ IDEA 教程](https://blog.csdn.net/qq_35246620/column/info/14873)
 
 #### 16.电脑
 
