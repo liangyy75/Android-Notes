@@ -93,6 +93,153 @@
 
 ## Java zip
 
+0. links
+    * [易百javazip](https://www.yiibai.com/javazip)
+1. java.util.zip.Adler32 implements Checksum: 可用于计算数据流的Adler-32校验和的类。 Adler-32校验和与CRC-32几乎一样可靠，但可以更快地计算。
+    1. long getValue(): 返回校验和值。
+    2. void reset(): 将校验和重置为初始值。
+    3. void update(byte[] b): 使用指定的字节数组更新校验和。
+    4. void update(byte[] b, int off, int len): 使用指定的字节数组更新校验和。
+    5. void update(int b): 使用指定的字节(参数b的低8位)更新校验和。
+2. java.util.zip.CRC32 implements Checksum: 是一个可用于计算数据流的CRC-32的类。
+    1. long getValue(): 返回CRC-32值。
+    2. void reset(): 将CRC-32重置为初始值。
+    3. void update(byte[] b): 用指定的字节数组更新CRC-32校验和。
+    4. void update(byte[] b, int off, int len): 用指定的字节数组更新CRC-32校验和。
+    5. void update(int b): 用指定字节(参数b的低8位)更新CRC-32校验和。
+3. java.util.zip.Deflater: 为使用流行的ZLIB压缩库的通用压缩提供支持。ZLIB压缩库最初是作为PNG图形标准的一部分开发的，不受专利保护。
+    1. 字段
+        * static int BEST_COMPRESSION - 最佳压缩的压缩级别。
+		* static int BEST_SPEED - 压缩级别最快的压缩。
+		* static int DEFAULT_COMPRESSION - 默认压缩级别。
+		* static int DEFAULT_STRATEGY - 默认压缩策略。
+		* static int DEFLATED - 压缩算法的压缩方法(目前唯一支持的压缩方法)。
+		* static int FILTERED - 压缩策略最适用于大部分数值较小且数据分布随机分布的数据。
+		* static int FULL_FLUSH - 压缩刷新模式，用于清除所有待处理的输出并重置拆卸器。
+		* static int HUFFMAN_ONLY - 仅用于霍夫曼编码的压缩策略。
+		* static int NO_COMPRESSION - 不压缩的压缩级别。
+		* static int NO_FLUSH - 用于实现最佳压缩结果的压缩刷新模式。
+		* static int SYNC_FLUSH - 用于清除所有未决输出的压缩刷新模式; 可能会降低某些压缩算法的压缩率。
+    2. 构造方法
+        * Deflater(): 用默认的压缩级别创建一个新的压缩器。
+        * Deflater(int level): 使用指定的压缩级别创建一个新的压缩器。
+        * Deflater(int level, boolean nowrap): 使用指定的压缩级别创建一个新的压缩器。
+    3. 类方法
+        1. int deflate(byte[] b): 压缩输入数据并用压缩数据填充指定的缓冲区。
+		2. int deflate(byte[] b, int off, int len): 压缩输入数据并用压缩数据填充指定的缓冲区。
+		3. int deflate(byte[] b, int off, int len, int flush): 压缩输入数据并用压缩数据填充指定的缓冲区。
+		4. void end(): 关闭压缩器并丢弃任何未处理的输入。
+		5. void finish(): 当被调用时，表示压缩应该以输入缓冲区的当前内容结束。
+		6. boolean finished(): 如果已达到压缩数据输出流的结尾，则返回true。
+		7. int getAdler(): 返回未压缩数据的ADLER-32值。
+		8. long getBytesRead(): 返回到目前为止输入的未压缩字节的总数。
+		9. long getBytesWritten(): 返回迄今为止输出的压缩字节总数。
+		10. int getTotalIn(): 返回到目前为止输入的未压缩字节的总数。
+		11. int getTotalOut(): 返回迄今为止输出的压缩字节总数。
+		12. boolean needsInput(): 如果输入数据缓冲区为空，并且应该调用setInput()以提供更多输入，则返回true。
+		13. void reset(): 重置deflater，以便可以处理一组新的输入数据。
+		14. void setDictionary(byte[] b): 设置预设字典进行压缩。
+		15. void setDictionary(byte[] b, int off, int len): 设置预设字典进行压缩。
+		16. void setInput(byte[] b): 设置压缩输入数据。
+		17. void setInput(byte[] b, int off, int len): 设置压缩输入数据。
+		18. void setLevel(int level): 将当前压缩级别设置为指定值。
+		19. void setStrategy(int strategy): 将压缩策略设置为指定的值。
+4. java.util.zip.Inflater: 为使用流行的ZLIB压缩库的通用解压缩提供支持。
+    1. 构造方法
+        1. Inflater(): 创建一个新的解压缩器。
+		2. Inflater(boolean nowrap): 创建一个新的解压缩器。
+    2. 类方法
+        1. void end(): 关闭解压缩器并丢弃任何未处理的输入。
+		2. boolean finished(): 如果已到达压缩数据流的末尾，则返回true。
+		3. int getAdler(): 返回未压缩数据的ADLER-32值。
+		4. long getBytesRead(): 返回迄今为止输入的压缩字节总数。
+		5. long getBytesWritten(): 返回到目前为止输出的未压缩字节的总数。
+		6. int getRemaining(): 返回输入缓冲区中剩余的字节总数。
+		7. int getTotalIn(): 返回迄今为止输入的压缩字节总数。
+		8. int getTotalOut(): 返回到目前为止输出的未压缩字节的总数。
+		9. int inflate(byte[] b): 将字节解压缩到指定的缓冲区中。
+		10. int inflate(byte[] b, int off, int len): 将字节解压缩到指定的缓冲区中。
+		11. boolean needsDictionary(): 如果解压缩需要预设字典，则返回true。
+		12. boolean needsInput(): 如果输入缓冲区中没有数据，则返回true。
+		13. void reset(): 重置inflater，以便可以处理一组新的输入数据。
+		14. void setDictionary(byte[] b): 将预设字典设置为给定的字节数组。
+		15. void setDictionary(byte[] b, int off, int len): 将预设字典设置为给定的字节数组。
+		16. void setInput(byte[] b): 设置解压缩的输入数据。
+		17. void setInput(byte[] b, int off, int len): 设置解压缩的输入数据。
+5. java.util.zip.DeflaterOutputStream extends FilterOutputStream: 实现输出流过滤器，用于压缩“deflate”压缩格式的数据。它也被用作其他类型压缩过滤器的基础，例如GZIPOutputStream。
+    1. 字段
+        * protected byte[] buf - 用于写入压缩数据的输出缓冲区。
+        * protected Deflater def  - 这个流的压缩器。
+    2. 构造方法
+        1. DeflaterOutputStream(OutputStream out): 用默认的压缩器和缓冲区大小创建一个新的输出流。
+		2. DeflaterOutputStream(OutputStream out, boolean syncFlush): 使用默认压缩器，默认缓冲区大小和指定的刷新模式创建新的输出流。
+		3. DeflaterOutputStream(OutputStream out, Deflater def): 用指定的压缩器和默认缓冲区大小创建一个新的输出流。
+		4. DeflaterOutputStream(OutputStream out, Deflater def, boolean syncFlush): 用指定的压缩器，刷新模式和默认缓冲区大小创建新的输出流。
+		5. DeflaterOutputStream(OutputStream out, Deflater def, int size): 用指定的压缩器和缓冲区大小创建一个新的输出流。
+		6. DeflaterOutputStream(OutputStream out, Deflater def, int size, boolean syncFlush): 用指定的压缩器，缓冲区大小和刷新模式创建一个新的输出流。
+    3. 类方法
+        1. void close(): 将剩余的压缩数据写入输出流并关闭基础流。
+		2. void finish(): 完成将压缩数据写入输出流而不关闭底层流。
+		3. void flush(): 刷新压缩的输出流。
+		4. void write(byte[] b, int off, int len): 将一个字节数组写入压缩输出流。
+		5. void write(int b): 将一个字节写入压缩的输出流。
+6. java.util.zip.DeflaterInputStream extends FilterInputStream: 实现输入流过滤器，用于压缩“deflate”中的数据压缩格式。
+    1. 字段
+        * protected final byte[] buf - 输入缓冲区用于读取压缩数据。
+        * protected final Deflater def - 此流的压缩器。
+        * private byte[] rbuf = new byte[1] - 临时读缓冲区。
+        * private boolean usesDefaultDeflater = false
+        * private boolean reachEOF = false
+    2. 构造方法
+        * DeflaterInputStream(InputStream in)
+        * DeflaterInputStream(InputStream in, Deflater defl)
+        * DeflaterInputStream(InputStream in, Deflater defl, int bufLen)
+    3. 类方法
+        * void ensureOpen(): 检查以确保此流尚未关闭。
+        * void close()
+        * int read()
+        * int read(byte[] b, int off, int len)
+        * long skip(long n)
+        * int available()
+        * boolean markSupported()
+7. java.util.zip.InflaterOutputStream extends FilterOutputStream: 实现输出流过滤器，用于解压缩以“deflate”压缩格式存储的数据。
+    1. 字段
+        * protected byte[] buf - 用于写入未压缩数据的输出缓冲区。
+        * protected Inflater inf - 这个流的解压缩器。
+    2. 构造方法
+        1. InflaterOutputStream(OutputStream out): 使用默认的解压缩器和缓冲区大小创建一个新的输出流。
+		2. InflaterOutputStream(OutputStream out, Inflater infl): 使用指定的解压缩器和默认缓冲区大小创建新的输出流。
+		3. InflaterOutputStream(OutputStream out, Inflater infl, int bufLen): 使用指定的解压缩器和缓冲区大小创建一个新的输出流。
+    3. 类方法
+        1. void close(): 将剩余的压缩数据写入输出流并关闭基础流。
+		2. void finish(): 完成将未压缩的数据写入输出流而不关闭底层流。
+		3. void flush(): 刷新此输出流，强制写入任何未决的缓冲输出字节。
+		4. void write(byte[] b, int off, int len): 将一个字节数组写入压缩输出流。
+		5. void write(int b): 将一个字节写入压缩的输出流。
+8. java.util.zip.InflaterInputStream extends FilterInputStream: 实现输入流过滤器，用于解压缩以“deflate”压缩格式存储的数据。
+    1. 字段
+        * protected byte[] buf - 用于解压缩的输入缓冲区。
+        * protected Inflater inf - 用于此流的解压缩器。protected int len - 输入缓冲区的长度。
+    2. 
+    3. 
+9. java.util.zip.GZIPOutputStream extends DeflaterOutputStream: 实现了用于以GZIP文件格式写入压缩数据的流过滤器。
+    1. 
+    2. 
+    3. 
+10. java.util.zip.GZIPInputStream extends InflaterInputStream: 实现了用于读取GZIP文件格式的压缩数据的流过滤器。
+    1. 字段
+        * protected CRC32 crc - CRC-32用于未压缩的数据。
+        * protected boolean eos - 表示输入流的结束。
+        * static int GZIP_MAGIC - GZIP头幻数。
+    2. 构造方法
+        1. GZIPInputStream(InputStream in): 用默认缓冲区大小创建一个新的输入流。
+		2. GZIPInputStream(InputStream in, int size): 用指定的缓冲区大小创建一个新的输入流。
+    3. 类方法
+        1. void close(): 关闭此输入流并释放与该流关联的所有系统资源。
+		2. int read(byte[] buf, int off, int len): 将未压缩的数据读入一个字节数组。
+7. 
+8. 
+
 ## Java jar
 
 ## Java function
