@@ -94,7 +94,8 @@
 ## Java zip
 
 0. links
-    * [易百javazip](https://www.yiibai.com/javazip)
+    * [易百javazip](https://www.yiibai.com/javazip) finished
+    * [[Java 基础] 使用java.util.zip包压缩和解压缩文件](https://www.cnblogs.com/0616--ataozhijia/p/5022028.html) finished
 1. java.util.zip.Adler32 implements Checksum: 可用于计算数据流的Adler-32校验和的类。 Adler-32校验和与CRC-32几乎一样可靠，但可以更快地计算。
     1. long getValue(): 返回校验和值。
     2. void reset(): 将校验和重置为初始值。
@@ -219,13 +220,30 @@
 8. java.util.zip.InflaterInputStream extends FilterInputStream: 实现输入流过滤器，用于解压缩以“deflate”压缩格式存储的数据。
     1. 字段
         * protected byte[] buf - 用于解压缩的输入缓冲区。
-        * protected Inflater inf - 用于此流的解压缩器。protected int len - 输入缓冲区的长度。
-    2. 
-    3. 
+        * protected Inflater inf - 用于此流的解压缩器。
+        * protected int len - 输入缓冲区的长度。
+    2. 构造函数
+        1. InflaterInputStream(InputStream in): 使用默认的解压缩器和缓冲区大小创建一个新的输入流。
+		2. InflaterInputStream(InputStream in, Inflater inf): 使用指定的解压缩器和默认缓冲区大小创建一个新的输入流。
+		3. InflaterInputStream(InputStream in, Inflater inf, int size): 使用指定的解压缩器和缓冲区大小创建一个新的输入流。
+    3. 类方法
+        1. int available(): 文件结尾(EOF)达到后返回0，否则返回1。
+		2. void close(): 关闭此输入流并释放与该流关联的所有系统资源。
+		3. void mark(int readlimit): 标记此输入流中的当前位置。
+		4. boolean markSupported(): 测试此输入流是否支持mark()和reset()方法。
+		5. int read(): 读取一个未压缩的数据字节。
+		6. void reset(): 将此流重新定位到上次在此输入流上调用mark()方法时的位置。
+		7. long skip(long n): 跳过未压缩数据的指定字节数。
 9. java.util.zip.GZIPOutputStream extends DeflaterOutputStream: 实现了用于以GZIP文件格式写入压缩数据的流过滤器。
-    1. 
-    2. 
-    3. 
+    1. protected CRC32 crc - CRC-32用于未压缩的数据。
+    2. 构造方法
+        1. GZIPOutputStream(OutputStream out): 用默认缓冲区大小创建一个新的输出流。
+		2. GZIPOutputStream(OutputStream out, boolean syncFlush): 使用默认缓冲区大小和指定的刷新模式创建新的输出流。
+		3. GZIPOutputStream(OutputStream out, int size): 用指定的缓冲区大小创建一个新的输出流。
+		4. GZIPOutputStream(OutputStream out, int size, boolean syncFlush): 用指定的缓冲区大小和刷新模式创建一个新的输出流。
+    3. 类方法
+        1. void close(): 完成将压缩数据写入输出流而不关闭底层流。
+		2. int write(byte[] buf, int off, int len)): 将字节数组写入压缩输出流。
 10. java.util.zip.GZIPInputStream extends InflaterInputStream: 实现了用于读取GZIP文件格式的压缩数据的流过滤器。
     1. 字段
         * protected CRC32 crc - CRC-32用于未压缩的数据。
@@ -237,8 +255,313 @@
     3. 类方法
         1. void close(): 关闭此输入流并释放与该流关联的所有系统资源。
 		2. int read(byte[] buf, int off, int len): 将未压缩的数据读入一个字节数组。
-7. 
-8. 
+11. java.util.zip.ZipEntry implements Clonable: 表示ZIP文件条目。
+    1. 字段
+        * protected byte[] buf - 用于写入未压缩数据的输出缓冲区。
+		* protected Inflater inf - 这个流的解压缩器。
+		* static int CENATT
+		* static int CENATX
+		* static int CENCOM
+		* static int CENCRC
+		* static int CENDSK
+		* static int CENEXT
+		* static int CENFLG
+		* static int CENHDR
+		* static int CENHOW
+		* static int CENLEN
+		* static int CENNAM
+		* static int CENOFF
+		* static long CENSIG
+		* static int CENSIZ
+		* static int CENTIM
+		* static int CENVEM
+		* static int CENVER
+		* static int DEFLATED - 压缩(压缩)条目的压缩方法。
+		* static int ENDCOM
+		* static int ENDHDR
+		* static int ENDOFF
+		* static long ENDSIG
+		* static int ENDSIZ
+		* static int ENDSUB
+		* static int ENDTOT
+		* static int EXTCRC
+		* static int EXTHDR
+		* static int EXTLEN
+		* static long EXTSIG
+		* static int EXTSIZ
+		* static int LOCCRC
+		* static int LOCEXT
+		* static int LOCFLG
+		* static int LOCHDR
+		* static int LOCHOW
+		* static int LOCLEN
+		* static int LOCNAM
+		* static long LOCSIG
+		* static int LOCSIZ
+		* static int LOCTIM
+		* static int LOCVER
+		* static int STORED - 未压缩条目的压缩方法。
+    2. 构造函数
+        1. ZipEntry(String name): 使用指定的名称创建一个新的zip条目。
+		2. ZipEntry(ZipEntry e): 创建一个新的zip条目，其中包含从指定的zip条目中获取的字段。
+    3. 类方法
+        1. Object clone(): 返回此条目的副本。
+		2. String getComment(): 返回条目的注释字符串;如果没有，则返回null。
+		3. long getCompressedSize(): 返回压缩条目数据的大小，如果未知，则返回-1。
+		4. long getCrc(): 返回未压缩条目数据的CRC-32校验和，如果未知，则返回-1。
+		5. byte[] getExtra(): 返回条目的额外字段数据，如果没有，则返回null。
+		6. int getMethod(): 返回条目的压缩方法，如果未指定，则返回-1。
+		7. String getName(): 返回条目的名称。
+		8. long getSize(): 返回条目数据的未压缩大小，如果未知，则返回-1。
+		9. long getTime(): 返回条目的修改时间，如果未指定，则返回-1。
+		10. int hashCode(): 返回此条目的哈希码值。
+		11. boolean isDirectory(): 如果这是一个目录条目，则返回true。
+		12. void setComment(String comment): 设置条目的可选注释字符串。
+		13. void setCrc(long crc): 设置未压缩条目数据的CRC-32校验和。
+		14. void setExtra(byte[] extra): 为条目设置可选的额外字段数据。
+		15. void setMethod(int method): 设置条目的压缩方法。
+		16. void setSize(long size): 设置条目数据的未压缩大小。
+		17. void setTime(long time): 设置条目的修改时间。
+		18. String toString(): 返回ZIP条目的字符串表示形式。
+12. java.util.zip.ZipFile implements Clonable: 用于读取zip文件中的条目。
+    1. 字段
+        * static int CENATT
+		* static int CENATX
+		* static int CENCOM
+		* static int CENCRC
+		* static int CENDSK
+		* static int CENEXT
+		* static int CENFLG
+		* static int CENHDR
+		* static int CENHOW
+		* static int CENLEN
+		* static int CENNAM
+		* static int CENOF
+		* static long CENSIG
+		* static int CENSIZ
+		* static int CENTIM
+		* static int CENVEM
+		* static int CENVER
+		* static int ENDCOM
+		* static int ENDHDR
+		* static int ENDOFF
+		* static long ENDSIG
+		* static int ENDSIZ
+		* static int ENDSUB
+		* static int ENDTOT
+		* static int EXTCRC
+		* static int EXTHDR
+		* static int EXTLEN
+		* static long EXTSIG
+		* static int EXTSIZ
+		* static int LOCCRC
+		* static int LOCEXT
+		* static int LOCFLG
+		* static int LOCHDR
+		* static int LOCHOW
+		* static int LOCLEN
+		* static int LOCNAM
+		* static long LOCSIG
+		* static int LOCSIZ
+		* static int LOCTIM
+		* static int LOCVER
+		* static int OPEN_DELETE - 模式标志打开一个zip文件并将其标记为删除。
+		* static int OPEN_READ - 模式标志打开一个zip文件进行读取。
+    2. 构造函数
+        1. ZipFile(File file): 给定指定的File对象，打开ZIP文件进行读取。
+		2. ZipFile(File file, Charset charset): 给定指定的File对象，打开ZIP文件进行读取。
+		3. ZipFile(File file, int mode): 打开一个新的ZipFile以指定的模式从指定的File对象读取。
+		4. ZipFile(File file, int mode, Charset charset): 从指定的File对象以指定的模式打开一个新的ZipFile读取。
+		5. ZipFile(String name): 打开一个zip文件进行读取。
+		6. ZipFile(String name, Charset charset): 打开一个zip文件进行读取。
+    3. 类方法
+        1. void close(): 关闭ZIP文件。
+		2. Enumeration<? extends ZipEntry> entries(): 返回ZIP文件条目的枚举。
+		3. String getComment(): 返回压缩文件注释，如果没有，则返回null。
+		4. ZipEntry getEntry(String name): 返回指定名称的zip文件条目，如果未找到，则返回null。
+		5. InputStream getInputStream(ZipEntry entry): 返回用于读取指定zip文件条目内容的输入流。
+		6. String getName(): 返回ZIP文件的路径名称。
+		7. int size(): 返回ZIP文件中的条目数。
+13. java.util.zip.ZipInputStream extends InflaterInputStream: 实现用于读取ZIP文件格式文件的输入流过滤器。包括对压缩和未压缩条目的支持。
+    1. 字段
+        * static int CENATT
+		* static int CENATX
+		* static int CENCOM
+		* static int CENCRC
+		* static int CENDSK
+		* static int CENEXT
+		* static int CENFLG
+		* static int CENHDR
+		* static int CENHOW
+		* static int CENLEN
+		* static int CENNAM
+		* static int CENOFF
+		* static long CENSIG
+		* static int CENSIZ
+		* static int CENTIM
+		* static int CENVEM
+		* static int CENVER
+		* static int ENDCOM
+		* static int ENDHDR
+		* static int ENDOFF
+		* static long ENDSIG
+		* static int ENDSIZ
+		* static int ENDSUB
+		* static int ENDTOT
+		* static int EXTCRC
+		* static int EXTHDR
+		* static int EXTLEN
+		* static long EXTSIG
+		* static int EXTSIZ
+		* static int LOCCRC
+		* static int LOCEXT
+		* static int LOCFLG
+		* static int LOCHDR
+		* static int LOCHOW
+		* static int LOCLEN
+		* static int LOCNAM
+		* static long LOCSIG
+		* static int LOCSIZ
+		* static int LOCTIM
+		* static int LOCVER
+    2. 构造函数
+        1. ZipInputStream(InputStream in): 创建一个新的ZIP输入流。
+		2. ZipInputStream(InputStream in, Charset charset): 创建一个新的ZIP输入流。
+    3. 类方法
+        1. int available(): 达到当前输入数据结尾(EOF)之后返回0，否则返回1。
+		2. void close(): 关闭此输入流并释放与该流关联的所有系统资源。
+		3. void closeEntry(): 关闭当前的ZIP条目并定位流以读取下一个条目。
+		4. ZipEntry getNextEntry(): 读取下一个ZIP文件条目并将该流定位在条目数据的开头。
+		5. int read(byte[] b, int off, int len): 从当前的ZIP条目读入一个字节数组。
+		6. long skip(long n): 跳过当前ZIP条目中指定的字节数。
+14. java.util.zip.ZipOutputStream extends DeflaterOutputStream: 实现一个输出流过滤器，用于以ZIP文件格式写入文件。包括对压缩和未压缩条目的支持。
+    1. 字段 ...
+    2. 构造函数
+        1. ZipOutputStream(OutputStream out): 创建一个新的ZIP输出流。
+		2. ZipOutputStream(OutputStream out, Charset charset): 使用指定字符我们要创建一个新的ZIP输出流。
+    3. 类方法
+        1. void close(): 关闭ZIP输出流以及正在过滤的流。
+		2. void closeEntry(): 关闭当前的ZIP条目并定位写入下一个条目的流。
+		3. void finish(): 完成编写ZIP输出流的内容而不关闭底层流。
+		4. void putNextEntry(ZipEntry e): 开始编写新的ZIP文件条目并将流定位到条目数据的开头。
+		5. void setComment(String comment): 设置ZIP文件的注释
+		6. void setLevel(int level): 为后续的DEFLATED条目设置压缩级别。
+		7. void setMethod(int method): 为后续条目设置默认压缩方法。
+		8. void write(byte[] b, int off, int len): 将一个字节数组写入当前ZIP条目数据。
+15. 实例
+    1. ZipFile
+        ```java
+        File file = new File("F:/zippath.zip");
+        ZipFile zipFile = new ZipFile(file);
+        System.out.println("压缩文件的名称为：" + zipFile.getName());
+        ```
+    2. 压缩单个文件
+        ```java
+        public static void ZipFile(String filepath ,String zippath) {
+            try {
+                File file = new File(filepath);
+                File zipFile = new File(zippath);
+                InputStream input = new FileInputStream(file);
+                ZipOutputStream zipOut = new ZipOutputStream(new FileOutputStream(zipFile));
+                zipOut.putNextEntry(new ZipEntry(file.getName()));
+                int temp = 0;
+                while((temp = input.read()) != -1){
+                    zipOut.write(temp);
+                }
+                input.close();
+                zipOut.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        // ZipFile("d:/hello.txt", "d:/hello.zip");
+        ```
+    3. 压缩多个文件（文件夹）
+        ```java
+        public static void ZipMultiFile(String filepath ,String zippath) {
+            try {
+                File file = new File(filepath);  // 要被压缩的文件夹
+                File zipFile = new File(zippath);
+                InputStream input = null;
+                ZipOutputStream zipOut = new ZipOutputStream(new FileOutputStream(zipFile));
+                if (file.isDirectory()) {
+                    File[] files = file.listFiles();
+                    for (int i = 0; i < files.length; ++i) {
+                        input = new FileInputStream(files[i]);
+                        zipOut.putNextEntry(new ZipEntry(file.getName() + File.separator + files[i].getName()));
+                        int temp = 0;
+                        while ((temp = input.read()) != -1) {
+                            zipOut.write(temp);
+                        }
+                        input.close();
+                    }
+                }
+                zipOut.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        // ZipMultiFile("f:/uu", "f:/zippath.zip");
+        ```
+    4. 解压缩单个文件
+        ```java
+        public static void ZipContraFile(String zippath ,String outfilepath ,String filename) {
+            try {
+                File file = new File(zippath);  // 压缩文件路径和文件名
+                File outFile = new File(outfilepath);  // 解压后路径和文件名
+                ZipFile zipFile = new ZipFile(file);
+                ZipEntry entry = zipFile.getEntry(filename);  // 所解压的文件名
+                InputStream input = zipFile.getInputStream(entry);
+                OutputStream output = new FileOutputStream(outFile);
+                int temp = 0;
+                while((temp = input.read()) != -1){
+                    output.write(temp);
+                }
+                input.close();
+                output.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        // ZipContraFile("d:/hello.zip","d:/eee.txt", "hello.txt");
+        ```
+    5. 解压缩多个文件: 当我们需要解压缩多个文件的时候，ZipEntry就无法使用了。如果想操作更加复杂的压缩文件，我们就必须使用ZipInputStream类。
+        ```java
+        public static void ZipContraMultiFile(String zippath ,String outzippath){
+            try {
+                File file = new File(zippath);
+                File outFile = null;
+                ZipFile zipFile = new ZipFile(file);
+                ZipInputStream zipInput = new ZipInputStream(new FileInputStream(file));
+                ZipEntry entry = null;
+                InputStream input = null;
+                OutputStream output = null;
+                while ((entry = zipInput.getNextEntry()) != null) {
+                    System.out.println("解压缩" + entry.getName() + "文件");
+                    outFile = new File(outzippath + File.separator + entry.getName());
+                    if (!outFile.getParentFile().exists()) {
+                        outFile.getParentFile().mkdir();
+                    }
+                    if (!outFile.exists()) {
+                        outFile.createNewFile();
+                    }
+                    input = zipFile.getInputStream(entry);
+                    output = new FileOutputStream(outFile);
+                    int temp = 0;
+                    while ((temp = input.read()) != -1) {
+                        output.write(temp);
+                    }
+                    input.close();
+                    output.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        // ZipContraMultiFile("f:/zippath.zip", "d:/");
+        // ZipContraMultiFile("d:/hello.zip", "d:/");
+        ```
+    6. 
 
 ## Java jar
 
