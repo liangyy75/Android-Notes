@@ -173,7 +173,7 @@
             ```kt
             var array:Array<Char> = arrayOf('H','E','L','L','O')
             array.forEach ForEach@{
-                if (it == 'L') return
+                if (it == 'L') return@ForEach
                 println(it)
             }
             ```
@@ -217,8 +217,8 @@
             ```
         8. 小结
             1. run：使用this指定当前对象，最后一行为返回值
-            2. let：使用it指定当前对象，最后一行为返回值
-            3. with：使用this指定当前对象，最后一行为返回值，写法上有区别
+            2. with：使用this指定当前对象，最后一行为返回值，写法上有区别
+            3. let：使用it指定当前对象，最后一行为返回值
             4. apply：使用this指定当前对象，返回值为该对象自己
             5. also：使用it指定当前对象，返回值为该对象自己
     6. 表达式
@@ -272,7 +272,7 @@
                 fun forward(pixels: Double)
             }
             val myTurtle = Turtle()
-            with(myTurtle) { // 画一个 100 像素的正方形
+            with (myTurtle) { // 画一个 100 像素的正方形
                 penDown()
                 for(i in 1..4) {
                     forward(100.0)
@@ -339,9 +339,10 @@
             ```
         3. 自行闭包: 定义闭包的同时直接执行闭包，一般用于初始化上下文环境
             ```kt
-            { x: Int, y: Int ->
+            println(({ x: Int, y: Int ->
                 println("${x + y}")
-            }(1, 3)
+                x + y
+            })(1, 3))
             ```
     8. 运算符: 自定义运输费
         ```kt
@@ -435,13 +436,281 @@
             }
             ```
     12. 构造方法
-        1. 
-        2. 
-        3. 
+        1. 主构造函数
+            1. Kotlin的构造函数可以写在类头中，跟在类名后面，如果有注解还需要加上关键字constructor
+                ```kt
+                class Person(private val name: String) {
+                    fun sayHello() {
+                        println("hello $name")
+                    }
+                }
+                ```
+            2. 在主构造函数中不能有任何代码实现，如果有额外的代码需要在构造方法中执行，你需要放到init代码块中执行
+                ```kt
+                class Person(private var name: String) {
+                    init {
+                        name = "Zhang Tao"
+                    }
+                    fun sayHello() {
+                        println("hello $name")
+                    }
+                }
+                ```
+        2. 次构造函数: 存在两个或两个以上的构造方法时，可以增加次构造方法
+            ```kt
+            class Person(private var name: String) {
+                private var description: String? = null
+                init {
+                    name = "Zhang Tao"
+                }
+                constructor(name: String, description: String) : this(name) {
+                    this.description = description
+                }
+                fun sayHello() {
+                    println("hello $name")
+                }
+            }
+            ```
     13. 类与对象
-    14. 常用操作符
+        1. 输出类名
+            ```kt
+            println(HelloWorld::class.java.simpleName)  // 输出类名
+            println(HelloWorld::class.java.name)  // 输出包名+类名
+            ```
+        2. 创建对象
+            ```kt
+            val rectangle = Rectangle(5.0, 2.0)
+            val triangle = Triangle(3.0, 4.0, 5.0)
+            ```
+        3. 数据类: data修饰的类称之为数据类，当data修饰后，会自动将所有成员用operator声明，即为这些成员生成getter()和setter()
+            ```kt
+            data class Customer(val name: String, val email: String)
+            // 编译器自动从主构造函数中的属性导入下面这些成员函数
+            // equals()
+            // hashCode()
+            // toString()
+            // componentN()：函数返回对应着声明的参数顺序
+            // copy()
+            ```
+        4. 内部类: Kt默认的内部类为静态内部类，可以使用inner关键字将内部类变为非静态内部类，且可使用注解去获取外部类的成员属性
+            ```kt
+            class Outter {
+                var a = 5
+                inner class Inner {
+                    var a = 6
+                    fun getOutterA () {
+                        println(this@Outter.a)
+                    }
+                }
+            }
+            ```
+        5. 单例类: object关键字表示该类是单例
+            ```kt
+            class Single private constructor() {
+                companion object {
+                    fun get() : Single {
+                        return Holder.instance
+                    }
+                }
+                private object Holder {
+                    val instance = Single()
+                }
+            }
+            // or
+            object Resource {
+                val name = "Name"
+            }
+            //使用
+            Resource.INSTANCE.name
+            ```
+        6. 枚举类: 枚举默认没有数值，如果需要固定类型的数值，可在类名后声明参数类型
+            ```kt
+            enum class Programer (val id: Int) {
+                JAVA(0), KOTLIN(1), C(2), CPP(3), ANDROID(4);
+                fun getTag(): String{
+                    return "$id + $name"
+                }
+            }
+            // 使用
+            println(Programer.JAVA.getTag())
+            ```
+        7. 密封类
+            1. sealed修饰的类称为密封类，用来表示受限的类层次结构
+                ```kt
+                sealed class BaseClass {
+                    class Test1 : BaseClass() {
+                        override fun test() {
+                            println("Test1实例")
+                        }
+                    }
+                    class Test2 : BaseClass() {
+                        override fun test() {
+                            println("Test2实例")
+                        }
+                    }
+                    object Test3 : BaseClass() {
+                        override fun test() {
+                            println("Test3实例")
+                        }
+                    }
+                    open fun test() {
+                        println("BaseClass实例")
+                    }
+                }
+                ```
+            2. 密封类与枚举的区别：
+                * 密封类是枚举类的扩展
+                * 枚举类型的值集合是受限的，且每个枚举常量只存在一个实例
+                * 密封类的一个子类可以有可包含状态的多个实例
+        8. 继承: 在class中加open关键字即可被继承
+            ```kt
+            open class Person (var name:String, var age:Int) {}
+            ```
+        9. 接口代理: 接口代理表示代理人可直接调用接口代理的方法
+            ```kt
+            // 代理driver和writer，当执行manager.driver()，Manager类会去调用代理的driver.driver()
+            class Manager(val driver: Driver, val writer: Writer) : Driver by driver, Writer by writer
+            interface Driver{ fun driver() }
+            interface Wirter{ fun wirter() }
+            ```
+        10. 伴生对象: 用companion关键字修饰对象内的方法，我们称companion修饰的对象为伴生对象，本质是静态方法。如果在Java文件中想通过类名的方式去调用静态方法，则需要加入注解才可以使用
+            ```kt
+            class StringUtils {
+                companion object {
+                    @JvmStatic
+                    fun isEmpty(str: String): Boolean {
+                        return "" == str
+                    }
+                    @JvmField
+                    var TAG = "StringUtils"
+                }
+            }
+            ```
+        11. 方法重载: 由于Kt中有默认参数的性质，所以方法的重载可以用默认参数来实现，如果在Java文件中想使用Kt重载的话，就需要加入注解才可以使用
+            ```kt
+            class StringUtils {
+                @JvmOverloads
+                fun a(int: Int = 0): Int{
+                    return int
+                }
+            }
+            ```
+        12. 匿名对象: 使用object对象表示匿名对象
+            ```kt
+            btn?.setOnClickListener(object : View.OnClickListener{
+                override fun onClick(v: View?) {
+                }
+            })
+            ```
+    14. 常用操作符: Kotlin的操作符跟RxJava基本一致
+        1. 下标操作类
+            * contains：判断是否有指定元素
+            * elementAt：返回对应的元素，越界会抛IndexOutOfBoundsException
+            * firstOrNull：返回符合条件的第一个元素，没有返回null
+            * lastOrNull：返回符合条件的最后一个元素，没有返回null
+            * indexOf：返回指定元素的下标，没有返回-1
+            * singleOrNull：返回符合条件的单个元素，如有没有符合或超过一个，返回null
+        2. 判断类
+            * any：判断集合中 是否有满足条件的元素
+            * all：判断集合中的元素是否都满足条件
+            * none：判断集合中是否都不满足条件，是则返回true
+            * count：查询集合中满足条件的元素个数
+            * reduce：从第一项到最后一项进行累计
+        3. 过滤类
+            * filter：过滤 掉所有满足条件的元素
+            * filterNot：过滤所有不满足条件的元素
+            * filterNotNull：过滤NULL
+            * take：返回前n个元素
+        4. 转换类
+            * map：转换成另一个集合
+            * mapIndexed：除了转换成另一个集合，还可以拿到Index
+            * mapNotNull：执行转换前过滤掉 为 NULL 的元素
+            * flatMap：自定义逻辑合并两个集合
+            * groupBy：按照某个条件分组，返回Map
+        5. 排序类
+            * reversed：反序
+            * sorted：升序
+            * sortedBy：自定义排序
+            * sortedDescending：降序
+        6. 实战操作符
+            ```kt
+            val fruits = listOf("banana", "avocado", "apple", "kiwifruit")
+            fruits
+                .filter { it.startsWith("a") }
+                .sortedBy { it }
+                .map { it.toUpperCase() }
+                .forEach { println(it) }
+            ```
     15. 特性
+        1. 懒加载: ``val p : String by lazy { /* 计算该字符串 */ }``
+        2. 安全类型转换: 父类转成子类会抛出类型转换失败的错误，如果采用as?的方式，则返回null ``var child : Child = parent as? Child``
+        3. 输出可执行文件: 在Gradle添加依赖指定main函数文件，后缀名为Kt。刷新Gradle，在Gradle右边栏点击distribution/installDist，生成的程序在build/install目录下
+            ```kt
+            apply plugin:'application'
+            mainClassName = "com.hensen.android.MyCalcKt"
+            ```
+        4. internal关键字: 在变量中使用internal关键字表示成员变量只允许在模块内能被访问到 ``internal val a``
+        5. 尾递归: 对于递归函数，如果递归函数并未对递归的结果进行操作，则可以使用 tailrec 关键字将递归声明为尾递归，尾递归会优化代码，将递归转换成迭代
+            ```kt
+            data class ListNode(val value: Int, var next: ListNode?)
+            // 对递归的结果并未操作，属于尾递归
+            tailrec fun findListNode(head: ListNode?, value: Int): ListNode? {
+                head ?: return null
+                if(head.value == value) return head
+                return findListNode(head.next, value)
+            }
+            // 对递归的结果进行乘法运算，不属于尾递归
+            fun factorial(n: Long): Long {
+                return n * factorial(n - 1)
+            }
+            ```
     16. Android相关
+        1. view.find: 使用Ktolin的拓展函数，view.find替代findViewById ``var textView = view.find(R.id.textView)``
+        2. observable: Delegates.observable可以监听当前的变量值的变化，改变变量的值，即可触发observable
+            ```kt
+            private var mCurrentState: Int by Delegates.observable(-1) { _, old, new ->
+                if (old != new) {
+                    RxBus.getDefault().post(ChannelPK_OnModelChange_Rank_EventArgs(new == 1))
+                    MLog.info(PKModelManager.TAG, "rank mode : $old -> $new")
+                }
+            }
+            fun onModelChange() {
+                mCurrentState = 1 //改变变量的值，即可触发observable
+            }
+            ```
+        3. bundle: 创建bundle已经不需要再去执行其各种put方法
+            ```kt
+            val bundle = bundleOf(
+                "KET_INT" to 1,
+                "KET_LONG" to 2L,
+                "KET_BOOLEAN" to true,
+                "KEY_NULL" to null,
+                "KEY_ARRAY" to arrayOf(1, 2)
+            )
+            ```
+        4. Parcelize
+            1. Parcelize已经不需要再写什么代码了，只需要继承和注解
+                ```kt
+                @Parcelize
+                data class User(val name: String, val age: Int): Parcelize
+                ```
+            2. @Parcelize的使用需要在gradle声明变量
+                ```kt
+                androidExtensions {
+                    experimental = true
+                }
+                ```
+        5. Serializable: 指定Serializable的名字 ``class Book(@SerializedName(TXT) var txt: String)``
+        6. postDelay: 支持闭包和lambda表达式 ``handler.postDelay(50) {  }``
+        7. 注解: 如果说在Java文件中需要使用到KT的变量、静态方法、重载方法等，就需要注解声明
+            * @JvmField：将属性编译为Java变量
+            * @JvmStatic：将伴生对象编译为Java静态方法
+            * @JvmOverloads：默认参数生成重载方法
+            * @file:JvmName：指定Kotlin文件编译后的类名
+    17. xml
+    18. json
+    19. file
+    20. 输入输出
 2. 深入
 
 ## Scala

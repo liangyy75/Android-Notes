@@ -52,6 +52,8 @@ Android源码设计模式解析与实战.pdf
 [Java博客网](http://www.jobbole.com/)<br>
 [Java博客网](http://www.importnew.com/)<br>
 []()<br>
+[JavaFx官网](http://www.javafxchina.net/blog/docs/tutorial1/)<br>
+[]()<br>
 
 #### 4.Android系列
 
