@@ -163,13 +163,281 @@
             log("Hensen")(System.out)("HelloWorld")
             ```
     5. lambda表达式
+        1. 定义Lambda表达式
+            ```kt
+            var sum = { arg1: Int,arg2: Int -> arg1 + arg2 }
+            sum(1,2)  // 使用第一种方式
+            sum.invoke(1,2)  // 第二种
+            ```
+        2. 带有return的Lambda表达式: Lambda表达式并不是函数，如果直接return，会退出当前调用Lambda表达式的函数，而不是退出当前的Lambda表达式，可以使用@别名的方式退出
+            ```kt
+            var array:Array<Char> = arrayOf('H','E','L','L','O')
+            array.forEach ForEach@{
+                if (it == 'L') return
+                println(it)
+            }
+            ```
+        3. 带有run的Lambda表达式: 调用某对象的run函数，在函数块内可以通过this指代该对象。返回值为函数块的最后一行或指定return表达式
+            ```kt
+            val a = "string".run {
+                println(this)
+                3
+            }
+            println(a)  // 3
+            ```
+        4. 带有let的Lambda表达式
+            ```kt
+            val a = "string".let {
+                println(this)
+                3
+            }
+            println(a)  // 3
+            ```
+        5. 带有with的Lambda表达式
+            ```kt
+            val a = with("string") {
+                println(this)
+                3
+            }
+            println(a)  // 3
+            ```
+        6. 带有apply的Lambda表达式
+            ```kt
+            val a = "str".apply {
+                println(this)  // str
+            }
+            println(a)  // str
+            ```
+        7. 带有also的Lambda表达式
+            ```kt
+            val a = "str".also {
+                println(it)  // str
+            }
+            println(a)  // str
+            ```
+        8. 小结
+            1. run：使用this指定当前对象，最后一行为返回值
+            2. let：使用it指定当前对象，最后一行为返回值
+            3. with：使用this指定当前对象，最后一行为返回值，写法上有区别
+            4. apply：使用this指定当前对象，返回值为该对象自己
+            5. also：使用it指定当前对象，返回值为该对象自己
     6. 表达式
+        1. when
+            ```kt
+            fun transform(x: Int) {
+                return when (x) {
+                    is Int -> println("$x is Int")
+                    in 1..100 -> println("$x is in 1-100")
+                    !in 1..100 -> println("$x is not in 1-100")
+                    // else不写则不做默认操作
+                    else -> throw IllegalArgumentException("Invalid x param value")
+                }
+            }
+            fun describe(obj: Any): String = when (obj) {
+                1          -> "One"
+                "Hello"    -> "Greeting"
+                is Long    -> "Long"
+                !is String -> "Not a string"
+                else       -> "Unknown"
+            }
+            ```
+        2. try-catch
+            ```kt
+            fun test() {
+                val result = try {
+                    count()
+                } catch (e: ArithmeticException) {
+                    throw IllegalStateException(e)
+                }
+            }
+            ```
+        3. if
+            ```kt
+            fun foo (param: Int) {
+                val result = if (param == 1) {
+                    "one"
+                } else if (param == 2) {
+                    "two"
+                } else {
+                    "three"
+                }
+            }
+            ```
+        4. with
+            ```kt
+            class Turtle {
+                fun penDown()
+                fun penUp()
+                fun turn(degrees: Double)
+                fun forward(pixels: Double)
+            }
+            val myTurtle = Turtle()
+            with(myTurtle) { // 画一个 100 像素的正方形
+                penDown()
+                for(i in 1..4) {
+                    forward(100.0)
+                    turn(90.0)
+                }
+                penUp()
+            }
+            ```
+        5. for
+            ```kt
+            val items = listOf("apple", "banana", "kiwifruit")
+            for (item in items) {
+                println(item)
+            }
+            val items = listOf("apple", "banana", "kiwifruit")
+            for (index in items.indices) {
+                println("item at $index is ${items[index]}")
+            }
+            ```
+        6. while
+            ```kt
+            val items = listOf("apple", "banana", "kiwifruit")
+            var index = 0
+            while (index < items.size) {
+                println("item at $index is ${items[index]}")
+                index++
+            }
+            ```
+        7. 中缀表达式 infix
+            ```kt
+            Class Book{
+                infix fun on(any: Any): Boolean{
+                    return false
+                }
+            }
+            Class Desk{}
+            if (Book on Desk) {
+                println("book on the desk") 
+            }
+            ```
     7. 闭包
-    8. 运算符
+        1. 函数内部可以定义函数，属于闭包
+            ```kt
+            fun add(x: Int): (Int)-> Int{
+                return fun(y: Int): Int{
+                    return x + y
+                }
+            }
+            ```
+        2. 闭包持有函数内部的运行状态
+            ```kt
+            fun justCount():() -> Unit{
+                var count = 0 //被函数内部持有
+                return {
+                    println(count++)
+                }
+            }
+            fun main(args: Array<String>) {
+                val count = justCount()
+                count()  // 输出结果：0
+                count()  // 输出结果：1
+                count()  // 输出结果：2
+            }
+            ```
+        3. 自行闭包: 定义闭包的同时直接执行闭包，一般用于初始化上下文环境
+            ```kt
+            { x: Int, y: Int ->
+                println("${x + y}")
+            }(1, 3)
+            ```
+    8. 运算符: 自定义运输费
+        ```kt
+        class Complex(var arg1: Double,var arg2: Double){
+            operator fun plus(other: Complex): Complex{
+                return Complex(arg1 + other.arg1, arg2 + other.arg2)
+            }
+            operator fun plus(other: Int): Complex{
+                return Complex(arg1 + other,arg2)
+            }
+            oprator fun invoke(): Double{
+                return Math.hypot(arg1,arg2)
+            }
+            overide fun toString(): String{
+                return "${arg1} and ${arg2}"
+            }
+        }
+        val c1 = Complex(3.0,4.0)
+        val c1 = Complex(2.0,5.0)
+        println(c1 + c2) //5.0 and 9.0
+        println(c1 + 5) //8.0 and 4.0 
+        println(c1()) //5
+        ```
     9. 区间语句
+        1. 定义区间
+            ```kt
+            var range = 0..1024 //[0,1024]闭区间
+            var range = 0 until 1024 //[0,1024)半开区间
+            var range = 0..-1 //空区间
+            ```
+        2. 检查x是否在指定区间里面
+            ```kt
+            val x = 10
+            val y = 9
+            if (x in 1..y+1) {
+                println("fits in range")
+            }
+            ```
+        3. 检查list.size是否在list的索引上
+            ```kt
+            val list = listOf("a", "b", "c")
+            if (-1 !in 0..list.lastIndex) {
+                println("-1 is out of range")
+            }
+            if (list.size !in list.indices) {
+                println("list size is out of valid list indices range too")
+            }
+            ```
+        4. 区间遍历
+            ```kt
+            for (x in 1..10 step 2) {
+                print(x) //13579
+            }
+            for (x in 9 downTo 0 step 3) {
+                print(x) //9630
+            }
+            ```
     10. 集合
+        1. 初始化
+            ```kt
+            val mutableList = mutableListOf(0, 1)   //可读写List对象
+            var list = listOf(0, 1, 2)              //可读List对象
+            val set = setOf(1, 2, 4)                //可读Set对象
+            ```
+        2. 集合遍历
+            ```kt
+            val items = listOf("a", "b", "c")
+            for (item in items) {
+                println(item)
+            }
+            ```
+        3. 集合判断
+            ```kt
+            val items = listOf("apple", "balanace", "coffee")
+            when {
+                "orange" in items -> println("juicy")
+                "apple" in items -> println("apple is fine too")
+            }
+            ```
     11. 映射
+        1. 初始化
+            ```kt
+            val map = mutableMapOf("a" to 1, "b" to 2, "c" to 3) //可读写Map对象
+            val map = mapOf("a" to 1, "b" to 2, "c" to 3)        //可读Map对像
+            ```
+        2. 访问map: ``map["key"] = value``
+        3. 遍历map
+            ```kt
+            for ((k, v) in map) {
+                println("$k -> $v")
+            }
+            ```
     12. 构造方法
+        1. 
+        2. 
+        3. 
     13. 类与对象
     14. 常用操作符
     15. 特性
