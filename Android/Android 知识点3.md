@@ -3158,6 +3158,36 @@
 26. [如何下载Android源码](https://github.com/foxleezh/AOSP/issues/1) https://mirrors.tuna.tsinghua.edu.cn/help/AOSP/ [windows环境下repo下载Android源代码](https://segmentfault.com/a/1190000015279330)
 27. [How to Install Python Anaconda 5 on Arch Linux 2017](https://linoxide.com/linux-how-to/install-python-anaconda-5-arch-linux-4-11-7-1/)
 28. [常用android资源](https://huangtianyu.gitee.io/%E8%B5%84%E6%BA%90/)
+29. as使用快捷键 https://blog.csdn.net/yy1300326388/article/details/46411775
+    1. ``Ctrl + Shift + F`` 全局查询
+    2. ``Ctrl + Shift + N`` 查询文件/类/模块/...
+    3. ``Ctrl + E`` 最近文件
+    4. ``Alt + home`` 导航栏
+    5. ``Ctrl + Alt + L`` 代码格式化
+    6. ``Ctrl + Alt + O`` 清除无效包引用
+    7. ``Ctrl + Shift + R`` 全局替换
+    8. ``Ctrl + R`` 替换
+    9. ``Alt + F7`` 查找使用
+    10. ``Ctrl + F4`` 关闭
+    11. ``Ctrl + Shift + C`` 复制路径
+    12. ``Ctrl + Shift + ↑/↓`` 移动代码行
+    13. ``Ctrl + ←/→`` 在打开的文件间跳跃
+    14. ``Alt + ←/→`` 在单词间跳跃
+    15. ``Ctrl + Y`` 删除行
+    16. ``Ctrl + X`` 剪切行(如果什么都不选中)
+    17. ``Ctrl + (Shift + )W`` 扩大/缩小选中范围
+    18. ``Ctrl + Alt + T`` 快速生成结构体
+    19. ``Ctrl + Shift + T`` 生成test文件
+    20. ``Ctrl + O`` 快速选中重写的方法
+    21. ``Ctrl + \+/-`` 打开/折叠代码块
+    22. ``Ctrl + Shift + \+/-`` 打开/折叠全部代码块
+    23. ``Alt + 数字`` 打开/关闭工具窗口
+    24. ``Ctrl + Alt + H`` 查找调用的位置
+    25. ``Ctrl + Shift + U`` 大小写转换
+    26. ``Alt+Insert``
+    27. ``Ctrl +Alt+T`` try catch/if/while等
+    28. ``Ctrl + L`` 跳到指定的行数
+    29. ``Ctrl + Alt + M`` 提取方法
 
 ## Android权限系统
 
