@@ -1576,6 +1576,10 @@ img {
     5. 事件过滤: EventBus是基于事件的，也就是订阅方法参数，用户要关心不同的事件，就需要定义不同的事件对象。
     6. 不支持跨进程: 目前EventBus只支持跨线程，而不支持跨进程。如果一个app的service起到了另一个进程中，那么注册监听的模块则会收不到另一个进程的EventBus发出的事件。
 
+## Android RxXxx
+
+
+
 ## Retrofit2
 
 [Retrofit关键概念解析](https://www.jianshu.com/p/f085be1c302c)
