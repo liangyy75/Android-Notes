@@ -82,6 +82,7 @@ Android源码设计模式解析与实战.pdf
 [如何使用Android Studio开发Gradle插件](https://blog.csdn.net/sbsujjbcy/article/details/50782830)<br>
 [Groovy 和 Gradle (Android Studio)基础](https://blog.csdn.net/s402178946/article/details/54140325)<br>
 [Gradle核心思想（二）Gradle入门前奏](http://liuwangshu.cn/application/gradle/2-primer.html)<br>
+[Gradle实战](https://blog.csdn.net/u010818425/article/details/52319382)<br>
 <br>
 [Scala 菜鸟](https://www.runoob.com/scala/scala-tutorial.html)<br>
 [Scala and Android](https://app.assembla.com/wiki/show/scala-ide/Developing_for_Android)<br>

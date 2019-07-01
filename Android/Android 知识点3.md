@@ -719,6 +719,137 @@
 
 ## Flutter/Dart
 
+0. links
+    * [dart学习笔记](http://www.cndartlang.com/user/2)
+    * [dart 官网](https://dart.dev/guides)
+    * [语法基础——Dart语法基础](https://blog.csdn.net/qq_30379689/article/details/87260932)
+    * [flutter菜鸟教程](https://blog.csdn.net/duo_shine/column/info/25090)
+1. 基础
+    1. 基础
+        1. 主函数
+            ```dart
+            void main(List<String> args) {
+                print("Hello World");
+            }
+            ```
+        2. 注释: // /**/
+        3. 别名
+    2. 常量与变量
+        1. 如果未初始化的变量，其默认值为null
+            ```dart
+            const a = 10;
+            var b = 10;
+            ```
+        2. Dart没有public、protected、和private关键字，标识符(_)表示私有的意思，其余默认表示public
+        3. final和const都表示常量的意思，其值都不可修改，两者最大的区别
+            1. final属于运行时变量，在初始化的时候去创建的变量
+            2. const属于编译时变量，在编译期间就被创建的变量
+            3. 示例
+                ```dart
+                final a = 10;
+                const b = 10;
+                class Main() {
+                    final a = 10;
+                    // 如果const变量在类中，需要加上static
+                    // 因为类未初始化，该值无法被视为编译时变量，否则会报错
+                    static const b = 10;
+                }
+                ```
+        4. dart语法的const相当于java这种写法
+            ```java
+            private static final int a = 10;
+            ```
+        5. 若干个表达式引用为编译时常量，其结果也是编译时常量
+            ```java
+            const a = "Hello";
+            const b = "World";
+            const c = "$a $b";
+            ```
+    3. 类型
+        1. 基本类型
+            * numbers: 只支持int、double
+            * strings
+            * booleans
+            * lists
+            * maps
+            * runes
+            * symbols
+        2. number
+            * 运算符: +、-、*、/、～/、%
+            * 常用属性: isNaN、isEven、isOdd
+            * 常用方法: abs()、round()、floor()、ceil()、toInt()
+            * 特殊运算符: ?.、??、??=
+            * /和～/的区别
+                ```dart
+                int a = 10;
+                int b = 2;
+                print(a / b);  // 5.0
+                print(a ~/ b);  // 5
+                ```
+            * ??和??=的区别
+                ```dart
+                // ??属于条件表达式
+                // 如果b是null，则执行toString()并返回其结果，如果不是null，则返回其值
+                b ?? b.toString();
+                // ??=属于赋值表达式
+                // 如果b是null，则赋值给b，如果不是null，则b的值保持不变
+                b ??= value;
+                ```
+        3. boolean: true和false所创建的对象都是编译时常量。当Dart需要一个布尔值的时候，只有true对象才被认为是true，所有其他的值都是flase
+        4. string
+            ```dart
+            String str1 = 'Hello World';  // 普通字符串
+            String str2 = """<html>
+                <a href="">go</a>
+            </html>""";  // 段落
+            String str3 = r'Hello /n Word';  // 不转义
+            print(str3 * 5);  // 重复5次
+            print(str3 == str4);  // 相等
+            print(str3[0]);  // 获取字符
+            print('a + b = ${a + b}');  // 插值表达式
+            ```
+        5. list
+            ```dart
+            var list = [1,2,3];
+            var list = const [1,2,3];  // 定义不可变列表
+            var list = new List();
+            var list = new List<String>.generate(1000, (i) => "Item $i");
+            ```
+        6. map
+            ```dart
+            var map = {'1':'c','2':'java'};
+            var map = const{'1':'c','2':'java'};  // 定义不可变映射
+            var map = new Map();
+            ```
+        7. dynamic
+            ```dart
+            dynamic a = 10;  // 任意类型变量
+            var list = new List<dynamic>();  // 任意类型列表
+            ```
+        8. runes: 代表字符串的Unicode编码
+            ```dart
+            Runes input = new Runes('\u2665  \u{1f605}  \u{1f60e}  \u{1f47b}  \u{1f596}  \u{1f44d}');
+            print(new String.fromCharCodes(input));  //输出一排表情
+            ```
+        9. enum
+            ```dart
+            enum Color {red,green,blue}  // 枚举的定义
+            assert(Color.red.index == 0);  // 枚举索引获取
+            List<Color> colors = Color.values;  // 枚举列表获取
+            ```
+    4. 操作符
+        1. 
+        2. 
+    5. 函数
+    6. 异常
+    7. 导包
+    8. 级联调用
+    9. 异步支持
+    10. 类
+    11. 注解
+    12. 
+2. 
+
 ## Gradle
 
 0. links
