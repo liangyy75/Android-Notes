@@ -723,7 +723,8 @@
     * [dart学习笔记](http://www.cndartlang.com/user/2)
     * [dart 官网](https://dart.dev/guides)
     * [语法基础——Dart语法基础](https://blog.csdn.net/qq_30379689/article/details/87260932)
-    * [flutter菜鸟教程](https://blog.csdn.net/duo_shine/column/info/25090)
+    * [flutter 菜鸟教程](https://blog.csdn.net/duo_shine/column/info/25090)
+    * [Flutter 入门系列](https://blog.csdn.net/mengks1987/article/details/84868953)
 1. 基础
     1. 基础
         1. 主函数

@@ -926,6 +926,7 @@ Android Binder
     * [fragment重叠的完美解决方案](https://blog.csdn.net/yuzhiqiang_1993/article/details/75014591)
     * [Android碎片Fragment之多标签切换效果(微信和QQ底部多标签切换)](https://www.jianshu.com/p/69a47152c3a2)
     * [viewpager中彻底性动态添加、删除Fragment](https://www.cnblogs.com/zhujiabin/p/5382740.html)
+    * **[你真的会用Fragment吗？Fragment复用的那些事儿](https://www.jianshu.com/p/31f013df7580)** finished
 1. **为何产生**: 同时适配手机和平板、UI和逻辑的共享。
 2. **介绍**: 
     1. Fragment也会被加入回退栈中。
