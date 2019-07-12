@@ -3576,12 +3576,3 @@ Android 信息.md
     2. 使用apktool对apk进行二次打包
 
 ### end
-
-"android 控件.md" "android 布局.md" "android 资源类型详解.md" "android 架构组件学习.md" "android appwidget.md" "android media.md" "android OkHttp_NoHttp_Retrofit_.md" "android Glide_Fresco_Picasso.md" "android RxJava_RxAndroid_EventBus.md" 
-
-// android View
-// android Binder
-android 综合技术
-// android 性能优化
-android Window/WindowManager
-android ContentProvider
