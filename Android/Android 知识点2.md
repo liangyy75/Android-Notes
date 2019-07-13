@@ -1357,16 +1357,6 @@ img {
 
 [【Android】APT](https://www.jianshu.com/p/7af58e8e3e18)
 
-## Android Flutter
-
-[Flutter中文网](https://flutterchina.club/) -- Dart语言
-[Flutter文档汇总](https://segmentfault.com/a/1190000014722308)
-
-## Android Kotlin
-
-[抛弃 Java 改用 Kotlin 的六个月后，我后悔了](https://cloud.tencent.com/developer/news/249347)
-[Kotlin中文网](https://www.kotlincn.net/)
-
 ## Android QPython
 
 [Python on Android](http://www.qpython.com/)
