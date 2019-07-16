@@ -88,6 +88,7 @@ Android源码设计模式解析与实战.pdf
 [Scala 菜鸟](https://www.runoob.com/scala/scala-tutorial.html)<br>
 [Scala and Android](https://app.assembla.com/wiki/show/scala-ide/Developing_for_Android)<br>
 [Scala Programming for Android](https://stackoverflow.com/questions/476111/scala-programming-for-android)<br>
+[Binding.scala](https://github.com/ThoughtWorksInc/Binding.scala)<br>
 [Akka 中文指南](https://blog.csdn.net/qq_35246620/column/info/14666)<br>
 <br>
 [开发工具总结（10）之Flutter从配置安装到填坑指南详解](https://www.jianshu.com/p/399c01657920)<br>
@@ -144,6 +145,11 @@ https://studygolang.com/topics/8327#reply12 -- go
 * [《UNIX环境高级编程》中文第三版笔记](https://github.com/huaxz1986/APUE_notes)
 * [《算法导论》第三版中算法的C++实现](https://github.com/huaxz1986/cplusplus-_Implementation_Of_Introduction_to_Algorithms)
 * []()
+* [qt creator](https://download.qt.io/official_releases/qtcreator/4.9/4.9.2/)
+* [qt](http://download.qt.io/archive/qt/5.13/5.13.0/)
+* [qt](https://www.qt.io/download)
+* [Qt 快速入门系列教程](https://wizardforcel.gitbooks.io/qt-beginning/content/)
+* [Qt教程](http://c.biancheng.net/qt/)
 
 #### 7.其他
 
@@ -192,6 +198,10 @@ https://studygolang.com/topics/8327#reply12 -- go
 * [rust中文文档1](http://wiki.jikexueyuan.com/index.php/project/rust-primer/install/rustup.html)
 * [Rust中文文档2](https://rustlang-cn.org/)
 * []()
+<br>
+* [Real World Haskell 中文版](http://cnhaskell.com/index.html)
+<br>
+* [Lua](https://github.com/wsdjeg/lua-tutorial-cn)
 
 #### 11.后台语言--go
 

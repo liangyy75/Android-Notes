@@ -1,7 +1,7 @@
 <style>
 img {
-    margin:0 auto;
-    display:block;
+    margin: 0 auto;
+    display: block;
 }
 </style>
 
