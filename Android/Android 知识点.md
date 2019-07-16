@@ -448,6 +448,18 @@ Android Binder
 17. **Instant run** https://www.jianshu.com/p/2e23ba9ff14b
 18. **android 签名** 
 
+### Android 基础知识4(构建相关)
+
+1. mustRunAfter 与 finalizedBy 与 dependsOn 的差别: https://blog.csdn.net/lzyzsd/article/details/46935405
+2. compile 与 api 与 compileOnly 与 implementation 与 provided 等等的差别: [Android Studio3.0中dependencies依赖由compile变为implementation的区别](https://blog.csdn.net/silenceoo/article/details/78735687)
+3. 三种导入代码的方法
+    1. 直接将全部代码导入，但可能导致类冲突，因为可能项目其他地方又有该库的依赖
+    2. 通过 jar 和 pom.xml 定义规则导入
+    3. 通过 aar 和 pom.xml
+4. aar 与 jar
+5. pom.xml 与 .iml
+6. 
+
 ### Android Activity
 
 1. **概念**: Android开发中提供给用户进行滑动触摸等操作的界面。

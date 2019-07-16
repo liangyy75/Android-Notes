@@ -235,6 +235,8 @@ https://studygolang.com/topics/8327#reply12 -- go
 * [一个强大社区?](https://community.idera.com/)
 * [史上最简单的 GitHub 教程](https://blog.csdn.net/qq_35246620/article/details/66973794)
 * [史上最简单的 IntelliJ IDEA 教程](https://blog.csdn.net/qq_35246620/column/info/14873)
+* [IntelliJ IDEA使用教程 （总目录篇）](https://blog.csdn.net/qq_27093465/article/details/77449117)
+* [UMLet使用教程](https://www.awaimai.com/1448.html)
 
 #### 16.电脑
 
