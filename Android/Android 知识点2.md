@@ -13,6 +13,7 @@ img {
 * [Android 蓝牙/wifi](Android%20蓝牙%2fwifi)
 * [Android 地图](##Android%20地图)
 * [Android 插件化](##Android%20插件化)
+* [Android Arouter](##Android%20Arouter)
 * [Android Agora Platform](##Android%20Agora%20Platform)
 * [Android APT](##Android%20APT)
 * [Android Flutter](##Android%20Flutter)
@@ -1349,6 +1350,93 @@ img {
 
 
 
+## Android Arouter
+
+0. links
+    * [Arouter解析](https://my.oschina.net/JiangTun?tab=newest&catalogId=3687878)
+    * [Android模块开发之APT技术](https://www.jianshu.com/p/9616f4a462bd)
+1. 基本使用与页面祖册源码解析
+    1. Google提供的原声路由主要是通过intent，可以分成显示和隐式两种。显示的方案会导致类之间的直接依赖问题，耦合严重；隐式intent需要的配置清单中统一声明，首先有个暴露的问题，另外在多模块开发中协作也比较困难。只要调用startActivity后面的环节我们就无法控制了，在出现错误时无能为力，而ARouter可以在跳转过程中进行拦截，出现错误时可以实现降级策略。
+        1. 官方宣称的ARouter的优势
+            * 直接解析URL路由，解析参数并赋值
+            * 支持多模块项目
+            * 支持InstantRun
+            * 允许自定义拦截器，支持多个拦截器且定义拦截顺序
+            * ARouter可以提供IoC容器
+            * 映射关系自动注册
+            * 灵活的降级策略，支持用户指定全局降级与局部降级策略
+            * 支持MultiDex
+            * 支持第三方 App 加固(使用 arouter-register 实现自动注册)
+            * 支持生成路由文档
+            * 提供 IDE 插件便捷的关联路径和目标类
+            * 支持获取Fragment
+            * 页面、拦截器、服务等组件均自动注册到框架
+            * 映射关系按组分类、多级管理，按需初始化
+            * 支持多种方式配置转场动画
+            * 完全支持Kotlin以及混编(配置见文末)
+        2. 典型应用
+            * 从外部URL映射到内部页面，以及参数传递与解析
+            * 跨模块页面跳转，模块间解耦
+            * 拦截跳转过程，处理登陆、埋点等逻辑
+            * 跨模块API调用，通过控制反转来做组件解耦
+    2. ARouter配置
+        * 在使用之前需要先配置gradle
+            ```groovy
+            android {
+                defaultConfig {
+                    ...
+                    javaCompileOptions {
+                        annotationProcessorOptions {
+                            arguments = [AROUTER_MODULE_NAME: project.getName()]
+                        }
+                    }
+                }
+            }
+            dependencies {
+                // 替换成最新版本, 需要注意的是api
+                // 要与compiler匹配使用，均使用最新版可以保证兼容
+                compile 'com.alibaba:arouter-api:x.x.x'
+                annotationProcessor 'com.alibaba:arouter-compiler:x.x.x'
+                ...
+            }
+            // 旧版本gradle插件(< 2.2)，可以使用apt插件，配置方法见文末'其他#4'
+            // Kotlin配置参考文末'其他#5'
+            ```
+        * 接着需要尽早的初始化ARouter，可以考虑在Application中进行初始化
+            ```java
+            if (isDebug()) {           // 这两行必须写在init之前，否则这些配置在init过程中将无效
+                ARouter.openLog();     // 打印日志
+                ARouter.openDebug();   // 开启调试模式(如果在InstantRun模式下运行，必须开启调试模式！线上版本需要关闭,否则有安全风险)
+            }
+            ARouter.init(mApplication); // 尽可能早，推荐在Application中初始化
+            ```
+    3. activity页面之间跳转
+        * 首先需要在支持路由的页面上添加注解，路径path至少需要有两级，比如我们需要跳转到Test2Activity,那么需要在activity上面配置path,具体内容不一定是/test/activity2，可以自由发挥。
+            ```java
+            @Route(path = "/test/activity2")  // 其实最好将path的内容变为一个Constants.java文件里面的，这样更加解耦
+            public class Test2Activity extends AppCompactActivity
+            ```
+        * 然后直接像下面这样就行了，build中的参数就是上面配置的路径。
+            ```java
+            ARouter.getInstance().build("/test/activity2").navigation();
+            ARouter.getInstance().build("/test/activity2").withString("key1", "value1").navigation();  // 携带参数
+            ```
+        * 如果希望实现类似startActivityForResult呢？只需要在navigation中传入两个参数，第一个就是Context，第二个参数是requestCode。
+            ```java
+            ARouter.getInstance().build("/test/activity2").withString("key1", "value1").navigation(this, 999);
+            ```
+        * 在Test2Activity中就可以传递结果
+            ```java
+            setResult(int resultCode)
+            // or
+            setResult(int resultCode, Intent data)
+            ```
+        * 然后我们就可以在onActivityResult中得到数据，根据requestCode可以拿到数据。
+    4. APT技术
+        * APT，就是Annotation Processing Tool 的简称，就是可以在代码编译期间对注解进行处理，并且生成Java文件，减少手动的代码输入。这里我们就不多做介绍，这个不太清楚的可以参考我之前的分享[Android模块开发之APT技术](https://www.jianshu.com/p/9616f4a462bd)。
+    5. SPI技术
+    6. 页面注册源码解析
+
 ## Android Agora Platform
 
 [agorq io](https://www.agora.io/cn/)
@@ -1356,6 +1444,276 @@ img {
 ## Android APT
 
 [【Android】APT](https://www.jianshu.com/p/7af58e8e3e18)
+0. links
+    * [【Android】APT](https://www.jianshu.com/p/7af58e8e3e18)
+    * [反射注解与动态代理综合使用](https://www.jianshu.com/p/fad15887a05e) finished
+    * [javapoet github](https://github.com/square/javapoet) finished
+    * [JavaPoet 看这一篇就够了](https://juejin.im/entry/58fefebf8d6d810058a610de) finished
+    * [Android模块开发之APT技术](https://www.jianshu.com/p/9616f4a462bd)
+1. javapoet
+    1. javapoet是square公司良心出品，让我们脱离手动凭借字符串来生成Java类的痛苦，可以通过各种姿势来生成Java类。一个Java文件由四部分组成
+        1. 包名
+        2. 类
+        3. 属性
+        4. 方法
+    2. 对应到 JavaPoet 中也就是
+        ```java
+        JavaFile.builder("liang.example.lib",
+            TypeSpec.classBuilder(...)
+                .addField(FieldSpec...)
+                .addMethod(MethodSpec...)
+                .build())
+            .build();
+        ```
+    3. 实例
+        ```java
+        ClassName hoverboard = ClassName.get("com.mattel", "Hoverboard");  // 这个类可以不必存在
+        ClassName list = ClassName.get("java.util", "List");
+        ClassName arrayList = ClassName.get("java.util", "ArrayList");
+        TypeName listOfHoverboards = ParameterizedTypeName.get(list, hoverboard);
+        ClassName namedBoards = ClassName.get("com.mattel", "Hoverboard", "Boards");
+        MethodSpec hexDigit = MethodSpec.methodBuilder("hexDigit")
+            .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+            .addParameter(int.class, "i")
+            .returns(char.class)
+            .addStatement("return (char) (i < 10 ? i + '0' : i - 10 + 'a')")
+            .build();
+        ```
+        ```java
+        MethodSpec main = MethodSpec.methodBuilder("main")
+            .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+            .returns(void.class)
+            .addParameter(String[].class, "args")
+            // one statement
+            .addStatement("$T.out.println($S)", System.class, "Hello, JavaPoet!")
+            // mangy statements / 有大括号的
+            .addCode("int total = 0;\n"  // .addStatement("int total = 0")
+                + "for (int i = 0; i < 10; i++) {\n"  // .beginControlFlow("for (int i = 0; i < 10; i++)")
+                + "    total += i;\n"  // .addStatement("total += i")
+                + "}\n")  // endControlFlow()
+            // 多个大括号的
+            .addStatement("long now = $T.currentTimeMillis()", System.class)
+            .beginControlFlow("if ($T.currentTimeMillis() < now)", System.class)
+            .addStatement("$T.out.println($S)", System.class, "Time travelling, woo hoo!")
+            .nextControlFlow("else if ($T.currentTimeMillis() == now)", System.class)
+            .addStatement("$T.out.println($S)", System.class, "Time stood still!")
+            .nextControlFlow("else")
+            .addStatement("$T.out.println($S)", System.class, "Ok, time still moving forward")
+            .endControlFlow()
+            // try-catch
+            .beginControlFlow("try")
+            .addStatement("throw new Exception($S)", "Failed")
+            .nextControlFlow("catch ($T e)", Exception.class)
+            .addStatement("throw new $T(e)", RuntimeException.class)
+            .endControlFlow()
+            // 自定义导入类
+            .addStatement("$T result = new $T<>()", listOfHoverboards, arrayList)
+            .addStatement("result.add(new $T())", hoverboard)
+            .addStatement("result.add(new $T())", hoverboard)
+            // 添加其他 MethodSpec
+            .addStatement("int b = 10")
+            .addStatement("char[] result = new char[2]")
+            .addStatement("result[0] = $N((b >>> 4) & 0xf)", hexDigit)
+            .addStatement("result[1] = $N(b & 0xf)", hexDigit)
+            .addStatement("String byteToHex = new String(result)")
+            .build();
+            // $L for literals 可以接收 int / String / ...，不会有任何的改变(不会转义)
+            // $T for types 可以通过 Class 来指定，会自动生成import
+            // $S for strings 可以接受 String，可以接收引号和转义
+            // $N for Names
+        ```
+        ```java
+        TypeSpec helloWorld = TypeSpec.classBuilder("HelloWorld")
+            .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
+            .addMethod(main)
+            .build();
+        JavaFile javaFile = JavaFile.builder("com.example.helloworld", helloWorld)
+            .addStaticImport(hoverboard, "createNimbus")  // 静态导包
+            .addStaticImport(namedBoards, "*")
+            .addStaticImport(Collections.class, "*")
+            .build();
+        javaFile.writeTo(System.out);  // 可以写入流，或者调用javaFile.toString()作为字符串
+        // CodeBlock.builder().add("I ate $2L $1L", "tacos", 3) 等价于
+        // CodeBlock.builder().add("I ate $L $L", 3, "tacos")
+        // 甚至可以
+        // Map<String, Object> map = new LinkedHashMap<>();
+        // map.put("food", "tacos");
+        // map.put("count", 3);
+        // CodeBlock.builder().addNamed("I ate $count:L $food:L", map)
+        ```
+        ```java
+        // MethodSpec flux = MethodSpec.constructorBuilder()
+        //     .addModifiers(Modifier.PUBLIC)
+        //     .addParameter(String.class, "greeting")
+        //     .addStatement("this.$N = $N", "greeting", "greeting")
+        //     .build();
+        // FieldSpec android = FieldSpec.builder(String.class, "android")
+        //     .addModifiers(Modifier.PRIVATE, Modifier.FINAL)
+        //     .build();
+        // FieldSpec android = FieldSpec.builder(String.class, "android")
+        //     .addModifiers(Modifier.PRIVATE, Modifier.FINAL)
+        //     .initializer("$S + $L", "Lollipop v.", 5.0d)
+        //     .build();
+        // TypeSpec helloWorld = TypeSpec.interfaceBuilder("HelloWorld")
+        //     .addModifiers(Modifier.PUBLIC)
+        //     .addField(FieldSpec.builder(String.class, "ONLY_THING_THAT_IS_CONSTANT")
+        //         .addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
+        //         .initializer("$S", "change")
+        //         .build())
+        //     .addMethod(MethodSpec.methodBuilder("beep")
+        //         .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
+        //         .build())
+        //     .build();
+        // TypeSpec helloWorld = TypeSpec.enumBuilder("Roshambo")
+        //     .addModifiers(Modifier.PUBLIC)
+        //     .addEnumConstant("ROCK", TypeSpec.anonymousClassBuilder("$S", "fist")
+        //         .addMethod(MethodSpec.methodBuilder("toString")
+        //             .addAnnotation(Override.class)
+        //             .addModifiers(Modifier.PUBLIC)
+        //             .addStatement("return $S", "avalanche!")
+        //             .returns(String.class)
+        //             .build())
+        //         .build())
+        //     .addEnumConstant("SCISSORS", TypeSpec.anonymousClassBuilder("$S", "peace")
+        //         .build())
+        //     .addEnumConstant("PAPER", TypeSpec.anonymousClassBuilder("$S", "flat")
+        //         .build())
+        //     .addField(String.class, "handsign", Modifier.PRIVATE, Modifier.FINAL)
+        //     .addMethod(MethodSpec.constructorBuilder()
+        //         .addParameter(String.class, "handsign")
+        //         .addStatement("this.$N = $N", "handsign", "handsign")
+        //         .build())
+        //     .build();
+        // TypeSpec comparator = TypeSpec.anonymousClassBuilder("")
+        //     .addSuperinterface(ParameterizedTypeName.get(Comparator.class, String.class))
+        //     .addMethod(MethodSpec.methodBuilder("compare")
+        //         .addAnnotation(Override.class)
+        //         .addModifiers(Modifier.PUBLIC)
+        //         .addParameter(String.class, "a")
+        //         .addParameter(String.class, "b")
+        //         .returns(int.class)
+        //         .addStatement("return $N.length() - $N.length()", "a", "b")
+        //         .build())
+        //     .build();
+        // MethodSpec logRecord = MethodSpec.methodBuilder("recordEvent")
+        //     .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
+        //     .addAnnotation(AnnotationSpec.builder(Headers.class)
+        //         .addMember("accept", "$S", "application/json; charset=utf-8")
+        //         .addMember("userAgent", "$S", "Square Cash")
+        //         .build())
+        //     .addParameter(LogRecord.class, "logRecord")
+        //     .returns(LogReceipt.class)
+        //     .build();
+        //MethodSpec dismiss = MethodSpec.methodBuilder("dismiss")
+        //    .addJavadoc("Hides {@code message} from the caller's history. Other\n"
+        //        + "participants in the conversation will continue to see the\n"
+        //        + "message in their own history unless they also delete it.\n")
+        //    .addJavadoc("\n")
+        //    .addJavadoc("<p>Use {@link #delete($T)} to delete the entire\n"
+        //        + "conversation for all participants.\n", Conversation.class)
+        //    .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
+        //    .addParameter(Message.class, "message")
+        //    .build();
+        ```
+    4. 生成的Java文件
+        ```java
+        // 生成的
+        package com.example.helloworld;
+        import static com.mattel.Hoverboard.Boards.*;
+        import static com.mattel.Hoverboard.createNimbus;
+        import static java.util.Collections.*;
+        import com.mattel.Hoverboard;
+        import java.util.ArrayList;
+        import java.util.List;
+        public final class HelloWorld {
+            public static char hexDigit(int i) {
+                return (char) (i < 10 ? i + '0' : i - 10 + 'a');
+            }
+            public static void main(String[] args) {
+                System.out.println("Hello, JavaPoet!");
+                int total = 0;
+                for (int i = 0; i < 10; i++) {
+                    total += i;
+                }
+                long now = System.currentTimeMillis();
+                if (System.currentTimeMillis() < now)  {
+                    System.out.println("Time travelling, woo hoo!");
+                } else if (System.currentTimeMillis() == now) {
+                    System.out.println("Time stood still!");
+                } else {
+                    System.out.println("Ok, time still moving forward");
+                }
+                try {
+                    throw new Exception("Failed");
+                } catch (Execption e) {
+                    throw new RuntimeException(e);
+                }
+                List<Hoverboard> result = new ArrayList<>();
+                result.add(new Hoverboard());
+                result.add(new Hoverboard());
+                int b = 10;
+                char[] result = new char[2];
+                result[0] = hexDigit((b >>> 4) & 0xf);
+                result[1] = hexDigit(b & 0xf);
+                String byteToHex = new String(result);
+            }
+        }
+        ```
+    5. 关键类
+        * TypeSpec
+        * FieldSpec
+        * MethodSpec
+        * ParameterSpec
+        * AnnotationSpec
+        * JavaFile
+        * ClassName
+        * TypeName
+        * ParameterizedTypeName
+        * CodeBlock
+2. apt
+    1. APT，就是 Annotation Processing Tool 的简称，就是可以在代码编译期间对注解进行处理，并且生成Java文件，减少手动的代码输入。注解我们平时用到的比较多的可能会是运行时注解，比如大名鼎鼎的retrofit就是用运行时注解，通过动态代理来生成网络请求。编译时注解平时开发中可能会涉及的比较少，但并不是说不常用，比如我们经常用的轮子Dagger2, ButterKnife, EventBus3 都在用，所以要紧跟潮流来看看APT技术的来龙去脉。
+    2. 实例
+        1. Route
+            ```java
+            @Target(ElementType.TYPE)
+            @Retention(RetentionPolicy.CLASS)
+            public @interface Route {
+                String name();
+            }
+            ```
+        2. RouteProcessor
+            ```java
+            public class RouteProcessor extends AbstractProcessor {
+                /**
+                 * init()方法可以初始化拿到一些使用的工具，比如文件相关的辅助类 Filer;元素相关的辅助类Elements;日志相关的辅助类Messager;
+                 */
+                @Override
+                public synchronized void init(ProcessingEnvironment processingEnvironment) {
+                    super.init(processingEnvironment);
+                }
+                /**
+                 * getSupportedSourceVersion()方法返回 Java 版本;
+                 */
+                @Override
+                public SourceVersion getSupportedSourceVersion() {
+                    return super.getSupportedSourceVersion();
+                }
+                /**
+                 * getSupportedAnnotationTypes()方法返回要处理的注解的结合;
+                 */
+                @Override
+                public Set<String> getSupportedAnnotationTypes() {
+                    return super.getSupportedAnnotationTypes();
+                }
+                /**
+                 * 上面几个方法写法基本都是固定的，重头戏是process()方法。
+                 */
+                @Override
+                public boolean process(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
+                    return false;
+                }
+            }
+            ```
 
 ## Android QPython
 
