@@ -269,7 +269,7 @@ Android Binder
         1. HttpURLConnection直接支持GZIP压缩，默认添加"Accept-Encoding: gzip"头字段到请求中，并处理相应的回应，而Http Client虽然支持，但需要自己写代码处理。但在2.3中，由于Http的Content-Length头字段返回的是压缩后的大小，直接使用getContentLength()方法得到的数据大小是错误的，应该使用InputStream.read()直到返回值是-1为止。
         2. HttpURLConnection直接在系统层面做了缓存策略处理(Android 4.0以上)，Http请求将在以下三种中选择: 
             1. 完全的cache的response将直接从本地存储中获取。因为不需要网络连接，此类response可以立即得到。
-            2. 有条件cache的response必须在Web服务器验证一下cache的有效性。客户端发送一个请求，比如“如果/foo.png从昨天起有变化则给我新的图片” , 服务端的response要么是更新后的内容，要么是304没有修改状态码。如果内容是没有改变的，就不需要下载了。
+            2. 有条件cache的response必须在Web服务器验证一下cache的有效性。客户端发送一个请求，比如“如果/foo.png从昨天起有变化则给我新的图片" , 服务端的response要么是更新后的内容，要么是304没有修改状态码。如果内容是没有改变的，就不需要下载了。
             3. 没有cache的response将从服务器上获取。得到这些response之后会存储到cache以便将来使用。
     4. 选择: 
         1. HttpURLConnect是一个通用的、适合大多数应用的轻量级组件。这个类起步比较晚，很容易在主要API上做稳步的改善。但是HttpURLConnection在在Android 2.2及以下版本上存在一些令人厌烦的bug，尤其是在读取 InputStream时调用 close()方法，就有可能会导致连接池失效了。
@@ -442,8 +442,8 @@ Android Binder
     4. **android:targetSdkVersion** : 标明应用程序目标API Level的一个整数。如果不设置，默认值和minSdkVersion相同。这个属性通知系统，你已经针对这个指定的目标版本测试过你的程序，系统不必再使用兼容模式来让你的应用程序向前兼容这个目标版本。应用程序仍然能在低于targetSdkVersion的系统上运行。由于Android不断向着更新的版本进化，一些行为甚至是外观可能会改变。然而，如果平台的API Level高于你的应用程序中的targetSdkVersion属性指定的值，系统会开启兼容行为来确保你的应用程序继续以期望的形式来运行。你可以通过指定targetSdkVersion来匹配运行程序的平台的 API level来禁用这种兼容性行为。举例来说，设置这个值为11或更高，当你的应用运行在Android3.0或更高的系统上时，系统会为你的应用使用新的默认主题(Holo主题)，并且当运行在大屏幕的设备上时会禁用屏幕兼容模式(screen compatibility mode)，因为支持了 API level 11就暗示了支持大屏幕。为了让你的应用程序支持每个Android版本，你应当提高targetSdkVersion的值到最新的API level，然后在对应的平台上彻底的测试你的应用。从上面的论述可知，targetSdkVersion这个属性是在程序运行时期起作用的，系统根据这个属性决定要不要以兼容模式运行这个程序。
     5. **android:maxSdkVersion** : 标明可以运行你的应用的最高API Level版本。在Android1.5，1.6，2.0 和2.0.1，在安装应用或系统升级时，系统会检查这个值。在这两种情况下，如果应用设置的maxSdkVersion 值低于系统本身使用的API Level，系统将不会允许安装该应用。在系统升级后，新系统会重新校验这个值，如果新系统的API Level高于这个值，新系统会删除你的应用。在高于2.0.1的系统上，安装应用时不会再检验应用中设置的maxSdkVersion值，在系统升级后也不会重新校验这个值。但是在向用户展示可用的应用时，Google Play会继续使用这个属性进行过滤。**maxSdkVersion这个属性本来是在程序安装时和系统升级后起作用的。但是根据官方文档中的说明， 已经不再推荐使用这个属性**。
     6. **向前兼容**是 Android 非常关注的事情。用户在升级到新版 Android 的时候，用以前版本的 SDK 构建的现有应用应该不会出问题。这就是 compileSdkVersion, minSdkVersion 和 targetSdkVersion 的作用：他们分别控制可以使用哪些 API ，要求的 API 级别是什么，以及应用的兼容模式。
-    7. **compileSdkVersion** : compileSdkVersion 告诉 Gradle 用哪个 Android SDK 版本编译你的应用。使用任何新添加的 API 就需要使用对应 Level 的 Android SDK。需要强调的是修改 compileSdkVersion 不会改变运行时的行为。当你修改了 compileSdkVersion 的时候，可能会出现新的编译警告、编译错误，但新的 compileSdkVersion 不会被包含到 APK 中：它纯粹只是在编译的时候使用。（你真的应该修复这些警告，他们的出现一定是有原因的）。因此我们强烈推荐总是使用最新的 SDK 进行编译。在现有代码上使用新的编译检查可以获得很多好处，避免新弃用的 API ，并且为使用新的 API 做好准备。注意，如果使用 Support Library ，那么使用最新发布的 Support Library 就需要使用最新的 SDK 编译。例如，要使用 23.1.1 版本的 Support Library ，compileSdkVersion 就必需至少是 23 （大版本号要一致！）。通常，新版的 Support Library 随着新的系统版本而发布，它为系统新增加的 API 和新特性提供兼容性支持。
-    8. minSdkVersion 和 targetSdkVersion 与 compileSdkVersion 的另一个不同之处是它们会被包含进最终的 APK 文件中，如果你查看生成的 AndroidManifest.xml 文件，你会看到类似下面这样的标签：``<uses-sdk android:targetSdkVersion="23" android:minSdkVersion="7" />``。如果你在 manifest 文件中手工设置，你会发现 Gradle 在构建时会忽略它们（尽管其它构建系统可能会明确依赖它们）。**注意**: ``minSdkVersion <= targetSdkVersion <= compileSdkVersion``。理想上，在稳定状态下三者的关系应该更像这样：``minSdkVersion (lowest possible) <= targetSdkVersion == compileSdkVersion (latest SDK)``。用较低的 minSdkVersion 来覆盖最大的人群，用最新的 SDK 设置 target 和 compile 来获得最好的外观和行为。
+    7. **compileSdkVersion** : compileSdkVersion 告诉 Gradle 用哪个 Android SDK 版本编译你的应用。使用任何新添加的 API 就需要使用对应 Level 的 Android SDK。需要强调的是修改 compileSdkVersion 不会改变运行时的行为。当你修改了 compileSdkVersion 的时候，可能会出现新的编译警告、编译错误，但新的 compileSdkVersion 不会被包含到 APK 中：它纯粹只是在编译的时候使用。(你真的应该修复这些警告，他们的出现一定是有原因的)。因此我们强烈推荐总是使用最新的 SDK 进行编译。在现有代码上使用新的编译检查可以获得很多好处，避免新弃用的 API ，并且为使用新的 API 做好准备。注意，如果使用 Support Library ，那么使用最新发布的 Support Library 就需要使用最新的 SDK 编译。例如，要使用 23.1.1 版本的 Support Library ，compileSdkVersion 就必需至少是 23 (大版本号要一致！)。通常，新版的 Support Library 随着新的系统版本而发布，它为系统新增加的 API 和新特性提供兼容性支持。
+    8. minSdkVersion 和 targetSdkVersion 与 compileSdkVersion 的另一个不同之处是它们会被包含进最终的 APK 文件中，如果你查看生成的 AndroidManifest.xml 文件，你会看到类似下面这样的标签：``<uses-sdk android:targetSdkVersion="23" android:minSdkVersion="7" />``。如果你在 manifest 文件中手工设置，你会发现 Gradle 在构建时会忽略它们(尽管其它构建系统可能会明确依赖它们)。**注意**: ``minSdkVersion <= targetSdkVersion <= compileSdkVersion``。理想上，在稳定状态下三者的关系应该更像这样：``minSdkVersion (lowest possible) <= targetSdkVersion == compileSdkVersion (latest SDK)``。用较低的 minSdkVersion 来覆盖最大的人群，用最新的 SDK 设置 target 和 compile 来获得最好的外观和行为。
 16. **awesome adb** https://blog.csdn.net/u010610691/article/details/77663770
 17. **Instant run** https://www.jianshu.com/p/2e23ba9ff14b
 18. **android 签名** 
@@ -456,9 +456,128 @@ Android Binder
     1. 直接将全部代码导入，但可能导致类冲突，因为可能项目其他地方又有该库的依赖
     2. 通过 jar 和 pom.xml 定义规则导入
     3. 通过 aar 和 pom.xml
-4. aar 与 jar
-5. pom.xml 与 .iml
-6. 
+4. **aar** 与 **jar** 与 **war** 与 **Ear**: https://blog.csdn.net/zxw136511485/article/details/52777286
+    1. aar(Android Application Archive)是Android库项目的二进制归档文件: 我们随便找一个aar文件，然后修改后缀名为‘zip’或者‘rar’格式，然后解压该文件，打开解压后的文件夹，截图如下所示：(每个aar解压后的内容可能不完全一样，但是都会包含AndroidManifest.xml，classes.jar，res，R.txt)。*.aar文件中包含所有资源，class以及res资源文件。
+    2. jar(Java Application Archive)是java普通项目打包: 通常是开发时要引用通用类，打成jar包便于存放管理。当你使用某些功能时就需要这些jar包的支持，需要导入jar包。JAR 文件格式以流行的 ZIP 文件格式为基础。与 ZIP 文件不同的是，JAR 文件不仅用于压缩和发布，而且还用于部署和封装库、组件和插件程序，并可被像编译器和 JVM 这样的工具直接使用。在 JAR 中包含特殊的文件，如 manifests 和部署描述符，用来指示工具如何处理特定的 JAR。JAR(Java Archive，Java 归档文件)是与平台无关的文件格式，它允许将许多文件组合成一个压缩文件。为 J2EE 应用程序创建的 JAR 文件是 EAR(Enterprise Application Archive) 文件(企业 JAR 文件)。JAR 文件格式提供了许多优势和功能，其中很多是传统的压缩格式如 ZIP 或者 TAR 所没有提供的。它们包括： 安全性、减少下载时间、传输平台扩展、包密封、包版本控制、可移植性
+    3. war(Web Application Archive)是java web项目打包: 是做好一个web网站后，打成war包部署到服务器。目的是节省资源，提供效率。
+    4. Ear(Enterprise Application Archive)是包含全部企业应用程序的文件。在这种情形下，一个企业应用程序被定义为多个jar文件、资源、类和Web应用程序的集合。EAR文件包括整个项目，内含多个ejb module(jar文件)和web module(war文件)。
+5. **pom.xml** 与 **.iml** 与 **.classpath** 与 **.project**
+    1. pom是maven依赖文件: 打出来可以作为其他项目的maven依赖，在工程A中添加工程B的pom，A就可以使用B中的类。用在父级工程或聚合工程中。用来做jar包的版本控制。
+    2. .iml文件是IntelliJ自己的project structure的一部分。简短版本是它声明只对模块可见的库(例如jar)，而不是项目的其余部分或其他项目。它是一个xml文件,包含pom.xml中声明的每个工件的库条目及其范围(例如TEST或COMPILE)。
+    3. .iml与pom.xml间对照的关系: https://www.soinside.com/question/xFobi3RPTU2RiUY9BqR2SZ
+    4. pom.xml例子
+        ```xml
+        <?xml version="1.0" encoding="UTF-8"?>
+        <project xmlns="http://maven.apache.org/POM/4.0.0" 
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+            <modelVersion>4.0.0</modelVersion>
+            <groupId>test</groupId>
+            <artifactId>test</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <configuration>
+                            <source>1.8</source>
+                            <target>1.8</target>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+            <dependencies>
+                <dependency>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                    <version>${log4j.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                    <version>${org.slf4j.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.easymock</groupId>
+                    <artifactId>easymock</artifactId>
+                    <version>2.5.2</version>
+                    <optional>true</optional>
+                </dependency>
+                <dependency>
+                    <groupId>junitperf</groupId>
+                    <artifactId>junitperf</artifactId>
+                    <version>1.8</version>
+                </dependency>
+            </dependencies>
+            <properties>
+                <log4j.version>1.2.14</log4j.version>
+                <org.slf4j.version>1.5.2</org.slf4j.version>
+            </properties>
+        </project>
+        ```
+    5. 对应的 .iml 文件例子
+        ```xml
+        <?xml version="1.0" encoding="UTF-8"?>
+        <module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
+            <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_8">
+                <output url="file://$MODULE_DIR$/target/classes" />
+                <output-test url="file://$MODULE_DIR$/target/test-classes" />
+                <content url="file://$MODULE_DIR$">
+                    <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
+                    <sourceFolder url="file://$MODULE_DIR$/src/main/resources" type="java-resource" />
+                    <sourceFolder url="file://$MODULE_DIR$/src/test/java" isTestSource="true" />
+                    <excludeFolder url="file://$MODULE_DIR$/target" />
+                </content>
+                <orderEntry type="inheritedJdk" />
+                <orderEntry type="sourceFolder" forTests="false" />
+                <orderEntry type="library" name="Maven: log4j:log4j:1.2.14" level="project" />
+                <orderEntry type="library" name="Maven: org.slf4j:slf4j-log4j12:1.5.2" level="project" />
+                <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.5.2" level="project" />
+                <orderEntry type="library" name="Maven: org.easymock:easymock:2.5.2" level="project" />
+                <orderEntry type="library" name="Maven: org.hamcrest:hamcrest-core:1.1" level="project" />
+                <orderEntry type="library" name="Maven: org.hamcrest:hamcrest-library:1.1" level="project" />
+                <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.6" level="project" />
+                <orderEntry type="library" name="Maven: junitperf:junitperf:1.8" level="project" />
+            </component>
+        </module>
+        ```
+6. **dex** 与 **jar** 与 **class**: https://blog.csdn.net/MayData/article/details/53466126
+    1. 简单先解释下，一般java编写后的脚本文件是.java，.class是字节码文件，.dex是android平台可执行文件类型，一般java文件打包成jar包后里面的jar资源是.class，如果需要运行于android，那必须jar里面资源为.dex，如U1的jar脚本
+    2. dex 转 jar: https://sourceforge.net/projects/dex2jar/?source=typ_redirect 指令 ``d2j-dex2jar Xxx.dex``
+    3. jar 转 dex: build-tools/Xx.xx.xx/dx.bat
+        * 将jar包转换成dex格式二进制的jar包: ``dx --dex --output=target.jar(-output="输出的jar包名")  origin.jar(原来的jar包)``
+7. android studio 打包 apk / jar / aar: https://blog.csdn.net/qq_23547831/article/details/51966166
+8. .classpath 基本语法
+    1. 基本示例
+        ```xml
+        <?xml version="1.0" encoding="UTF-8"?>
+        <classpath>
+            <!-- 源码目录 --> 
+            <classpathentry kind="src" output="target/classes" path="src"/>
+            <!-- class文件目录 -->
+            <classpathentry kind="output" path="bin"/>
+            <!-- 工程引用外部lib目录(最好用相对路径) -->         
+            <classpathentry kind="lib" path="G:/java_ocr/Asprise-OCR-Java-Windows_XP_32bit-4.0/aspriseOCR.jar" exported="true"/>
+            <classpathentry kind="lib" path="lib/xstream-1.3.1.jar"/>
+            <!-- JDK编译时容器 -->
+            <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.6.0_06"/>
+        </classpath>
+        ```
+    2. 基本 classpathentry
+        - 定义项目的结构，如src、output、con、lib等。
+        - 源文件的具体位置(kind="src")
+        - 运行的系统环境(kind="con", exported="true")
+        - 外部引用的jar(不在项目的libs文件夹中)的具体位置信息(kind="lib", exported="true")
+        - 编译后的类文件(*.class)的输出目录(kind="output")
+    3. export指的是编译后导出到相应路径(这里的路径指的不是kind="output"的路径，output配置只能决定 *.class 文件的输出位置)，比如说jar会被导到bin/dexedLibs目录。如果将export属性全部改为false，编译正常，但程序打开会直接崩溃，提示RuntimeException:ClassNotFound。
+9. .project
+    1. 用处
+        - 工程名
+        - 工程注释描述
+        - 运行时需要的额外Eclipse插件
+        - 指定编译信息，指定编译工具
+    2. 如果你在开发过程中向工程里面加入了很多额外的插件，则必然会导致你的Eclipse启动速度变慢。在这种情况下，你可以到这个文件里面去掉一些插件，不过这样一来你在开启那些关联文件的时候会加载那些插件。
+10. pom语法详解 https://blog.csdn.net/sq_better/article/details/54630810
 
 ### Android Activity
 
@@ -1228,7 +1347,7 @@ Android Binder
     1. 原因: 当我们旋转屏幕的时候，activity会被销毁并重新创建，并且在销毁之前执行了onSaveInstanceState(Bundle outState)这个方法。这个方法会保存activity的一些信息，其中就包括添加过的fragment，当activity被重新创建时，会初始化其中的变量，这个时候点击底部导航的话会重新去添加fragment，也就导致了重叠的问题。
     2. 解决方案
         1. 想办法不让activity保存信息。(不推荐)。如重写onSaveInstanceState，但不使用super
-        2. 旋转屏幕时不让activity走生命周期方法(推荐)。这个方法最简单也最省事，只需要在相应的activity中声明android:configChanges=“keyboardHidden|orientation|screenSize”> 即可。声明这个属性后，当我们切换屏幕时，也就不会在走activity的生命周期方法了，也就不会造成fragment重叠的问题了。
+        2. 旋转屏幕时不让activity走生命周期方法(推荐)。这个方法最简单也最省事，只需要在相应的activity中声明android:configChanges=“keyboardHidden|orientation|screenSize"> 即可。声明这个属性后，当我们切换屏幕时，也就不会在走activity的生命周期方法了，也就不会造成fragment重叠的问题了。
         3. 还有一种可能也会造成fragment重叠的问题，就是当内存不足时activity被系统回收时，再次进入也会造成重叠的问题，原因也是因为onSaveInstanceState(outState);方法保存了activity的一些数据。因为是系统回收的activity，所以，我们就没法去控制activity不让他走生命周期方法，我们可以从另一个方面着手去解决。解决办法：在onSaveInstanceState(outState);中去保存fragment，当activity被恢复时，取出这些fragment即可。使用getSupportFragmentManager的putFragment方法。然后oncreate的时候判断一下savedInstanceState是为空，不为空的话就是有保存的fragment信息，使用getSupportFragmentManager的getFragment方法。
 12. [fragment清除页面数据(重新加载布局)](https://blog.csdn.net/yuzhiqiang_1993/article/details/76152454)
 
@@ -1372,7 +1491,7 @@ https://github.com/francistao/LearningNotes/blob/master/Part1/Android/线程通�
 9. **Bundle**: 
     1. 使用场景: Activity状态数据的保存与恢复涉及到的两个回调; Fragment的set/getArguments方法; 消息机制中的Message的setData方法等等
     2. 实现了Parcelable与Clonable接口，可以方便的在不同进程间传输，使用final修饰，所以不可以被继承。
-    3. 使用的是ArrayMap，这个集合类存储的也是键值对，但是与Hashmap不同的是，hashmap采用的是“数组+链表”的方式存储，而Arraymap中使用的是两个数组进行存储，一个数组存储key，一个数组存储value，内部的增删改查都将会使用二分查找来进行，这个和SparseArray差不多，只不过sparseArray的key值只能是int型的，而Arraymap可以是map型，所以在数据量不大的情况下可以使用这两个集合代替hashmap去优化性能；
+    3. 使用的是ArrayMap，这个集合类存储的也是键值对，但是与Hashmap不同的是，hashmap采用的是“数组+链表"的方式存储，而Arraymap中使用的是两个数组进行存储，一个数组存储key，一个数组存储value，内部的增删改查都将会使用二分查找来进行，这个和SparseArray差不多，只不过sparseArray的key值只能是int型的，而Arraymap可以是map型，所以在数据量不大的情况下可以使用这两个集合代替hashmap去优化性能；
     4. Bundle提供了很多get/put方法，包括基本类型以及实现了Parcelable/Serializable接口的。
     5. mParcelledData的取值有3种情况: 
         1. mParcelledData = EMPTY_PARCEL
@@ -1504,12 +1623,12 @@ https://blog.csdn.net/u011240877/article/details/72765136
 4. **application**: https://blog.csdn.net/totond/article/details/72782031 https://www.jianshu.com/p/b0dee36af8d0
     1. **每个APP都有一个Application实例**：如果我们没有继承Application子类自定义它的话，APP会创建一个默认的实例。
     2. **Application实例拥有着与APP一样长的生命周期**：在APP开启的时候首先就会实例化它，然后才是入口的Activity或者Service等。
-    3. **Application与APP“同生共死”**，在一个APP的生命周期只实例化一次，所以它“天生”就是一个单例，不需要使用单例模式去实现它。
+    3. **Application与APP“同生共死"**，在一个APP的生命周期只实例化一次，所以它“天生"就是一个单例，不需要使用单例模式去实现它。
     4. Application是**继承自ContextWarpper**的，继承来的方法就不在这里说了，下面来看看**Application的方法**：
         1. onCreate
         2. onConfigurationChanged(Configuration newConfig)
         3. onLowMemory(): Android系统整体内存较低时，当APP处于前台时，但是所有后台程序都被kill光了，但是还是内存不足时，系统就会调用这个方法告诉APP，兄弟轮到你了。我们可以在这个方法里面释放一些不重要的资源，来保证到时候内存足够而让APP进程不被系统杀掉，或者提醒用户清一下垃圾，让内存清一点空位出来。
-        4. onTrimMemory(int level): 当Android系统内存不足时调用这个方法告诉启动的APP，让它们减低点内存，否则就根据优先级调用onLowMemory来回收了。level是内存不足的严重性。假如这时候系统内存不足，运行着前台和后台一共几个APP，这些不同的APP会收到系统老妈不同的“劝告信息”: 
+        4. onTrimMemory(int level): 当Android系统内存不足时调用这个方法告诉启动的APP，让它们减低点内存，否则就根据优先级调用onLowMemory来回收了。level是内存不足的严重性。假如这时候系统内存不足，运行着前台和后台一共几个APP，这些不同的APP会收到系统老妈不同的“劝告信息": 
             1. TRIM_MEMORY_RUNNING_MODERATE=5: 轻量级的警告前台。告诉前台APP让它释放一下内存，但只会清理了其他后台APP与其他进程，而不会清除该前台APP。
             2. TRIM_MEMORY_RUNNING_LOW=10: 中级警告前台APP。
             3. TRIM_MEMORY_RUNNING_CRITICAL=15: 严重警告前台APP，甚至可能会调用onLowMemory来回收前台APP的资源了。
@@ -2086,11 +2205,11 @@ Android 信息.md
             .placeholder(R.mipmap.ic_launcher)//加载成功之前占位图
             .error(R.mipmap.ic_launcher)//加载错误之后的错误图
             .override(400,400)//指定图片的尺寸
-            //指定图片的缩放类型为fitCenter （等比例缩放图片，宽或者是高等于ImageView的宽或者是高。）
+            //指定图片的缩放类型为fitCenter (等比例缩放图片，宽或者是高等于ImageView的宽或者是高。)
             .fitCenter()
-            //指定图片的缩放类型为centerCrop （等比例缩放图片，直到图片的狂高都大于等于ImageView的宽度，然后截取中间的显示。）
+            //指定图片的缩放类型为centerCrop (等比例缩放图片，直到图片的狂高都大于等于ImageView的宽度，然后截取中间的显示。)
             .centerCrop()
-            .circleCrop()//指定图片的缩放类型为centerCrop （圆形）
+            .circleCrop()//指定图片的缩放类型为centerCrop (圆形)
             .skipMemoryCache(true)//跳过内存缓存
             .diskCacheStrategy(DiskCacheStrategy.ALL)//缓存所有版本的图像
             .diskCacheStrategy(DiskCacheStrategy.NONE)//跳过磁盘缓存
@@ -2345,7 +2464,7 @@ Android 信息.md
             dependencies {
                 // 支持 GIF 动图，需要添加
                 compile 'com.facebook.fresco:animated-gif:2.0.0'
-                // 支持 WebP （静态图+动图），需要添加
+                // 支持 WebP (静态图+动图)，需要添加
                 compile 'com.facebook.fresco:animated-webp:2.0.0'
                 compile 'com.facebook.fresco:webpsupport:2.0.0'
                 // 仅支持 WebP 静态图，需要添加
@@ -2353,7 +2472,7 @@ Android 信息.md
                 // 在 API < 14 上的机器支持 WebP 时，需要添加
                 compile 'com.facebook.fresco:animated-base-support:0.12.0'
                 // Provide the Android support library (you might already have this or a similar dependency)
-                // 提供Android支持库（您可能已经拥有此类或相似的依赖项）
+                // 提供Android支持库(您可能已经拥有此类或相似的依赖项)
                 implementation 'com.android.support:support-core-utils:24.2.1'
             }
             ```
@@ -3506,11 +3625,11 @@ Android 信息.md
     2. 桌面模式: Android Q 将支持桌面模式，类似三星 Dex 和华为的投影模式。它提供类似一个类似于 PC 的体验，但是远远不能代替 PC。
     3. 隐私增强: Android Q 还将更多地使用 Android Pie 中推出的隐私功能。 在 Android Q中，您可以选择应用程序在后台运行时是否可以访问该位置。此外，当应用程序使用您的位置数据、麦克风或摄像头时，您将在通知栏中看到相应的图标。 它会告诉你哪个应用程序正在使用该权限。Android Q 中还有一个新的专用隐私页面。它显示了您的联系人、短信和其他敏感信息的应用程序的确切数量。
     4. 超级锁定模式: 现在，Android Pie 有一个锁定模式，可以禁用指纹传感器，但我猜 Android Q 将会有某种超级锁定模式。
-    5. 屏幕录制: Android Q 支持屏幕录制，就想 iOS 一样。在泄漏信息中我们发现。录屏功能还不完善，可以通过长时间按下“电源”菜单中的“屏幕快照”来开启。
+    5. 屏幕录制: Android Q 支持屏幕录制，就想 iOS 一样。在泄漏信息中我们发现。录屏功能还不完善，可以通过长时间按下“电源"菜单中的“屏幕快照"来开启。
     6. 移除 Android Beam: 用于在设备之间共享文件的 Android Beam 选项消失了。这个功能基本上没有什么人用，移除了很多人也没什么感觉吧。但如果我的假设是正确的，那么谷歌可能正在为 Android 开发一个新的文件共享功能，类似于苹果的 AirDrop 和 Windows10 上的共享功能。 希望能在 Chromebook 上看到它，那也就不足为奇了。
     7. 运营商锁定: 如果你从运营商那里购买锁定的 Android Q 设备，他们将有能力阻止你使用其他特定运营商的SIM卡。
     8. 面部识别: XDA 团队发现了一串字符串，这些字符串表明 Android 10 将具有内部面部识别功能。 这意味着谷歌官方支持面部解锁系统。
-    9. 不允许从后台读取剪贴板信息: Android Q 包含了名为“READ_CLIPBOARD_IN_BACKGROUND”的新权限。顾名思义，新的权限将阻止随机的后台应用程序访问剪贴板内容。
+    9. 不允许从后台读取剪贴板信息: Android Q 包含了名为“READ_CLIPBOARD_IN_BACKGROUND"的新权限。顾名思义，新的权限将阻止随机的后台应用程序访问剪贴板内容。
     10. 降级应用程序更新: 许多关于泄露的代码和命令行表明，Android Q 将有将应用程序回滚到以前的版本的功能。
     11. 新字体、图标形状和提示颜色: Android Pie的一个特点是能够改变背景主题。有了AndroidQ，谷歌计划增加更多的定制功能。 泄露的 Android 信息中展示了新的两种新字体，图标形状，如正方形、松鼠、TearDrop，新的提示颜色：黑色、绿色和蓝色。
 8. Android vitals可以帮助我们精确诊断应用崩溃 https://mp.weixin.qq.com/s?__biz=MzAwODY4OTk2Mg==&mid=2652047285&idx=1&sn=7b5b574b29d37a1819bdb6950eec01c0&chksm=808ca7f0b7fb2ee60417e528ebccb5f70a4b9e9ef0e6834458f15c3789551982fe51188c78c9&scene=21#wechat_redirect
