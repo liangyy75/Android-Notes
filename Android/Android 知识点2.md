@@ -5,31 +5,30 @@ img {
 }
 </style>
 
-* [Android RecyclerView](##Android%20RecyclerView)
-* [Android ViewPager](##Android%20ViewPager)
-* [Android 性能优化](##Android%20性能优化)
-* [Android 热更新/热修复](##Android%20热更新%2f热修复)
-* [Android 自定义View](##Android%20自定义View)
-* [Android 蓝牙/wifi](Android%20蓝牙%2fwifi)
-* [Android 地图](##Android%20地图)
-* [Android 插件化](##Android%20插件化)
-* [Android Arouter](##Android%20Arouter)
-* [Android Agora Platform](##Android%20Agora%20Platform)
-* [Android APT](##Android%20APT)
-* [Android Flutter](##Android%20Flutter)
-* [Android Kotlin](##Android%20Kotlin)
-* [Android QPython](##Android%20QPython)
-* [Android EventBus源码阅读](##Android%20EventBus源码阅读)
-* [Android RxXxx](##Android%20RxXxx)
-* [Android Gson](##Android%20Gson)
-* [Retrofit2](##Retrofit2)
-* [OKHttp](##OKHttp)
-* [Android Hermes](##Android%20Hermes)
-* [Android 适配](##Android%20适配)
-* [Android KLog](##Android%20KLog)
-* [Android 工具](##Android%20工具)
-* [Android SDK](##Android%20SDK)
-* [Android 大项目](##Android%20大项目)
+- [Android RecyclerView](#Android-RecyclerView)
+- [Android ViewPager](#Android-ViewPager)
+- [Android 性能优化](#Android-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96)
+- [Android 热更新/热修复](#Android-%E7%83%AD%E6%9B%B4%E6%96%B0%E7%83%AD%E4%BF%AE%E5%A4%8D)
+- [Android 自定义View](#Android-%E8%87%AA%E5%AE%9A%E4%B9%89View)
+- [Android 蓝牙/wifi](#Android-%E8%93%9D%E7%89%99wifi)
+- [Android 地图](#Android-%E5%9C%B0%E5%9B%BE)
+- [Android 插件化](#Android-%E6%8F%92%E4%BB%B6%E5%8C%96)
+- [Android Arouter](#Android-Arouter)
+- [Android Agora Platform](#Android-Agora-Platform)
+- [Android APT](#Android-APT)
+- [Android QPython](#Android-QPython)
+- [Android EventBus源码阅读](#Android-EventBus%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB)
+- [Android RxXxx](#Android-RxXxx)
+- [Android Gson](#Android-Gson)
+- [Retrofit2](#Retrofit2)
+- [OKHttp](#OKHttp)
+- [Volley](#Volley)
+- [Android Hermes](#Android-Hermes)
+- [Android 适配](#Android-%E9%80%82%E9%85%8D)
+- [Android KLog](#Android-KLog)
+- [Android 工具](#Android-%E5%B7%A5%E5%85%B7)
+- [Android SDK](#Android-SDK)
+- [Android 大项目](#Android-%E5%A4%A7%E9%A1%B9%E7%9B%AE)
 
 [你还在被触摸事件困扰吗？看看这篇吧](https://www.jianshu.com/p/06574d8f10bf)
 
@@ -99,31 +98,25 @@ img {
             // 去除冗余的setItemClick事件 -- 但是需要用到data属性啊，真难，上面只有ViewHolder而没有position，所以。。。
             // 应该考虑使用 setOnTouchListener 与 GestureDetectorCompat(为什么使用这个???) ，不仅优雅，而且只需要一个 Listener 。但是使用TouchListener就真的只是Touch了，除非使用 GestureDetectorCompat.
         }
-
         public abstract void bindView(RVViewHolderTest viewHolder, T data);
-
         @Override
         public int getItemCount() {
             return datas.size();
         }
-
         public T getItem(int position) {
             return datas.get(position);
         }
-
         public void addData(T data) {
             datas.add(data);
             // notifyDataSetChanged();
             notifyItemInserted(datas.size() - 1);
         }
-
         public void addData(T data, int position) {
             datas.add(position, data);
             // notifyDataSetChanged();
             notifyItemInserted(position);
             recyclerView.scrollToPosition(position);
         }
-
         public T remove(int position) {
             T old = datas.remove(position);
             // notifyDataSetChanged();
@@ -132,19 +125,16 @@ img {
                 recyclerView.scrollToPosition(position);
             return old;
         }
-
         public void remove(T data) {
             int position = datas.indexOf(data);
             datas.remove(data);
             // notifyDataSetChanged();
             notifyItemRemoved(position);
         }
-
         public void setDatas(List<T> datas) {
             this.datas = datas;
             notifyDataSetChanged();
         }
-
         public interface OnItemClickListener<T> {
             public void onItemClick(View view, T data, int position);
             public boolean onItemLongClick(View view, T data, int position);
@@ -154,12 +144,10 @@ img {
 3. RecyclerView
     ```java
     public class MainActivity extends AppCompatActivity {
-
         @Override
         protected void onCreate(@Nullable Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_test_recyclerview);
-
             int size = 30;
             List<ExampleItem> dataSet = new ArrayList<>(size);
             for (int i = 0; i < size; i++) {
@@ -201,7 +189,6 @@ img {
                 }
             });
             recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-
             recyclerView.postDelayed(() -> {
                 adapter.addData(new ExampleItem("add string", 99, 99.5, false), 0);
                 recyclerView.scrollToPosition(0);
@@ -234,11 +221,9 @@ img {
         private LinearLayoutManager mLinearLayoutManager;
         private boolean isLoading = false;
         private int previousTotal = 0;
-
         public LoadMoreScrollListener(LinearLayoutManager mLinearLayoutManager) {
             this.mLinearLayoutManager = mLinearLayoutManager;
         }
-
         // @Override
         // public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
         //     super.onScrollStateChanged(recyclerView, newState);
@@ -250,11 +235,9 @@ img {
         //     }
         //     Log.d("state", message);
         // }
-
         @Override
         public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
             super.onScrolled(recyclerView, dx, dy);
-
             // Log.e("totalItemCount", "" + mLinearLayoutManager.getItemCount());
             // Log.e("visibleItemCount", "" + mLinearLayoutManager.getChildCount());
             // Log.e("部分可见", "firstVisibleItemPosition" + mLinearLayoutManager.findFirstVisibleItemPosition());
@@ -262,7 +245,6 @@ img {
             // Log.e("完全可见", "firstCompletelyVisibleItemPosition" + mLinearLayoutManager.findFirstCompletelyVisibleItemPosition());
             // Log.e("完全可见", "lastCompletelyVisibleItemPosition" + mLinearLayoutManager.findLastCompletelyVisibleItemPosition());
             // Log.e("-", "------------------------------------");
-
             int totalItemCount = mLinearLayoutManager.getItemCount();
             int visibleItemCount = mLinearLayoutManager.getChildCount();
             if (isLoading) {
@@ -277,7 +259,6 @@ img {
                 isLoading = true;
             }
         }
-
         public abstract void onLoadMore();
     }
     ```
@@ -327,16 +308,13 @@ img {
         private int lastState = RecyclerView.SCROLL_STATE_IDLE;
         private long timeLimit;
         private long lastTimeMillis = -1;
-
         public LoadMoreScrollListener2(LinearLayoutManager layoutManager) {
             this(layoutManager, 256);
         }
-
         public LoadMoreScrollListener2(LinearLayoutManager layoutManager, long timeLimit) {
             this.layoutManager = layoutManager;
             this.timeLimit = timeLimit;
         }
-
         @Override
         public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
             super.onScrollStateChanged(recyclerView, newState);
@@ -352,7 +330,6 @@ img {
             }
             lastState = newState;
         }
-
         @Override
         public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
             super.onScrolled(recyclerView, dx, dy);
@@ -372,10 +349,8 @@ img {
         private int[] itemLayoutIds = null;
         private View headerView = null;
         private View footerView = null;
-
         private static final int TYPE_HEADER = -1;
         private static final int TYPE_FOOTER = -2;
-
         // ...
         @Override
         public int getItemViewType(int position) {
@@ -390,23 +365,18 @@ img {
                     onItemViewTypeListener.getItemViewType(position, datas.get(position)) :
                     super.getItemViewType(position);
         }
-
         public void setOnItemViewTypeListener(OnItemViewTypeListener<T> onItemViewTypeListener) {
             this.onItemViewTypeListener = onItemViewTypeListener;
         }
-
         public void setItemLayoutIds(int[] itemLayoutIds) {
             this.itemLayoutIds = itemLayoutIds;
         }
-
         public void setHeaderView(View headerView) {
             this.headerView = headerView;
         }
-
         public void setFooterView(View footerView) {
             this.footerView = footerView;
         }
-
         @NonNull
         @Override
         public RVViewHolderTest onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -418,7 +388,6 @@ img {
                     RVViewHolderTest.get(context, parent, itemLayoutId) :
                     RVViewHolderTest.get(context, parent, itemLayoutIds[viewType]);
         }
-
         @Override
         public void onBindViewHolder(@NonNull final RVViewHolderTest viewHolder, int position) {
             if (datas == null || datas.size() == 0) return;
@@ -437,7 +406,6 @@ img {
                 viewHolder.getRoot().setOnLongClickListener(v -> onItemClickListener.onItemLongClick(v, data, pos));
             }
         }
-
         @Override
         public int getItemCount() {
             int size = datas.size();
@@ -447,15 +415,12 @@ img {
                 size++;
             return size;
         }
-
         public int getDataSize() {
             return datas.size();
         }
-
         public T getItem(int position) {
             return datas.get(position);
         }
-
         public void addData(T data) {
             int position = datas.size();
             datas.add(data);
@@ -466,7 +431,6 @@ img {
                 position++;
             recyclerView.scrollToPosition(position);
         }
-
         public void addData(T data, int position) {
             datas.add(position, data);
             if (headerView != null)
@@ -476,7 +440,6 @@ img {
                 position++;
             recyclerView.scrollToPosition(position);
         }
-
         public T remove(int position) {
             int dataPosition = position;
             T old = datas.remove(position);
@@ -486,7 +449,6 @@ img {
             scrollToPosition(position, dataPosition);
             return old;
         }
-
         public void remove(T data) {
             int position = datas.indexOf(data);
             int dataPosition = position;
@@ -496,7 +458,6 @@ img {
             notifyItemRemoved(position);
             scrollToPosition(position, dataPosition);
         }
-
         private void scrollToPosition(int position, int dataPosition) {
             if (dataPosition == 0)
                 recyclerView.scrollToPosition(0);
@@ -505,14 +466,12 @@ img {
             else
                 recyclerView.scrollToPosition(position - 1);
         }
-
         public void setDatas(List<T> datas) {
             this.datas = datas;
             notifyDataSetChanged();
             if (datas.size() > 0)
                 recyclerView.scrollToPosition(0);
         }
-
         @Override
         public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
             super.onAttachedToRecyclerView(recyclerView);
@@ -529,7 +488,6 @@ img {
                 });
             }
         }
-        
         @Override
         public void onViewAttachedToWindow(@NonNull RVViewHolderTest holder) {
             super.onViewAttachedToWindow(holder);
@@ -561,13 +519,10 @@ img {
             ((TextView) viewHolder.getViewById(R.id.test_recyclerview_item_bool)).setText(String.valueOf(data.isaBoolean()));
         }
     };
-
     adapter.setHeaderView(LayoutInflater.from(this).inflate(R.layout.item_recyclerview_header, recyclerView, false));
     adapter.setFooterView(LayoutInflater.from(this).inflate(R.layout.item_recyclerview_footer, recyclerView, false));
-
     adapter.setItemLayoutIds(new int[] { R.layout.item_recyclerview_list, R.layout.item_recyclerview_list2, R.layout.item_recyclerview_list3 });
     adapter.setOnItemViewTypeListener((position, data) -> data.getAnInt() % 3);
-
     // adapter.setOnItemClickListener(new RVAdapterTest.OnItemClickListener<ExampleItem>() {
     //     @Override
     //     public void onItemClick(View view, ExampleItem data, int position) {
@@ -611,7 +566,6 @@ img {
         }
     });
     recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-
     // recyclerView.postDelayed(() -> {
     //     adapter.addData(new ExampleItem("add string", 99, 99.5, false), 0);
     //     recyclerView.scrollToPosition(0);
@@ -619,7 +573,6 @@ img {
     // recyclerView.postDelayed(() -> {
     //     adapter.remove(0);
     // }, 10000);
-
     SwipeRefreshLayout swipeRefreshLayout = findViewById(R.id.test_recyclerview_swipe);
     swipeRefreshLayout.setColorSchemeResources(
             android.R.color.holo_blue_bright,
@@ -657,7 +610,6 @@ img {
             }, 1000);
         }
     });
-
     recyclerView.postDelayed(() -> {
         int size1 = adapter.getDataSize();
         adapter.addData(new ExampleItem("string" + size1, size1, size1 + 0.5f, size1 % 2 == 0));
@@ -738,12 +690,10 @@ img {
             adapter.move(viewHolder.getAdapterPosition() - 1, target.getAdapterPosition() - 1);
             return true;
         }
-
         @Override
         public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
             adapter.remove(viewHolder.getAdapterPosition() - 1);
         }
-
         @Override
         public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
             super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
@@ -1043,20 +993,20 @@ img {
             2. 类加载方案: 时效性差，需要重新冷启动才能见效，但修复范围广，限制少。QZone超级补丁、微信Tinker。
         2. 分析方案对比: 虽然热修复的主要套路有两种，但是，由这两种套路延伸出来的各种不同的帮派有很多，其中闻名天下的有四大门派。QZone超级补丁、微信Tinker、阿里AndFix、美团Robust。综合他们的优劣进行对比如下。
 
-            支撑/方案 | Tinker | QZone | AndFix | Robust
-            :-|:-|:-|:-|:-
-            类替换 | yes | yes | no | no
-            So替换 | yes | no | no | no
-            资源替换 | yes | yes | no | no
-            全平台支持 | yes | yes | yes | yes
-            即时生效 | no | no | yes | yes
-            性能损耗 | 较小 | 较大 | 较小 | 较小
-            补丁包大小 | 较小 | 较大 | 一般 | 一般
-            开发透明 | yes | yes | no | no
-            复杂度 | 较低 | 较低 | 复杂 | 复杂
-            gradle支持 | yes | no | no | no
-            Rom体积 | 较大 | 较小 | 较小 | 较小
-            成功率 | 较高 | 较高 | 一般 | 最高
+            | 支撑/方案  | Tinker | QZone | AndFix | Robust |
+            | :--------- | :----- | :---- | :----- | :----- |
+            | 类替换     | yes    | yes   | no     | no     |
+            | So替换     | yes    | no    | no     | no     |
+            | 资源替换   | yes    | yes   | no     | no     |
+            | 全平台支持 | yes    | yes   | yes    | yes    |
+            | 即时生效   | no     | no    | yes    | yes    |
+            | 性能损耗   | 较小   | 较大  | 较小   | 较小   |
+            | 补丁包大小 | 较小   | 较大  | 一般   | 一般   |
+            | 开发透明   | yes    | yes   | no     | no     |
+            | 复杂度     | 较低   | 较低  | 复杂   | 复杂   |
+            | gradle支持 | yes    | no    | no     | no     |
+            | Rom体积    | 较大   | 较小  | 较小   | 较小   |
+            | 成功率     | 较高   | 较高  | 一般   | 最高   |
         3. 总的来说
             1. AndFix作为native解决方案，首先面临的是稳定性与兼容性问题，更重要的是它无法实现类替换，它是需要大量额外的开发成本的；
             2. Robust兼容性与成功率较高，但是它与AndFix一样，无法新增变量与类只能用做的bugFix方案；
@@ -1443,14 +1393,13 @@ img {
 
 ## Android APT
 
-[【Android】APT](https://www.jianshu.com/p/7af58e8e3e18)
-0. links
+1. links
     * [【Android】APT](https://www.jianshu.com/p/7af58e8e3e18)
     * [反射注解与动态代理综合使用](https://www.jianshu.com/p/fad15887a05e) finished
     * [javapoet github](https://github.com/square/javapoet) finished
     * [JavaPoet 看这一篇就够了](https://juejin.im/entry/58fefebf8d6d810058a610de) finished
     * [Android模块开发之APT技术](https://www.jianshu.com/p/9616f4a462bd)
-1. javapoet
+2. javapoet
     1. javapoet是square公司良心出品，让我们脱离手动凭借字符串来生成Java类的痛苦，可以通过各种姿势来生成Java类。一个Java文件由四部分组成
         1. 包名
         2. 类
@@ -1670,7 +1619,7 @@ img {
         * TypeName
         * ParameterizedTypeName
         * CodeBlock
-2. apt
+3. apt
     1. APT，就是 Annotation Processing Tool 的简称，就是可以在代码编译期间对注解进行处理，并且生成Java文件，减少手动的代码输入。注解我们平时用到的比较多的可能会是运行时注解，比如大名鼎鼎的retrofit就是用运行时注解，通过动态代理来生成网络请求。编译时注解平时开发中可能会涉及的比较少，但并不是说不常用，比如我们经常用的轮子Dagger2, ButterKnife, EventBus3 都在用，所以要紧跟潮流来看看APT技术的来龙去脉。
     2. 实例
         1. Route
@@ -2254,13 +2203,13 @@ img {
             ```
         2. GsonBuilder提供了 FieldNamingStrategy 接口和 setFieldNamingPolicy 和 setFieldNamingStrategy 两个方法。
         3. 默认实现: GsonBuilder.setFieldNamingPolicy 方法与 Gson 提供的另一个枚举类 FieldNamingPolicy 配合使用，该枚举类提供了5种实现方式分别为：
-            FieldNamingPolicy | 结果（仅输出emailAddress字段）
-            :- |:-
-            IDENTITY | {"emailAddress":"ikidou@example.com"}
-            LOWER_CASE_WITH_DASHES | {"email-address":"ikidou@example.com"}
-            LOWER_CASE_WITH_UNDERSCORES | {"email_address":"ikidou@example.com"}
-            UPPER_CAMEL_CASE | {"EmailAddress":"ikidou@example.com"}
-            UPPER_CAMEL_CASE_WITH_SPACES | {"Email Address":"ikidou@example.com"}
+            | FieldNamingPolicy            | 结果（仅输出emailAddress字段）         |
+            | :--------------------------- | :------------------------------------- |
+            | IDENTITY                     | {"emailAddress":"ikidou@example.com"}  |
+            | LOWER_CASE_WITH_DASHES       | {"email-address":"ikidou@example.com"} |
+            | LOWER_CASE_WITH_UNDERSCORES  | {"email_address":"ikidou@example.com"} |
+            | UPPER_CAMEL_CASE             | {"EmailAddress":"ikidou@example.com"}  |
+            | UPPER_CAMEL_CASE_WITH_SPACES | {"Email Address":"ikidou@example.com"} |
         4. 自定义实现: GsonBuilder.setFieldNamingStrategy 方法需要与Gson提供的FieldNamingStrategy接口配合使用，用于实现将POJO的字段与JSON的字段相对应。上面的FieldNamingPolicy实际上也实现了FieldNamingStrategy接口，也就是说FieldNamingPolicy也可以使用setFieldNamingStrategy方法。
         5. 用法：
             ```java
@@ -2412,13 +2361,13 @@ img {
         3. 注： @JsonAdapter 仅支持 TypeAdapter或TypeAdapterFactory( 2.7开始已经支持 JsonSerializer/JsonDeserializer)
         4. 注：JsonAdapter的优先级比GsonBuilder.registerTypeAdapter的优先级更高。
     5. TypeAdapter与 JsonSerializer、JsonDeserializer对比
-        . | TypeAdapter | JsonSerializer、JsonDeserializer
-        :-|:-|:-
-        引入版本 | 2.0 | 1.x
-        Stream API | 支持 | 不支持*，需要提前生成JsonElement
-        内存占用 | 小 | 比TypeAdapter大
-        效率 | 高 | 比TypeAdapter低
-        作用范围 | 序列化 和 反序列化 | 序列化 或 反序列化
+        | .          | TypeAdapter        | JsonSerializer、JsonDeserializer |
+        | :--------- | :----------------- | :------------------------------- |
+        | 引入版本   | 2.0                | 1.x                              |
+        | Stream API | 支持               | 不支持*，需要提前生成JsonElement |
+        | 内存占用   | 小                 | 比TypeAdapter大                  |
+        | 效率       | 高                 | 比TypeAdapter低                  |
+        | 作用范围   | 序列化 和 反序列化 | 序列化 或 反序列化               |
     6. TypeAdapter实例
         1. 注：这里的TypeAdapter泛指TypeAdapter、JsonSerializer和JsonDeserializer。上面讲了一个自动将字符串形式的数值转换成int型时可能出现空字符串的问题，下面介绍一个其它读者的需求：服务器返回的数据中data字段类型不固定，比如请求成功data是一个List,不成功的时候是String类型，这样前端在使用泛型解析的时候，怎么去处理呢？
         2. 其实这个问题的原因主要由服务器端造成的，接口设计时没有没有保证数据的一致性，正确的数据返回姿势：同一个接口任何情况下不得改变返回类型，要么就不要返，要么就返空值，如null、[],{}。
@@ -2479,7 +2428,315 @@ img {
 
 ## Volley
 
-
+0. links
+   1. [Android 网络通信框架Volley学习系列](http://www.voidcn.com/article/p-gaharqmq-mg.html)
+   2. [Android Volley完全解析系列](https://blog.csdn.net/guolin_blog/article/details/17482095)
+   3. [volley github](https://github.com/google/volley)
+   4. [Volley overview](https://developer.android.com/training/volley/index.html)
+   5. [Volley支持https的3种方法小结](https://blog.csdn.net/lintax/article/details/69761913)
+   6. [Android高效加载大图、多图解决方案，有效避免程序OOM](https://blog.csdn.net/guolin_blog/article/details/9316683)
+1. 初识
+    1. 基本用法
+        1. Android系统中主要提供了两种方式来进行HTTP通信，HttpURLConnection和HttpClient，它们的使用率非常高。
+        2. 不过HttpURLConnection和HttpClient的用法还是稍微有些复杂的，如果不进行适当封装的话，很容易就会写出不少重复代码。于是乎，一些Android网络通信框架也就应运而生，说AsyncHttpClient，它把HTTP所有的通信细节全部封装在了内部，我们只需要简单调用几行代码就可以完成通信操作了；如Universal-Image-Loader，它使得在界面上显示网络图片的操作变得极度简单，开发者不用关心如何从网络上获取图片，也不用关心开启线程、回收图片资源等细节。
+        3. 而Android开发团队也是在2013年Google I/O大会上推出了一个新的网络通信框架——Volley，把AsyncHttpClient和Universal-Image-Loader的优点集于了一身，既可以像AsyncHttpClient一样非常简单地进行HTTP通信，也可以像Universal-Image-Loader一样轻松加载网络上的图片。除了简单易用之外，Volley在性能方面也进行了大幅度的调整，它的设计目标就是非常适合去进行数据量不大，但通信频繁的网络操作，而对于大数据量的网络操作，比如说下载文件等，Volley的表现就会非常糟糕。
+        4. StringRequest的用法
+            1. 获得请求队列对象``RequestQueue mQueue = Volley.newRequestQueue(context);``
+            2. RequestQueue是一个请求队列对象，它可以缓存所有的HTTP请求，然后按照一定的算法并发地发出这些请求。RequestQueue内部的设计就是非常合适高并发的，因此我们不必为每一次HTTP请求都创建一个RequestQueue对象，这是非常浪费资源的，基本上在每一个需要和网络交互的Activity中创建一个RequestQueue对象就足够了。
+            3. 创建StringRequest对象
+                ```java
+                StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://www.baidu.com",
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            Log.d("TAG", response);
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Log.e("TAG", error.getMessage(), error);
+                        }
+                    });
+                ```
+            4. 发出请求``mQueue.add(stringRequest);``
+            5. 添加权限``<uses-permission android:name="android.permission.INTERNET" />``
+        5. JsonRequest的用法
+            1. 类似于StringRequest，JsonRequest也是继承自Request类的，不过由于JsonRequest是一个抽象类，因此我们无法直接创建它的实例，那么只能从它的子类入手了。JsonRequest有两个直接的子类，JsonObjectRequest和JsonArrayRequest
+            2. 至于它们的用法也基本上没有什么特殊之处，先new出一个JsonObjectRequest对象，如下所示
+            ```java
+                JsonObjectRequest jsonObjectRequest = new JsonObjectRequest("http://m.weather.com.cn/data/101010100.html", null,
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            Log.d("TAG", response.toString());
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Log.e("TAG", error.getMessage(), error);
+                        }
+                    });
+                ```
+        6. ImageRequest的用法
+            1. 示例
+                ```java
+                ImageRequest imageRequest = new ImageRequest("http://developer.android.com/images/home/aw_dac.png",
+                    new Response.Listener<Bitmap>() {
+                        @Override
+                        public void onResponse(Bitmap response) {
+                            imageView.setImageBitmap(response);
+                        }
+                    }, 0, 0, Config.RGB_565, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            imageView.setImageResource(R.drawable.default_image);
+                        }
+                    });
+                ```
+            2. 第三第四个参数分别用于指定允许图片最大的宽度和高度，如果指定的网络图片的宽度或高度大于这里的最大值，则会对图片进行压缩，指定成0的话就表示不管图片有多大，都不会进行压缩。第五个参数用于指定图片的颜色属性，Bitmap.Config下的几个常量都可以在这里使用，其中ARGB_8888可以展示最好的颜色属性，每个图片像素占据4个字节的大小，而RGB_565则表示每个图片像素占据2个字节大小。
+        7. ImageLoader的用法
+            1. ImageLoader也可以用于加载网络上的图片，并且它的内部也是使用ImageRequest来实现的，不过ImageLoader明显要比ImageRequest更加高效，因为它不仅可以帮我们对图片进行缓存，还可以过滤掉重复的链接，避免重复发送请求。
+            2. 由于ImageLoader已经不是继承自Request的了，所以它的用法也和我们之前学到的内容有所不同，总结起来大致可以分为以下四步:
+                1. 创建一个RequestQueue对象。
+                2. 创建一个ImageLoader对象。
+                3. 获取一个ImageListener对象。
+                4. 调用ImageLoader的get()方法加载网络上的图片。
+            3. 示例
+                ```java
+                ImageLoader imageLoader = new ImageLoader(requestQueue, new ImageCache() {
+                    @Override public void putBitmap(String url, Bitmap bitmap) {}
+                    @Override public Bitmap getBitmap(String url) { return null; }
+                });
+                ImageListener listener = ImageLoader.getImageListener(imageView, R.drawable.proceeding_image, R.drawable.failed_image);
+                imageLoader.get("https://img-my.csdn.net/uploads/201404/13/1397393290_5765.jpeg", listener, 200, 200);
+                ```
+            4. 虽然现在我们已经掌握了ImageLoader的用法，但是刚才介绍的ImageLoader的优点却还没有使用到。为什么呢？因为这里创建的ImageCache对象是一个空的实现，完全没能起到图片缓存的作用。其实写一个ImageCache也非常简单，但是如果想要写一个性能非常好的ImageCache，最好就要借助Android提供的LruCache功能了。
+                ```java
+                public class BitmapCache implements ImageCache {
+                    private LruCache<String, Bitmap> mCache;
+                    public BitmapCache() {
+                        int maxSize = 10 * 1024 * 1024;
+                        mCache = new LruCache<String, Bitmap>(maxSize) {
+                            @Override
+                            protected int sizeOf(String key, Bitmap bitmap) {
+                                return bitmap.getRowBytes() * bitmap.getHeight();
+                            }
+                        };
+                    }
+                    @Override
+                    public Bitmap getBitmap(String url) {
+                        return mCache.get(url);
+                    }
+                    @Override
+                    public void putBitmap(String url, Bitmap bitmap) {
+                        mCache.put(url, bitmap);
+                    }
+                }
+                ```
+        8. NetworkImageView的用法
+            1. NetworkImageView控件的用法要比前两种方式更加简单，大致可以分为以下五步：
+                1. 创建一个RequestQueue对象。
+                2. 创建一个ImageLoader对象。
+                3. 在布局文件中添加一个NetworkImageView控件。
+                4. 在代码中获取该控件的实例。
+                5. 设置要加载的图片地址。
+            2. 其中，第一第二步和ImageLoader的用法是完全一样的，因此这里我们就从第三步开始学习了。
+                ```xml
+                <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:orientation="vertical" >
+                    <Button
+                        android:id="@+id/button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Send Request" />
+                    <com.android.volley.toolbox.NetworkImageView
+                        android:id="@+id/network_image_view"
+                        android:layout_width="200dp"
+                        android:layout_height="200dp"
+                        android:layout_gravity="center_horizontal"/>
+                </LinearLayout>
+                ```
+            3. ``networkImageView = (NetworkImageView) findViewById(R.id.network_image_view);``
+            4. 设置要加载的图片地址。
+                ```java
+                networkImageView.setDefaultImageResId(R.drawable.default_image);
+                networkImageView.setErrorImageResId(R.drawable.failed_image);
+                networkImageView.setImageUrl("https://img-my.csdn.net/uploads/201404/13/1397393290_5765.jpeg", imageLoader);
+                ```
+            5. NetworkImageView并不需要提供任何设置最大宽高的方法也能够对加载的图片进行压缩。这是由于NetworkImageView是一个控件，在加载图片的时候它会自动获取自身的宽高，然后对比网络图片的宽度，再决定是否需要对图片进行压缩。也就是说，压缩过程是在内部完全自动化的，并不需要我们关心，NetworkImageView会始终呈现给我们一张大小刚刚好的网络图片，不会多占用任何一点内存，这也是NetworkImageView最简单好用的一点吧。当然了，如果你不想对图片进行压缩的话，其实也很简单，只需要在布局文件中把NetworkImageView的layout_width和layout_height都设置成wrap_content就可以了，这样NetworkImageView就会将该图片的原始大小展示出来，不会进行任何压缩。
+    2. 高级用法
+        1. 定制自己的Request
+            1. XmlRequest
+                ```java
+                public class XmlRequest extends Request<XmlPullParser> {
+                    private final Object mLock = new Object();
+                    private Response.Listener<XmlPullParser> mListener;
+                    public XmlRequest(String url, Response.Listener<XmlPullParser> mListener, Response.ErrorListener listener) {
+                        super(url, listener);
+                        this.mListener = mListener;
+                    }
+                    public XmlRequest(int method, String url, Response.Listener<XmlPullParser> mListener, @Nullable Response.ErrorListener listener) {
+                        super(method, url, listener);
+                        this.mListener = mListener;
+                    }
+                    @Override public void cancel() {
+                        super.cancel();
+                        synchronized (mLock) {
+                            mListener = null;
+                        }
+                    }
+                    @Override protected Response<XmlPullParser> parseNetworkResponse(NetworkResponse response) {
+                        String xmlString;
+                        try {
+                            xmlString = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
+                        } catch (UnsupportedEncodingException e) {
+                            // return Response.error(new ParseError(e));
+                            xmlString = new String(response.data);
+                        }
+                        try {
+                            XmlPullParser xmlPullParser = XmlPullParserFactory.newInstance().newPullParser();
+                            xmlPullParser.setInput(new StringReader(xmlString));
+                            return Response.success(xmlPullParser, HttpHeaderParser.parseCacheHeaders(response));
+                        } catch (XmlPullParserException e) {
+                            return Response.error(new ParseError(e));
+                        }
+                    }
+                    @Override protected void deliverResponse(XmlPullParser response) {
+                        Response.Listener<XmlPullParser> listener;
+                        synchronized (mLock) {
+                            listener = mListener;
+                        }
+                        if (listener != null) {
+                            listener.onResponse(response);
+                        }
+                    }
+                }
+                ```
+            2. GsonRequest
+                ```java
+                public class HTTPSTrustManager implements X509TrustManager {
+                    private static final String TAG = "HTTPSTrustManager";
+                    private static TrustManager[] trustManagers;
+                    private static final X509Certificate[] _AcceptedIssuers = new X509Certificate[]{};
+                    @Override public void checkClientTrusted(X509Certificate[] x509Certificates, String s) {}
+                    @Override public void checkServerTrusted(X509Certificate[] x509Certificates, String s) {}
+                    @Override public X509Certificate[] getAcceptedIssuers() {
+                        return _AcceptedIssuers;
+                    }
+                    public static void allowAllSSL() {
+                        HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
+                            @Override
+                            public boolean verify(String arg0, SSLSession arg1) {
+                                // TODO Auto-generated method stub
+                                return true;
+                            }
+                        });
+                        SSLContext context = null;
+                        if (trustManagers == null) {
+                            trustManagers = new TrustManager[]{new HTTPSTrustManager()};
+                        }
+                        try {
+                            context = SSLContext.getInstance("TLS");
+                            context.init(null, trustManagers, new SecureRandom());
+                        } catch (NoSuchAlgorithmException e) {
+                            Log.e(TAG, "NoSuchAlgorithmException", e);
+                        } catch (KeyManagementException e) {
+                            Log.e(TAG, "KeyManagementException", e);
+                        }
+                        assert context != null;
+                        HttpsURLConnection.setDefaultSSLSocketFactory(context.getSocketFactory());
+                    }
+                }
+                ```
+                ```java
+                public abstract class GsonRequest<T> extends Request<T> {
+                    private final static Gson gson = new Gson();
+                    private final Object mLock = new Object();
+                    private Response.Listener<T> mListener;
+                    private Class<T> entityClass;
+                    public Class<T> getEntityClass() {
+                        return entityClass;
+                    }
+                    public GsonRequest(String url, Response.Listener<T> mListener, Response.ErrorListener listener) {
+                        super(url, listener);
+                        this.mListener = mListener;
+                        ParameterizedType genericSuperclass = (ParameterizedType) getClass().getGenericSuperclass();
+                        entityClass = (Class<T>) genericSuperclass.getActualTypeArguments()[0];
+                    }
+                    public GsonRequest(int method, String url, Response.Listener<T> mListener, @Nullable Response.ErrorListener listener) {
+                        super(method, url, listener);
+                        this.mListener = mListener;
+                        ParameterizedType genericSuperclass = (ParameterizedType) getClass().getGenericSuperclass();
+                        entityClass = (Class<T>) genericSuperclass.getActualTypeArguments()[0];
+                    }
+                    @Override protected Response<T> parseNetworkResponse(NetworkResponse response) {
+                        String jsonString;
+                        try {
+                            jsonString = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
+                        } catch (UnsupportedEncodingException e) {
+                            jsonString = new String(response.data);
+                        }
+                        return Response.success(gson.fromJson(jsonString, entityClass), HttpHeaderParser.parseCacheHeaders(response));
+                    }
+                    @Override protected void deliverResponse(T response) {
+                        Response.Listener<T> listener;
+                        synchronized (mLock) {
+                            listener = mListener;
+                        }
+                        if (listener != null) {
+                            listener.onResponse(response);
+                        }
+                    }
+                    @Override public void cancel() {
+                        super.cancel();
+                        synchronized (mLock) {
+                            mListener = null;
+                        }
+                    }
+                }
+                ```
+            3. 调用
+                ```java
+                private void testGsonRequest() {
+                    final Gson gson = new Gson();
+                    try {
+                        GsonRequest<Weather> gsonRequest = new GsonRequest<Weather>(json_url,
+                                response -> Log.d(TAG, "get json successfully. " + gson.toJson(response)),
+                                error -> Log.e(TAG, "get json failed.", error)){};
+                        Log.d(TAG, "gsonRequest's entityClass: " + gsonRequest.getEntityClass().getSimpleName());
+                        requestQueue.add(gsonRequest);
+                    } catch (Exception e) {
+                        Log.e(TAG, "cast error!", e);
+                    }
+                }
+                private void testXmlRequest() {
+                    XmlRequest xmlRequest = new XmlRequest(xml_url, response -> {
+                        Log.d(TAG, "get xml successfully. ");
+                        try {
+                            int eventType = response.getEventType();
+                            while (eventType != XmlPullParser.END_DOCUMENT) {
+                                if (eventType == XmlPullParser.START_TAG) {
+                                    String nodeName = response.getName();
+                                    if ("city".equals(nodeName)) {
+                                        String pName = response.getAttributeValue(0);
+                                        Log.d(TAG, "pName is " + pName);
+                                    }
+                                }
+                                eventType = response.next();
+                            }
+                        } catch (XmlPullParserException e) {
+                            Log.d(TAG, "parse xml failed -- XmlPullParserException.", e);
+                        } catch (IOException e) {
+                            Log.d(TAG, "parse xml failed -- IOException.", e);
+                        }
+                    }, error -> Log.d(TAG, "get xml failed.", error));
+                    requestQueue.add(xmlRequest);
+                }
+                ```
+        2. 
+2. 源码解读
 
 ## Android Hermes
 

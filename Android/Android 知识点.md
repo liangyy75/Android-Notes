@@ -2041,7 +2041,7 @@ Android 信息.md
         - MyBean b = JSON.parseObject(jsonStr, MyBean.class); List<MyBean> bs = JSON.parseArray(jsonStr, MyBean.class);
 
 ### Android 网络请求2
-        
+
 1. **Ksoap2**: 
 2. **REST**: 
 
