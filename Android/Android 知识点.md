@@ -1,46 +1,48 @@
+<style>
+img {
+    margin: 0 auto;
+    display: block;
+}
+</style>
+
 <!-- GFM-TOC -->
-* [Android 基础知识](###Android%20基础知识)
-* [Android 基础知识2](###Android%20基础知识2)
-* [Android 基础知识3](###Android%20基础知识3)
-* [Android Activity](###Android%20Activity)
-* [Android Service](###Android%20Service)
-* [Android BroadcastReceiver](###Android%20BroadcastReceiver)
-* [Android ContentProvider](###Android%20ContentProvider) 未完成
-* [Android Fragment](###Android%20Fragment) 未完成
-* [Android Handler](###Android%20Handler)
-* [Android Loader](###Android%20Loader)
-* [Android Binder](###Android%20Binder)
-* [Android Messenger](###Android%20Messenger) 未完成
-* [Android AIDL](###Android%20AIDL) 未完成
-* [Android 系统启动](###Android%20系统启动) 未完成
-* [Android 消息](###Android%20消息) 未完成
-* [Android 数据存储](###Android%20数据存储) 未完成
-* [Android ORM](###Android%20ORM) 未完成
-* [Android 事件响应](###Android%20事件响应) 未完成
-* [Android 函数响应式](###Android%20函数响应式) 未完成
-* [Android 网络请求](###Android%20网络请求)
-* [Android 网络请求2](###Android%20网络请求2) 未完成
-* [Android 网络请求3](###Android%20网络请求3) 未完成
-* [Android 图片请求](###Android%20图片请求) 未完成
-* [Android 消息通知](###Android%20消息通知) 未完成
-* [Android 视频音频](###Android%20视频音频) 未完成
-* [Android 依赖注入](###Android%20依赖注入) 未完成
-* [Android 动画](###Android%20动画) 未完成
-* [Android Drawable](###Android%20Drawable) 未完成
-* [Android 自定义View](###Android%20自定义View) 未完成
-* [Android 性能优化](###Android%20性能优化)
-* [Android 内存泄露](###Android%20内存泄露)
-* [Android 安全漏洞](###Android%20安全漏洞) 未完成
-* [Android 源码阅读](###Android%20源码阅读)
-* [Android Android NDK 与 Java JNI](###Android%20Android%20NDK%20与%20Java%20JNI)
-* [Android Support Annotation Library](###Android%20Support%20Annotation%20Library)
-* [Androidx](###Androidx)
-* [Android 5678新特性](###Android%205678新特性)
-* [Android 新特性](###Android%20新特性)
-* [Android Groovy](###Android%20Groovy)
-* [Android Glide](###Android%20Glide)
-* [Android View](###Android%20View)
-* [Android 综合技术](###Android%20综合技术)
+- [Android 基础知识](#Android-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86)
+- [Android 基础知识2](#Android-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%862)
+- [Android 基础知识3](#Android-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%863)
+- [Android 基础知识4(构建相关)](#Android-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%864%E6%9E%84%E5%BB%BA%E7%9B%B8%E5%85%B3)
+- [Android Activity](#Android-Activity)
+- [Android Service](#Android-Service)
+- [Android BroadcastReceiver](#Android-BroadcastReceiver)
+- [Android ContentProvider](#Android-ContentProvider)
+- [Android Fragment](#Android-Fragment)
+- [Android Handler](#Android-Handler)
+- [Android Loader](#Android-Loader)
+- [Android Binder](#Android-Binder)
+- [Android Messenger](#Android-Messenger)
+- [Android AIDL](#Android-AIDL)
+- [Android 系统启动](#Android-%E7%B3%BB%E7%BB%9F%E5%90%AF%E5%8A%A8)
+- [Android 消息](#Android-%E6%B6%88%E6%81%AF)
+- [Android 数据存储](#Android-%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8)
+- [Android 事件响应](#Android-%E4%BA%8B%E4%BB%B6%E5%93%8D%E5%BA%94)
+- [Android 函数响应式](#Android-%E5%87%BD%E6%95%B0%E5%93%8D%E5%BA%94%E5%BC%8F)
+- [Android 网络请求](#Android-%E7%BD%91%E7%BB%9C%E8%AF%B7%E6%B1%82)
+- [Android 消息通知](#Android-%E6%B6%88%E6%81%AF%E9%80%9A%E7%9F%A5)
+- [Android 视频音频](#Android-%E8%A7%86%E9%A2%91%E9%9F%B3%E9%A2%91)
+- [Android 动画](#Android-%E5%8A%A8%E7%94%BB)
+- [Android Drawable](#Android-Drawable)
+- [Android 自定义View](#Android-%E8%87%AA%E5%AE%9A%E4%B9%89View)
+- [Android 性能优化](#Android-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96)
+- [Android 内存泄露](#Android-%E5%86%85%E5%AD%98%E6%B3%84%E9%9C%B2)
+- [Android 安全漏洞](#Android-%E5%AE%89%E5%85%A8%E6%BC%8F%E6%B4%9E)
+- [Android 源码阅读](#Android-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB)
+- [Android Android NDK 与 Java JNI](#Android-Android-NDK-%E4%B8%8E-Java-JNI)
+- [Android Support Annotation Library](#Android-Support-Annotation-Library)
+- [Androidx](#Androidx)
+- [Android 5678新特性](#Android-5678%E6%96%B0%E7%89%B9%E6%80%A7)
+- [Android 新特性](#Android-%E6%96%B0%E7%89%B9%E6%80%A7)
+- [Android View](#Android-View)
+- [Android 综合技术](#Android-%E7%BB%BC%E5%90%88%E6%8A%80%E6%9C%AF)
+- [end](#end)
 <!-- GFM-TOC -->
 
 保活后台服务(priority persistent startForeground Android系统广播Intent.action_time_tick start_sticky ondestroy中重启)
@@ -734,27 +736,27 @@ Android Binder
 3. **种类**: 
     1. 普通广播: 开发者自身定义Intent的广播 sendBroadcast(intent)
     2. 系统广播: Android中内置了的系统广播，都有特定的Intent-Filter(包括具体的action)，Android系统广播action如下:
-    	| 系统操作 | action |
-		| -------- | ------ |
-		| 监听网络变化 | android.net.conn.CONNECTIVITY_CHANGE |
-		| 关闭或打开飞行模式 | Intent.ACTION_AIRPLANE_MODE_CHANGED |
-		| 充电时或电量发生变化 | Intent.ACTION_BATTERY_CHANGED |
-		| 电池电量低 | Intent.ACTION_BATTERY_LOW |
-		| 电池电量充足(即从电量低变化到饱满时会发出广播 | Intent.ACTION_BATTERY_OKAY |
-		| 系统启动完成后(仅广播一次) | Intent.ACTION_BOOT_COMPLETED |
-		| 按下照相时的拍照按键(硬件按键)时 | Intent.ACTION_CAMERA_BUTTON |
-		| 屏幕锁屏 | Intent.ACTION_CLOSE_SYSTEM_DIALOGS |
-		| 设备当前设置被改变时(界面语言、设备方向等) | Intent.ACTION_CONFIGURATION_CHANGED |
-		| 插入耳机时 | Intent.ACTION_HEADSET_PLUG |
-		| 未正确移除SD卡但已取出来时(正确移除方法:设置--SD卡和设备内存--卸载SD卡) | Intent.ACTION_MEDIA_BAD_REMOVAL |
-		| 插入外部储存装置(如SD卡) | Intent.ACTION_MEDIA_CHECKING |
-		| 成功安装APK | Intent.ACTION_PACKAGE_ADDED |
-		| 成功删除APK | Intent.ACTION_PACKAGE_REMOVED |
-		| 重启设备 | Intent.ACTION_REBOOT |
-		| 屏幕被关闭 | Intent.ACTION_SCREEN_OFF |
-		| 屏幕被打开 | Intent.ACTION_SCREEN_ON |
-		| 关闭系统时 | Intent.ACTION_SHUTDOWN |
-		| 重启设备 | Intent.ACTION_REBOOT |
+     | 系统操作                                                                | action                               |
+     | ----------------------------------------------------------------------- | ------------------------------------ |
+     | 监听网络变化                                                            | android.net.conn.CONNECTIVITY_CHANGE |
+     | 关闭或打开飞行模式                                                      | Intent.ACTION_AIRPLANE_MODE_CHANGED  |
+     | 充电时或电量发生变化                                                    | Intent.ACTION_BATTERY_CHANGED        |
+     | 电池电量低                                                              | Intent.ACTION_BATTERY_LOW            |
+     | 电池电量充足(即从电量低变化到饱满时会发出广播                           | Intent.ACTION_BATTERY_OKAY           |
+     | 系统启动完成后(仅广播一次)                                              | Intent.ACTION_BOOT_COMPLETED         |
+     | 按下照相时的拍照按键(硬件按键)时                                        | Intent.ACTION_CAMERA_BUTTON          |
+     | 屏幕锁屏                                                                | Intent.ACTION_CLOSE_SYSTEM_DIALOGS   |
+     | 设备当前设置被改变时(界面语言、设备方向等)                              | Intent.ACTION_CONFIGURATION_CHANGED  |
+     | 插入耳机时                                                              | Intent.ACTION_HEADSET_PLUG           |
+     | 未正确移除SD卡但已取出来时(正确移除方法:设置--SD卡和设备内存--卸载SD卡) | Intent.ACTION_MEDIA_BAD_REMOVAL      |
+     | 插入外部储存装置(如SD卡)                                                | Intent.ACTION_MEDIA_CHECKING         |
+     | 成功安装APK                                                             | Intent.ACTION_PACKAGE_ADDED          |
+     | 成功删除APK                                                             | Intent.ACTION_PACKAGE_REMOVED        |
+     | 重启设备                                                                | Intent.ACTION_REBOOT                 |
+     | 屏幕被关闭                                                              | Intent.ACTION_SCREEN_OFF             |
+     | 屏幕被打开                                                              | Intent.ACTION_SCREEN_ON              |
+     | 关闭系统时                                                              | Intent.ACTION_SHUTDOWN               |
+     | 重启设备                                                                | Intent.ACTION_REBOOT                 |
     3. 有序广播: 发送出去的广播被广播接收者按照先后顺序接收，有序是针对广播接收者而言的。
 		1. 顺序规则是: 按照Priority属性值从大-小排序；Priority属性相同者，动态注册的广播优先。  
 		2. 有序广播的特点: 接收广播按顺序接收；先接收的广播接收者可以对广播进行截断，即后接收的广播接收者不再接收到此广播;
@@ -1748,8 +1750,6 @@ Android 信息.md
         - Cursor: 游标，有点类似于JDBC里的resultset，结果集！可以简单理解为指向数据库中某一个记录的指针！
     4. ``data/data/<包名>/database/``
 
-### Android ORM
-
 ### Android 事件响应
 
 ![Android事件分发机制](./images/Android%20事件分发.png)
@@ -2040,479 +2040,6 @@ Android 信息.md
         - 一样要bean，一样要求json对象中的key的名称与Java对象的JavaBean类中的属性名要相同
         - MyBean b = JSON.parseObject(jsonStr, MyBean.class); List<MyBean> bs = JSON.parseArray(jsonStr, MyBean.class);
 
-### Android 网络请求2
-
-1. **Ksoap2**: 
-2. **REST**: 
-
-### Android 网络请求3
-
-1. **OkHttp**: 
-2. **Retrofit**: 
-3. **NoHttp**: 
-4. **android-async-http**: 
-
-### Android 图片请求
-
-0. links
-    * [Android实战——Glide的使用，加载图片只要一句话](https://blog.csdn.net/qq_30379689/article/details/60373696) finished
-    * [android Glide简单使用](https://blog.csdn.net/bzlj2912009596/article/details/81702367) finished
-    * [Glide最新版V4使用指南](https://blog.csdn.net/u013005791/article/details/74532091)
-    * [Glide系列1](https://blog.csdn.net/u010356768/article/category/7264668)
-    * [Glide系列2](https://so.csdn.net/so/search/s.do?q=glide&t=blog&u=mingyunxiaohai)
-    * [Glide系列3](https://blog.csdn.net/sinyu890807/column/info/15318)
-    * [glide github](https://github.com/bumptech/glide)
-    * [glide-transform github](https://github.com/wasabeef/glide-transformations)
-    * [glide系统2](https://blog.csdn.net/yulyu/article/details/55261439)
-    * [glide源码](https://blog.csdn.net/guolin_blog/article/details/53939176)
-    * [Android高效加载大图、多图解决方案，有效避免程序OOM](https://blog.csdn.net/guolin_blog/article/details/9316683)
-    * [picasso github](https://github.com/square/picasso)
-    * [picasso-transfrom github](https://github.com/TannerPerrien/picasso-transformations)
-    * [Fresco github](https://github.com/facebook/fresco)
-    * [Fresco-processors](https://github.com/wasabeef/fresco-processors)
-    * [fresco 中文文档](https://www.fresco-cn.org/docs/index.html)
-    * [fresco系列1](https://so.csdn.net/so/search/s.do?q=fresco&t=blog&u=xuyueqing1225)
-    * [fresco系列2](https://blog.csdn.net/y1scp/article/details/49245535)
-    * http://blog.csdn.net/android_ls/article/details/53137867
-    * https://www.jianshu.com/p/976c86fa72bc
-1. **Bitmap的高效加载**
-    1. BitmapFactory类提供四种方法: decodeFile、decodeResource、decodeStream和decodeByteArray；其中decodeFile和decodeResource间接的调用了decodeStream方法；这四个方法最终在Android底层实现。
-    2. 如何高效的加载Bitmap？核心思想: 按需加载；很多时候ImageView并没有原始图片那么大，所以没必要加载原始大小的图片。采用BitmapFactory.Options来加载所需尺寸的图片。通过BitmapFactory.Options来缩放图片，主要是用到了它的inSampleSize参数，即采样率。inSampleSize应该为2的指数，如果不是系统会向下取整并选择一个最接近2的指数来代替；缩放比例为1/(inSampleSize的二次方)。
-    3. Bitmap内存占用: 拿一张1024x1024像素的图片来说，假定采用ARGB8888格式存储，那么它占用的内存为1024\*1024\*4，即4MB。
-    4. 
-2. **Android的缓存策略**
-    1. 如何减少流量消耗？缓存。当程序第一次从网络上加载图片后，将其缓存在存储设备中，下次使用这张图片的时候就不用再从网络从获取了。一般情况会把图片存一份到内存中，一份到存储设备中，如果内存中没找到就去存储设备中找，还没有找到就从网络上下载。
-    2. 目前常用的缓存算法是LRU，是近期最少使用算法，当缓存满时，优先淘汰那些近期最少使用的缓存对象。采用LRU算法的缓存有两种: LRUCache(内存缓存)和DiskLruCache(存储缓存)。
-    3. LruCache是Android3.1所提供的一个缓存类，通过support-v4兼容包可以兼容到早期的Android版本。LruCache是一个泛型类，是线程安全的，内部采用LinkedHashMap以强引用的方式存储外界缓存对象，并提供get和put方法来完成缓存的获取和添加操作，当缓存满时，LruCache会移除较早的使用的缓存对象。LruCache初始化时需重写sizeOf方法，用于计算缓存对象的大小。
-    4. DiskLruCache用于实现磁盘缓存，DiskLruCache得到了Android官方文档推荐，但它不属于Android SDK的一部分，https://android.googlesource.com/platform/libcore/+/android-4.1.1_r1/luni/src/main/java/libcore/io/DiskLruCache.java
-    5. 自己实现一个ImageLoader，包含 https://github.com/singwhatiwanna/android-art-res/blob/master/Chapter_12/src/com/ryg/chapter_12/loader/ImageLoader.java
-        1. 图片压缩功能
-        2. 内存缓存和磁盘缓存
-        3. 同步加载和异步加载的接口设计
-3. **glide**
-    1. Glide是一个快速和有效的开源媒体管理和图像加载Android框架包装媒体解码，内存和磁盘缓存，和资源汇集成一个简单和易于使用的界面。其优点有
-        - 使用简单
-        - 可配置度高，自适应程度高
-        - 支持常见图片格式，jpg、png、gif、webp
-        - 支持多种数据源，网络、资源、assets 、File、Uri等
-        - 高效缓存策略支持内存和硬盘缓存，图片只要下载一次，下次就直接从缓存中读取了
-        - 生命周期集成根据Activity/Fragment生命周期自动管理请求
-        - 高效处理Bitmap
-    2. 一些警示
-        - 对于图片请求会在onStop的时候自动暂停，然后在onStart的时候重新启动，gif的动画也会在onStop的时候停止，以免在后台消耗电量。
-        - 此外，当设备的网络状态发生改变的时候，所有失败的请求会自动重启，保证数据的正确性，还是比较人性化、自动化的。  
-        - Glide提供多种缓存机制，对于图片原图和Resize的图片可以自由缓存，它相比于Picasso，内存消耗要小很多。  
-        - Glide使用最好是在主线程中使用，因为它需要context，在非主线程中使用Glide可能会导致内存泄露或者更严重的Crash。
-        - 相信大家多Context的使用应该是非常谨慎的，非要在非主线程使用Glide的话就将context换成getApplicationContext。
-    3. gradle 与 权限
-        ```groovy
-        implementation 'com.github.bumptech.glide:glide:4.8.0'
-        annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
-        ```
-        ```xml
-        <uses-permission android:name="android.permission.INTERNET" />
-        <!-- 用于硬盘缓存和读取 -->
-        <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-        <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-        <!-- 它可以监听用户的连接状态并在用户重新连接到网络时重启之前失败的请求 -->
-        <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-        ```
-    4. 基本使用
-        ```java
-        Glide
-            .with(Context context)  // 初始化，因为 Activity/Application/Fragment/FragmentActivity 都继承了 Context，所以应该都可以使用
-            // 注意.with()里面的参数，Glide的请求是和传进去的Context共存亡的，如果传一个Activity进去，当Activity GC过后，你的请求也就GC了，但是如果这样传：.with(context.getApplicationContext() ).当你的Activity GC过后，请求还是会继续，回调还是会继续。
-            .load("http://xxx.png")  // 还支持 "file:///xxx.png" | R.drawable.xxx | file | uri | byte[]
-            .asBitmap()  // or asGif()
-            .into(imageView)  // or into(int h, int w).get() /* 返回Bitmap */ or
-            // .into(new SimpleTarget<Bitmap>() {
-            //     @Override public void onResourceReady(Bitmap bitmap, GlideAnimation glideAnimation) {
-            //         imageView.setImageBitmap(bitmap);
-            //     }
-            // })
-        ```
-    5. Target: 不要写成匿名内部类的机制，原因就是java的自动垃圾回收机制可能在图片还没有加载好的时候就已经把你的Target回收了。
-        ```java
-        new Target<Bitmap>() {
-            @Override public void onLoadStarted(Drawable placeholder) { /* 设置加载过程中的Drawable */ }
-            @Override public void onLoadFailed(Exception e, Drawable errorDrawable) { /* 设置加载失败的Drawable */ }
-            @Override public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) { /* 设置加载成功的Bitmap */ }
-            @Override public void onLoadCleared(Drawable placeholder) { /* 设置加载被取消时的Drawable */ }
-            @Override public void getSize(SizeReadyCallback cb) {}
-            @Override public void setRequest(Request request) {}
-            @Override public Request getRequest() { return null; }
-            @Override public void onStart() {}
-            @Override public void onStop() {}
-            @Override public void onDestroy() {}
-        }
-        ```
-    6. 其他的一些小技巧1
-        ```java
-        .placeholder(R.drawable.placeholder)  // 加载中
-        .error(R.drawable.error)  // 加载失败
-        .load(null).fallback(R.drawable.Xxx)  // 传递null时，这个callback方法就会被调用。
-        .thumbnail(0.1f)  // 先加载缩略图 然后在加载全图
-        .thumbnail(Glide.with(context).load(url))  // 指定缩略图
-        .crossFade()  // 淡入淡出效果，注意crossFade可以传入时间，注意这个是默认的。
-        .fadeFade(int duration)  // 可以设置时间
-        .dontAnimate()  // 无动画
-        .animate(R.anim.alpha_in)  // 自定义动画
-        .listener(RequestListener listener)  // 设置监听回调
-        .override(int w, int h)  // 指定尺寸
-        .centerCrop()  // 截取中间部分(应该有默认值)
-        .fitCenter()  // 等比拉伸填充(应该有默认值)
-        ```
-    7. 其他的一些小技巧2
-        ```java
-        .priority(Priority.HIGH)  // 设置图片请求的优先级
-        .pauseRequests()  // 暂停请求
-        .resumeRequests()  // 回复请求
-        .downloadOnly(int width, int height)  // 在后台线程当中进行加载和缓存 @Depreated
-        .downloadOnly(Y extends Target<File> target)  // @Depreated
-        .asFile().submit()  // 阻塞住，直到得到 FutureTarget<File> 结果
-        // 得到的 FutureTarget<File> 需要使用 Glide.with(getApplicationContext()).clear(futureTarget) 清除
-        // 还可以 asBitmap().submit() 这样可得到 FutureTarget<Bitmap> 结果
-        .transition(withCrossFade())  // 用于决定你的加载完成时会发生什么。(淡入淡出动画)
-        .asFile | .asGif | .asBitmap | .asDrawable
-        ```
-    8. Glide从4.0开始，使用的时候多了一个注解处理器 (Annotation Processor)，主要用于我们自定义的时候自动生成一些类，帮助我们简化操作。或者定义一些全局的常用的方法。
-        1. 自定义的方法：需要重写AppGlideModule
-            ```java
-            @GlideModule
-            public class MyAppGlideModule extends AppGlideModule {
-                @Override
-                public void applyOptions(@NonNull Context context, @NonNull GlideBuilder builder) {
-                    super.applyOptions(context, builder);
-                }
-                @Override
-                public void registerComponents(@NonNull Context context, @NonNull Glide glide, @NonNull Registry registry) {
-                    super.registerComponents(context, glide, registry);
-                }
-            }
-            ```
-        2. 我们不必去重写 AppGlideModule 中的任何一个方法。子类中完全可以不用写任何东西，它只需要继承 AppGlideModule 并且添加 @GlideModule 注解。这里我们重写了两个方法，后面只需要在applyOptions()和registerComponents()这两个方法中加入具体的逻辑，就能实现更改Glide配置或者替换Glide组件的功能了。
-        3. 如果要使用我们自定义的module，定义玩上面的类后，Android Studio中点击菜单栏Build -> Rebuild Project重新编译然后代码中变为GlideApp开头。
-            ```java
-            GlideApp.with(fragment)
-                .load(myUrl)
-                .placeholder(R.drawable.placeholder)
-                .fitCenter()
-                .into(imageView);
-            ```
-    9. Glide中的大部分设置项都可以通过 RequestOptions 类和 apply() 方法来应用到程序中。
-        ```java
-        RequestOptions options = new RequestOptions()
-            .placeholder(R.mipmap.ic_launcher)//加载成功之前占位图
-            .error(R.mipmap.ic_launcher)//加载错误之后的错误图
-            .override(400,400)//指定图片的尺寸
-            //指定图片的缩放类型为fitCenter (等比例缩放图片，宽或者是高等于ImageView的宽或者是高。)
-            .fitCenter()
-            //指定图片的缩放类型为centerCrop (等比例缩放图片，直到图片的狂高都大于等于ImageView的宽度，然后截取中间的显示。)
-            .centerCrop()
-            .circleCrop()//指定图片的缩放类型为centerCrop (圆形)
-            .skipMemoryCache(true)//跳过内存缓存
-            .diskCacheStrategy(DiskCacheStrategy.ALL)//缓存所有版本的图像
-            .diskCacheStrategy(DiskCacheStrategy.NONE)//跳过磁盘缓存
-            .diskCacheStrategy(DiskCacheStrategy.DATA)//只缓存原来分辨率的图片
-            .diskCacheStrategy(DiskCacheStrategy.RESOURCE)//只缓存最终的图片
-            ;
-        Glide.with(this)
-            .load(url)
-            .apply(options)
-            .into(imageView);
-        ```
-    10. 如果使用了自定义的API，centerCrop()，fitCenter()，circleCrop()可以省略RequestOptions 这一步，更简单
-        ```java
-         GlideApp.with(this)
-            .load(url)
-            .placeholder(R.mipmap.ic_launcher)
-            .centerCrop()
-            .fitCenter()
-            .circleCrop()
-            .override(400,400)
-            .into(imageView);
-        ```
-    11. 设置缓存
-        1. base
-            ```java
-            // 设置跳过内存缓存
-            Glide.with(this).load(imageUrl).skipMemoryCache(true).into(imageView);
-            // 设置缓存策略
-            Glide.with(this).load(imageUrl).diskCacheStrategy(DiskCacheStrategy.ALL).into(imageView);
-                // DiskCacheStrategy.ALL：缓存源资源和转换后的资源，缓存所有版本的图片,默认模式
-                // DiskCacheStrategy.NONE：不作任何磁盘缓存，再一张图片变化很快速时缓存起来是没有作用的
-                // DiskCacheStrategy.SOURCE：缓存源资源，仅缓存原图(全分辨率的图片)
-                // DiskCacheStrategy.RESULT：缓存转换后的资源，仅缓存最终的图片,即修改了尺寸或者转换后的图片
-            // 清理磁盘缓存，需要在子线程中执行
-            Glide.get(this).clearDiskCache();
-            // 清理内存缓存，可以在UI主线程中进
-            Glide.get(this).clearMemory();
-            ```
-        2. 在GlideModule中，我们可以设置磁盘缓存的位置，磁盘缓存的大小和内存缓存的大小，同时还可以设置图片的显示质量。要是用GlideModule，需要创建它的实现类，然后在manifests中申明实现类的全类路径
-            ```xml
-            <meta-data android:name="com.example.mchenys.httputilsdemo.image.glide.module.SimpleGlideModule" android:value="GlideModule" />
-            ```
-        3. GlideModule的实现类，需要实现applyOptions方法  https://blog.csdn.net/bzlj2912009596/article/details/81702367
-            ```java
-            /**
-             * 要创建一个额外的类去定制 Glide。下一步是要全局的去声明这个类，让 Glide 知道它应该在哪里被加载和使用。
-             * Glide 会扫描 AndroidManifest.xml 为 Glide module 的 meta 声明。
-             * 因此，你必须在 AndroidManifest.xml 的 <application> 标签内去声明这个SimpleGlideModule。
-             */
-            public class SimpleGlideModule implements GlideModule {
-                public static DiskCache cache;
-                @Override
-                public void applyOptions(Context context, GlideBuilder builder) {
-                    // 在 Android 中有两个主要的方法对图片进行解码: ARGB8888 和 RGB565 。前者为每个像素使用了 4 个字节，
-                    // 后者仅为每个像素使用了 2 个字节。ARGB8888 的优势是图像质量更高以及能存储一个 alpha 通道。
-                    // Picasso 使用 ARGB8888，Glide 默认使用低质量的 RGB565。
-                    // 对于 Glide 使用者来说：你可以使用 Glide module 方法去改变解码规则。
-                    builder.setDecodeFormat(DecodeFormat.PREFER_ARGB_8888);
-                    // 设置缓存目录
-                    File cacheDir = PathUtils.getDiskCacheDir(context, CacheConfig.IMG_DIR);
-                    cache = DiskLruCacheWrapper.get(cacheDir, DiskCache.Factory.DEFAULT_DISK_CACHE_SIZE);  // 250 MB
-                    builder.setDiskCache(new DiskCache.Factory() {
-                        @Override
-                        public DiskCache build() {
-                            return cache;
-                        }
-                    });
-                    // 设置memory和Bitmap池的大小
-                    MemorySizeCalculator calculator = new MemorySizeCalculator(context);
-                    int defaultMemoryCacheSize = calculator.getMemoryCacheSize();
-                    int defaultBitmapPoolSize = calculator.getBitmapPoolSize();
-                    int customMemoryCacheSize = (int) (1.2 * defaultMemoryCacheSize);
-                    int customBitmapPoolSize = (int) (1.2 * defaultBitmapPoolSize);
-                    builder.setMemoryCache(new LruResourceCache(customMemoryCacheSize));
-                    builder.setBitmapPool(new LruBitmapPool(customBitmapPoolSize));
-                }
-                @Override
-                public void registerComponents(Context context, Glide glide) {}
-            }
-            ```
-    12. BitmapTransformation
-        1. ``implementation 'jp.wasabeef:glide-transformations:4.0.1'``  // implementation 'jp.co.cyberagent.android:gpuimage:2.x.x' (for GPU)
-        2. 使用
-            ```java
-            // 实现高斯模糊，radius取值1-25，值越大图片越模糊
-            Glide.with(context).load(url).apply(bitmapTransform(new BlurTransformation(radius))).into(imageView);
-            // 圆角
-            Glide.with(context).load(url).apply(bitmapTransform(new RoundedCornersTransformation(radius, margin, CornerType))).into(imageView);
-            // 黑白
-            Glide.with(this).load(url).apply(bitmapTransform(new GrayscaleTransformation())).into(imageView);
-            // 遮盖
-            Glide.with(this).load(url).apply(bitmapTransform(new MaskTransformation(R.mipmap.ic_launcher))).into(imageView);
-            // 混合
-            MultiTransformation multi = new MultiTransformation(
-                new BlurTransformation(25),
-                new RoundedCornersTransformation(128, 0, RoundedCornersTransformation.CornerType.BOTTOM))))
-            Glide.with(this).load(R.drawable.demo).apply(bitmapTransform(multi)).into(imageView);
-            ```
-        3. 基本分类
-            - Crop: CropTransformation(默认), CropCircleTransformation(圆形), CropSquareTransformation(方形), RoundedCornersTransformation(圆角)
-            - Color: ColorFilterTransformation(颜色覆盖), GrayscaleTransformation(置灰)
-            - Blur: BlurTransformation(毛玻璃)
-            - Mask: MaskTransformation(遮盖)
-            - GPU Filter (use GPUImage), Will require add dependencies for GPUImage:
-                - ToonFilterTransformation, SepiaFilterTransformation, ContrastFilterTransformation
-                - InvertFilterTransformation, PixelationFilterTransformation, SketchFilterTransformation
-                - SwirlFilterTransformation, BrightnessFilterTransformation, KuwaharaFilterTransformation VignetteFilterTransformation
-        4. transform方法是不支持多次调用的,如果你调用了两次,那么第二次的会覆盖了第一次的效果，但是他有一个重载的方法可以传入多个对象,这样传入的变形器都能够生效
-    13. 图片裁剪
-        1. ImageView的ScaleType一共有8种属性:
-            - matrix: 不缩放,图片与控件左上角对齐,当图片大小超过控件时将被裁剪
-            - center: 不缩放,图片与控件中心点对齐,当图片大小超过控件时将被裁剪
-            - centerInside: 以完整显示图片为目标,不剪裁,当显示不下的时候将缩放,能够显示的情况下不缩放
-            - centerCrop: 以填满整个控件为目标,等比缩放,超过控件时将被裁剪(宽高都要填满,所以只要图片宽高比与控件宽高比不同时,一定会被剪裁)
-            - fitCenter(默认): 自适应控件,不剪裁,在不超过控件的前提下,等比缩放到最大,居中显示
-            - fitStart: 自适应控件,不剪裁,在不超过控件的前提下,等比缩放到最大,靠左(上)显示
-            - fitEnd: 自适应控件,不剪裁,在不超过控件的前提下,等比缩放到最大,靠右(下)显示
-            - fitXY: 以填满整个控件为目标,不按比例拉伸或缩放(可能会变形),不剪裁
-        2. Glide有两个方法可以设置图片剪裁的策略: fitCenter()、centerCrop()。这两个方法其实都是通过调用transform方法来对图片进行处理。当你没有调用上述两个方法,并且也没有调用transform方法的时候,在Glide调用into方法时,会根据你设置的ScaleType来做处理。
-        3. 有一点要注意的就是fitCenter和centerCrop方法与transform方法可以共存,但是有时候会互相影响,如果说圆角处理遇到了剪裁,圆角那一部分可能会刚好被剪裁掉了。
-    14. 自定义裁剪
-        1. 圆角处理
-            ```java
-            public  class CornersTransform extends BitmapTransformation {
-                private float radius;
-                public CornersTransform(Context context) {
-                    this(context, 10);
-                }
-                public CornersTransform(Context context, float radius) {
-                    super(context);
-                    this.radius = radius;
-                }
-                @Override protected Bitmap transform(BitmapPool pool, Bitmap source, int outWidth, int outHeight) {
-                    if (source == null) return null;
-                    Bitmap result = pool.get(source.getWidth(), source.getHeight(), Bitmap.Config.ARGB_8888);
-                    if (result == null) {
-                        result = Bitmap.createBitmap(source.getWidth(), source.getHeight(), Bitmap.Config.ARGB_8888);
-                    }
-                    Canvas canvas = new Canvas(result);
-                    Paint paint = new Paint();
-                    paint.setShader(new BitmapShader(source, BitmapShader.TileMode.CLAMP, BitmapShader.TileMode.CLAMP));
-                    paint.setAntiAlias(true);
-                    RectF rectF = new RectF(0f, 0f, source.getWidth(), source.getHeight());
-                    canvas.drawRoundRect(rectF, radius, radius, paint);
-                    return result;
-                }
-                @Override
-                public String getId() {
-                    return getClass().getName();
-                }
-            }
-            ```
-        2. CustomShapeTransformation
-            ```java
-            public class CustomShapeTransformation extends BitmapTransformation {
-                private Paint mPaint; // 画笔
-                private Context mContext;
-                private int mShapeRes; // 形状的drawable资源
-                public CustomShapeTransformation(Context context, int shapeRes) {
-                    super(context);
-                    mContext = context;
-                    mShapeRes = shapeRes;
-                    mPaint = new Paint();
-                    mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-                }
-                @Override public Bitmap transform(BitmapPool pool, Bitmap toTransform, int outWidth, int outHeight) {
-                    // 获取到形状资源的Drawable对象
-                    Drawable shape = ContextCompat.getDrawable(mContext, mShapeRes);
-                    float shapeWidth = shape.getMinimumWidth(); // 形状的宽
-                    float shapeHeight = shape.getMinimumHeight(); // 形状的高
-                    int width = toTransform.getWidth(); // 图片的宽
-                    int height = toTransform.getHeight(); // 图片的高
-                    if (width > height) {
-                        // 如果图片的宽大于高，则以高为基准，以形状的宽高比重新设置宽度
-                        width = (int) (height * (shapeWidth / shapeHeight));
-                    } else {
-                        // 如果图片的宽小于等于高，则以宽为基准，以形状的宽高比重新设置高度度
-                        height = (int) (width * (shapeHeight / shapeWidth));
-                    }
-                    // 居中裁剪图片，调用Glide库中TransformationUtils类的centerCrop()方法完成裁剪，保证图片居中且填满
-                    final Bitmap toReuse = pool.get(width, height, toTransform.getConfig() != null
-                            ? toTransform.getConfig() : Bitmap.Config.ARGB_8888);
-                    Bitmap transformed = TransformationUtils.centerCrop(toReuse, toTransform, width, height);
-                    if (toReuse != null && toReuse != transformed && !pool.put(toReuse)) {
-                        toReuse.recycle();
-                    }
-                    // 根据算出的宽高新建Bitmap对象并设置到画布上
-                    Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-                    Canvas canvas = new Canvas(bitmap);
-                    // 设置形状的大小与图片的大小一致
-                    shape.setBounds(0, 0, width, height);
-                    // 将图片画到画布上
-                    shape.draw(canvas);
-                    // 将裁剪后的图片画得画布上
-                    canvas.drawBitmap(transformed, 0, 0, mPaint);
-                    return bitmap;
-                }
-                @Override
-                public String getId() {
-                    // 用于缓存的唯一标识符
-                    return "CustomShapeTransformation" + mShapeRes;
-                }
-            }
-            ```
-    15. 集成: 替换掉自带的HttpClient，版本查询: https://github.com/bumptech/glide/wiki/Integration-Libraries
-        1. Glide包含一些小的、可选的集成库，目前Glide集成库当中包含了访问网络操作的Volley和OkHttp：
-            ```groovy
-            dependencies {
-                compile 'com.github.bumptech.glide:volley-integration:1.2.2'
-                compile 'com.mcxiaoke.volley:library:1.0.5'
-                // or
-                compile 'com.github.bumptech.glide:okhttp-integration:1.2.2'
-                compile 'com.squareup.okhttp:okhttp:2.0.0'
-            }
-            ```
-        2. application中
-            ```xml
-            <meta-data android:name="com.bumptech.glide.integration.volley.VolleyGlideModule" android:value="GlideModule" />
-            <!-- or -->
-            <meta-data android:name="com.bumptech.glide.integration.okhttp.OkHttpGlideModule" android:value="GlideModule" />
-            <!-- 注意如果多个集成，那么最后一个才有效 -->
-            ```
-        3. 然后改变混淆文件
-            ```
-            -keep class com.bumptech.glide.integration.volley.VolleyGlideModule
-            #or
-            -keep public class * implements com.bumptech.glide.module.GlideModule
-            -keep class com.bumptech.glide.integration.okhttp.OkHttpGlideModule
-            #or
-            -keep public class * implements com.bumptech.glide.module.GlideModule
-            ```
-        4. Glide如同ImageLoader一样，也是可以配置一些属性的，Glide可以在GlideModel中统一配置其属性。Glide允许一个应用当中存在多个GlideModules，但是Glide并不会按照一个特殊的顺序去调用已注册的GlideModules。如果一个应用的多个依赖工程当中有多个相同的Modules，就有可能会产生冲突。如果一个冲突是不可避免的，应用应该默认去定义一个自己的Module,用来手动地处理这个冲突，在进行Manifest合并的时候，可以用下面的标签排除冲突的Module
-            ```xml
-            <meta-data android:name="com.example.jianglei.glidedemo.GlideModelConfig" tools:node="remove"/>
-            ```
-    16. 注意事项
-        1. Glide内部封装了所有的细节，什么网络请求，什么缓存机制，当所有都就绪过后，自动切换回UI线程，更新ImageView。？？？
-        2. 如果传给into().的是一个ImageView，但是图片的size比ImageView的Size大，Glide为了节省时间，会加载小的那个size的Image。但是这对Target并不适用，以为这里并不知道Size。但是如果知道image应该多大，可以传递给Target。如 new SimpleTarget<Bitmap>(250, 200) { ... }
-        3. Target 下有 SimpleTarget / ViewTarget(适用于想Glide加载到自定义View中去) / notificationTarget / AppWidget
-        4. asGif可以加载gif图，asBitmap可以加载静态gif图即gif图的第一帧，如果非gif图用asGif方法加载呢？这时候会报错。Glide默认可以自动识别图片格式，加载gif图，所以在不确定图片格式的情况下，不要直接写asGif哦。
-        5. You cannot start a load for a destroyed activity这样的异常如何处理？记住不要再非主线程里面使用Glide加载图片，如果真的使用了，请把context参数换成getApplicationContext。希望可以帮你避免这个问题。
-        6. 为什么有的图片第一次加载的时候只显示占位图，第二次才显示正常的图片呢？如果你刚好使用了这个圆形Imageview库或者其他的一些自定义的圆形Imageview，而你又刚好设置了占位的话，那么，你就会遇到第一个问题。如何解决呢？
-            1. 不设置占位
-            2. 使用Glide的Transformation API自定义圆形Bitmap的转换。
-            3. 使用Target
-        7. 有时候你会发现网络加载完了之后会有拉伸现象，而你的控件大小明明是自适应的呀，这是为什么呢，请你检查下你是否设置了占位图，有的话请去掉就ok了。
-4. **fresco**
-    1. 引入
-        1. ``implementation 'com.facebook.fresco:fresco:2.0.0'``
-        2. 按需添加
-            ```groovy
-            dependencies {
-                // 支持 GIF 动图，需要添加
-                compile 'com.facebook.fresco:animated-gif:2.0.0'
-                // 支持 WebP (静态图+动图)，需要添加
-                compile 'com.facebook.fresco:animated-webp:2.0.0'
-                compile 'com.facebook.fresco:webpsupport:2.0.0'
-                // 仅支持 WebP 静态图，需要添加
-                compile 'com.facebook.fresco:webpsupport:2.0.0'
-                // 在 API < 14 上的机器支持 WebP 时，需要添加
-                compile 'com.facebook.fresco:animated-base-support:0.12.0'
-                // Provide the Android support library (you might already have this or a similar dependency)
-                // 提供Android支持库(您可能已经拥有此类或相似的依赖项)
-                implementation 'com.android.support:support-core-utils:24.2.1'
-            }
-            ```
-        3. 在 Application 中初始化
-            ```java
-            public class MyApplication extends Application {
-                @Override public void onCreate() {
-                    super.onCreate();
-                    Fresco.initialize(this);
-                }
-            }
-            ```
-        4. 需要声明的权限与 Glide 类似
-    2. 基本使用
-        1. xml
-            ```xml
-            <com.facebook.drawee.view.SimpleDraweeView
-                android:id="@+id/my_image_view"
-                android:layout_width="130dp"
-                android:layout_height="130dp"
-                fresco:placeholderImage="@drawable/my_drawable"/>
-            ```
-        2. java
-            ```java
-            Uri uri = Uri.parse("https://raw.githubusercontent.com/facebook/fresco/gh-pages/static/logo.png");
-            SimpleDraweeView draweeView = (SimpleDraweeView) findViewById(R.id.my_image_view);
-            draweeView.setImageURI(uri);
-            ```
-        3. 剩下的，Fresco会替你完成:
-            - 显示占位图直到加载完成；
-            - 下载图片；
-            - 缓存图片；
-            - 图片不再显示时，从内存中移除；
-    3. https://frescolib.org/docs/shipping.html 让App更小，尽管Fresco这么大
-    4. 
-5. **picasso**
-    1. 
-    2. 
-    3. 
-
 ### Android 消息通知
 
 1. Toast
@@ -2523,8 +2050,6 @@ Android 信息.md
 ### Android 视频音频
 
 1. [Android 集成 FFmpeg](https://blog.csdn.net/yhaolpz/article/details/76408829)
-
-### Android 依赖注入
 
 ### Android 动画
 
@@ -3633,14 +3158,6 @@ Android 信息.md
     10. 降级应用程序更新: 许多关于泄露的代码和命令行表明，Android Q 将有将应用程序回滚到以前的版本的功能。
     11. 新字体、图标形状和提示颜色: Android Pie的一个特点是能够改变背景主题。有了AndroidQ，谷歌计划增加更多的定制功能。 泄露的 Android 信息中展示了新的两种新字体，图标形状，如正方形、松鼠、TearDrop，新的提示颜色：黑色、绿色和蓝色。
 8. Android vitals可以帮助我们精确诊断应用崩溃 https://mp.weixin.qq.com/s?__biz=MzAwODY4OTk2Mg==&mid=2652047285&idx=1&sn=7b5b574b29d37a1819bdb6950eec01c0&chksm=808ca7f0b7fb2ee60417e528ebccb5f70a4b9e9ef0e6834458f15c3789551982fe51188c78c9&scene=21#wechat_redirect
-
-### Android Groovy
-
-[Groovy脚本基础全攻略](https://blog.csdn.net/yanbober/article/details/49047515)
-
-### Android Glide
-
-[Gradle脚本基础全攻略](https://blog.csdn.net/yanbober/article/details/49314255)
 
 ### Android View
 

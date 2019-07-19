@@ -1257,6 +1257,7 @@ img {
         * 参考文档
             * [Groovy Documentation：Groovy 的详细介绍文档](http://www.groovy-lang.org/documentation.html)
             * [Groovy API Reference：Groovy 的 API 文档，必要的时候查阅](http://www.groovy-lang.org/api.html)
+            * [Groovy脚本基础全攻略](https://blog.csdn.net/yanbober/article/details/49047515)
             * []()
     2. Gradle
         * 参考博客
@@ -1265,6 +1266,7 @@ img {
             * [深入理解Android之Gradle](http://blog.csdn.net/Innost/article/details/48228651)
             * [Gradle构建最佳实践](http://www.figotan.org/2016/04/01/gradle-on-android-best-practise/)
             * [Gradle从入门到实战 - Groovy基础](https://blog.csdn.net/singwhatiwanna/article/details/76084580)
+            * [Gradle脚本基础全攻略](https://blog.csdn.net/yanbober/article/details/49314255)
         * 参考文档
             * [Gradle User Manual](https://docs.gradle.org/current/userguide/userguide.html)
             * [Gradle Build Language Reference：Gradle DSL 参考，重点的几个 DSL 过一下，其他的用到再查](https://docs.gradle.org/current/dsl/)
@@ -2832,11 +2834,11 @@ img {
             }
             ```
         5. **类和类成员**
-            作用范围 | keep所指定类、成员 | keep所指定类、成员(前提是在压缩阶段没有被删除)
-            :-|:-|:-
-            类和类成员 | -keep | -keepnames
-            仅类成员 | -keepclassmembers | -keepclassmembernames
-            类和类成员(前提是成员都存在) | -keepclasseswithmembers | -keepclasseswithmembernames
+            | 作用范围                     | keep所指定类、成员      | keep所指定类、成员(前提是在压缩阶段没有被删除) |
+            | :--------------------------- | :---------------------- | :--------------------------------------------- |
+            | 类和类成员                   | -keep                   | -keepnames                                     |
+            | 仅类成员                     | -keepclassmembers       | -keepclassmembernames                          |
+            | 类和类成员(前提是成员都存在) | -keepclasseswithmembers | -keepclasseswithmembernames                    |
     4. 应用场景
         1. **安卓底层组件和类名不可混淆**: 将底层的keep住，插件化才能准确的hook到底层组件
             ```py
