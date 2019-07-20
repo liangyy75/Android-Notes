@@ -31,6 +31,7 @@ Android源码设计模式解析与实战.pdf
 [Android/ubuntu/Spring/Mongodb]()<br>
 [Akka/Idea/Github/MySQL](https://blog.csdn.net/qq_35246620)<br>
 [恺风的技术博客索引](https://blog.csdn.net/flowingflying/article/details/4547084)<br>
+[Android大佬 zhangphil](https://blog.csdn.net/zhangphil/column/info/18077)<br>
 []()<br>
 
 #### 2.工具包
@@ -187,6 +188,14 @@ https://studygolang.com/topics/8327#reply12 -- go
 * []()
 * [《learning python》中文第四版的学习笔记，由纸值文档转换而来](https://github.com/huaxz1986/python_learning_notes)
 * [python开发大全、系列文章、精品教程](https://blog.csdn.net/luanpeng825485697/article/details/78347433)
+<br>
+1. android相关的
+	* https://github.com/brython-dev/brython
+	* http://brython.info/
+	* https://github.com/kivy/kivy
+	* https://beeware.org/
+	* https://www.jianshu.com/p/f95576c03f5b
+	* https://riptutorial.com/zh-CN/kivy
 
 #### 10.小语种1——lua/R/Rust/Haskell/Ruby/
 

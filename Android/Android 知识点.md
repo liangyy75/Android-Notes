@@ -3515,14 +3515,6 @@ Android 信息.md
     11. 新字体、图标形状和提示颜色: Android Pie的一个特点是能够改变背景主题。有了AndroidQ，谷歌计划增加更多的定制功能。 泄露的 Android 信息中展示了新的两种新字体，图标形状，如正方形、松鼠、TearDrop，新的提示颜色：黑色、绿色和蓝色。
 8. Android vitals可以帮助我们精确诊断应用崩溃 https://mp.weixin.qq.com/s?__biz=MzAwODY4OTk2Mg==&mid=2652047285&idx=1&sn=7b5b574b29d37a1819bdb6950eec01c0&chksm=808ca7f0b7fb2ee60417e528ebccb5f70a4b9e9ef0e6834458f15c3789551982fe51188c78c9&scene=21#wechat_redirect
 
-### Android Groovy
-
-[Groovy脚本基础全攻略](https://blog.csdn.net/yanbober/article/details/49047515)
-
-### Android Glide
-
-[Gradle脚本基础全攻略](https://blog.csdn.net/yanbober/article/details/49314255)
-
 ### Android View
 
 1. 坐标系

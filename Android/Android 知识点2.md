@@ -16,8 +16,6 @@ img {
 * [Android Arouter](##Android%20Arouter)
 * [Android Agora Platform](##Android%20Agora%20Platform)
 * [Android APT](##Android%20APT)
-* [Android Flutter](##Android%20Flutter)
-* [Android Kotlin](##Android%20Kotlin)
 * [Android QPython](##Android%20QPython)
 * [Android EventBus源码阅读](##Android%20EventBus源码阅读)
 * [Android RxXxx](##Android%20RxXxx)

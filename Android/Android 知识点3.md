@@ -1254,6 +1254,7 @@ img {
             * [语法基础——Groovy语法基础](https://blog.csdn.net/qq_30379689/article/details/81200026) finished
             * [groovy了解](https://blog.csdn.net/u011861874/article/category/8297824)
             * [拥抱 Android Studio 之三：溯源，Groovy 与 Gradle 基础](http://blog.bugtags.com/2016/01/04/embrace-android-studio-groovy-gradle/) finished
+            * [Groovy脚本基础全攻略](https://blog.csdn.net/yanbober/article/details/49047515)
         * 参考文档
             * [Groovy Documentation：Groovy 的详细介绍文档](http://www.groovy-lang.org/documentation.html)
             * [Groovy API Reference：Groovy 的 API 文档，必要的时候查阅](http://www.groovy-lang.org/api.html)
@@ -1265,6 +1266,7 @@ img {
             * [深入理解Android之Gradle](http://blog.csdn.net/Innost/article/details/48228651)
             * [Gradle构建最佳实践](http://www.figotan.org/2016/04/01/gradle-on-android-best-practise/)
             * [Gradle从入门到实战 - Groovy基础](https://blog.csdn.net/singwhatiwanna/article/details/76084580)
+            * [Gradle脚本基础全攻略](https://blog.csdn.net/yanbober/article/details/49314255)
         * 参考文档
             * [Gradle User Manual](https://docs.gradle.org/current/userguide/userguide.html)
             * [Gradle Build Language Reference：Gradle DSL 参考，重点的几个 DSL 过一下，其他的用到再查](https://docs.gradle.org/current/dsl/)
