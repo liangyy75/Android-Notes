@@ -6,42 +6,43 @@ img {
 </style>
 
 <!-- GFM-TOC -->
-- [Android 基础知识](#Android-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86)
-- [Android 基础知识2](#Android-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%862)
-- [Android 基础知识3](#Android-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%863)
-- [Android 基础知识4(构建相关)](#Android-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%864%E6%9E%84%E5%BB%BA%E7%9B%B8%E5%85%B3)
-- [Android Activity](#Android-Activity)
-- [Android Service](#Android-Service)
-- [Android BroadcastReceiver](#Android-BroadcastReceiver)
-- [Android ContentProvider](#Android-ContentProvider)
-- [Android Fragment](#Android-Fragment)
-- [Android Handler](#Android-Handler)
-- [Android Loader](#Android-Loader)
-- [Android Binder](#Android-Binder)
-- [Android Messenger](#Android-Messenger)
-- [Android AIDL](#Android-AIDL)
-- [Android 系统启动](#Android-%E7%B3%BB%E7%BB%9F%E5%90%AF%E5%8A%A8)
-- [Android 消息](#Android-%E6%B6%88%E6%81%AF)
-- [Android 数据存储](#Android-%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8)
-- [Android 事件响应](#Android-%E4%BA%8B%E4%BB%B6%E5%93%8D%E5%BA%94)
-- [Android 函数响应式](#Android-%E5%87%BD%E6%95%B0%E5%93%8D%E5%BA%94%E5%BC%8F)
-- [Android 网络请求](#Android-%E7%BD%91%E7%BB%9C%E8%AF%B7%E6%B1%82)
-- [Android 消息通知](#Android-%E6%B6%88%E6%81%AF%E9%80%9A%E7%9F%A5)
-- [Android 视频音频](#Android-%E8%A7%86%E9%A2%91%E9%9F%B3%E9%A2%91)
-- [Android 动画](#Android-%E5%8A%A8%E7%94%BB)
-- [Android Drawable](#Android-Drawable)
-- [Android 自定义View](#Android-%E8%87%AA%E5%AE%9A%E4%B9%89View)
-- [Android 性能优化](#Android-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96)
-- [Android 内存泄露](#Android-%E5%86%85%E5%AD%98%E6%B3%84%E9%9C%B2)
-- [Android 安全漏洞](#Android-%E5%AE%89%E5%85%A8%E6%BC%8F%E6%B4%9E)
-- [Android 源码阅读](#Android-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB)
-- [Android Android NDK 与 Java JNI](#Android-Android-NDK-%E4%B8%8E-Java-JNI)
-- [Android Support Annotation Library](#Android-Support-Annotation-Library)
+- [基础知识](#%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86)
+- [基础知识2](#%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%862)
+- [基础知识3](#%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%863)
+- [基础知识4(构建相关)](#%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%864%E6%9E%84%E5%BB%BA%E7%9B%B8%E5%85%B3)
+- [Activity](#Activity)
+- [Service](#Service)
+- [BroadcastReceiver](#BroadcastReceiver)
+- [ContentProvider](#ContentProvider)
+- [Fragment](#Fragment)
+- [Handler](#Handler)
+- [Loader](#Loader)
+- [Binder](#Binder)
+- [Messenger](#Messenger)
+- [AIDL](#AIDL)
+- [系统启动](#%E7%B3%BB%E7%BB%9F%E5%90%AF%E5%8A%A8)
+- [消息](#%E6%B6%88%E6%81%AF)
+- [数据存储](#%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8)
+- [事件响应](#%E4%BA%8B%E4%BB%B6%E5%93%8D%E5%BA%94)
+- [函数响应式](#%E5%87%BD%E6%95%B0%E5%93%8D%E5%BA%94%E5%BC%8F)
+- [网络请求](#%E7%BD%91%E7%BB%9C%E8%AF%B7%E6%B1%82)
+- [消息通知](#%E6%B6%88%E6%81%AF%E9%80%9A%E7%9F%A5)
+- [图片相关](#%E5%9B%BE%E7%89%87%E7%9B%B8%E5%85%B3)
+- [视频音频](#%E8%A7%86%E9%A2%91%E9%9F%B3%E9%A2%91)
+- [动画](#%E5%8A%A8%E7%94%BB)
+- [Drawable](#Drawable)
+- [自定义View](#%E8%87%AA%E5%AE%9A%E4%B9%89View)
+- [性能优化](#%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96)
+- [内存泄露](#%E5%86%85%E5%AD%98%E6%B3%84%E9%9C%B2)
+- [安全漏洞](#%E5%AE%89%E5%85%A8%E6%BC%8F%E6%B4%9E)
+- [源码阅读](#%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB)
+- [Android NDK 与 Java JNI](#Android-NDK-%E4%B8%8E-Java-JNI)
+- [Support Annotation Library](#Support-Annotation-Library)
 - [Androidx](#Androidx)
-- [Android 5678新特性](#Android-5678%E6%96%B0%E7%89%B9%E6%80%A7)
-- [Android 新特性](#Android-%E6%96%B0%E7%89%B9%E6%80%A7)
-- [Android View](#Android-View)
-- [Android 综合技术](#Android-%E7%BB%BC%E5%90%88%E6%8A%80%E6%9C%AF)
+- [5678新特性](#5678%E6%96%B0%E7%89%B9%E6%80%A7)
+- [新特性](#%E6%96%B0%E7%89%B9%E6%80%A7)
+- [View](#View)
+- [综合技术](#%E7%BB%BC%E5%90%88%E6%8A%80%E6%9C%AF)
 - [end](#end)
 <!-- GFM-TOC -->
 
@@ -49,7 +50,7 @@ img {
 广播接收器回调的context
 Android Binder
 
-### Android 基础知识
+## 基础知识
 
 1. **五种布局**: FrameLayout 、 LinearLayout 、 AbsoluteLayout 、 RelativeLayout 、 TableLayout 全都继承自ViewGroup，各自特点及绘制效率对比。
 2. **如何判断应用被强杀**: 在Application中定义一个static常量，赋值为－1，在欢迎界面改为0，如果被强杀，application重新初始化，在父类Activity判断该常量的值。
@@ -155,7 +156,7 @@ Android Binder
 24. **ListView里的ViewType机制**: https://blog.csdn.net/modurookie/article/details/80213192
 25. **TextView怎么改变局部颜色(SpannableString或者HTML)**: 
 
-### Android 基础知识2
+## 基础知识2
 
 1. **ListView**: 继承于AbsListView，依靠Adapter在数据源与它之间建立桥梁，重点是**RecycleBin机制**(实现成百上千条数据都不会OOM)
     1. RecycleBin当中使用mActiveViews这个数组来存储View，调用这个方法后就会根据传入的参数来将ListView中的指定元素存储到mActiveViews中。
@@ -298,7 +299,7 @@ Android Binder
 24. **网络图片加载框架(可以参考BitmapFun)**: 
 25. **Android里的LRU算法原理**: 使用ListHashMap实现的。
 
-### Android 基础知识3
+## 基础知识3
 
 1. **解决android应用被强杀或应用被回收导致的空指针问题**: https://blog.csdn.net/lvzishen123/article/details/51519451
 2. **onSaveInstanceState**相关: 
@@ -450,7 +451,7 @@ Android Binder
 17. **Instant run** https://www.jianshu.com/p/2e23ba9ff14b
 18. **android 签名** 
 
-### Android 基础知识4(构建相关)
+## 基础知识4(构建相关)
 
 1. mustRunAfter 与 finalizedBy 与 dependsOn 的差别: https://blog.csdn.net/lzyzsd/article/details/46935405
 2. compile 与 api 与 compileOnly 与 implementation 与 provided 等等的差别: [Android Studio3.0中dependencies依赖由compile变为implementation的区别](https://blog.csdn.net/silenceoo/article/details/78735687)
@@ -581,7 +582,7 @@ Android Binder
     2. 如果你在开发过程中向工程里面加入了很多额外的插件，则必然会导致你的Eclipse启动速度变慢。在这种情况下，你可以到这个文件里面去掉一些插件，不过这样一来你在开启那些关联文件的时候会加载那些插件。
 10. pom语法详解 https://blog.csdn.net/sq_better/article/details/54630810
 
-### Android Activity
+## Activity
 
 1. **概念**: Android开发中提供给用户进行滑动触摸等操作的界面。
 2. **Activity四种状态**:
@@ -648,7 +649,7 @@ Android Binder
         2. public static final Parcelable.Creator CREATOR = new Parcelable.Creator() { public T createFromParcel(Parcel in){} public T[] newArray(int size) {} }
         3. public void writeToParcel(Parcel dest, int flags) {} 与 private void readFromParcel(Parcel in) {} 与 public T(Parcel in) { readFromParcel(in); }
 
-### Android Service
+## Service
 
 1. **概念**: Android程序中四大基础组件之一，它和Activity一样都是Context的子类，只不过它没有UI界面，是在后台运行的组件。
 2. **生命周期**: Service对象不能自己启动，需要通过某个Activity、Service或者其他Context对象来启动。
@@ -729,7 +730,7 @@ Android Binder
     2. 另一方面不需要考虑在什么时候关闭该Service
     3. onStartCommand中回调了onStart，onStart中通过mServiceHandler发送消息到该handler的handleMessage中去。最后handleMessage中回调onHandleIntent(intent)。
 
-### Android BroadcastReceiver
+## BroadcastReceiver
 
 1. **概念**: 是一种广泛运用于应用程序之间传输信息的机制。从本质上来说，广播内容就是一个Intent，在Intent中携带数据。
 2. **使用场景**: 同一个App内具有多个进程的不同组件之间的消息通信 不同App内的通信 多线程通信 与Android系统在特定情况下的通信，如电话呼入、网络可用
@@ -793,7 +794,7 @@ Android Binder
     1. 动态注册广播时只有在注册广播之后取消注册之前的有效期内才能接收到广播。 
     2. 静态注册广播时就算应用没有启动也能接收到广播，会执行Application的OnCreate()，但不会执行Actvity的onCreate()。
 
-### Android ContentProvider
+## ContentProvider
 
 [使用ContentProvider](https://blog.csdn.net/a992036795/article/details/51610936)
 [ContentProvider原理分析](https://blog.csdn.net/a992036795/article/details/51612425)
@@ -1049,7 +1050,7 @@ Android Binder
     3. 。。。 https://blog.csdn.net/a992036795/article/details/51612425
 3. 
 
-### Android Fragment
+## Fragment
 
 0. links
     * **[《Android基础：Fragment，看这篇就够了》](https://cloud.tencent.com/developer/article/1071779)**
@@ -1353,7 +1354,7 @@ Android Binder
         3. 还有一种可能也会造成fragment重叠的问题，就是当内存不足时activity被系统回收时，再次进入也会造成重叠的问题，原因也是因为onSaveInstanceState(outState);方法保存了activity的一些数据。因为是系统回收的activity，所以，我们就没法去控制activity不让他走生命周期方法，我们可以从另一个方面着手去解决。解决办法：在onSaveInstanceState(outState);中去保存fragment，当activity被恢复时，取出这些fragment即可。使用getSupportFragmentManager的putFragment方法。然后oncreate的时候判断一下savedInstanceState是为空，不为空的话就是有保存的fragment信息，使用getSupportFragmentManager的getFragment方法。
 12. [fragment清除页面数据(重新加载布局)](https://blog.csdn.net/yuzhiqiang_1993/article/details/76152454)
 
-### Android Handler
+## Handler
 
 [Android源码系列(16) -- MessageQueue](https://www.codercto.com/a/36074.html)
 https://blog.csdn.net/pgg_cold/article/details/79400435
@@ -1388,7 +1389,7 @@ https://github.com/francistao/LearningNotes/blob/master/Part1/Android/线程通�
 9. **Handler**: 
     1. 执行方式: post(Runnable), new Handler(new Handler.Callback(){ public void handleMessage(msg){...} }), sendMessage(Message)
 
-### Android Loader
+## Loader
 
 1. 3.0之后最推荐的异步操作就是Loader。它可以方便我们在Activity和Fragment中异步加载数据，而不是用线程或AsyncTask，他的优点如下: 
     1. 提供异步加载数据机制；
@@ -1437,7 +1438,7 @@ https://github.com/francistao/LearningNotes/blob/master/Part1/Android/线程通�
 4. 实例 https://blog.csdn.net/yanbober/article/details/48861457 android.test.loader.CursorLoaderListFragment.java
 5. 源码解析 https://blog.csdn.net/yanbober/article/details/48861457
 
-### Android Binder
+## Binder
 
 **https://www.jianshu.com/p/04a034cbbc27**
 
@@ -1501,19 +1502,19 @@ https://github.com/francistao/LearningNotes/blob/master/Part1/Android/线程通�
         3. mParcelledData = null
     6. 在unparcel()方法中就对上述几种情况做了不同的处理，当mParcelledData为null时，直接返回；当mParcelledData为EMPTY_PARCEL时，会创建一个容量为1的ArrayMap对象；当mParcelledData为Parcel.obtain()时，则会将里面的数据读出，并创建一个ArrayMap，并将数据存储到ArrayMap对象里面，同时将mParcelledData回收并置为null；
 
-### Android Messenger
+## Messenger
 
 https://cloud.tencent.com/developer/article/1199115
 https://blog.csdn.net/lmj623565791/article/details/47017485
 https://blog.csdn.net/u011240877/article/details/72836178
 
-### Android AIDL
+## AIDL
 
 https://developer.android.google.cn/guide/components/aidl  
 https://www.jianshu.com/p/375e3873b1f4
 https://blog.csdn.net/u011240877/article/details/72765136
 
-### Android 系统启动
+## 系统启动
 
 [Android源码-深入理解Window和WindowManager](https://www.jianshu.com/p/1c4059d3865b?utm_campaign=maleskine&utm_content=note&utm_medium=seo_notes&utm_source=recommendation)
 [Window和WindowManager理解](https://blog.csdn.net/yhaolpz/article/details/68936932)
@@ -1670,11 +1671,11 @@ https://blog.csdn.net/u011240877/article/details/72765136
         4. **监听App所处状态**: 锁屏开屏，退到后台回到前台，手机内存状态，横竖屏切换，Activity的生命周期，退出应用(不稳定)，这些都可以通过Application监听。
 5. 
 
-### Android 消息
+## 消息
 
 Android 信息.md
 
-### Android 数据存储
+## 数据存储
 
 1. **分类**:
     1. SQLite: SQLite是一个轻量级的数据库，支持基本的SQL语法，是常被采用的一种数据存储方式。 Android为此数据库提供了一个名为SQLiteDatabase的类，封装了一些操作数据库的api
@@ -1750,7 +1751,7 @@ Android 信息.md
         - Cursor: 游标，有点类似于JDBC里的resultset，结果集！可以简单理解为指向数据库中某一个记录的指针！
     4. ``data/data/<包名>/database/``
 
-### Android 事件响应
+## 事件响应
 
 ![Android事件分发机制](./images/Android%20事件分发.png)
 
@@ -1942,9 +1943,9 @@ Android 信息.md
 	```
 - Gestures(手势)
 
-### Android 函数响应式
+## 函数响应式
 
-### Android 网络请求
+## 网络请求
 
 1. **权限**: android.permission.INTERNET(使用网络)/android.permission.CHANGE_NETWORK_STATE(管理网络状态)
 2. **URL**: 没有很好的错误处理: 如手机没有网络、服务器关闭、URL无效、用户操作超时，因此，从一个URL读取数据值之前，往往需要了解更多的信息，例如，需要读取的数据到底有多大
@@ -2040,18 +2041,34 @@ Android 信息.md
         - 一样要bean，一样要求json对象中的key的名称与Java对象的JavaBean类中的属性名要相同
         - MyBean b = JSON.parseObject(jsonStr, MyBean.class); List<MyBean> bs = JSON.parseArray(jsonStr, MyBean.class);
 
-### Android 消息通知
+## 消息通知
 
 1. Toast
 2. AlertDialog
 3. Notification
-4. 
 
-### Android 视频音频
+## 图片相关
+
+1. **Bitmap的高效加载**
+    1. BitmapFactory类提供四种方法: decodeFile、decodeResource、decodeStream和decodeByteArray；其中decodeFile和decodeResource间接的调用了decodeStream方法；这四个方法最终在Android底层实现。
+    2. 如何高效的加载Bitmap？核心思想: 按需加载；很多时候ImageView并没有原始图片那么大，所以没必要加载原始大小的图片。采用BitmapFactory.Options来加载所需尺寸的图片。通过BitmapFactory.Options来缩放图片，主要是用到了它的inSampleSize参数，即采样率。inSampleSize应该为2的指数，如果不是系统会向下取整并选择一个最接近2的指数来代替；缩放比例为1/(inSampleSize的二次方)。
+    3. Bitmap内存占用: 拿一张1024x1024像素的图片来说，假定采用ARGB8888格式存储，那么它占用的内存为1024\*1024\*4，即4MB。
+    4. 
+2. **Android的缓存策略**
+    1. 如何减少流量消耗？缓存。当程序第一次从网络上加载图片后，将其缓存在存储设备中，下次使用这张图片的时候就不用再从网络从获取了。一般情况会把图片存一份到内存中，一份到存储设备中，如果内存中没找到就去存储设备中找，还没有找到就从网络上下载。
+    2. 目前常用的缓存算法是LRU，是近期最少使用算法，当缓存满时，优先淘汰那些近期最少使用的缓存对象。采用LRU算法的缓存有两种: LRUCache(内存缓存)和DiskLruCache(存储缓存)。
+    3. LruCache是Android3.1所提供的一个缓存类，通过support-v4兼容包可以兼容到早期的Android版本。LruCache是一个泛型类，是线程安全的，内部采用LinkedHashMap以强引用的方式存储外界缓存对象，并提供get和put方法来完成缓存的获取和添加操作，当缓存满时，LruCache会移除较早的使用的缓存对象。LruCache初始化时需重写sizeOf方法，用于计算缓存对象的大小。
+    4. DiskLruCache用于实现磁盘缓存，DiskLruCache得到了Android官方文档推荐，但它不属于Android SDK的一部分，https://android.googlesource.com/platform/libcore/+/android-4.1.1_r1/luni/src/main/java/libcore/io/DiskLruCache.java
+    5. 自己实现一个ImageLoader，包含 https://github.com/singwhatiwanna/android-art-res/blob/master/Chapter_12/src/com/ryg/chapter_12/loader/ImageLoader.java
+        1. 图片压缩功能
+        2. 内存缓存和磁盘缓存
+        3. 同步加载和异步加载的接口设计
+
+## 视频音频
 
 1. [Android 集成 FFmpeg](https://blog.csdn.net/yhaolpz/article/details/76408829)
 
-### Android 动画
+## 动画
 
 1. **分类**: https://blog.csdn.net/xuepeng0728119/article/details/50592819
     1. **Tween Animation 补间动画(又叫view动画)**，是通过对场景里的对象不断做图像变换(透明度、缩放、平移、旋转)从而产生动画效果，是一种渐进式动画，并且View动画支持自定义。
@@ -2302,7 +2319,7 @@ Android 信息.md
     7. 动画在3.0以下的系统存在兼容性问题，特殊场景可能无法正常工作，需做好适配工作。
 6. 
 
-### Android Drawable
+## Drawable
 
 1. **实例**: 
     1. **shapeDrawable**: 
@@ -2329,7 +2346,7 @@ Android 信息.md
         4. **圆**: shape="oval" ... **椭圆**: shape="oval" ...
         5. **圆环**: shape="ring" ...
 
-### Android 自定义View
+## 自定义View
 
 1. **如何自定义控件**: 
     1. 自定义属性的声明和获取
@@ -2374,7 +2391,7 @@ Android 信息.md
         5. draw the fade effect and restore layers
         6. draw decorations (foreground, scrollbars)
 
-### Android 性能优化
+## 性能优化
 
 布局优化、绘制优化、内存泄漏优化、响应速度优化、ListView优化、Bitmap优化、线程优化等
 
@@ -2427,7 +2444,7 @@ Android 信息.md
 6. **响应速度优化**: 
     1. 响应速度优化的核心思想就是避免在主线程中去做耗时操作，将耗时操作放在其他线程当中去执行。Activity如果5秒无法响应屏幕触摸事件或者键盘输入事件就会触发ANR，而BroadcastReceiver如果10秒还未执行完操作也会出现ANR。当一个进程发生ANR以后系统会在/data/anr的目录下创建一个文件traces.txt，通过分析该文件就能定位出ANR的原因。
 
-### Android 内存泄露
+## 内存泄露
 
 1. **静态集合类引起内存泄漏**: 静态变量的生命周期和应用程序一致，他们所引用的所有的对象Object也不能被释放
 <!-- 2. **当集合里面的对象属性被修改后，再调用remove()方法时不起作用**: 集合根据hashCode来保证对象的唯一性，而如果修改了对象属性，对象的hashCode改变，就无法根据hashCode来remove -->
@@ -2469,7 +2486,7 @@ Android 信息.md
 2. MemoryAnalyzer.exe: java内存泄漏检查工具利器 https://blog.csdn.net/fishinhouse/article/details/80781673
 3. 
 
-### Android 安全漏洞
+## 安全漏洞
 
 1. **WebView**:
     1. Android API level 16以及之前的版本存在远程代码执行安全漏洞，该漏洞源于程序没有正确闲置使用WebView.addJavascriptInterface方法，远程攻击者可通过使用反射机制利用该漏洞执行任意java对象的方法
@@ -2479,7 +2496,7 @@ Android 信息.md
     5. webView硬件加速导致页面渲染问题，易导致页面白块，解决方法是暂时关闭硬件加速
     6. 当页面加载完成时会回调webviewClient.onPageFinished()方法，这个方法会判断当前页面有没有被加载完毕，但是当你发生页面跳转的时候，这个方法会被调用无数次，所以当你的webview需要加载各种网页，并且需要在网页上操作时，调用WebChromeClient.onProgressChanged方法更好
 
-### Android 源码阅读
+## 源码阅读
 
 1. Message: 
     1. 成员变量: 
@@ -2620,7 +2637,7 @@ Android 信息.md
         4. public boolean hasFileDescriptors()
 12. 
 
-### Android Android NDK 与 Java JNI
+## Android NDK 与 Java JNI
 
 * [Android：JNI 与 NDK到底是什么？(含实例教学，入门)](https://blog.csdn.net/carson_ho/article/details/73250163)
 * [Android: JNI 入门](https://www.cnblogs.com/rocomp/p/4892866.html)
@@ -3100,11 +3117,11 @@ Android 信息.md
     4. 速度快
 3. 
 
-### Android Support Annotation Library
+## Support Annotation Library
 
 [Android进阶系列之Support Annotation Library使用详解](https://blog.csdn.net/sw5131899/article/details/53842362)
 
-### Androidx
+## Androidx
 
 1. Android 迁移到 Androidx
     1. 最近 Google 发布了 Android support library 28，同时也发布了 androidx 1.0.0 第一个正式版本，然后得知支持库的 "28.0.0" 将会是最后一次更新，之后的更新都会迁移到 Androidx 中，所以没办法，只能把项目依赖也迁移到 Androidx 了。
@@ -3124,11 +3141,11 @@ Android 信息.md
         4. https://mp.weixin.qq.com/s/JcviqDZ8To3ZEL2H0kVukA
 2. 新特性
 
-### Android 5678新特性
+## 5678新特性
 
 [Android5,6,7,8新特性](https://blog.csdn.net/Calvin_zhou/article/details/79262254)
 
-### Android 新特性
+## 新特性
 
 1. 9.0新特性 https://blog.csdn.net/GenlanFeng/article/details/79496359
 2. 2019年8个最新移动APP开发技术趋势 https://www.kingwins.com.cn/content-10384.html
@@ -3159,7 +3176,7 @@ Android 信息.md
     11. 新字体、图标形状和提示颜色: Android Pie的一个特点是能够改变背景主题。有了AndroidQ，谷歌计划增加更多的定制功能。 泄露的 Android 信息中展示了新的两种新字体，图标形状，如正方形、松鼠、TearDrop，新的提示颜色：黑色、绿色和蓝色。
 8. Android vitals可以帮助我们精确诊断应用崩溃 https://mp.weixin.qq.com/s?__biz=MzAwODY4OTk2Mg==&mid=2652047285&idx=1&sn=7b5b574b29d37a1819bdb6950eec01c0&chksm=808ca7f0b7fb2ee60417e528ebccb5f70a4b9e9ef0e6834458f15c3789551982fe51188c78c9&scene=21#wechat_redirect
 
-### Android View
+## View
 
 1. 坐标系
     1. Android坐标系: 左上角为原点，往右是x轴正方向，往下是y轴正方向。MotionEvent提供的getRawX()和getRawY()获取的坐标都是Android坐标系的坐标。
@@ -3537,7 +3554,7 @@ Android 信息.md
 9. 
 10. 
 
-### Android 综合技术
+## 综合技术
 
 1. 使用CrashHandler来获取应用的crash信息
     1. 如何检测崩溃并了解详细的crash信息？首先需实现一个uncaughtExceptionHandler对象，在它的uncaughtException方法中获取异常信息并将其存储到SD卡或者上传到服务器中，然后调用Thread的setDefaultUncaughtExceptionHandler为当前进程的所有线程设置异常处理器。
@@ -3666,4 +3683,4 @@ Android 信息.md
     1. 使用dex2jar和jd-gui反编译apk
     2. 使用apktool对apk进行二次打包
 
-### end
+## end

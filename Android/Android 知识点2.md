@@ -5,33 +5,42 @@ img {
 }
 </style>
 
-* [Android RecyclerView](##Android%20RecyclerView)
-* [Android ViewPager](##Android%20ViewPager)
-* [Android 性能优化](##Android%20性能优化)
-* [Android 热更新/热修复](##Android%20热更新%2f热修复)
-* [Android 自定义View](##Android%20自定义View)
-* [Android 蓝牙/wifi](Android%20蓝牙%2fwifi)
-* [Android 地图](##Android%20地图)
-* [Android 插件化](##Android%20插件化)
-* [Android Arouter](##Android%20Arouter)
-* [Android Agora Platform](##Android%20Agora%20Platform)
-* [Android APT](##Android%20APT)
-* [Android QPython](##Android%20QPython)
-* [Android EventBus源码阅读](##Android%20EventBus源码阅读)
-* [Android RxXxx](##Android%20RxXxx)
-* [Android Gson](##Android%20Gson)
-* [Retrofit2](##Retrofit2)
-* [OKHttp](##OKHttp)
-* [Android Hermes](##Android%20Hermes)
-* [Android 适配](##Android%20适配)
-* [Android KLog](##Android%20KLog)
-* [Android 工具](##Android%20工具)
-* [Android SDK](##Android%20SDK)
-* [Android 大项目](##Android%20大项目)
+- [RecyclerView](#RecyclerView)
+- [ViewPager](#ViewPager)
+- [性能优化](#%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96)
+- [热更新/热修复](#%E7%83%AD%E6%9B%B4%E6%96%B0%E7%83%AD%E4%BF%AE%E5%A4%8D)
+- [自定义View](#%E8%87%AA%E5%AE%9A%E4%B9%89View)
+- [蓝牙/wifi](#%E8%93%9D%E7%89%99wifi)
+- [地图](#%E5%9C%B0%E5%9B%BE)
+- [插件化](#%E6%8F%92%E4%BB%B6%E5%8C%96)
+- [Arouter](#Arouter)
+- [Agora Platform](#Agora-Platform)
+- [APT](#APT)
+- [QPython](#QPython)
+- [EventBus源码阅读](#EventBus%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB)
+- [RxJava](#RxJava)
+- [Gson](#Gson)
+- [Retrofit2](#Retrofit2)
+- [OKHttp](#OKHttp)
+- [Volley](#Volley)
+- [NoHttp](#NoHttp)
+- [android-async-http](#android-async-http)
+- [Ksoap2 与 REST](#Ksoap2-%E4%B8%8E-REST)
+- [Glide](#Glide)
+- [Fresco](#Fresco)
+- [Piscsso](#Piscsso)
+- [ORM](#ORM)
+- [依赖注入](#%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5)
+- [Hermes](#Hermes)
+- [适配](#%E9%80%82%E9%85%8D)
+- [KLog](#KLog)
+- [工具](#%E5%B7%A5%E5%85%B7)
+- [SDK](#SDK)
+- [大项目](#%E5%A4%A7%E9%A1%B9%E7%9B%AE)
 
 [你还在被触摸事件困扰吗？看看这篇吧](https://www.jianshu.com/p/06574d8f10bf)
 
-## Android RecyclerView
+## RecyclerView
 
 1. RecyclerView.ViewHolder
     ```java
@@ -723,7 +732,7 @@ img {
     ```
 7. 
 
-## Android ViewPager
+## ViewPager
 
 1. ViewPager
 2. PagerAdapter
@@ -744,7 +753,7 @@ img {
     3. ViewPager默认缓存左右相邻界面，为了避免不必要的重新数据加载(重复调用onCreateView())，因为有4个tab，因此将离线缓存的半径设置为3，即 setOffscreenPageLimit(3)。
     4. 
 
-## Android 性能优化
+## 性能优化
 
 1. RecyclerView [RecyclerView性能优化](https://www.jianshu.com/p/bd432a3527d6) [RecyclerView一些你可能需要知道的优化技术](https://www.jianshu.com/p/1d2213f303fc)
     1. 数据处理与视图绑定分离: 在onBindViewHolder方法中，应该只是将数据set到视图中，而不应进行业务的处理。
@@ -798,7 +807,7 @@ img {
     12. 推荐 asynclistdiffer 代替 DiffUtils 。
 2. ListView
 
-## Android 热更新/热修复
+## 热更新/热修复
 
 0. link
     * **[Android热更新系列](https://www.jianshu.com/nb/35349338)**
@@ -1007,7 +1016,7 @@ img {
             | Rom体积    | 较大   | 较小  | 较小   | 较小   |
             | 成功率     | 较高   | 较高  | 一般   | 最高   |
         3. 总的来说
-            1. AndFix作为native解决方案，首先面临的是稳定性与兼容性问题，更重要的是它无法实现类替换，它是需要大量额外的开发成本的；
+            1. AndFix作为native解决方案，首先面临��是稳定性与兼容性问题，更重要的是它无法实现类替换，它是需要大量额外的开发成本的；
             2. Robust兼容性与成功率较高，但是它与AndFix一样，无法新增变量与类只能用做的bugFix方案；
             3. Qzone方案可以做到发布产品功能，但是它主要问题是插桩带来Dalvik的性能问题，以及为了解决Art下内存地址问题而导致补丁包急速增大的。
             4. 特别是在Android N之后，由于混合编译的inline策略修改，对于市面上的各种方案都不太容易解决。而Tinker热补丁方案不仅支持类、So以及资源的替换，它还是2.X－8.X(1.9.0以上支持8.X)的全平台支持。利用Tinker我们不仅可以用做bugfix,甚至可以替代功能的发布。Tinker已运行在微信的数亿Android设备上，那么为什么你不使用Tinker呢？
@@ -1180,7 +1189,7 @@ img {
 2. 
 3. 
 
-## Android 自定义View
+## 自定义View
 
 0. 链接
     0. [Android layout属性大全](https://blog.csdn.net/ican87/article/details/37566679)
@@ -1282,7 +1291,7 @@ img {
 2. 从继承上看所有View:
     1. 
 
-## Android 蓝牙/wifi
+## 蓝牙/wifi
 
 [android wifi操作大全](https://blog.csdn.net/q908555281/article/details/48546417)
 [android开发中Wifi功能总结](https://blog.csdn.net/qq_34773981/article/details/79163579)
@@ -1291,15 +1300,15 @@ img {
 [Android 蓝牙篇](https://blog.csdn.net/zqf_888/article/details/81060606)
 [Android蓝牙开发系列文章](https://blog.csdn.net/huangliniqng/article/details/82185635)
 
-## Android 地图
+## 地图
 
 
 
-## Android 插件化
+## 插件化
 
 
 
-## Android Arouter
+## Arouter
 
 0. links
     * [Arouter解析](https://my.oschina.net/JiangTun?tab=newest&catalogId=3687878)
@@ -1386,11 +1395,11 @@ img {
     5. SPI技术
     6. 页面注册源码解析
 
-## Android Agora Platform
+## Agora Platform
 
 [agorq io](https://www.agora.io/cn/)
 
-## Android APT
+## APT
 
 1. links
     * [【Android】APT](https://www.jianshu.com/p/7af58e8e3e18)
@@ -1663,11 +1672,11 @@ img {
             }
             ```
 
-## Android QPython
+## QPython
 
 [Python on Android](http://www.qpython.com/)
 
-## Android EventBus源码阅读
+## EventBus源码阅读
 
 [浅析EventBus 3.0实现思想](https://www.jianshu.com/p/7f982f294fc2)
 [EventBus后续深入知识点整理](https://www.jianshu.com/p/f8fd67eef9aa)
@@ -1874,16 +1883,278 @@ img {
     5. 事件过滤: EventBus是基于事件的，也就是订阅方法参数，用户要关心不同的事件，就需要定义不同的事件对象。
     6. 不支持跨进程: 目前EventBus只支持跨线程，而不支持跨进程。如果一个app的service起到了另一个进程中，那么注册监听的模块则会收不到另一个进程的EventBus发出的事件。
 
-## Android RxXxx
-
-
-
-## Android Gson
+## RxJava
 
 0. links
+    * [RxJava/RxAndroid 使用实例实践](https://www.jianshu.com/p/031745744bfa)
+    * [Android Rxjava：这是一篇 清晰 & 易懂的Rxjava 入门教程](https://www.jianshu.com/p/a406b94f3188)
+    * [Rxjava github](https://github.com/ReactiveX/RxJava)
+    * [Rxandroid github](https://github.com/ReactiveX/RxAndroid)
+    * [RxXxx 官网](http://reactivex.io/documentation/operators.html)
+    * [RxBinding github](https://github.com/JakeWharton/RxBinding)
+    * **[RxJava系列目录1](https://www.jianshu.com/p/d22cbc05152e)**
+    * **[RxJava系列目录2](https://blog.csdn.net/niubitianping/article/category/6736107)**
+    * **[RxJava系列目录3](https://so.csdn.net/so/search/s.do?q=%E7%8E%8B%E5%AD%A6%E5%B2%97RxJava&t=blog&u=qczg_wxg)**
+    * **[RxJava系列目录4](https://maxwell-nc.github.io/android/rxjava2-1.html)**
+1. RxJava引入
+    1. 响应式编程介绍(Reactive programming): 不是一种API，而是一种新的非常有用的范式。而RxJava就是一套基于此思想的框架，在Android开发中我们通过这个框架就能探索响应式的世界。同时结合另一个库，RxAndroid，这是一个扩展库，更好的兼容了Android特性，比如主线程，UI事件等。一般的程序是这样的，表达式只会计算一次，然后把赋值给变量。如下，在a重新赋值后，前面的c并不会变化，而响应式编程会对值的变化做出响应。
+        ```java
+        int a = 2;
+        int b = 3;
+        int c = a * b;	// c is 6
+        a = 10;			// c is still 6
+        ```
+    2. 依赖
+        ```groovy
+        implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
+        implementation 'io.reactivex.rxjava2:rxjava:2.2.10'
+        ```
+    3. RxJava Observable [【java】Observer和Observable详解](https://blog.csdn.net/u012250875/article/details/77747878)
+        1. RxJava使用的是观察者模式，其中有两个关键的接口：Observable和Observer。当Observable（被观察的对象）状态改变，所有subscribed（订阅）的Observer（观察者）会收到一个通知。在Observable的接口中有一个方法subscribe()，这样Observer可以调用来进行订阅。同样，在Observer接口中有三个方法，会被Observable回调：
+            - onNext(T value) 提供了一个 T 类型的item给Observer
+            - onComplete() 在Observable发送items结束后通知Observer
+            - onError(Throwable e) 当Observable发生错误时通知Observer
+        2. 作为一个表现良好的Observable，发射0到多个数据时后面都会跟上一个completion或是error的回调。一个网络请求observable通常只发射一个数据并且立刻completes。在一个observable已经结束后不能再发射新的item数据。
+    4. RxJava Observable2
+        1. 可以直接通过Observable.create()创建一个Observable：``Observable<T> create(ObservableOnSubscribe<T> source)``。ObservableOnSubscribe是一个接口，里面只有一个方法``void subscribe(ObservableEmitter<T> emitter) throws Exception;``。而RxJava中的Emitter接口和Observer比较相似，都有以下方法
+            ```java
+            public interface Emitter<T> {
+                void onNext(T value);
+                void onError(Throwable error);
+                void onComplete();
+            }
+            ```
+        2. ObservableEmitter提供了一个方法用来取消订阅，用一个实际场景来形容一下。想象一个水龙头和水流，这个管道就相当于Observable，从里面能放出水，ObservableEmitter就相当于是水龙头，控制开关，而水龙头连接到管道就是Observable.create()。
+2. 实例
+    1. 创建Observable
+        ```java
+        private Observable<String> createButtonClickObservable() {  // 1
+            return Observable.create(new ObservableOnSubscribe<String>() {  // 2
+                @Override public void subscribe(final ObservableEmitter<String> emitter) throws Exception {  // 3
+                    mSearchButton.setOnClickListener(new View.OnClickListener() {  // 4
+                        @Override public void onClick(View view) {
+                            emitter.onNext(mQueryEditText.getText().toString());  // 5
+                        }
+                    });
+                    emitter.setCancellable(new Cancellable() {  // 6
+                        @Override public void cancel() throws Exception {  // 7
+                            mSearchButton.setOnClickListener(null);
+                        }
+                    });
+                }
+            });
+        }
+        ```
+    2. 上面这段代码做了以下几件事情
+        - 定义了一个方法会返回一个Observable，泛型是String类型。
+        - 通过Observable.create()创建了一个observable，并提供了一个ObservableOnSubscribe。
+        - 在参数的内部类中覆写了subscribe()方法。
+        - 给搜索按钮mSearchButton添加了一个点击事件。
+        - 当点击事件触发时，调用emitter的onNext方法，并传递了当前mQueryEditText的值。
+        - 在Java中保持引用容易造成内存泄漏，在不再需要的时候及时移除listeners是一个好习惯，那么这里怎么移除呢？ObservableEmitter有一个setCancellable()方法。通过重写cancel()方法，然后当Observable被处理的时候这个实现会被回调，比如已经结束或者是所有的观察者都解除了订阅。
+        - 通过setOnClickListener(null)来移除监听。
+    3. 创建Observer
+        ```java
+        @Override
+        protected void onStart() {
+            super.onStart();
+            createButtonClickObservable().subscribe(new Consumer<String>() {
+                @Override public void accept(String query) throws Exception {
+                    showResult(mCheeseSearchEngine.search(query));
+                }
+            });
+        }
+        ```
+3. RxJava知识1
+    1. 通过subscribeOn和observeOn两个操作符能改变线程的执行状态。subscribeOn在操作链上最好只调用一次，如果多次调用，依然只有第一次生效。subscribeOn用来指定observable在哪个线程上创建执行操作，如果想要通过observables发射事件给Android的View，那么需要保证订阅者在Android的UI线程上执行操作。另一方面，observeOn可以在链上调用多次，它主要是用来指定下一个操作在哪一个线程上执行。
+    2. 线程模型例子
+        ```java
+        myObservable // observable will be subscribed on i/o thread
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .map(/* this will be called on main thread... */)
+            .doOnNext(/* ...and everything below until next observeOn */)
+            .observeOn(Schedulers.io())
+            .subscribe(/* this will be called on i/o thread */);
+            // -----------------
+            observable.subscribeOn(Schedulers.io()/Schedulers.computation()/Schedulers.immediate()/
+                Schedulers.newThread()/AndroidSchedulers.mainThread());
+            observable.observeOn(...);
+            observable.map(new Function<type, returnType>() {  // 数据类型转换，如 [1, 2, 3, 4] -> [1, 4, 9, 16]
+                @Override
+                public returnType apply(type parameter) throws Exception {}
+            });
+            observable.subscribe(new Consumer<T>() {
+                @Override
+                public void accept(T datas) {}
+            });
+            observable.doOnNext(new Consumer<T>() {});
+            observable.filter(new Predicate<String>() {
+                @Override
+                public boolean test(String query) throws Exception {
+                    return query.length() >= 2;
+                }
+            });
+            observable.debounce(1000, TimeUnit.MILLISECONDS);
+        ```
+    3. schedulers介绍
+        - Schedulers.io(): 适合I/O类型的操作，比如网络请求，磁盘操作。
+        - Schedulers.computation(): 适合计算任务，比如事件循环或者回调处理。
+        - AndroidSchedulers.mainThread(): 回调主线程，比如UI操作。
+        - Schedulers.immediate(): 直接在当前线程运行，相当于不指定线程。这是默认的Scheduler。
+        - Schedulers.newThread(): 总是启用新线程，并在新线程执行操作。
+    4. 订阅周期: 前面我们实现过setCancellable方法，这个方法会在解除订阅的时候回调。Observable.subscribe()会返回一个Disposable，Disposable是一个接口，可以调用dispose方法解除订阅。
+4. RxJava知识2
+    1. 操作符: Create https://www.jianshu.com/p/d27a8588b379
+        * just: 触发 onNext
+        * empty: 触发 onComplete
+        * error: 触发 onError
+        * never: 什么都不触发，除了都会触发的 onSubscribe
+        * formArray/fromIterable: 遍历触发onNext，最后触发onComplete
+        * fromCallable: 当有观察者订阅时，从 Callable 的回调方法里获取要发射的数据。注意该 Callable 要放到如线程池中调用。
+        * fromFuture: 产生 Future 的 Callable/... 需要放到线程池中调用，然后如果超时了会调用 onError ，否则调用 onNext 和 onComplete
+        * fromPublisher: 使用 Publisher 接口，感觉与 ObservableOnSubscribe 类似
+        * defer: 推迟创建，直到当观察者订阅时才创建，并且针对每个观察者创建都是一个新的 Observable。
+        * **generate**: create 每次可以发射多个事件，而 generate 是每次只能发送一个事件，连续调用多次 onNext 会抛出 IllegalStateException 异常。但注意，只是一次回调中调用一次。可以多次调用回调的，只要满足条件。而且 onNext 可以与 onComplete/onError 配合使用。可以看看链接， generate 是可以分为无状态和有状态的，而且好像都是死循环，会一直调用，直到调用了 onComplete 。
+        * interval: 每隔固定时长调用 onNext 发送一个 long 值，从 0 开始。默认在计算线程发射。
+        * intervalRange: 和 interval 类似，只是不一定是每次加1，可以自定义
+        * range/rangeLong: 发射一个整数序列。区别一个是 int，一个是 long 。和 interval 的区别可能在于 range/rangeLong 没有固定时长。
+        * timer: 在一个给定的延迟后发射一个特殊的值。默认在 Schedulers.computation() 线程。可以配合其他的 Observable ，如配合 rangeLong 模拟 interval 。
+        * unsafeCreate: create 的参数是 ObservableOnSubscribe ，发射器是 ObservableEmitter 。unsafeCreate 的参数是 ObservableSource ，参数是 Observer 。相当于 1.x 时代的 create，没什么用。
+        * wrap: 和 unsafe 的区别，主要在 source instanceof Observable ，一个抛出异常，一个返回，返回时做了个类型转换，不知道怎么用。
+        * compose: 接收 ObservableTransformer 对象，可以对一个 Observable 做一系列的链式调用，可以复用。
+        * observable.repeat/repeatUntil/repeatWhen: 重复调用 observable 的回调，多次甚至无数次。
+    2. 操作符: Transform https://www.jianshu.com/p/b00e4fb27296
+        * buffer: 按照规定大小缓存，每次取 count 个数，取完一次跳过 skip 个数，将每次取的数据合并到一个列表里。
+        * window: 和 buffer 类似，但不是变成一个个列表发射，而是多个 Observable，每个 Observable 发射一个子集。
+        * blockingIterable
+        * blockingForEach
+        * blockingLatest
+        * blockingMostRecent
+        * blockingNext
+        * blockingSubscribe
+        * cast
+        * map
+        * flatMap
+        * flatMapIterable
+        * flatMapCompletable
+        * flatMapMaybe
+        * flatMapSingle
+        * switchMap/switchMapDelayError/switchMapSingle/switchMapSingleDelayError
+        * concatMap/concatMapEager
+        * concatMapDelayError/concatMapEagerDelayError
+        * concatMapIterable
+        * concatMapCompletable
+        * forEach
+        * forEachWhile
+        * groupBy
+        * safeSubscribe
+        * scan/scanWith
+        * sorted
+        * to
+        * toList
+        * toSortedList
+        * toMap
+        * toMultimap
+        * toFlowable
+        * toFuture
+5. RxJava知识3
+    1. 操作符: Filter
+        * blockingFirst/blockingLast
+        * blockingSingle
+        * distinct
+        * distinctUntilChanged
+        * elementAt/elementAtOrError/firstElement/first/firstOrError/lastElement/last/lastOrError
+        * filter
+        * ofType
+        * ignoreElements
+        * singleElements
+        * single/singleOrError
+        * skip/skipLast/skipUntil/skipWhile
+        * take/takeLast/takeUntil/takeWhile
+        * debounce/throttleWithTimeout
+        * sample/throttleLast
+        * throttleFirst
+    2. 操作符: Combine
+        * combineLatest
+        * combineLatestDelayError
+        * withLatestFrom
+        * merge/mergeDelayError/mergeArray/mergeArrayDelayError/mergeWith
+        * switchOnNext/switchOnNextDelayError
+        * zip/zipArray/zipIterable/zipWith
+        * join/groupJoin
+        * startWith/startWithArray
+    3. 操作符: Utility
+        * using
+        * delay
+        * delaySubscription
+        * materialize/dematerialize
+        * doOnSubscribe/doOnNext/doAfterNext/doOnTerminate/doAfterTerminate/doOnError/doOnComplete/doOnDispose/doFinally/doOnLifecycle/doOnEach
+        * onTerminateDetach
+        * serialize
+        * subscribe/subscribeWith
+        * timeInterval
+        * timestamp
+        * timeout
+    4. 操作符: Error Handle
+        * onErrorResumeNext
+        * onErrorReturn/onErrorReturnItem
+        * onExceptionResumeNext
+        * retry/retryUntil/retryWhen
+6. RxJava知识4
+    1. 操作符: Conditional and Boolean
+        * amb/ambArray/ambWith
+        * sequenceEqual
+        * all
+        * any
+        * contains
+        * isEmpty
+        * defaultIfEmpty
+        * switchIfEmpty
+    2. 操作符: Mathematical and Aggregate
+        * concat/concatDelayError/concatArray/concatArrayDelayError
+        * concatEager/concatArrayEager
+        * concatWith
+        * collect/collectInto
+        * count
+        * reduce/reduceWith
+    3. Connectable
+        * cache/cacheWithInitialCapacity
+        * publish
+        * replay
+        * share
+7. RxJava总结
+    1. Observable
+        1. amb / ambArray / create
+    2. public interface Observer<T>
+        1. onNext / onComplete / onError / onSubscribe(Disposable d): 刚开始时调用，用于解除订阅。
+    2. public interface Subscriber<T>
+        1. onNext / onComplete / onError
+        2. onSubscribe(Subscription s)
+    3. basic
+        1. Disposable: isDispose / dispose
+        2. Subscription: request / cancel
+        3. SafeSu...
+    4. lambda
+        1. Consumer: accept
+        2. ObservableSource: subscribe
+        3. Cancellable: cancel
+        4. Action: run
+        5. ObservableOnSubscribe: subscribe
+    5. public interface emitter<T>
+        1. onNext(T t) / onComplete / onError(Throwable t)
+    6. public interface ObservableEmitter<T>
+        1. setDisposable(Disposable d) / isDisposed
+        2. setCancellable(Cancellable c)
+        3. serialize
+        4. tryOnError(Throwable t)
+
+## Gson
+
+1. links
     * [你真的会用Gson吗?Gson使用指南（一）](https://www.jianshu.com/p/e740196225a4)
     * [搞定Gson泛型封装](https://www.jianshu.com/p/d62c2be60617)
-1. 基础1
+2. 基础1
     1. Gson的基本用法: Gson提供了fromJson() 和toJson() 两个直接用于解析和生成的方法，前者实现反序列化，后者实现了序列化。同时每个方法都提供了重载方法，我常用的总共有5个。
         1. 基本数据类型的解析
             ```java
@@ -1909,7 +2180,7 @@ img {
             }
             // 生成
             User user = new User("怪盗kidou",24);
-            String jsonObject = gson.toJson(user); // {"name":"怪盗kidou","age":24}
+            String jsonObject = gson.toJson(user); // {"name":"��盗kidou","age":24}
             // 解析
             String jsonString = "{\"name\":\"怪盗kidou\",\"age\":24}";
             User user = gson.fromJson(jsonString, User.class);
@@ -1975,7 +2246,7 @@ img {
                 Result<List<User>> userListResult = gson.fromJson(json, new TypeToken<Result<List<User>>>(){}.getType());
                 List<User> users = userListResult.data;
                 ```
-2. 基础2
+3. 基础2
     1. Gson的流式反序列化
         1. 自动方式: Gson提供了fromJson()和toJson() 两个直接用于解析和生成的方法，前者实现反序列化，后者实现了序列化。同时每个方法都提供了重载方法，我常用的总共有5个。
             ```java
@@ -2084,7 +2355,7 @@ img {
                 .setPrettyPrinting()
                 .create();
             ```
-3. 基础3
+4. 基础3
     1. 字段过滤的几种方法
         1. 基本: 字段过滤Gson中比较常用的技巧，特别是在Android中，在处理业务逻辑时可能需要在设置的POJO中加入一些字段，但显然在序列化的过程中是不需要的，并且如果序列化还可能带来一个问题就是**循环引用**，那么在用Gson序列化之前为不防止这样的事件情发生，你不得不作另外的处理。以一个商品分类Category 为例。
             ```java
@@ -2194,7 +2465,7 @@ img {
                     .create();
                 ```
         6. 只要不是通过设置 excludeFieldsWithModifiers 的方式，staticField都是默认被排除的，可以看源码 Excluder 的 55行、withModifiers 方法 ，withExclusionStrategy 方法
-    6. POJO与JSON的字段映射规则
+    2. POJO与JSON的字段映射规则
         1. 还是之前User的例子，已经去除所有注解：
             ```java
             User user = new User("怪盗kidou", 24);
@@ -2223,7 +2494,7 @@ img {
                 .create();
             ```
         6. 注意： @SerializedName注解拥有最高优先级，在加有@SerializedName注解的字段上FieldNamingStrategy不生效！
-4. 基础4
+5. 基础4
     1. TypeAdapter
         1. TypeAdapter是Gson自2.0（源码注释上说的是2.1）开始版本提供的一个抽象类，用于接管某种类型的序列化和反序列化过程，包含两个注要方法 write(JsonWriter,T) 和 read(JsonReader) 其它的方法都是final方法并最终调用这两个抽象方法。
         2. 注意：TypeAdapter 以及 JsonSerializer 和 JsonDeserializer 都需要与 GsonBuilder.registerTypeAdapter 示或GsonBuilder.registerTypeHierarchyAdapter配合使用，下面将不再重复说明。
@@ -2412,7 +2683,7 @@ img {
             1. 必须使用registerTypeHierarchyAdapter方法，不然对List的子类无效，但如果POJO中都是使用List，那么可以使用registerTypeAdapter。
             2. 对于是数组的情况，需要创建一个新的Gson，不可以直接使用context,不然gson又会调我们自定义的JsonDeserializer造成递归调用，方案二没有重新创建Gson，那么就需要提取出List<E>中E的类型，然后分别反序列化适合为E手动注册了TypeAdaper的情况。
             3. 从效率上推荐方案二，免去重新实例化Gson和注册其它TypeAdapter的过程。
-5. 基础5
+6. 基础5
     1. TypeBuilder
 
 ## Retrofit2
@@ -2425,15 +2696,17 @@ img {
 
 ## OKHttp
 
+
+
 ## Volley
 
 0. links
-   1. [Android 网络通信框架Volley学习系列](http://www.voidcn.com/article/p-gaharqmq-mg.html)
-   2. [Android Volley完全解析系列](https://blog.csdn.net/guolin_blog/article/details/17482095)
-   3. [volley github](https://github.com/google/volley)
-   4. [Volley overview](https://developer.android.com/training/volley/index.html)
-   5. [Volley支持https的3种方法小结](https://blog.csdn.net/lintax/article/details/69761913)
-   6. [Android高效加载大图、多图解决方案，有效避免程序OOM](https://blog.csdn.net/guolin_blog/article/details/9316683)
+    1. [Android 网络通信框架Volley学习系列](http://www.voidcn.com/article/p-gaharqmq-mg.html)
+    2. [Android Volley完全解析系列](https://blog.csdn.net/guolin_blog/article/details/17482095)
+    3. [volley github](https://github.com/google/volley)
+    4. [Volley overview](https://developer.android.com/training/volley/index.html)
+    5. [Volley支持https的3种方法小结](https://blog.csdn.net/lintax/article/details/69761913)
+    6. [Android高效加载大图、多图解决方案，有效避免程序OOM](https://blog.csdn.net/guolin_blog/article/details/9316683)
 1. 初识
     1. 基本用法
         1. Android系统中主要提供了两种方式来进行HTTP通信，HttpURLConnection和HttpClient，它们的使用率非常高。
@@ -2737,19 +3010,13 @@ img {
         2. 
 2. 源码解读
 
-## Android 网络请求2
+## NoHttp
 
-1. **Ksoap2**: 
-2. **REST**: 
+## android-async-http
 
-## Android 网络请求3
+## Ksoap2 与 REST
 
-1. **OkHttp**: 
-2. **Retrofit**: 
-3. **NoHttp**: 
-4. **android-async-http**: 
-
-## Android 图片请求
+## Glide
 
 1. links
     * [Android实战——Glide的使用，加载图片只要一句话](https://blog.csdn.net/qq_30379689/article/details/60373696) finished
@@ -2762,31 +3029,7 @@ img {
     * [glide-transform github](https://github.com/wasabeef/glide-transformations)
     * [glide系统2](https://blog.csdn.net/yulyu/article/details/55261439)
     * [glide源码](https://blog.csdn.net/guolin_blog/article/details/53939176)
-    * [Android高效加载大图、多图解决方案，有效避免程序OOM](https://blog.csdn.net/guolin_blog/article/details/9316683)
-    * [picasso github](https://github.com/square/picasso)
-    * [picasso-transfrom github](https://github.com/TannerPerrien/picasso-transformations)
-    * [Fresco github](https://github.com/facebook/fresco)
-    * [Fresco-processors](https://github.com/wasabeef/fresco-processors)
-    * [fresco 中文文档](https://www.fresco-cn.org/docs/index.html)
-    * [fresco系列1](https://so.csdn.net/so/search/s.do?q=fresco&t=blog&u=xuyueqing1225)
-    * [fresco系列2](https://blog.csdn.net/y1scp/article/details/49245535)
-    * http://blog.csdn.net/android_ls/article/details/53137867
-    * https://www.jianshu.com/p/976c86fa72bc
-2. **Bitmap的高效加载**
-    1. BitmapFactory类提供四种方法: decodeFile、decodeResource、decodeStream和decodeByteArray；其中decodeFile和decodeResource间接的调用了decodeStream方法；这四个方法最终在Android底层实现。
-    2. 如何高效的加载Bitmap？核心思想: 按需加载；很多时候ImageView并没有原始图片那么大，所以没必要加载原始大小的图片。采用BitmapFactory.Options来加载所需尺寸的图片。通过BitmapFactory.Options来缩放图片，主要是用到了它的inSampleSize参数，即采样率。inSampleSize应该为2的指数，如果不是系统会向下取整并选择一个最接近2的指数来代替；缩放比例为1/(inSampleSize的二次方)。
-    3. Bitmap内存占用: 拿一张1024x1024像素的图片来说，假定采用ARGB8888格式存储，那么它占用的内存为1024\*1024\*4，即4MB。
-    4. 
-3. **Android的缓存策略**
-    1. 如何减少流量消耗？缓存。当程序第一次从网络上加载图片后，将其缓存在存储设备中，下次使用这张图片的时候就不用再从网络从获取了。一般情况会把图片存一份到内存中，一份到存储设备中，如果内存中没找到就去存储设备中找，还没有找到就从网络上下载。
-    2. 目前常用的缓存算法是LRU，是近期最少使用算法，当缓存满时，优先淘汰那些近期最少使用的缓存对象。采用LRU算法的缓存有两种: LRUCache(内存缓存)和DiskLruCache(存储缓存)。
-    3. LruCache是Android3.1所提供的一个缓存类，通过support-v4兼容包可以兼容到早期的Android版本。LruCache是一个泛型类，是线程安全的，内部采用LinkedHashMap以强引用的方式存储外界缓存对象，并提供get和put方法来完成缓存的获取和添加操作，当缓存满时，LruCache会移除较早的使用的缓存对象。LruCache初始化时需重写sizeOf方法，用于计算缓存对象的大小。
-    4. DiskLruCache用于实现磁盘缓存，DiskLruCache得到了Android官方文档推荐，但它不属于Android SDK的一部分，https://android.googlesource.com/platform/libcore/+/android-4.1.1_r1/luni/src/main/java/libcore/io/DiskLruCache.java
-    5. 自己实现一个ImageLoader，包含 https://github.com/singwhatiwanna/android-art-res/blob/master/Chapter_12/src/com/ryg/chapter_12/loader/ImageLoader.java
-        1. 图片压缩功能
-        2. 内存缓存和磁盘缓存
-        3. 同步加载和异步加载的接口设计
-4. **glide**
+2. glide入门
     1. Glide是一个快速和有效的开源媒体管理和图像加载Android框架包装媒体解码，内存和磁盘缓存，和资源汇集成一个简单和易于使用的界面。其优点有
         - 使用简单
         - 可配置度高，自适应程度高
@@ -2828,7 +3071,8 @@ img {
             //     }
             // })
         ```
-    5. Target: 不要写成匿名内部类的机制，原因就是java的自动垃圾回收机制可能在图片还没有加载好的时候就已经把你的Target回收了。
+3. glide深入1
+    1. Target: 不要写成匿名内部类的机制，原因就是java的自动垃圾回收机制可能在图片还没有加载好的时候就已经把你的Target回收了。
         ```java
         new Target<Bitmap>() {
             @Override public void onLoadStarted(Drawable placeholder) { /* 设置加载过程中的Drawable */ }
@@ -2843,7 +3087,7 @@ img {
             @Override public void onDestroy() {}
         }
         ```
-    6. 其他的一些小技巧1
+    2. 其他的一些小技巧1
         ```java
         .placeholder(R.drawable.placeholder)  // 加载中
         .error(R.drawable.error)  // 加载失败
@@ -2859,7 +3103,7 @@ img {
         .centerCrop()  // 截取中间部分(应该有默认值)
         .fitCenter()  // 等比拉伸填充(应该有默认值)
         ```
-    7. 其他的一些小技巧2
+    3. 其他的一些小技巧2
         ```java
         .priority(Priority.HIGH)  // 设置图片请求的优先级
         .pauseRequests()  // 暂停请求
@@ -2872,7 +3116,8 @@ img {
         .transition(withCrossFade())  // 用于决定你的加载完成时会发生什么。(淡入淡出动画)
         .asFile | .asGif | .asBitmap | .asDrawable
         ```
-    8. Glide从4.0开始，使用的时候多了一个注解处理器 (Annotation Processor)，主要用于我们自定义的时候自动生成一些类，帮助我们简化操作。或者定义一些全局的常用的方法。
+4. glide深入2
+    1. Glide从4.0开始，使用的时候多了一个注解处理器 (Annotation Processor)，主要用于我们自定义的时候自动生成一些类，帮助我们简化操作。或者定义一些全局的常用的方法。
         1. 自定义的方法：需要重写AppGlideModule
             ```java
             @GlideModule
@@ -2896,7 +3141,7 @@ img {
                 .fitCenter()
                 .into(imageView);
             ```
-    9. Glide中的大部分设置项都可以通过 RequestOptions 类和 apply() 方法来应用到程序中。
+    2. Glide中的大部分设置项都可以通过 RequestOptions 类和 apply() 方法来应用到程序中。
         ```java
         RequestOptions options = new RequestOptions()
             .placeholder(R.mipmap.ic_launcher)//加载成功之前占位图
@@ -2918,7 +3163,7 @@ img {
             .apply(options)
             .into(imageView);
         ```
-    10. 如果使用了自定义的API，centerCrop()，fitCenter()，circleCrop()可以省略RequestOptions 这一步，更简单
+    3. 如果使用了自定义的API，centerCrop()，fitCenter()，circleCrop()可以省略RequestOptions 这一步，更简单
         ```java
          GlideApp.with(this)
             .load(url)
@@ -2929,7 +3174,8 @@ img {
             .override(400,400)
             .into(imageView);
         ```
-    11. 设置缓存
+5. glide深入3
+    1. 设置缓存
         1. base
             ```java
             // 设置跳过内存缓存
@@ -2945,7 +3191,7 @@ img {
             // 清理内存缓存，可以在UI主线程中进
             Glide.get(this).clearMemory();
             ```
-        2. 在GlideModule中，我们可以设置磁盘缓存的位置，磁盘缓存的大小和内存缓存的大小，同时还可以设置图片的显示质量。要是用GlideModule，需要创建它的实现类，然后在manifests中申明实现类的全类路径
+        2. 在GlideModule中，我们可���设置磁盘缓存的位置，磁盘缓存的大小和内存缓存的大小，同时还可以设置图片的显示质量。要是用GlideModule，需要创建它的实现类，然后在manifests中申明实现类的全类路径
             ```xml
             <meta-data android:name="com.example.mchenys.httputilsdemo.image.glide.module.SimpleGlideModule" android:value="GlideModule" />
             ```
@@ -2987,7 +3233,7 @@ img {
                 public void registerComponents(Context context, Glide glide) {}
             }
             ```
-    12. BitmapTransformation
+    2. BitmapTransformation
         1. ``implementation 'jp.wasabeef:glide-transformations:4.0.1'``  // implementation 'jp.co.cyberagent.android:gpuimage:2.x.x' (for GPU)
         2. 使用
             ```java
@@ -3015,7 +3261,7 @@ img {
                 - InvertFilterTransformation, PixelationFilterTransformation, SketchFilterTransformation
                 - SwirlFilterTransformation, BrightnessFilterTransformation, KuwaharaFilterTransformation VignetteFilterTransformation
         4. transform方法是不支持多次调用的,如果你调用了两次,那么第二次的会覆盖了第一次的效果，但是他有一个重载的方法可以传入多个对象,这样传入的变形器都能够生效
-    13. 图片裁剪
+    3. 图片裁剪
         1. ImageView的ScaleType一共有8种属性:
             - matrix: 不缩放,图片与控件左上角对齐,当图片大小超过控件时将被裁剪
             - center: 不缩放,图片与控件中心点对齐,当图片大小超过控件时将被裁剪
@@ -3027,7 +3273,8 @@ img {
             - fitXY: 以填满整个控件为目标,不按比例拉伸或缩放(可能会变形),不剪裁
         2. Glide有两个方法可以设置图片剪裁的策略: fitCenter()、centerCrop()。这两个方法其实都是通过调用transform方法来对图片进行处理。当你没有调用上述两个方法,并且也没有调用transform方法的时候,在Glide调用into方法时,会根据你设置的ScaleType来做处理。
         3. 有一点要注意的就是fitCenter和centerCrop方法与transform方法可以共存,但是有时候会互相影响,如果说圆角处理遇到了剪裁,圆角那一部分可能会刚好被剪裁掉了。
-    14. 自定义裁剪
+6. glide深入4
+    1. 自定义裁剪
         1. 圆角处理
             ```java
             public  class CornersTransform extends BitmapTransformation {
@@ -3111,7 +3358,7 @@ img {
                 }
             }
             ```
-    15. 集成: 替换掉自带的HttpClient，版本查询: https://github.com/bumptech/glide/wiki/Integration-Libraries
+    2. 集成: 替换掉自带的HttpClient，版本查询: https://github.com/bumptech/glide/wiki/Integration-Libraries
         1. Glide包含一些小的、可选的集成库，目前Glide集成库当中包含了访问网络操作的Volley和OkHttp：
             ```groovy
             dependencies {
@@ -3142,7 +3389,7 @@ img {
             ```xml
             <meta-data android:name="com.example.jianglei.glidedemo.GlideModelConfig" tools:node="remove"/>
             ```
-    16. 注意事项
+    3. 注意事项
         1. Glide内部封装了所有的细节，什么网络请求，什么缓存机制，当所有都就绪过后，自动切换回UI线程，更新ImageView。？？？
         2. 如果传给into().的是一个ImageView，但是图片的size比ImageView的Size大，Glide为了节省时间，会加载小的那个size的Image。但是这对Target并不适用，以为这里并不知道Size。但是如果知道image应该多大，可以传递给Target。如 new SimpleTarget<Bitmap>(250, 200) { ... }
         3. Target 下有 SimpleTarget / ViewTarget(适用于想Glide加载到自定义View中去) / notificationTarget / AppWidget
@@ -3153,7 +3400,19 @@ img {
             2. 使用Glide的Transformation API自定义圆形Bitmap的转换。
             3. 使用Target
         7. 有时候你会发现网络加载完了之后会有拉伸现象，而你的控件大小明明是自适应的呀，这是为什么呢，请你检查下你是否设置了占位图，有的话请去掉就ok了。
-5. **fresco**
+
+## Fresco
+
+0. links
+    * [Android高效加载大图、多图解决方案，有效避免程序OOM](https://blog.csdn.net/guolin_blog/article/details/9316683)
+    * [Fresco github](https://github.com/facebook/fresco)
+    * [Fresco-processors](https://github.com/wasabeef/fresco-processors)
+    * [fresco 中文文档](https://www.fresco-cn.org/docs/index.html)
+    * [fresco系列1](https://so.csdn.net/so/search/s.do?q=fresco&t=blog&u=xuyueqing1225)
+    * [fresco系列2](https://blog.csdn.net/y1scp/article/details/49245535)
+    * http://blog.csdn.net/android_ls/article/details/53137867
+    * https://www.jianshu.com/p/976c86fa72bc
+1. fresco初识
     1. 引入
         1. ``implementation 'com.facebook.fresco:fresco:2.0.0'``
         2. 按需添加
@@ -3204,24 +3463,26 @@ img {
             - 缓存图片；
             - 图片不再显示时，从内存中移除；
     3. https://frescolib.org/docs/shipping.html 让App更小，尽管Fresco这么大
-    4. 
-6. **picasso**
-    1. 
-    2. 
-    3. 
 
-## Android ORM
+## Piscsso
 
-## Android 依赖注入
+0. links
+    * [picasso github](https://github.com/square/picasso)
+    * [picasso-transfrom github](https://github.com/TannerPerrien/picasso-transformations)
+1. Piscsso初识
 
-## Android Hermes
+## ORM
+
+## 依赖注入
+
+## Hermes
 
 [](https://github.com/Xiaofei-it/Hermes)
 [Hermes--新颖巧妙易用的Android进程间通信IPC框架](https://www.jianshu.com/p/c18befa71e28)
 [](https://github.com/Xiaofei-it/HermesEventBus)
 [HermesEventBus-饿了么开源的Android跨进程事件分发框架](https://blog.csdn.net/jdsjlzx/article/details/52279314)
 
-## Android 适配
+## 适配
 
 1. 屏幕适配
     * [](https://github.com/yatoooon/AndroidScreenAdaptation)
@@ -3276,21 +3537,21 @@ img {
         findViewById(R.id.title).setPadding(0, statusBarHeight, 0, 0);
         ```
 
-## Android KLog
+## KLog
 
 [](https://github.com/ZhaoKaiQiang/KLog)
 
-## Android 工具
+## 工具
 
 * [UETool](https://github.com/eleme/UETool)
 * [uiautomatorviewer](Android自带的工具吧，可以解析ui)
 
-## Android SDK
+## SDK
 
 * [Ping SDK](https://www.pingxx.com/docs/overview/)
 * [Share SDK](http://sharesdk.mob.com/)
 
-## Android 大项目
+## 大项目
 
 * [CloudReader仿网易云音乐](https://jingbin.me/CloudReader/)
     * [github](https://github.com/youlookwhat/CloudReader)

@@ -3990,9 +3990,9 @@ img {
 
 ## Android权限系统
 
-## Android bugclose
+## bugclose
 
-## Java Process/Runtime
+## Process/Runtime
 
 0. links
     * [How to Run a Shell Command in Java](https://www.baeldung.com/run-shell-command-in-java)
@@ -4006,7 +4006,7 @@ img {
 * [（2.2.11.1）Android全新CI平台——Jenkins构建入门](https://blog.csdn.net/fei20121106/article/details/73810802)
 * [android版本列表](https://zh.wikipedia.org/wiki/Android%E7%89%88%E6%9C%AC%E5%88%97%E8%A1%A8)
 
-## Android KLog
+## KLog
 
 1. Environment类是一个提供访问环境变量的类。
     1. **getExternalStorageState()**: 返回String 获取外部存储设备的当前状态。返回值如下表
@@ -4341,9 +4341,9 @@ img {
     2. public Tags(Object... tags)
     3. toString
 
-## Android buildSrc
+## buildSrc
 
-## Android firstpublish
+## firstpublish
 
 1. public class FirstPublishPlugin implements Plugin<Project>: 主要就是调用了 Repack
     1. void apply(Project project)
@@ -4368,13 +4368,13 @@ img {
 3. public class FirstPublishPacker
     1. main
 
-## Android dexknife
+## dexknife
 
-## Android build-timer
+## build-timer
 
-## Android hysignal
+## hysignal
 
-## Android AndroidShell
+## AndroidShell
 
 public static CommandResult run(@NonNull String shell, @NonNull String... commands)
 public static CommandResult run(@NonNull String shell, @NonNull String[] commands, @Nullable String[] env)
