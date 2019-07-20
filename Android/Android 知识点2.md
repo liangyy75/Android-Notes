@@ -5,7 +5,6 @@ img {
 }
 </style>
 
-<<<<<<< HEAD
 * [Android RecyclerView](##Android%20RecyclerView)
 * [Android ViewPager](##Android%20ViewPager)
 * [Android 性能优化](##Android%20性能优化)
@@ -29,37 +28,6 @@ img {
 * [Android 工具](##Android%20工具)
 * [Android SDK](##Android%20SDK)
 * [Android 大项目](##Android%20大项目)
-=======
-- [Android RecyclerView](#Android-RecyclerView)
-- [Android ViewPager](#Android-ViewPager)
-- [Android 性能优化](#Android-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96)
-- [Android 热更新/热修复](#Android-%E7%83%AD%E6%9B%B4%E6%96%B0%E7%83%AD%E4%BF%AE%E5%A4%8D)
-- [Android 自定义View](#Android-%E8%87%AA%E5%AE%9A%E4%B9%89View)
-- [Android 蓝牙/wifi](#Android-%E8%93%9D%E7%89%99wifi)
-- [Android 地图](#Android-%E5%9C%B0%E5%9B%BE)
-- [Android 插件化](#Android-%E6%8F%92%E4%BB%B6%E5%8C%96)
-- [Android Arouter](#Android-Arouter)
-- [Android Agora Platform](#Android-Agora-Platform)
-- [Android APT](#Android-APT)
-- [Android QPython](#Android-QPython)
-- [Android EventBus源码阅读](#Android-EventBus%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB)
-- [Android RxXxx](#Android-RxXxx)
-- [Android Gson](#Android-Gson)
-- [Retrofit2](#Retrofit2)
-- [OKHttp](#OKHttp)
-- [Volley](#Volley)
-- [Android 网络请求2](#Android-%E7%BD%91%E7%BB%9C%E8%AF%B7%E6%B1%822)
-- [Android 网络请求3](#Android-%E7%BD%91%E7%BB%9C%E8%AF%B7%E6%B1%823)
-- [Android 图片请求](#Android-%E5%9B%BE%E7%89%87%E8%AF%B7%E6%B1%82)
-- [Android ORM](#Android-ORM)
-- [Android 依赖注入](#Android-%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5)
-- [Android Hermes](#Android-Hermes)
-- [Android 适配](#Android-%E9%80%82%E9%85%8D)
-- [Android KLog](#Android-KLog)
-- [Android 工具](#Android-%E5%B7%A5%E5%85%B7)
-- [Android SDK](#Android-SDK)
-- [Android 大项目](#Android-%E5%A4%A7%E9%A1%B9%E7%9B%AE)
->>>>>>> 5f39e7d98c8c0f7d73d8390f20b2de783b71d335
 
 [你还在被触摸事件困扰吗？看看这篇吧](https://www.jianshu.com/p/06574d8f10bf)
 
