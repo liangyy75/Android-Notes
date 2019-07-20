@@ -5,6 +5,7 @@ img {
 }
 </style>
 
+<<<<<<< HEAD
 * [Android RecyclerView](##Android%20RecyclerView)
 * [Android ViewPager](##Android%20ViewPager)
 * [Android 性能优化](##Android%20性能优化)
@@ -28,6 +29,37 @@ img {
 * [Android 工具](##Android%20工具)
 * [Android SDK](##Android%20SDK)
 * [Android 大项目](##Android%20大项目)
+=======
+- [Android RecyclerView](#Android-RecyclerView)
+- [Android ViewPager](#Android-ViewPager)
+- [Android 性能优化](#Android-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96)
+- [Android 热更新/热修复](#Android-%E7%83%AD%E6%9B%B4%E6%96%B0%E7%83%AD%E4%BF%AE%E5%A4%8D)
+- [Android 自定义View](#Android-%E8%87%AA%E5%AE%9A%E4%B9%89View)
+- [Android 蓝牙/wifi](#Android-%E8%93%9D%E7%89%99wifi)
+- [Android 地图](#Android-%E5%9C%B0%E5%9B%BE)
+- [Android 插件化](#Android-%E6%8F%92%E4%BB%B6%E5%8C%96)
+- [Android Arouter](#Android-Arouter)
+- [Android Agora Platform](#Android-Agora-Platform)
+- [Android APT](#Android-APT)
+- [Android QPython](#Android-QPython)
+- [Android EventBus源码阅读](#Android-EventBus%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB)
+- [Android RxXxx](#Android-RxXxx)
+- [Android Gson](#Android-Gson)
+- [Retrofit2](#Retrofit2)
+- [OKHttp](#OKHttp)
+- [Volley](#Volley)
+- [Android 网络请求2](#Android-%E7%BD%91%E7%BB%9C%E8%AF%B7%E6%B1%822)
+- [Android 网络请求3](#Android-%E7%BD%91%E7%BB%9C%E8%AF%B7%E6%B1%823)
+- [Android 图片请求](#Android-%E5%9B%BE%E7%89%87%E8%AF%B7%E6%B1%82)
+- [Android ORM](#Android-ORM)
+- [Android 依赖注入](#Android-%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5)
+- [Android Hermes](#Android-Hermes)
+- [Android 适配](#Android-%E9%80%82%E9%85%8D)
+- [Android KLog](#Android-KLog)
+- [Android 工具](#Android-%E5%B7%A5%E5%85%B7)
+- [Android SDK](#Android-SDK)
+- [Android 大项目](#Android-%E5%A4%A7%E9%A1%B9%E7%9B%AE)
+>>>>>>> 5f39e7d98c8c0f7d73d8390f20b2de783b71d335
 
 [你还在被触摸事件困扰吗？看看这篇吧](https://www.jianshu.com/p/06574d8f10bf)
 
@@ -97,31 +129,25 @@ img {
             // 去除冗余的setItemClick事件 -- 但是需要用到data属性啊，真难，上面只有ViewHolder而没有position，所以。。。
             // 应该考虑使用 setOnTouchListener 与 GestureDetectorCompat(为什么使用这个???) ，不仅优雅，而且只需要一个 Listener 。但是使用TouchListener就真的只是Touch了，除非使用 GestureDetectorCompat.
         }
-
         public abstract void bindView(RVViewHolderTest viewHolder, T data);
-
         @Override
         public int getItemCount() {
             return datas.size();
         }
-
         public T getItem(int position) {
             return datas.get(position);
         }
-
         public void addData(T data) {
             datas.add(data);
             // notifyDataSetChanged();
             notifyItemInserted(datas.size() - 1);
         }
-
         public void addData(T data, int position) {
             datas.add(position, data);
             // notifyDataSetChanged();
             notifyItemInserted(position);
             recyclerView.scrollToPosition(position);
         }
-
         public T remove(int position) {
             T old = datas.remove(position);
             // notifyDataSetChanged();
@@ -130,19 +156,16 @@ img {
                 recyclerView.scrollToPosition(position);
             return old;
         }
-
         public void remove(T data) {
             int position = datas.indexOf(data);
             datas.remove(data);
             // notifyDataSetChanged();
             notifyItemRemoved(position);
         }
-
         public void setDatas(List<T> datas) {
             this.datas = datas;
             notifyDataSetChanged();
         }
-
         public interface OnItemClickListener<T> {
             public void onItemClick(View view, T data, int position);
             public boolean onItemLongClick(View view, T data, int position);
@@ -152,12 +175,10 @@ img {
 3. RecyclerView
     ```java
     public class MainActivity extends AppCompatActivity {
-
         @Override
         protected void onCreate(@Nullable Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_test_recyclerview);
-
             int size = 30;
             List<ExampleItem> dataSet = new ArrayList<>(size);
             for (int i = 0; i < size; i++) {
@@ -199,7 +220,6 @@ img {
                 }
             });
             recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-
             recyclerView.postDelayed(() -> {
                 adapter.addData(new ExampleItem("add string", 99, 99.5, false), 0);
                 recyclerView.scrollToPosition(0);
@@ -232,11 +252,9 @@ img {
         private LinearLayoutManager mLinearLayoutManager;
         private boolean isLoading = false;
         private int previousTotal = 0;
-
         public LoadMoreScrollListener(LinearLayoutManager mLinearLayoutManager) {
             this.mLinearLayoutManager = mLinearLayoutManager;
         }
-
         // @Override
         // public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
         //     super.onScrollStateChanged(recyclerView, newState);
@@ -248,11 +266,9 @@ img {
         //     }
         //     Log.d("state", message);
         // }
-
         @Override
         public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
             super.onScrolled(recyclerView, dx, dy);
-
             // Log.e("totalItemCount", "" + mLinearLayoutManager.getItemCount());
             // Log.e("visibleItemCount", "" + mLinearLayoutManager.getChildCount());
             // Log.e("部分可见", "firstVisibleItemPosition" + mLinearLayoutManager.findFirstVisibleItemPosition());
@@ -260,7 +276,6 @@ img {
             // Log.e("完全可见", "firstCompletelyVisibleItemPosition" + mLinearLayoutManager.findFirstCompletelyVisibleItemPosition());
             // Log.e("完全可见", "lastCompletelyVisibleItemPosition" + mLinearLayoutManager.findLastCompletelyVisibleItemPosition());
             // Log.e("-", "------------------------------------");
-
             int totalItemCount = mLinearLayoutManager.getItemCount();
             int visibleItemCount = mLinearLayoutManager.getChildCount();
             if (isLoading) {
@@ -275,7 +290,6 @@ img {
                 isLoading = true;
             }
         }
-
         public abstract void onLoadMore();
     }
     ```
@@ -325,16 +339,13 @@ img {
         private int lastState = RecyclerView.SCROLL_STATE_IDLE;
         private long timeLimit;
         private long lastTimeMillis = -1;
-
         public LoadMoreScrollListener2(LinearLayoutManager layoutManager) {
             this(layoutManager, 256);
         }
-
         public LoadMoreScrollListener2(LinearLayoutManager layoutManager, long timeLimit) {
             this.layoutManager = layoutManager;
             this.timeLimit = timeLimit;
         }
-
         @Override
         public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
             super.onScrollStateChanged(recyclerView, newState);
@@ -350,7 +361,6 @@ img {
             }
             lastState = newState;
         }
-
         @Override
         public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
             super.onScrolled(recyclerView, dx, dy);
@@ -370,10 +380,8 @@ img {
         private int[] itemLayoutIds = null;
         private View headerView = null;
         private View footerView = null;
-
         private static final int TYPE_HEADER = -1;
         private static final int TYPE_FOOTER = -2;
-
         // ...
         @Override
         public int getItemViewType(int position) {
@@ -388,23 +396,18 @@ img {
                     onItemViewTypeListener.getItemViewType(position, datas.get(position)) :
                     super.getItemViewType(position);
         }
-
         public void setOnItemViewTypeListener(OnItemViewTypeListener<T> onItemViewTypeListener) {
             this.onItemViewTypeListener = onItemViewTypeListener;
         }
-
         public void setItemLayoutIds(int[] itemLayoutIds) {
             this.itemLayoutIds = itemLayoutIds;
         }
-
         public void setHeaderView(View headerView) {
             this.headerView = headerView;
         }
-
         public void setFooterView(View footerView) {
             this.footerView = footerView;
         }
-
         @NonNull
         @Override
         public RVViewHolderTest onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -416,7 +419,6 @@ img {
                     RVViewHolderTest.get(context, parent, itemLayoutId) :
                     RVViewHolderTest.get(context, parent, itemLayoutIds[viewType]);
         }
-
         @Override
         public void onBindViewHolder(@NonNull final RVViewHolderTest viewHolder, int position) {
             if (datas == null || datas.size() == 0) return;
@@ -435,7 +437,6 @@ img {
                 viewHolder.getRoot().setOnLongClickListener(v -> onItemClickListener.onItemLongClick(v, data, pos));
             }
         }
-
         @Override
         public int getItemCount() {
             int size = datas.size();
@@ -445,15 +446,12 @@ img {
                 size++;
             return size;
         }
-
         public int getDataSize() {
             return datas.size();
         }
-
         public T getItem(int position) {
             return datas.get(position);
         }
-
         public void addData(T data) {
             int position = datas.size();
             datas.add(data);
@@ -464,7 +462,6 @@ img {
                 position++;
             recyclerView.scrollToPosition(position);
         }
-
         public void addData(T data, int position) {
             datas.add(position, data);
             if (headerView != null)
@@ -474,7 +471,6 @@ img {
                 position++;
             recyclerView.scrollToPosition(position);
         }
-
         public T remove(int position) {
             int dataPosition = position;
             T old = datas.remove(position);
@@ -484,7 +480,6 @@ img {
             scrollToPosition(position, dataPosition);
             return old;
         }
-
         public void remove(T data) {
             int position = datas.indexOf(data);
             int dataPosition = position;
@@ -494,7 +489,6 @@ img {
             notifyItemRemoved(position);
             scrollToPosition(position, dataPosition);
         }
-
         private void scrollToPosition(int position, int dataPosition) {
             if (dataPosition == 0)
                 recyclerView.scrollToPosition(0);
@@ -503,14 +497,12 @@ img {
             else
                 recyclerView.scrollToPosition(position - 1);
         }
-
         public void setDatas(List<T> datas) {
             this.datas = datas;
             notifyDataSetChanged();
             if (datas.size() > 0)
                 recyclerView.scrollToPosition(0);
         }
-
         @Override
         public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
             super.onAttachedToRecyclerView(recyclerView);
@@ -527,7 +519,6 @@ img {
                 });
             }
         }
-        
         @Override
         public void onViewAttachedToWindow(@NonNull RVViewHolderTest holder) {
             super.onViewAttachedToWindow(holder);
@@ -559,13 +550,10 @@ img {
             ((TextView) viewHolder.getViewById(R.id.test_recyclerview_item_bool)).setText(String.valueOf(data.isaBoolean()));
         }
     };
-
     adapter.setHeaderView(LayoutInflater.from(this).inflate(R.layout.item_recyclerview_header, recyclerView, false));
     adapter.setFooterView(LayoutInflater.from(this).inflate(R.layout.item_recyclerview_footer, recyclerView, false));
-
     adapter.setItemLayoutIds(new int[] { R.layout.item_recyclerview_list, R.layout.item_recyclerview_list2, R.layout.item_recyclerview_list3 });
     adapter.setOnItemViewTypeListener((position, data) -> data.getAnInt() % 3);
-
     // adapter.setOnItemClickListener(new RVAdapterTest.OnItemClickListener<ExampleItem>() {
     //     @Override
     //     public void onItemClick(View view, ExampleItem data, int position) {
@@ -609,7 +597,6 @@ img {
         }
     });
     recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-
     // recyclerView.postDelayed(() -> {
     //     adapter.addData(new ExampleItem("add string", 99, 99.5, false), 0);
     //     recyclerView.scrollToPosition(0);
@@ -617,7 +604,6 @@ img {
     // recyclerView.postDelayed(() -> {
     //     adapter.remove(0);
     // }, 10000);
-
     SwipeRefreshLayout swipeRefreshLayout = findViewById(R.id.test_recyclerview_swipe);
     swipeRefreshLayout.setColorSchemeResources(
             android.R.color.holo_blue_bright,
@@ -655,7 +641,6 @@ img {
             }, 1000);
         }
     });
-
     recyclerView.postDelayed(() -> {
         int size1 = adapter.getDataSize();
         adapter.addData(new ExampleItem("string" + size1, size1, size1 + 0.5f, size1 % 2 == 0));
@@ -736,12 +721,10 @@ img {
             adapter.move(viewHolder.getAdapterPosition() - 1, target.getAdapterPosition() - 1);
             return true;
         }
-
         @Override
         public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
             adapter.remove(viewHolder.getAdapterPosition() - 1);
         }
-
         @Override
         public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
             super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
@@ -1041,20 +1024,20 @@ img {
             2. 类加载方案: 时效性差，需要重新冷启动才能见效，但修复范围广，限制少。QZone超级补丁、微信Tinker。
         2. 分析方案对比: 虽然热修复的主要套路有两种，但是，由这两种套路延伸出来的各种不同的帮派有很多，其中闻名天下的有四大门派。QZone超级补丁、微信Tinker、阿里AndFix、美团Robust。综合他们的优劣进行对比如下。
 
-            支撑/方案 | Tinker | QZone | AndFix | Robust
-            :-|:-|:-|:-|:-
-            类替换 | yes | yes | no | no
-            So替换 | yes | no | no | no
-            资源替换 | yes | yes | no | no
-            全平台支持 | yes | yes | yes | yes
-            即时生效 | no | no | yes | yes
-            性能损耗 | 较小 | 较大 | 较小 | 较小
-            补丁包大小 | 较小 | 较大 | 一般 | 一般
-            开发透明 | yes | yes | no | no
-            复杂度 | 较低 | 较低 | 复杂 | 复杂
-            gradle支持 | yes | no | no | no
-            Rom体积 | 较大 | 较小 | 较小 | 较小
-            成功率 | 较高 | 较高 | 一般 | 最高
+            | 支撑/方案  | Tinker | QZone | AndFix | Robust |
+            | :--------- | :----- | :---- | :----- | :----- |
+            | 类替换     | yes    | yes   | no     | no     |
+            | So替换     | yes    | no    | no     | no     |
+            | 资源替换   | yes    | yes   | no     | no     |
+            | 全平台支持 | yes    | yes   | yes    | yes    |
+            | 即时生效   | no     | no    | yes    | yes    |
+            | 性能损耗   | 较小   | 较大  | 较小   | 较小   |
+            | 补丁包大小 | 较小   | 较大  | 一般   | 一般   |
+            | 开发透明   | yes    | yes   | no     | no     |
+            | 复杂度     | 较低   | 较低  | 复杂   | 复杂   |
+            | gradle支持 | yes    | no    | no     | no     |
+            | Rom体积    | 较大   | 较小  | 较小   | 较小   |
+            | 成功率     | 较高   | 较高  | 一般   | 最高   |
         3. 总的来说
             1. AndFix作为native解决方案，首先面临的是稳定性与兼容性问题，更重要的是它无法实现类替换，它是需要大量额外的开发成本的；
             2. Robust兼容性与成功率较高，但是它与AndFix一样，无法新增变量与类只能用做的bugFix方案；
@@ -1441,14 +1424,13 @@ img {
 
 ## Android APT
 
-[【Android】APT](https://www.jianshu.com/p/7af58e8e3e18)
-0. links
+1. links
     * [【Android】APT](https://www.jianshu.com/p/7af58e8e3e18)
     * [反射注解与动态代理综合使用](https://www.jianshu.com/p/fad15887a05e) finished
     * [javapoet github](https://github.com/square/javapoet) finished
     * [JavaPoet 看这一篇就够了](https://juejin.im/entry/58fefebf8d6d810058a610de) finished
     * [Android模块开发之APT技术](https://www.jianshu.com/p/9616f4a462bd)
-1. javapoet
+2. javapoet
     1. javapoet是square公司良心出品，让我们脱离手动凭借字符串来生成Java类的痛苦，可以通过各种姿势来生成Java类。一个Java文件由四部分组成
         1. 包名
         2. 类
@@ -1668,7 +1650,7 @@ img {
         * TypeName
         * ParameterizedTypeName
         * CodeBlock
-2. apt
+3. apt
     1. APT，就是 Annotation Processing Tool 的简称，就是可以在代码编译期间对注解进行处理，并且生成Java文件，减少手动的代码输入。注解我们平时用到的比较多的可能会是运行时注解，比如大名鼎鼎的retrofit就是用运行时注解，通过动态代理来生成网络请求。编译时注解平时开发中可能会涉及的比较少，但并不是说不常用，比如我们经常用的轮子Dagger2, ButterKnife, EventBus3 都在用，所以要紧跟潮流来看看APT技术的来龙去脉。
     2. 实例
         1. Route
@@ -2252,13 +2234,13 @@ img {
             ```
         2. GsonBuilder提供了 FieldNamingStrategy 接口和 setFieldNamingPolicy 和 setFieldNamingStrategy 两个方法。
         3. 默认实现: GsonBuilder.setFieldNamingPolicy 方法与 Gson 提供的另一个枚举类 FieldNamingPolicy 配合使用，该枚举类提供了5种实现方式分别为：
-            FieldNamingPolicy | 结果（仅输出emailAddress字段）
-            :- |:-
-            IDENTITY | {"emailAddress":"ikidou@example.com"}
-            LOWER_CASE_WITH_DASHES | {"email-address":"ikidou@example.com"}
-            LOWER_CASE_WITH_UNDERSCORES | {"email_address":"ikidou@example.com"}
-            UPPER_CAMEL_CASE | {"EmailAddress":"ikidou@example.com"}
-            UPPER_CAMEL_CASE_WITH_SPACES | {"Email Address":"ikidou@example.com"}
+            | FieldNamingPolicy            | 结果（仅输出emailAddress字段）         |
+            | :--------------------------- | :------------------------------------- |
+            | IDENTITY                     | {"emailAddress":"ikidou@example.com"}  |
+            | LOWER_CASE_WITH_DASHES       | {"email-address":"ikidou@example.com"} |
+            | LOWER_CASE_WITH_UNDERSCORES  | {"email_address":"ikidou@example.com"} |
+            | UPPER_CAMEL_CASE             | {"EmailAddress":"ikidou@example.com"}  |
+            | UPPER_CAMEL_CASE_WITH_SPACES | {"Email Address":"ikidou@example.com"} |
         4. 自定义实现: GsonBuilder.setFieldNamingStrategy 方法需要与Gson提供的FieldNamingStrategy接口配合使用，用于实现将POJO的字段与JSON的字段相对应。上面的FieldNamingPolicy实际上也实现了FieldNamingStrategy接口，也就是说FieldNamingPolicy也可以使用setFieldNamingStrategy方法。
         5. 用法：
             ```java
@@ -2410,13 +2392,13 @@ img {
         3. 注： @JsonAdapter 仅支持 TypeAdapter或TypeAdapterFactory( 2.7开始已经支持 JsonSerializer/JsonDeserializer)
         4. 注：JsonAdapter的优先级比GsonBuilder.registerTypeAdapter的优先级更高。
     5. TypeAdapter与 JsonSerializer、JsonDeserializer对比
-        . | TypeAdapter | JsonSerializer、JsonDeserializer
-        :-|:-|:-
-        引入版本 | 2.0 | 1.x
-        Stream API | 支持 | 不支持*，需要提前生成JsonElement
-        内存占用 | 小 | 比TypeAdapter大
-        效率 | 高 | 比TypeAdapter低
-        作用范围 | 序列化 和 反序列化 | 序列化 或 反序列化
+        | .          | TypeAdapter        | JsonSerializer、JsonDeserializer |
+        | :--------- | :----------------- | :------------------------------- |
+        | 引入版本   | 2.0                | 1.x                              |
+        | Stream API | 支持               | 不支持*，需要提前生成JsonElement |
+        | 内存占用   | 小                 | 比TypeAdapter大                  |
+        | 效率       | 高                 | 比TypeAdapter低                  |
+        | 作用范围   | 序列化 和 反序列化 | 序列化 或 反序列化               |
     6. TypeAdapter实例
         1. 注：这里的TypeAdapter泛指TypeAdapter、JsonSerializer和JsonDeserializer。上面讲了一个自动将字符串形式的数值转换成int型时可能出现空字符串的问题，下面介绍一个其它读者的需求：服务器返回的数据中data字段类型不固定，比如请求成功data是一个List,不成功的时候是String类型，这样前端在使用泛型解析的时候，怎么去处理呢？
         2. 其实这个问题的原因主要由服务器端造成的，接口设计时没有没有保证数据的一致性，正确的数据返回姿势：同一个接口任何情况下不得改变返回类型，要么就不要返，要么就返空值，如null、[],{}。
@@ -2474,6 +2456,795 @@ img {
 1. 
 
 ## OKHttp
+
+## Volley
+
+0. links
+   1. [Android 网络通信框架Volley学习系列](http://www.voidcn.com/article/p-gaharqmq-mg.html)
+   2. [Android Volley完全解析系列](https://blog.csdn.net/guolin_blog/article/details/17482095)
+   3. [volley github](https://github.com/google/volley)
+   4. [Volley overview](https://developer.android.com/training/volley/index.html)
+   5. [Volley支持https的3种方法小结](https://blog.csdn.net/lintax/article/details/69761913)
+   6. [Android高效加载大图、多图解决方案，有效避免程序OOM](https://blog.csdn.net/guolin_blog/article/details/9316683)
+1. 初识
+    1. 基本用法
+        1. Android系统中主要提供了两种方式来进行HTTP通信，HttpURLConnection和HttpClient，它们的使用率非常高。
+        2. 不过HttpURLConnection和HttpClient的用法还是稍微有些复杂的，如果不进行适当封装的话，很容易就会写出不少重复代码。于是乎，一些Android网络通信框架也就应运而生，说AsyncHttpClient，它把HTTP所有的通信细节全部封装在了内部，我们只需要简单调用几行代码就可以完成通信操作了；如Universal-Image-Loader，它使得在界面上显示网络图片的操作变得极度简单，开发者不用关心如何从网络上获取图片，也不用关心开启线程、回收图片资源等细节。
+        3. 而Android开发团队也是在2013年Google I/O大会上推出了一个新的网络通信框架——Volley，把AsyncHttpClient和Universal-Image-Loader的优点集于了一身，既可以像AsyncHttpClient一样非常简单地进行HTTP通信，也可以像Universal-Image-Loader一样轻松加载网络上的图片。除了简单易用之外，Volley在性能方面也进行了大幅度的调整，它的设计目标就是非常适合去进行数据量不大，但通信频繁的网络操作，而对于大数据量的网络操作，比如说下载文件等，Volley的表现就会非常糟糕。
+        4. StringRequest的用法
+            1. 获得请求队列对象``RequestQueue mQueue = Volley.newRequestQueue(context);``
+            2. RequestQueue是一个请求队列对象，它可以缓存所有的HTTP请求，然后按照一定的算法并发地发出这些请求。RequestQueue内部的设计就是非常合适高并发的，因此我们不必为每一次HTTP请求都创建一个RequestQueue对象，这是非常浪费资源的，基本上在每一个需要和网络交互的Activity中创建一个RequestQueue对象就足够了。
+            3. 创建StringRequest对象
+                ```java
+                StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://www.baidu.com",
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            Log.d("TAG", response);
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Log.e("TAG", error.getMessage(), error);
+                        }
+                    });
+                ```
+            4. 发出请求``mQueue.add(stringRequest);``
+            5. 添加权限``<uses-permission android:name="android.permission.INTERNET" />``
+        5. JsonRequest的用法
+            1. 类似于StringRequest，JsonRequest也是继承自Request类的，不过由于JsonRequest是一个抽象类，因此我们无法直接创建它的实例，那么只能从它的子类入手了。JsonRequest有两个直接的子类，JsonObjectRequest和JsonArrayRequest
+            2. 至于它们的用法也基本上没有什么特殊之处，先new出一个JsonObjectRequest对象，如下所示
+            ```java
+                JsonObjectRequest jsonObjectRequest = new JsonObjectRequest("http://m.weather.com.cn/data/101010100.html", null,
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            Log.d("TAG", response.toString());
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Log.e("TAG", error.getMessage(), error);
+                        }
+                    });
+                ```
+        6. ImageRequest的用法
+            1. 示例
+                ```java
+                ImageRequest imageRequest = new ImageRequest("http://developer.android.com/images/home/aw_dac.png",
+                    new Response.Listener<Bitmap>() {
+                        @Override
+                        public void onResponse(Bitmap response) {
+                            imageView.setImageBitmap(response);
+                        }
+                    }, 0, 0, Config.RGB_565, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            imageView.setImageResource(R.drawable.default_image);
+                        }
+                    });
+                ```
+            2. 第三第四个参数分别用于指定允许图片最大的宽度和高度，如果指定的网络图片的宽度或高度大于这里的最大值，则会对图片进行压缩，指定成0的话就表示不管图片有多大，都不会进行压缩。第五个参数用于指定图片的颜色属性，Bitmap.Config下的几个常量都可以在这里使用，其中ARGB_8888可以展示最好的颜色属性，每个图片像素占据4个字节的大小，而RGB_565则表示每个图片像素占据2个字节大小。
+        7. ImageLoader的用法
+            1. ImageLoader也可以用于加载网络上的图片，并且它的内部也是使用ImageRequest来实现的，不过ImageLoader明显要比ImageRequest更加高效，因为它不仅可以帮我们对图片进行缓存，还可以过滤掉重复的链接，避免重复发送请求。
+            2. 由于ImageLoader已经不是继承自Request的了，所以它的用法也和我们之前学到的内容有所不同，总结起来大致可以分为以下四步:
+                1. 创建一个RequestQueue对象。
+                2. 创建一个ImageLoader对象。
+                3. 获取一个ImageListener对象。
+                4. 调用ImageLoader的get()方法加载网络上的图片。
+            3. 示例
+                ```java
+                ImageLoader imageLoader = new ImageLoader(requestQueue, new ImageCache() {
+                    @Override public void putBitmap(String url, Bitmap bitmap) {}
+                    @Override public Bitmap getBitmap(String url) { return null; }
+                });
+                ImageListener listener = ImageLoader.getImageListener(imageView, R.drawable.proceeding_image, R.drawable.failed_image);
+                imageLoader.get("https://img-my.csdn.net/uploads/201404/13/1397393290_5765.jpeg", listener, 200, 200);
+                ```
+            4. 虽然现在我们已经掌握了ImageLoader的用法，但是刚才介绍的ImageLoader的优点却还没有使用到。为什么呢？因为这里创建的ImageCache对象是一个空的实现，完全没能起到图片缓存的作用。其实写一个ImageCache也非常简单，但是如果想要写一个性能非常好的ImageCache，最好就要借助Android提供的LruCache功能了。
+                ```java
+                public class BitmapCache implements ImageCache {
+                    private LruCache<String, Bitmap> mCache;
+                    public BitmapCache() {
+                        int maxSize = 10 * 1024 * 1024;
+                        mCache = new LruCache<String, Bitmap>(maxSize) {
+                            @Override
+                            protected int sizeOf(String key, Bitmap bitmap) {
+                                return bitmap.getRowBytes() * bitmap.getHeight();
+                            }
+                        };
+                    }
+                    @Override
+                    public Bitmap getBitmap(String url) {
+                        return mCache.get(url);
+                    }
+                    @Override
+                    public void putBitmap(String url, Bitmap bitmap) {
+                        mCache.put(url, bitmap);
+                    }
+                }
+                ```
+        8. NetworkImageView的用法
+            1. NetworkImageView控件的用法要比前两种方式更加简单，大致可以分为以下五步：
+                1. 创建一个RequestQueue对象。
+                2. 创建一个ImageLoader对象。
+                3. 在布局文件中添加一个NetworkImageView控件。
+                4. 在代码中获取该控件的实例。
+                5. 设置要加载的图片地址。
+            2. 其中，第一第二步和ImageLoader的用法是完全一样的，因此这里我们就从第三步开始学习了。
+                ```xml
+                <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:orientation="vertical" >
+                    <Button
+                        android:id="@+id/button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Send Request" />
+                    <com.android.volley.toolbox.NetworkImageView
+                        android:id="@+id/network_image_view"
+                        android:layout_width="200dp"
+                        android:layout_height="200dp"
+                        android:layout_gravity="center_horizontal"/>
+                </LinearLayout>
+                ```
+            3. ``networkImageView = (NetworkImageView) findViewById(R.id.network_image_view);``
+            4. 设置要加载的图片地址。
+                ```java
+                networkImageView.setDefaultImageResId(R.drawable.default_image);
+                networkImageView.setErrorImageResId(R.drawable.failed_image);
+                networkImageView.setImageUrl("https://img-my.csdn.net/uploads/201404/13/1397393290_5765.jpeg", imageLoader);
+                ```
+            5. NetworkImageView并不需要提供任何设置最大宽高的方法也能够对加载的图片进行压缩。这是由于NetworkImageView是一个控件，在加载图片的时候它会自动获取自身的宽高，然后对比网络图片的宽度，再决定是否需要对图片进行压缩。也就是说，压缩过程是在内部完全自动化的，并不需要我们关心，NetworkImageView会始终呈现给我们一张大小刚刚好的网络图片，不会多占用任何一点内存，这也是NetworkImageView最简单好用的一点吧。当然了，如果你不想对图片进行压缩的话，其实也很简单，只需要在布局文件中把NetworkImageView的layout_width和layout_height都设置成wrap_content就可以了，这样NetworkImageView就会将该图片的原始大小展示出来，不会进行任何压缩。
+    2. 高级用法
+        1. 定制自己的Request
+            1. XmlRequest
+                ```java
+                public class XmlRequest extends Request<XmlPullParser> {
+                    private final Object mLock = new Object();
+                    private Response.Listener<XmlPullParser> mListener;
+                    public XmlRequest(String url, Response.Listener<XmlPullParser> mListener, Response.ErrorListener listener) {
+                        super(url, listener);
+                        this.mListener = mListener;
+                    }
+                    public XmlRequest(int method, String url, Response.Listener<XmlPullParser> mListener, @Nullable Response.ErrorListener listener) {
+                        super(method, url, listener);
+                        this.mListener = mListener;
+                    }
+                    @Override public void cancel() {
+                        super.cancel();
+                        synchronized (mLock) {
+                            mListener = null;
+                        }
+                    }
+                    @Override protected Response<XmlPullParser> parseNetworkResponse(NetworkResponse response) {
+                        String xmlString;
+                        try {
+                            xmlString = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
+                        } catch (UnsupportedEncodingException e) {
+                            // return Response.error(new ParseError(e));
+                            xmlString = new String(response.data);
+                        }
+                        try {
+                            XmlPullParser xmlPullParser = XmlPullParserFactory.newInstance().newPullParser();
+                            xmlPullParser.setInput(new StringReader(xmlString));
+                            return Response.success(xmlPullParser, HttpHeaderParser.parseCacheHeaders(response));
+                        } catch (XmlPullParserException e) {
+                            return Response.error(new ParseError(e));
+                        }
+                    }
+                    @Override protected void deliverResponse(XmlPullParser response) {
+                        Response.Listener<XmlPullParser> listener;
+                        synchronized (mLock) {
+                            listener = mListener;
+                        }
+                        if (listener != null) {
+                            listener.onResponse(response);
+                        }
+                    }
+                }
+                ```
+            2. GsonRequest
+                ```java
+                public class HTTPSTrustManager implements X509TrustManager {
+                    private static final String TAG = "HTTPSTrustManager";
+                    private static TrustManager[] trustManagers;
+                    private static final X509Certificate[] _AcceptedIssuers = new X509Certificate[]{};
+                    @Override public void checkClientTrusted(X509Certificate[] x509Certificates, String s) {}
+                    @Override public void checkServerTrusted(X509Certificate[] x509Certificates, String s) {}
+                    @Override public X509Certificate[] getAcceptedIssuers() {
+                        return _AcceptedIssuers;
+                    }
+                    public static void allowAllSSL() {
+                        HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
+                            @Override
+                            public boolean verify(String arg0, SSLSession arg1) {
+                                // TODO Auto-generated method stub
+                                return true;
+                            }
+                        });
+                        SSLContext context = null;
+                        if (trustManagers == null) {
+                            trustManagers = new TrustManager[]{new HTTPSTrustManager()};
+                        }
+                        try {
+                            context = SSLContext.getInstance("TLS");
+                            context.init(null, trustManagers, new SecureRandom());
+                        } catch (NoSuchAlgorithmException e) {
+                            Log.e(TAG, "NoSuchAlgorithmException", e);
+                        } catch (KeyManagementException e) {
+                            Log.e(TAG, "KeyManagementException", e);
+                        }
+                        assert context != null;
+                        HttpsURLConnection.setDefaultSSLSocketFactory(context.getSocketFactory());
+                    }
+                }
+                ```
+                ```java
+                public abstract class GsonRequest<T> extends Request<T> {
+                    private final static Gson gson = new Gson();
+                    private final Object mLock = new Object();
+                    private Response.Listener<T> mListener;
+                    private Class<T> entityClass;
+                    public Class<T> getEntityClass() {
+                        return entityClass;
+                    }
+                    public GsonRequest(String url, Response.Listener<T> mListener, Response.ErrorListener listener) {
+                        super(url, listener);
+                        this.mListener = mListener;
+                        ParameterizedType genericSuperclass = (ParameterizedType) getClass().getGenericSuperclass();
+                        entityClass = (Class<T>) genericSuperclass.getActualTypeArguments()[0];
+                    }
+                    public GsonRequest(int method, String url, Response.Listener<T> mListener, @Nullable Response.ErrorListener listener) {
+                        super(method, url, listener);
+                        this.mListener = mListener;
+                        ParameterizedType genericSuperclass = (ParameterizedType) getClass().getGenericSuperclass();
+                        entityClass = (Class<T>) genericSuperclass.getActualTypeArguments()[0];
+                    }
+                    @Override protected Response<T> parseNetworkResponse(NetworkResponse response) {
+                        String jsonString;
+                        try {
+                            jsonString = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
+                        } catch (UnsupportedEncodingException e) {
+                            jsonString = new String(response.data);
+                        }
+                        return Response.success(gson.fromJson(jsonString, entityClass), HttpHeaderParser.parseCacheHeaders(response));
+                    }
+                    @Override protected void deliverResponse(T response) {
+                        Response.Listener<T> listener;
+                        synchronized (mLock) {
+                            listener = mListener;
+                        }
+                        if (listener != null) {
+                            listener.onResponse(response);
+                        }
+                    }
+                    @Override public void cancel() {
+                        super.cancel();
+                        synchronized (mLock) {
+                            mListener = null;
+                        }
+                    }
+                }
+                ```
+            3. 调用
+                ```java
+                private void testGsonRequest() {
+                    final Gson gson = new Gson();
+                    try {
+                        GsonRequest<Weather> gsonRequest = new GsonRequest<Weather>(json_url,
+                                response -> Log.d(TAG, "get json successfully. " + gson.toJson(response)),
+                                error -> Log.e(TAG, "get json failed.", error)){};
+                        Log.d(TAG, "gsonRequest's entityClass: " + gsonRequest.getEntityClass().getSimpleName());
+                        requestQueue.add(gsonRequest);
+                    } catch (Exception e) {
+                        Log.e(TAG, "cast error!", e);
+                    }
+                }
+                private void testXmlRequest() {
+                    XmlRequest xmlRequest = new XmlRequest(xml_url, response -> {
+                        Log.d(TAG, "get xml successfully. ");
+                        try {
+                            int eventType = response.getEventType();
+                            while (eventType != XmlPullParser.END_DOCUMENT) {
+                                if (eventType == XmlPullParser.START_TAG) {
+                                    String nodeName = response.getName();
+                                    if ("city".equals(nodeName)) {
+                                        String pName = response.getAttributeValue(0);
+                                        Log.d(TAG, "pName is " + pName);
+                                    }
+                                }
+                                eventType = response.next();
+                            }
+                        } catch (XmlPullParserException e) {
+                            Log.d(TAG, "parse xml failed -- XmlPullParserException.", e);
+                        } catch (IOException e) {
+                            Log.d(TAG, "parse xml failed -- IOException.", e);
+                        }
+                    }, error -> Log.d(TAG, "get xml failed.", error));
+                    requestQueue.add(xmlRequest);
+                }
+                ```
+        2. 
+2. 源码解读
+
+## Android 网络请求2
+
+1. **Ksoap2**: 
+2. **REST**: 
+
+## Android 网络请求3
+
+1. **OkHttp**: 
+2. **Retrofit**: 
+3. **NoHttp**: 
+4. **android-async-http**: 
+
+## Android 图片请求
+
+1. links
+    * [Android实战——Glide的使用，加载图片只要一句话](https://blog.csdn.net/qq_30379689/article/details/60373696) finished
+    * [android Glide简单使用](https://blog.csdn.net/bzlj2912009596/article/details/81702367) finished
+    * [Glide最新版V4使用指南](https://blog.csdn.net/u013005791/article/details/74532091)
+    * [Glide系列1](https://blog.csdn.net/u010356768/article/category/7264668)
+    * [Glide系列2](https://so.csdn.net/so/search/s.do?q=glide&t=blog&u=mingyunxiaohai)
+    * [Glide系列3](https://blog.csdn.net/sinyu890807/column/info/15318)
+    * [glide github](https://github.com/bumptech/glide)
+    * [glide-transform github](https://github.com/wasabeef/glide-transformations)
+    * [glide系统2](https://blog.csdn.net/yulyu/article/details/55261439)
+    * [glide源码](https://blog.csdn.net/guolin_blog/article/details/53939176)
+    * [Android高效加载大图、多图解决方案，有效避免程序OOM](https://blog.csdn.net/guolin_blog/article/details/9316683)
+    * [picasso github](https://github.com/square/picasso)
+    * [picasso-transfrom github](https://github.com/TannerPerrien/picasso-transformations)
+    * [Fresco github](https://github.com/facebook/fresco)
+    * [Fresco-processors](https://github.com/wasabeef/fresco-processors)
+    * [fresco 中文文档](https://www.fresco-cn.org/docs/index.html)
+    * [fresco系列1](https://so.csdn.net/so/search/s.do?q=fresco&t=blog&u=xuyueqing1225)
+    * [fresco系列2](https://blog.csdn.net/y1scp/article/details/49245535)
+    * http://blog.csdn.net/android_ls/article/details/53137867
+    * https://www.jianshu.com/p/976c86fa72bc
+2. **Bitmap的高效加载**
+    1. BitmapFactory类提供四种方法: decodeFile、decodeResource、decodeStream和decodeByteArray；其中decodeFile和decodeResource间接的调用了decodeStream方法；这四个方法最终在Android底层实现。
+    2. 如何高效的加载Bitmap？核心思想: 按需加载；很多时候ImageView并没有原始图片那么大，所以没必要加载原始大小的图片。采用BitmapFactory.Options来加载所需尺寸的图片。通过BitmapFactory.Options来缩放图片，主要是用到了它的inSampleSize参数，即采样率。inSampleSize应该为2的指数，如果不是系统会向下取整并选择一个最接近2的指数来代替；缩放比例为1/(inSampleSize的二次方)。
+    3. Bitmap内存占用: 拿一张1024x1024像素的图片来说，假定采用ARGB8888格式存储，那么它占用的内存为1024\*1024\*4，即4MB。
+    4. 
+3. **Android的缓存策略**
+    1. 如何减少流量消耗？缓存。当程序第一次从网络上加载图片后，将其缓存在存储设备中，下次使用这张图片的时候就不用再从网络从获取了。一般情况会把图片存一份到内存中，一份到存储设备中，如果内存中没找到就去存储设备中找，还没有找到就从网络上下载。
+    2. 目前常用的缓存算法是LRU，是近期最少使用算法，当缓存满时，优先淘汰那些近期最少使用的缓存对象。采用LRU算法的缓存有两种: LRUCache(内存缓存)和DiskLruCache(存储缓存)。
+    3. LruCache是Android3.1所提供的一个缓存类，通过support-v4兼容包可以兼容到早期的Android版本。LruCache是一个泛型类，是线程安全的，内部采用LinkedHashMap以强引用的方式存储外界缓存对象，并提供get和put方法来完成缓存的获取和添加操作，当缓存满时，LruCache会移除较早的使用的缓存对象。LruCache初始化时需重写sizeOf方法，用于计算缓存对象的大小。
+    4. DiskLruCache用于实现磁盘缓存，DiskLruCache得到了Android官方文档推荐，但它不属于Android SDK的一部分，https://android.googlesource.com/platform/libcore/+/android-4.1.1_r1/luni/src/main/java/libcore/io/DiskLruCache.java
+    5. 自己实现一个ImageLoader，包含 https://github.com/singwhatiwanna/android-art-res/blob/master/Chapter_12/src/com/ryg/chapter_12/loader/ImageLoader.java
+        1. 图片压缩功能
+        2. 内存缓存和磁盘缓存
+        3. 同步加载和异步加载的接口设计
+4. **glide**
+    1. Glide是一个快速和有效的开源媒体管理和图像加载Android框架包装媒体解码，内存和磁盘缓存，和资源汇集成一个简单和易于使用的界面。其优点有
+        - 使用简单
+        - 可配置度高，自适应程度高
+        - 支持常见图片格式，jpg、png、gif、webp
+        - 支持多种数据源，网络、资源、assets 、File、Uri等
+        - 高效缓存策略支持内存和硬盘缓存，图片只要下载一次，下次就直接从缓存中读取了
+        - 生命周期集成根据Activity/Fragment生命周期自动管理请求
+        - 高效处理Bitmap
+    2. 一些警示
+        - 对于图片请求会在onStop的时候自动暂停，然后在onStart的时候重新启动，gif的动画也会在onStop的时候停止，以免在后台消耗电量。
+        - 此外，当设备的网络状态发生改变的时候，所有失败的请求会自动重启，保证数据的正确性，还是比较人性化、自动化的。  
+        - Glide提供多种缓存机制，对于图片原图和Resize的图片可以自由缓存，它相比于Picasso，内存消耗要小很多。  
+        - Glide使用最好是在主线程中使用，因为它需要context，在非主线程中使用Glide可能会导致内存泄露或者更严重的Crash。
+        - 相信大家多Context的使用应该是非常谨慎的，非要在非主线程使用Glide的话就将context换成getApplicationContext。
+    3. gradle 与 权限
+        ```groovy
+        implementation 'com.github.bumptech.glide:glide:4.8.0'
+        annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
+        ```
+        ```xml
+        <uses-permission android:name="android.permission.INTERNET" />
+        <!-- 用于硬盘缓存和读取 -->
+        <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+        <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+        <!-- 它可以监听用户的连接状态并在用户重新连接到网络时重启之前失败的请求 -->
+        <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+        ```
+    4. 基本使用
+        ```java
+        Glide
+            .with(Context context)  // 初始化，因为 Activity/Application/Fragment/FragmentActivity 都继承了 Context，所以应该都可以使用
+            // 注意.with()里面的参数，Glide的请求是和传进去的Context共存亡的，如果传一个Activity进去，当Activity GC过后，你的请求也就GC了，但是如果这样传：.with(context.getApplicationContext() ).当你的Activity GC过后，请求还是会继续，回调还是会继续。
+            .load("http://xxx.png")  // 还支持 "file:///xxx.png" | R.drawable.xxx | file | uri | byte[]
+            .asBitmap()  // or asGif()
+            .into(imageView)  // or into(int h, int w).get() /* 返回Bitmap */ or
+            // .into(new SimpleTarget<Bitmap>() {
+            //     @Override public void onResourceReady(Bitmap bitmap, GlideAnimation glideAnimation) {
+            //         imageView.setImageBitmap(bitmap);
+            //     }
+            // })
+        ```
+    5. Target: 不要写成匿名内部类的机制，原因就是java的自动垃圾回收机制可能在图片还没有加载好的时候就已经把你的Target回收了。
+        ```java
+        new Target<Bitmap>() {
+            @Override public void onLoadStarted(Drawable placeholder) { /* 设置加载过程中的Drawable */ }
+            @Override public void onLoadFailed(Exception e, Drawable errorDrawable) { /* 设置加载失败的Drawable */ }
+            @Override public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) { /* 设置加载成功的Bitmap */ }
+            @Override public void onLoadCleared(Drawable placeholder) { /* 设置加载被取消时的Drawable */ }
+            @Override public void getSize(SizeReadyCallback cb) {}
+            @Override public void setRequest(Request request) {}
+            @Override public Request getRequest() { return null; }
+            @Override public void onStart() {}
+            @Override public void onStop() {}
+            @Override public void onDestroy() {}
+        }
+        ```
+    6. 其他的一些小技巧1
+        ```java
+        .placeholder(R.drawable.placeholder)  // 加载中
+        .error(R.drawable.error)  // 加载失败
+        .load(null).fallback(R.drawable.Xxx)  // 传递null时，这个callback方法就会被调用。
+        .thumbnail(0.1f)  // 先加载缩略图 然后在加载全图
+        .thumbnail(Glide.with(context).load(url))  // 指定缩略图
+        .crossFade()  // 淡入淡出效果，注意crossFade可以传入时间，注意这个是默认的。
+        .fadeFade(int duration)  // 可以设置时间
+        .dontAnimate()  // 无动画
+        .animate(R.anim.alpha_in)  // 自定义动画
+        .listener(RequestListener listener)  // 设置监听回调
+        .override(int w, int h)  // 指定尺寸
+        .centerCrop()  // 截取中间部分(应该有默认值)
+        .fitCenter()  // 等比拉伸填充(应该有默认值)
+        ```
+    7. 其他的一些小技巧2
+        ```java
+        .priority(Priority.HIGH)  // 设置图片请求的优先级
+        .pauseRequests()  // 暂停请求
+        .resumeRequests()  // 回复请求
+        .downloadOnly(int width, int height)  // 在后台线程当中进行加载和缓存 @Depreated
+        .downloadOnly(Y extends Target<File> target)  // @Depreated
+        .asFile().submit()  // 阻塞住，直到得到 FutureTarget<File> 结果
+        // 得到的 FutureTarget<File> 需要使用 Glide.with(getApplicationContext()).clear(futureTarget) 清除
+        // 还可以 asBitmap().submit() 这样可得到 FutureTarget<Bitmap> 结果
+        .transition(withCrossFade())  // 用于决定你的加载完成时会发生什么。(淡入淡出动画)
+        .asFile | .asGif | .asBitmap | .asDrawable
+        ```
+    8. Glide从4.0开始，使用的时候多了一个注解处理器 (Annotation Processor)，主要用于我们自定义的时候自动生成一些类，帮助我们简化操作。或者定义一些全局的常用的方法。
+        1. 自定义的方法：需要重写AppGlideModule
+            ```java
+            @GlideModule
+            public class MyAppGlideModule extends AppGlideModule {
+                @Override
+                public void applyOptions(@NonNull Context context, @NonNull GlideBuilder builder) {
+                    super.applyOptions(context, builder);
+                }
+                @Override
+                public void registerComponents(@NonNull Context context, @NonNull Glide glide, @NonNull Registry registry) {
+                    super.registerComponents(context, glide, registry);
+                }
+            }
+            ```
+        2. 我们不必去重写 AppGlideModule 中的任何一个方法。子类中完全可以不用写任何东西，它只需要继承 AppGlideModule 并且添加 @GlideModule 注解。这里我们重写了两个方法，后面只需要在applyOptions()和registerComponents()这两个方法中加入具体的逻辑，就能实现更改Glide配置或者替换Glide组件的功能了。
+        3. 如果要使用我们自定义的module，定义玩上面的类后，Android Studio中点击菜单栏Build -> Rebuild Project重新编译然后代码中变为GlideApp开头。
+            ```java
+            GlideApp.with(fragment)
+                .load(myUrl)
+                .placeholder(R.drawable.placeholder)
+                .fitCenter()
+                .into(imageView);
+            ```
+    9. Glide中的大部分设置项都可以通过 RequestOptions 类和 apply() 方法来应用到程序中。
+        ```java
+        RequestOptions options = new RequestOptions()
+            .placeholder(R.mipmap.ic_launcher)//加载成功之前占位图
+            .error(R.mipmap.ic_launcher)//加载错误之后的错误图
+            .override(400,400)//指定图片的尺寸
+            //指定图片的缩放类型为fitCenter (等比例缩放图片，宽或者是高等于ImageView的宽或者是高。)
+            .fitCenter()
+            //指定图片的缩放类型为centerCrop (等比例缩放图片，直到图片的狂高都大于等于ImageView的宽度，然后截取中间的显示。)
+            .centerCrop()
+            .circleCrop()//指定图片的缩放类型为centerCrop (圆形)
+            .skipMemoryCache(true)//跳过内存缓存
+            .diskCacheStrategy(DiskCacheStrategy.ALL)//缓存所有版本的图像
+            .diskCacheStrategy(DiskCacheStrategy.NONE)//跳过磁盘缓存
+            .diskCacheStrategy(DiskCacheStrategy.DATA)//只缓存原来分辨率的图片
+            .diskCacheStrategy(DiskCacheStrategy.RESOURCE)//只缓存最终的图片
+            ;
+        Glide.with(this)
+            .load(url)
+            .apply(options)
+            .into(imageView);
+        ```
+    10. 如果使用了自定义的API，centerCrop()，fitCenter()，circleCrop()可以省略RequestOptions 这一步，更简单
+        ```java
+         GlideApp.with(this)
+            .load(url)
+            .placeholder(R.mipmap.ic_launcher)
+            .centerCrop()
+            .fitCenter()
+            .circleCrop()
+            .override(400,400)
+            .into(imageView);
+        ```
+    11. 设置缓存
+        1. base
+            ```java
+            // 设置跳过内存缓存
+            Glide.with(this).load(imageUrl).skipMemoryCache(true).into(imageView);
+            // 设置缓存策略
+            Glide.with(this).load(imageUrl).diskCacheStrategy(DiskCacheStrategy.ALL).into(imageView);
+                // DiskCacheStrategy.ALL：缓存源资源和转换后的资源，缓存所有版本的图片,默认模式
+                // DiskCacheStrategy.NONE：不作任何磁盘缓存，再一张图片变化很快速时缓存起来是没有作用的
+                // DiskCacheStrategy.SOURCE：缓存源资源，仅缓存原图(全分辨率的图片)
+                // DiskCacheStrategy.RESULT：缓存转换后的资源，仅缓存最终的图片,即修改了尺寸或者转换后的图片
+            // 清理磁盘缓存，需要在子线程中执行
+            Glide.get(this).clearDiskCache();
+            // 清理内存缓存，可以在UI主线程中进
+            Glide.get(this).clearMemory();
+            ```
+        2. 在GlideModule中，我们可以设置磁盘缓存的位置，磁盘缓存的大小和内存缓存的大小，同时还可以设置图片的显示质量。要是用GlideModule，需要创建它的实现类，然后在manifests中申明实现类的全类路径
+            ```xml
+            <meta-data android:name="com.example.mchenys.httputilsdemo.image.glide.module.SimpleGlideModule" android:value="GlideModule" />
+            ```
+        3. GlideModule的实现类，需要实现applyOptions方法  https://blog.csdn.net/bzlj2912009596/article/details/81702367
+            ```java
+            /**
+             * 要创建一个额外的类去定制 Glide。下一步是要全局的去声明这个类，让 Glide 知道它应该在哪里被加载和使用。
+             * Glide 会扫描 AndroidManifest.xml 为 Glide module 的 meta 声明。
+             * 因此，你必须在 AndroidManifest.xml 的 <application> 标签内去声明这个SimpleGlideModule。
+             */
+            public class SimpleGlideModule implements GlideModule {
+                public static DiskCache cache;
+                @Override
+                public void applyOptions(Context context, GlideBuilder builder) {
+                    // 在 Android 中有两个主要的方法对图片进行解码: ARGB8888 和 RGB565 。前者为每个像素使用了 4 个字节，
+                    // 后者仅为每个像素使用了 2 个字节。ARGB8888 的优势是图像质量更高以及能存储一个 alpha 通道。
+                    // Picasso 使用 ARGB8888，Glide 默认使用低质量的 RGB565。
+                    // 对于 Glide 使用者来说：你可以使用 Glide module 方法去改变解码规则。
+                    builder.setDecodeFormat(DecodeFormat.PREFER_ARGB_8888);
+                    // 设置缓存目录
+                    File cacheDir = PathUtils.getDiskCacheDir(context, CacheConfig.IMG_DIR);
+                    cache = DiskLruCacheWrapper.get(cacheDir, DiskCache.Factory.DEFAULT_DISK_CACHE_SIZE);  // 250 MB
+                    builder.setDiskCache(new DiskCache.Factory() {
+                        @Override
+                        public DiskCache build() {
+                            return cache;
+                        }
+                    });
+                    // 设置memory和Bitmap池的大小
+                    MemorySizeCalculator calculator = new MemorySizeCalculator(context);
+                    int defaultMemoryCacheSize = calculator.getMemoryCacheSize();
+                    int defaultBitmapPoolSize = calculator.getBitmapPoolSize();
+                    int customMemoryCacheSize = (int) (1.2 * defaultMemoryCacheSize);
+                    int customBitmapPoolSize = (int) (1.2 * defaultBitmapPoolSize);
+                    builder.setMemoryCache(new LruResourceCache(customMemoryCacheSize));
+                    builder.setBitmapPool(new LruBitmapPool(customBitmapPoolSize));
+                }
+                @Override
+                public void registerComponents(Context context, Glide glide) {}
+            }
+            ```
+    12. BitmapTransformation
+        1. ``implementation 'jp.wasabeef:glide-transformations:4.0.1'``  // implementation 'jp.co.cyberagent.android:gpuimage:2.x.x' (for GPU)
+        2. 使用
+            ```java
+            // 实现高斯模糊，radius取值1-25，值越大图片越模糊
+            Glide.with(context).load(url).apply(bitmapTransform(new BlurTransformation(radius))).into(imageView);
+            // 圆角
+            Glide.with(context).load(url).apply(bitmapTransform(new RoundedCornersTransformation(radius, margin, CornerType))).into(imageView);
+            // 黑白
+            Glide.with(this).load(url).apply(bitmapTransform(new GrayscaleTransformation())).into(imageView);
+            // 遮盖
+            Glide.with(this).load(url).apply(bitmapTransform(new MaskTransformation(R.mipmap.ic_launcher))).into(imageView);
+            // 混合
+            MultiTransformation multi = new MultiTransformation(
+                new BlurTransformation(25),
+                new RoundedCornersTransformation(128, 0, RoundedCornersTransformation.CornerType.BOTTOM))))
+            Glide.with(this).load(R.drawable.demo).apply(bitmapTransform(multi)).into(imageView);
+            ```
+        3. 基本分类
+            - Crop: CropTransformation(默认), CropCircleTransformation(圆形), CropSquareTransformation(方形), RoundedCornersTransformation(圆角)
+            - Color: ColorFilterTransformation(颜色覆盖), GrayscaleTransformation(置灰)
+            - Blur: BlurTransformation(毛玻璃)
+            - Mask: MaskTransformation(遮盖)
+            - GPU Filter (use GPUImage), Will require add dependencies for GPUImage:
+                - ToonFilterTransformation, SepiaFilterTransformation, ContrastFilterTransformation
+                - InvertFilterTransformation, PixelationFilterTransformation, SketchFilterTransformation
+                - SwirlFilterTransformation, BrightnessFilterTransformation, KuwaharaFilterTransformation VignetteFilterTransformation
+        4. transform方法是不支持多次调用的,如果你调用了两次,那么第二次的会覆盖了第一次的效果，但是他有一个重载的方法可以传入多个对象,这样传入的变形器都能够生效
+    13. 图片裁剪
+        1. ImageView的ScaleType一共有8种属性:
+            - matrix: 不缩放,图片与控件左上角对齐,当图片大小超过控件时将被裁剪
+            - center: 不缩放,图片与控件中心点对齐,当图片大小超过控件时将被裁剪
+            - centerInside: 以完整显示图片为目标,不剪裁,当显示不下的时候将缩放,能够显示的情况下不缩放
+            - centerCrop: 以填满整个控件为目标,等比缩放,超过控件时将被裁剪(宽高都要填满,所以只要图片宽高比与控件宽高比不同时,一定会被剪裁)
+            - fitCenter(默认): 自适应控件,不剪裁,在不超过控件的前提下,等比缩放到最大,居中显示
+            - fitStart: 自适应控件,不剪裁,在不超过控件的前提下,等比缩放到最大,靠左(上)显示
+            - fitEnd: 自适应控件,不剪裁,在不超过控件的前提下,等比缩放到最大,靠右(下)显示
+            - fitXY: 以填满整个控件为目标,不按比例拉伸或缩放(可能会变形),不剪裁
+        2. Glide有两个方法可以设置图片剪裁的策略: fitCenter()、centerCrop()。这两个方法其实都是通过调用transform方法来对图片进行处理。当你没有调用上述两个方法,并且也没有调用transform方法的时候,在Glide调用into方法时,会根据你设置的ScaleType来做处理。
+        3. 有一点要注意的就是fitCenter和centerCrop方法与transform方法可以共存,但是有时候会互相影响,如果说圆角处理遇到了剪裁,圆角那一部分可能会刚好被剪裁掉了。
+    14. 自定义裁剪
+        1. 圆角处理
+            ```java
+            public  class CornersTransform extends BitmapTransformation {
+                private float radius;
+                public CornersTransform(Context context) {
+                    this(context, 10);
+                }
+                public CornersTransform(Context context, float radius) {
+                    super(context);
+                    this.radius = radius;
+                }
+                @Override protected Bitmap transform(BitmapPool pool, Bitmap source, int outWidth, int outHeight) {
+                    if (source == null) return null;
+                    Bitmap result = pool.get(source.getWidth(), source.getHeight(), Bitmap.Config.ARGB_8888);
+                    if (result == null) {
+                        result = Bitmap.createBitmap(source.getWidth(), source.getHeight(), Bitmap.Config.ARGB_8888);
+                    }
+                    Canvas canvas = new Canvas(result);
+                    Paint paint = new Paint();
+                    paint.setShader(new BitmapShader(source, BitmapShader.TileMode.CLAMP, BitmapShader.TileMode.CLAMP));
+                    paint.setAntiAlias(true);
+                    RectF rectF = new RectF(0f, 0f, source.getWidth(), source.getHeight());
+                    canvas.drawRoundRect(rectF, radius, radius, paint);
+                    return result;
+                }
+                @Override
+                public String getId() {
+                    return getClass().getName();
+                }
+            }
+            ```
+        2. CustomShapeTransformation
+            ```java
+            public class CustomShapeTransformation extends BitmapTransformation {
+                private Paint mPaint; // 画笔
+                private Context mContext;
+                private int mShapeRes; // 形状的drawable资源
+                public CustomShapeTransformation(Context context, int shapeRes) {
+                    super(context);
+                    mContext = context;
+                    mShapeRes = shapeRes;
+                    mPaint = new Paint();
+                    mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+                }
+                @Override public Bitmap transform(BitmapPool pool, Bitmap toTransform, int outWidth, int outHeight) {
+                    // 获取到形状资源的Drawable对象
+                    Drawable shape = ContextCompat.getDrawable(mContext, mShapeRes);
+                    float shapeWidth = shape.getMinimumWidth(); // 形状的宽
+                    float shapeHeight = shape.getMinimumHeight(); // 形状的高
+                    int width = toTransform.getWidth(); // 图片的宽
+                    int height = toTransform.getHeight(); // 图片的高
+                    if (width > height) {
+                        // 如果图片的宽大于高，则以高为基准，以形状的宽高比重新设置宽度
+                        width = (int) (height * (shapeWidth / shapeHeight));
+                    } else {
+                        // 如果图片的宽小于等于高，则以宽为基准，以形状的宽高比重新设置高度度
+                        height = (int) (width * (shapeHeight / shapeWidth));
+                    }
+                    // 居中裁剪图片，调用Glide库中TransformationUtils类的centerCrop()方法完成裁剪，保证图片居中且填满
+                    final Bitmap toReuse = pool.get(width, height, toTransform.getConfig() != null
+                            ? toTransform.getConfig() : Bitmap.Config.ARGB_8888);
+                    Bitmap transformed = TransformationUtils.centerCrop(toReuse, toTransform, width, height);
+                    if (toReuse != null && toReuse != transformed && !pool.put(toReuse)) {
+                        toReuse.recycle();
+                    }
+                    // 根据算出的宽高新建Bitmap对象并设置到画布上
+                    Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+                    Canvas canvas = new Canvas(bitmap);
+                    // 设置形状的大小与图片的大小一致
+                    shape.setBounds(0, 0, width, height);
+                    // 将图片画到画布上
+                    shape.draw(canvas);
+                    // 将裁剪后的图片画得画布上
+                    canvas.drawBitmap(transformed, 0, 0, mPaint);
+                    return bitmap;
+                }
+                @Override
+                public String getId() {
+                    // 用于缓存的唯一标识符
+                    return "CustomShapeTransformation" + mShapeRes;
+                }
+            }
+            ```
+    15. 集成: 替换掉自带的HttpClient，版本查询: https://github.com/bumptech/glide/wiki/Integration-Libraries
+        1. Glide包含一些小的、可选的集成库，目前Glide集成库当中包含了访问网络操作的Volley和OkHttp：
+            ```groovy
+            dependencies {
+                compile 'com.github.bumptech.glide:volley-integration:1.2.2'
+                compile 'com.mcxiaoke.volley:library:1.0.5'
+                // or
+                compile 'com.github.bumptech.glide:okhttp-integration:1.2.2'
+                compile 'com.squareup.okhttp:okhttp:2.0.0'
+            }
+            ```
+        2. application中
+            ```xml
+            <meta-data android:name="com.bumptech.glide.integration.volley.VolleyGlideModule" android:value="GlideModule" />
+            <!-- or -->
+            <meta-data android:name="com.bumptech.glide.integration.okhttp.OkHttpGlideModule" android:value="GlideModule" />
+            <!-- 注意如果多个集成，那么最后一个才有效 -->
+            ```
+        3. 然后改变混淆文件
+            ```
+            -keep class com.bumptech.glide.integration.volley.VolleyGlideModule
+            #or
+            -keep public class * implements com.bumptech.glide.module.GlideModule
+            -keep class com.bumptech.glide.integration.okhttp.OkHttpGlideModule
+            #or
+            -keep public class * implements com.bumptech.glide.module.GlideModule
+            ```
+        4. Glide如同ImageLoader一样，也是可以配置一些属性的，Glide可以在GlideModel中统一配置其属性。Glide允许一个应用当中存在多个GlideModules，但是Glide并不会按照一个特殊的顺序去调用已注册的GlideModules。如果一个应用的多个依赖工程当中有多个相同的Modules，就有可能会产生冲突。如果一个冲突是不可避免的，应用应该默认去定义一个自己的Module,用来手动地处理这个冲突，在进行Manifest合并的时候，可以用下面的标签排除冲突的Module
+            ```xml
+            <meta-data android:name="com.example.jianglei.glidedemo.GlideModelConfig" tools:node="remove"/>
+            ```
+    16. 注意事项
+        1. Glide内部封装了所有的细节，什么网络请求，什么缓存机制，当所有都就绪过后，自动切换回UI线程，更新ImageView。？？？
+        2. 如果传给into().的是一个ImageView，但是图片的size比ImageView的Size大，Glide为了节省时间，会加载小的那个size的Image。但是这对Target并不适用，以为这里并不知道Size。但是如果知道image应该多大，可以传递给Target。如 new SimpleTarget<Bitmap>(250, 200) { ... }
+        3. Target 下有 SimpleTarget / ViewTarget(适用于想Glide加载到自定义View中去) / notificationTarget / AppWidget
+        4. asGif可以加载gif图，asBitmap可以加载静态gif图即gif图的第一帧，如果非gif图用asGif方法加载呢？这时候会报错。Glide默认可以自动识别图片格式，加载gif图，所以在不确定图片格式的情况下，不要直接写asGif哦。
+        5. You cannot start a load for a destroyed activity这样的异常如何处理？记住不要再非主线程里面使用Glide加载图片，如果真的使用了，请把context参数换成getApplicationContext。希望可以帮你避免这个问题。
+        6. 为什么有的图片第一次加载的时候只显示占位图，第二次才显示正常的图片呢？如果你刚好使用了这个圆形Imageview库或者其他的一些自定义的圆形Imageview，而你又刚好设置了占位的话，那么，你就会遇到第一个问题。如何解决呢？
+            1. 不设置占位
+            2. 使用Glide的Transformation API自定义圆形Bitmap的转换。
+            3. 使用Target
+        7. 有时候你会发现网络加载完了之后会有拉伸现象，而你的控件大小明明是自适应的呀，这是为什么呢，请你检查下你是否设置了占位图，有的话请去掉就ok了。
+5. **fresco**
+    1. 引入
+        1. ``implementation 'com.facebook.fresco:fresco:2.0.0'``
+        2. 按需添加
+            ```groovy
+            dependencies {
+                // 支持 GIF 动图，需要添加
+                compile 'com.facebook.fresco:animated-gif:2.0.0'
+                // 支持 WebP (静态图+动图)，需要添加
+                compile 'com.facebook.fresco:animated-webp:2.0.0'
+                compile 'com.facebook.fresco:webpsupport:2.0.0'
+                // 仅支持 WebP 静态图，需要添加
+                compile 'com.facebook.fresco:webpsupport:2.0.0'
+                // 在 API < 14 上的机器支持 WebP 时，需要添加
+                compile 'com.facebook.fresco:animated-base-support:0.12.0'
+                // Provide the Android support library (you might already have this or a similar dependency)
+                // 提供Android支持库(您可能已经拥有此类或相似的依赖项)
+                implementation 'com.android.support:support-core-utils:24.2.1'
+            }
+            ```
+        3. 在 Application 中初始化
+            ```java
+            public class MyApplication extends Application {
+                @Override public void onCreate() {
+                    super.onCreate();
+                    Fresco.initialize(this);
+                }
+            }
+            ```
+        4. 需要声明的权限与 Glide 类似
+    2. 基本使用
+        1. xml
+            ```xml
+            <com.facebook.drawee.view.SimpleDraweeView
+                android:id="@+id/my_image_view"
+                android:layout_width="130dp"
+                android:layout_height="130dp"
+                fresco:placeholderImage="@drawable/my_drawable"/>
+            ```
+        2. java
+            ```java
+            Uri uri = Uri.parse("https://raw.githubusercontent.com/facebook/fresco/gh-pages/static/logo.png");
+            SimpleDraweeView draweeView = (SimpleDraweeView) findViewById(R.id.my_image_view);
+            draweeView.setImageURI(uri);
+            ```
+        3. 剩下的，Fresco会替你完成:
+            - 显示占位图直到加载完成；
+            - 下载图片；
+            - 缓存图片；
+            - 图片不再显示时，从内存中移除；
+    3. https://frescolib.org/docs/shipping.html 让App更小，尽管Fresco这么大
+    4. 
+6. **picasso**
+    1. 
+    2. 
+    3. 
+
+## Android ORM
+
+## Android 依赖注入
 
 ## Android Hermes
 
