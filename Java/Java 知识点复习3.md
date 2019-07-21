@@ -1,11 +1,26 @@
 <!-- [TOC] -->
 
-[Java8~9核心功能](https://blog.csdn.net/neweastsun/column/info/14382)
-[Effective Java Third Edition](https://www.cnblogs.com/IcanFixIt/tag/Effective%20Java%20Third%20Edition/)
+- [异常](#%E5%BC%82%E5%B8%B8)
+- [配置](#%E9%85%8D%E7%BD%AE)
+- [zip](#zip)
+- [jar](#jar)
+- [function](#function)
+- [security](#security)
+- [math](#math)
+- [io](#io)
+- [nio](#nio)
+- [regex](#regex)
+- [网络](#%E7%BD%91%E7%BB%9C)
+- [Java5 Annotation](#Java5-Annotation)
+- [反射](#%E5%8F%8D%E5%B0%84)
+- [工具类](#%E5%B7%A5%E5%85%B7%E7%B1%BB)
+- [Java8 Stream](#Java8-Stream)
+- [Java9 Module](#Java9-Module)
+- [lucene](#lucene)
+- [ElasticSearch](#ElasticSearch)
+- [end](#end)
 
-* []()
-
-## Java 异常
+## 异常
 
 1. java se7 中新增的 try-with ，可以自动关闭实现了 java.lang.AutoCloseable 或者 java.io.Closeable 的类可以在代码块结束后自动关闭。
     1. 例子
@@ -79,7 +94,7 @@
 6. **RuntimeException** extends Exception
     1. public RuntimeException(); public RuntimeException(String Message); public RuntimeException(String message, Throwable cause); public RuntimeException(Throwable cause); protected RuntimeException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace);
 
-## Java 配置
+## 配置
 
 0. https://docs.oracle.com/javase/tutorial/essential/environment/index.html
 1. APP配置相关API
@@ -91,7 +106,7 @@
 1. String newLine = System.getProperty("line.separator");
 2. **System**
 
-## Java zip
+## zip
 
 0. links
     * [易百javazip](https://www.yiibai.com/javazip) finished
@@ -563,21 +578,21 @@
         ```
     6. 
 
-## Java jar
+## jar
 
-## Java function
+## function
 
-## Java security
+## security
 
-## Java math
+## math
 
-## Java io
+## io
 
-## Java nio
+## nio
 
-## Java regex
+## regex
 
-## Java 网络
+## 网络
 
 [原生java http方式上传大文件(含文件流分段上传问题、base64分段转码问题解决思路)](https://blog.csdn.net/u014248939/article/details/53205030)<br>
 
@@ -688,7 +703,7 @@ https://blog.csdn.net/briblue/article/details/73824058
     9. @Repeatable  -- 只有使用了@Repeatable的注解才可以在一个元素上多次修饰，如 @Repeatable(MyTest.class) public @interface MyTest {}
 4. 
 
-## Java 反射
+## 反射
 
 [Java 反射 图](http://www.xwood.net/_site_domain_/_root/5870/5874/t_c276566.html) ../images/java/reflect/reflect.png
 [](https://blog.csdn.net/HiGson/article/details/54934887)
@@ -1020,7 +1035,7 @@ https://blog.csdn.net/briblue/article/details/73824058
         1. public Object invoke(Object proxy, Method method, Object[] args);
     2. 
 
-## Java 工具类
+## 工具类
 
 0. others
     1. java.util.function.Supplier<T> 接口
@@ -1108,7 +1123,7 @@ Java9 提供了一个交互式环境，你不用再创建一个 project 或是�
 2. 减少和Scala等语言之间的切换；
 3. 方便测试。
 
-## Java lucene
+## lucene
 
 [lucene笔记](https://blog.csdn.net/qq_36059561/article/category/8090392/3?)
 [跟我一步一步的学习lucene](https://blog.csdn.net/wuyinggui10000/article/category/3173543)
@@ -1123,6 +1138,11 @@ Java9 提供了一个交互式环境，你不用再创建一个 project 或是�
 
 [Module](https://www.cnblogs.com/IcanFixIt/p/7161615.html#top)
 
-## Java ElasticSearch
+## ElasticSearch
 
 [ElasticSearch系列](https://www.cnblogs.com/shaosks/category/1073135.html)
+
+## end
+
+[Java8~9核心功能](https://blog.csdn.net/neweastsun/column/info/14382)
+[Effective Java Third Edition](https://www.cnblogs.com/IcanFixIt/tag/Effective%20Java%20Third%20Edition/)

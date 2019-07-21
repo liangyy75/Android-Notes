@@ -1307,6 +1307,9 @@ img {
 ## 插件化
 
 
+## usb挂载
+
+https://blog.csdn.net/new_abc/article/details/53006327
 
 ## Arouter
 
@@ -2154,6 +2157,7 @@ img {
 1. links
     * [你真的会用Gson吗?Gson使用指南（一）](https://www.jianshu.com/p/e740196225a4)
     * [搞定Gson泛型封装](https://www.jianshu.com/p/d62c2be60617)
+    * [Gson github](https://github.com/google/gson)
 2. 基础1
     1. Gson的基本用法: Gson提供了fromJson() 和toJson() 两个直接用于解析和生成的方法，前者实现反序列化，后者实现了序列化。同时每个方法都提供了重载方法，我常用的总共有5个。
         1. 基本数据类型的解析
@@ -2692,325 +2696,579 @@ img {
     * [Retrofit关键概念解析](https://www.jianshu.com/p/f085be1c302c)
     * [Retrofit解析3之反射](https://www.jianshu.com/p/2216475cddfe)
     * [你真的会用Retrofit2吗?Retrofit2完全教程](https://www.jianshu.com/p/308f3c54abdd)
-1. 
+    * [Android Retrofit 2.0 的详细 使用攻略（含实例讲解）](https://www.jianshu.com/p/a3e162261ab6)
+    * [Retrofit 从入门到了解【总结】](https://www.cnblogs.com/baiqiantao/p/7494850.html)
+    * [Retrofit github](https://github.com/square/retrofit)
+    * [OKhttp和Retrofit源码分析](https://blog.csdn.net/new_abc/column/info/13425)
+    * [RxJava+Retrofit+OkHttp](https://blog.csdn.net/u014610664/column/info/13297)
+1. 知识1
+2. 知识2
+3. 知识3
+4. 知识4
 
 ## OKHttp
 
-
+0. links
+    * [OkHttp官方教程解析-彻底入门OkHttp使用](https://blog.csdn.net/u013651026/article/details/79738059) finished
+    * [理解RESTful架构](http://www.ruanyifeng.com/blog/2011/09/restful.html)
+    * [OkHttp github](https://github.com/square/okhttp)
+    * [OkHttpFinal github](https://github.com/pengjianbo/OkHttpFinal)
+    * [Kalle github](https://github.com/yanzhenjie/Kalle)
+    * [xUtil github]()
+    * [restful-api-design-references github](https://github.com/aisuhua/restful-api-design-references)
+    * [Android网络编程（六）OkHttp3用法全解析](https://blog.csdn.net/itachi85/article/details/51190687)
+    * [OKhttp和Retrofit源码分析](https://blog.csdn.net/new_abc/column/info/13425)
+1. OkHttp知识1
+    1. 导入
+        ```groovy
+        implementation("com.squareup.okhttp3:okhttp:4.0.1")
+        testImplementation("com.squareup.okhttp3:mockwebserver:4.0.1")  // 如果需要
+        ```
+        ```xml
+        <uses-permission android:name="android.permission.INTERNET"/>
+        ```
+    2. 基本的Get
+        ```java
+        OkHttpClient client = new OkHttpClient();
+        String get(String url) throws IOException {
+            Request request = new Request.Builder().url(url).build();
+            Response response = client.newCall(request).execute();
+            return response.isSuccessful() ? response.body().string() : "empty string";
+            // 获取到流的形式: response.body().byteStream() / response.body().charStream()
+        }
+        ```
+    3. 基本的Post
+        ```java
+        public static final MediaType JSON = MediaType.parse("application/json;charset=utf-8");
+        OkHttpClient client = new OkHttpClient();
+        String post(String url, String json) throws IOException {
+            Request request = new Request.Builder().url(url).post(RequestBody.create(JSON, json)).build();
+            Response response = client.newCall(request).execute();
+            return response.isSuccessful() ? response.body().string() : "empty string";
+        }
+        ```
+    4. Post(键值对)
+        ```java
+        String post(String url, Map<String, String> map) throws IOException {
+            RequestBody toBody = new FormEncoding.Builder()
+                .add("platform", "android")
+                .add("name", "bug")
+                .add("subject", "XXXXXXXXXXXXXXX")
+                .build();
+            Request request = new Request.Builder().url(url).post(toBody).build();
+            Response response = client.newCall(request).execute();
+            return response.body().string();
+        }
+        ```
+2. OkHttp知识2
+    1. 下面的共同条件
+        ```java
+        OkHttpClient client = new OKHttpClient();
+        public static final MediaType MEDIA_TYPE_MARKDOWN = MediaType.parse("text/x-markdown; charset=utf-8");
+        ```
+    2. Synchronous Get(同步Get): 下载一个文件，打印他的响应头，以string形式打印响应体。响应体的 string() 方法对于小文档来说十分方便、高效。 但是如果响应体太大（超过1MB），应避免适应 string()方法 ，因为他会将把整个文档加载到内存中。对于超过1MB的响应body，应使用流的方式来处理body。
+        ```java
+        Request request = new Request.Builder().tag(MainActivity.this)
+            .url("http://publicobject.com/helloworld.txt").build();
+        Response response = client.newCall(request).execute();
+        if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+        Headers responseHeaders = response.headers();
+        for (int i = 0; i < responseHeaders.size(); ++i) {
+            Log.d("MainActivity-- ", responseHeaders.name(i) + ": " + responseHeaders.value(i));
+        }
+        Log.d(response.body().string());
+        ```
+    3. Asynchronous Get(异步Get): 在一个工作线程中下载文件，当响应可读时回调Callback接口。读取响应时会阻塞当前线程。OkHttp现阶段不提供异步api来接收响应体。
+        ```java
+        Request request = new Request.Builder().tag(MainActivity.this)
+            .url("http://publicobject.com/helloworld.txt").build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override public void onFailure(Call call, IOException e) {
+                Log.e(TAG, "onFailure", e);
+            }
+            @Override public void onResponse(Call call, Response response) throws IOException {
+                if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+                Headers responseHeaders = response.headers();
+                for (int i = 0; i < responseHeaders.size(); ++i) {
+                    Log.d("MainActivity-- ", responseHeaders.name(i) + ": " + responseHeaders.value(i));
+                }
+                Log.d(response.body().string());
+            }
+        });
+        ```
+    4. Accessing Headers(提取响应头)
+        ```java
+        Request request = new Request.Builder()
+            .url("https://api.github.com/repos/square/okhttp/issues")
+            .header("User-Agent", "OkHttp Headers.java")
+            .addHeader("Accept", "application/json; q=0.5")
+            .addHeader("Accept", "application/vnd.github.v3+json")
+            .build();
+        // ...
+        Log.d("MainActivity-- ", "Server: " + response.header("Server"));
+        ```
+3. OkHttp知识3
+    1. Posting a String(Post方式提交String): 使用HTTP POST提交请求到服务。这个例子提交了一个markdown文档到web服务，以HTML方式渲染markdown。 因为整个请求体都在内存中，因此避免使用此api提交大文档（大于1MB）。
+        ```java
+        String postBody = "Releases\n"
+            + "--------\n"
+            + "\n"
+            + " * _1.0_ May 6, 2013\n"
+            + " * _1.1_ June 15, 2013\n"
+            + " * _1.2_ August 11, 2013\n";
+        Request request = new Request.Builder()
+            .url("https://api.github.com/markdown/raw")
+            .post(RequestBody.create(MEDIA_TYPE_MARKDOWN, postBody))
+            .build();
+        ```
+    2. Post Streaming(Post方式提交流): 以流的方式POST提交请求体。请求体的内容由流写入产生。这个例子是流直接写入Okio的BufferedSink。你的程序可能会使用OutputStream，你可以使用BufferedSink.outputStream()来获取。
+        ```java
+        RequestBody requestBody = new RequestBody() {
+            @Override public MediaType contentType() { return MEDIA_TYPE_MARKDOWN; }
+            @Override public void writeTo(BufferedSink sink) throws IOException {
+                sink.writeUtf8("Numbers\n");
+                sink.writeUtf8("-------\n");
+                for (int i = 2; i <= 997; i++) {
+                    sink.writeUtf8(String.format(" * %s = %s\n", i, factor(i)));
+                }
+            }
+            private String factor(int n) {
+                for (int i = 2; i < n; i++) {
+                    int x = n / i;
+                    if (x * i == n) return factor(x) + " × " + i;
+                }
+                return Integer.toString(n);
+            }
+        };
+        Request request = new Request.Builder().url("https://api.github.com/markdown/raw").post(requestBody).build();
+        ```
+    3. Posting a File(Post方式提交文件)
+        ```java
+        Request request = new Request.Builder().url("https://api.github.com/markdown/raw").post(RequestBody.create(MEDIA_TYPE_MARKDOWN, new File("README.md"))).build();
+        ```
+    4. Posting form parameters(Post方式提交表单)
+        ```java
+        Request request = new Request.Builder().url("https://en.wikipedia.org/w/index.php").post(new FormBody.Builder().add("search", "Jurassic Park").build()).build();
+        ```
+4. OkHttp知识4
+    1. Posting a multipart request(Post方式提交分块请求): MultipartBuilder可以构建复杂的请求体，与HTML文件上传形式兼容。多块请求体中每块请求都是一个请求体，可以定义自己的请求头。这些请求头可以用来描述这块请求，例如他的Content-Disposition。如果Content-Length和Content-Type可用的话，他们会被自动添加到请求头中。
+        ```java
+        private static final String IMGUR_CLIENT_ID = "...";
+        private static final MediaType MEDIA_TYPE_PNG = MediaType.parse("image/png");
+        // Use the imgur image upload API as documented at
+        https://api.imgur.com/endpoints/image
+        RequestBody requestBody = new MultipartBody().Builder().setType(MultipartBody.FORM)
+            .addFormDataPart("title", "Square Logo")
+            .addFormDataPart("image", "logo-square.png",
+                RequestBody.create(MEDIA_TYPE_PNG, new File("website/static/logo-square.png")))
+            .build();
+        Request request = new Request.Builder()
+            .header("Authorization", "Client-ID " + IMGUR_CLIENT_ID)
+            .url("https://api.imgur.com/3/image")
+            .post(requestBody).build();
+        ```
+    2. Response Caching(响应缓存)
+        ```java
+        private final OkHttpClient client;
+        public CacheResponse(File cacheDirectory) throws Exception {
+            int cacheSize = 10 * 1024 * 1024;  // 10 MiB
+            Cache cache = new Cache(cacheDirectory, cacheSize);
+            client = new OkHttpClient.Builder().cache(cache).build();
+        }
+        // response.cacheResponse() / response.networkResponse()
+        // CacheControl.FORCE_NETWORK / CacheControl.FORCE_CACHE
+        ```
+    3. Canceling a Call(取消一个Call): 使用Call.cancel()可以立即停止掉一个正在执行的call。如果一个线程正在写请求或者读响应，将会引发IOException。 当call没有必要的时候，使用这个api可以节约网络资源。例如当用户离开一个应用时。不管同步还是异步的call都可以取消。你可以通过tags来同时取消多个请求。当你构建一请求时，使用RequestBuilder.tag(tag)来分配一个标签。之后你就可以用OkHttpClient.cancel(tag)来取消所有带有这个tag的call。
+        ```java
+        private final ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+        Request request = new Request.Builder().url("http://httpbin.org/delay/2").build();  // This URL is served with a 2 second delay.
+        final long startNanos = System.nanoTime();
+        final Call call = client.newCall(request);
+        executor.schedule(() -> {  // Schedule a job to cancel the call in 1 second.
+            System.out.printf("%.2f Canceling call.%n", (System.nanoTime() - startNanos) / 1e9f);
+            call.cancel();
+            System.out.printf("%.2f Canceled call.%n", (System.nanoTime() - startNanos) / 1e9f);
+        }, 1, TimeUnit.SECONDS);
+        try {
+            System.out.printf("%.2f Executing call.%n", (System.nanoTime() - startNanos) / 1e9f);
+            Response response = call.execute();
+            System.out.printf("%.2f Call was expected to fail, but completed: %s%n", (System.nanoTime() - startNanos) / 1e9f, response);
+        } catch (IOException e) {
+            System.out.printf("%.2f Call failed as expected: %s%n", (System.nanoTime() - startNanos) / 1e9f, e);
+        }
+        ```
+5. OkHttp知识5
+    1. Timeouts(超时): OkHttp支持连接，读取和写入超时。``client = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();``
+    2. Per-call Configuration(每个Call的配置): 使用OkHttpClient，所有的HTTP Client配置包括代理设置、超时设置、缓存设置。当你需要为单个call改变配置的时候，clone一个 OkHttpClient。 这个api将会返回一个浅拷贝（shallow copy），你可以用来单独自定义。下面的例子中，我们让一个请求是500ms的超时、另一个是3000ms的超时。
+        ```java
+        private final OkHttpClient client = new OkHttpClient();
+        OkHttpClient copy1 = client.newBuilder().readTimeout(500, TimeUnit.MILLISECONDS).build();
+        OkHttpClient copy2 = client.newBuilder().readTimeout(3000, TimeUnit.MILLISECONDS).build();
+        ```
+    3. Handling authentication(处理验证): OkHttp会自动重试未验证的请求。当响应是401 Not Authorized时，Authenticator会被要求提供证书。Authenticator的实现中需要建立一个新的包含证书的请求。如果没有证书可用，返回null来跳过尝试。
+        1. 基本例子
+            ```java
+            client = new OkHttpClient.Builder().authenticator(new Authenticator() {
+                @Override public Request authenticate(Route route, Response response) throws IOException {
+                    System.out.println("Authenticating for response: " + response);
+                    System.out.println("Challenges: " + response.challenges());
+                    String credential = Credentials.basic("jesse", "password1");
+                    return response.request().newBuilder().header("Authorization", credential).build();
+                }
+            }).build();
+            ```
+        2. 为了避免在身份验证不起作用时进行多次重试，可以返回NULL以放弃。例如，当这些确切的凭据已经尝试时，您可能希望跳过重试。
+            ```java
+            if (credential.equals(response.request().header("Authorization"))) {
+                return null;  // If we already failed with these credentials, don't retry.
+            }
+            // You may also skip the retry when you’ve hit an application-defined attempt limit:
+            if (responseCount(response) >= 3) {
+                return null; // If we've failed 3 times, give up.
+            }
+            // This above code relies on this responseCount() method:
+            private int responseCount(Response response) {
+                int result = 1;
+                while ((response = response.priorResponse()) != null) result++;
+                return result;
+            }
+            ```
+6. OkHttp知识6
+    1. OkHttpClient
+    2. Request
+    3. Response
+    4. RequestBody
+    5. ResponseBody
+    6. MultipartBody
+    7. FormBody
+    8. Callback
 
 ## Volley
 
-0. links
-    1. [Android 网络通信框架Volley学习系列](http://www.voidcn.com/article/p-gaharqmq-mg.html)
-    2. [Android Volley完全解析系列](https://blog.csdn.net/guolin_blog/article/details/17482095)
-    3. [volley github](https://github.com/google/volley)
-    4. [Volley overview](https://developer.android.com/training/volley/index.html)
-    5. [Volley支持https的3种方法小结](https://blog.csdn.net/lintax/article/details/69761913)
-    6. [Android高效加载大图、多图解决方案，有效避免程序OOM](https://blog.csdn.net/guolin_blog/article/details/9316683)
-1. 初识
-    1. 基本用法
-        1. Android系统中主要提供了两种方式来进行HTTP通信，HttpURLConnection和HttpClient，它们的使用率非常高。
-        2. 不过HttpURLConnection和HttpClient的用法还是稍微有些复杂的，如果不进行适当封装的话，很容易就会写出不少重复代码。于是乎，一些Android网络通信框架也就应运而生，说AsyncHttpClient，它把HTTP所有的通信细节全部封装在了内部，我们只需要简单调用几行代码就可以完成通信操作了；如Universal-Image-Loader，它使得在界面上显示网络图片的操作变得极度简单，开发者不用关心如何从网络上获取图片，也不用关心开启线程、回收图片资源等细节。
-        3. 而Android开发团队也是在2013年Google I/O大会上推出了一个新的网络通信框架——Volley，把AsyncHttpClient和Universal-Image-Loader的优点集于了一身，既可以像AsyncHttpClient一样非常简单地进行HTTP通信，也可以像Universal-Image-Loader一样轻松加载网络上的图片。除了简单易用之外，Volley在性能方面也进行了大幅度的调整，它的设计目标就是非常适合去进行数据量不大，但通信频繁的网络操作，而对于大数据量的网络操作，比如说下载文件等，Volley的表现就会非常糟糕。
-        4. StringRequest的用法
-            1. 获得请求队列对象``RequestQueue mQueue = Volley.newRequestQueue(context);``
-            2. RequestQueue是一个请求队列对象，它可以缓存所有的HTTP请求，然后按照一定的算法并发地发出这些请求。RequestQueue内部的设计就是非常合适高并发的，因此我们不必为每一次HTTP请求都创建一个RequestQueue对象，这是非常浪费资源的，基本上在每一个需要和网络交互的Activity中创建一个RequestQueue对象就足够了。
-            3. 创建StringRequest对象
-                ```java
-                StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://www.baidu.com",
-                    new Response.Listener<String>() {
-                        @Override
-                        public void onResponse(String response) {
-                            Log.d("TAG", response);
-                        }
-                    }, new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            Log.e("TAG", error.getMessage(), error);
-                        }
-                    });
-                ```
-            4. 发出请求``mQueue.add(stringRequest);``
-            5. 添加权限``<uses-permission android:name="android.permission.INTERNET" />``
-        5. JsonRequest的用法
-            1. 类似于StringRequest，JsonRequest也是继承自Request类的，不过由于JsonRequest是一个抽象类，因此我们无法直接创建它的实例，那么只能从它的子类入手了。JsonRequest有两个直接的子类，JsonObjectRequest和JsonArrayRequest
-            2. 至于它们的用法也基本上没有什么特殊之处，先new出一个JsonObjectRequest对象，如下所示
+1. links
+    * [Android Volley完全解析系列](https://blog.csdn.net/guolin_blog/article/details/17482095) finished(除了最后的源码解读那一篇)
+    * [volley github](https://github.com/google/volley)
+    * [Volley overview](https://developer.android.com/training/volley/index.html)
+    * [Volley支持https的3种方法小结](https://blog.csdn.net/lintax/article/details/69761913)
+    * [Android高效加载大图、多图解决方案，有效避免程序OOM](https://blog.csdn.net/guolin_blog/article/details/9316683)
+2. 基本用法
+    1. Android系统中主要提供了两种方式来进行HTTP通信，HttpURLConnection和HttpClient，它们的使用率非常高。
+    2. 不过HttpURLConnection和HttpClient的用法还是稍微有些复杂的，如果不进行适当封装的话，很容易就会写出不少重复代码。于是乎，一些Android网络通信框架也就应运而生，说 AsyncHttpClient，它把HTTP所有的通信细节全部封装在了内部，我们只需要简单调用几行代码就可以完成通信操作了；如Universal-Image-Loader，它使得在界面上显示网络图片的操作变得极度简单， 开发者不用关心如何从网络上获取图片，也不用关心开启线程、回收图片资源等细节。
+    3. 而Android开发团队也是在2013年Google I/O大会上推出了一个新的网络通信框架——Volley，把AsyncHttpClient和Universal-Image-Loader的优点集于了一身，既可以像AsyncHttpClient一样非 常简单地进行HTTP通信，也可以像Universal-Image-Loader一样轻松加载网络上的图片。除了简单易用之外，Volley在性能方面也进行了大幅度的调整，它的设计目标就是非常适合去进行数据量不大，但通信频繁的网络操作，而对于大数据量的网络操作，比如说下载文件等，Volley的表现就会非常糟糕。
+    4. StringRequest的用法
+        1. 获得请求队列对象``RequestQueue mQueue = Volley.newRequestQueue(context);``
+        2. RequestQueue是一个请求队列对象，它可以缓存所有的HTTP请求，然后按照一定的算法并发地发出这些请求。RequestQueue内部的设计就是非常合适高并发的，因此我们不必为每一次HTTP请求都创建一个RequestQueue对象，这是非常浪费资源的，基本上在每一个需要和网络交互的Activity中创建一个RequestQueue对象就足够了。
+        3. 创建StringRequest对象
             ```java
-                JsonObjectRequest jsonObjectRequest = new JsonObjectRequest("http://m.weather.com.cn/data/101010100.html", null,
-                    new Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject response) {
-                            Log.d("TAG", response.toString());
+            StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://www.baidu.com",
+                response -> Log.d("TAG", response),
+                error -> Log.e("TAG", error.getMessage(), error));
+            ```
+        4. 发出请求``mQueue.add(stringRequest);``
+        5. 添加权限``<uses-permission android:name="android.permission.INTERNET" />``
+    5. JsonRequest的用法
+        1. 类似于StringRequest，JsonRequest也是继承自Request类的，不过由于JsonRequest是一个抽象类，因此我们无法直接创建它的实例，那么只能从它的子类入手了。JsonRequest有两个直接的子类，JsonObjectRequest和JsonArrayRequest
+        2. 至于它们的用法也基本上没有什么特殊之处，先new出一个JsonObjectRequest对象，如下所示
+        ```java
+            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest("http://m.weather.com.cn/data/101010100.html", null,
+                response -> Log.d("TAG", response.toString()),
+                error -> Log.e("TAG", error.getMessage(), error));
+            ```
+    6. ImageRequest的用法
+        1. 示例
+            ```java
+            ImageRequest imageRequest = new ImageRequest("http://developer.android.com/images/home/aw_dac.png",
+                response -> imageView.setImageBitmap(response), 0, 0, Config.RGB_565,
+                error -> Log.e("TAG", error.getMessage(), error));
+            ```
+        2. 第三第四个参数分别用于指定允许图片最大的宽度和高度，如果指定的网络图片的宽度或高度大于这里的最大值，则会对图片进行压缩，指定成0的话就表示不管图片有多大，都不会进行压缩。第五个参数用于指定图片的颜色属性，Bitmap.Config下的几个常量都可以在这里使用，其中ARGB_8888可以展示最好的颜色属性，每个图片像素占据4个字节的大小，而RGB_565则表示每个图片像素占据2个字节大小。
+3. 高级用法1
+    1. ImageLoader的用法
+        1. ImageLoader也可以用于加载网络上的图片，并且它的内部也是使用ImageRequest来实现的，不过ImageLoader明显要比ImageRequest更加高效，因为它不仅可以帮我们对图片进行缓存，还可以过滤掉重复的链接，避免重复发送请求。
+        2. 由于ImageLoader已经不是继承自Request的了，所以它的用法也和我们之前学到的内容有所不同，总结起来大致可以分为以下四步:
+            1. 创建一个RequestQueue对象。
+            2. 创建一个ImageLoader对象。
+            3. 获取一个ImageListener对象。
+            4. 调用ImageLoader的get()方法加载网络上的图片。
+        3. 示例
+            ```java
+            ImageLoader imageLoader = new ImageLoader(requestQueue, new ImageCache() {
+                @Override public void putBitmap(String url, Bitmap bitmap) {}
+                @Override public Bitmap getBitmap(String url) { return null; }
+            });
+            ImageListener listener = ImageLoader.getImageListener(imageView, R.drawable.proceeding_image, R.drawable.failed_image);
+            imageLoader.get("https://img-my.csdn.net/uploads/201404/13/1397393290_5765.jpeg", listener, 200, 200);
+            ```
+        4. 虽然现在我们已经掌握了ImageLoader的用法，但是刚才介绍的ImageLoader的优点却还没有使用到。为什么呢？因为这里创建的ImageCache对象是一个空的实现，完全没能起到图片缓存的作用。其实写一个ImageCache也非常简单，但是如果想要写一个性能非常好的ImageCache，最好就要借助Android提供的LruCache功能了。
+            ```java
+            public class BitmapCache implements ImageCache {
+                private LruCache<String, Bitmap> mCache;
+                public BitmapCache() {
+                    int maxSize = 10 * 1024 * 1024;
+                    mCache = new LruCache<String, Bitmap>(maxSize) {
+                        @Override protected int sizeOf(String key, Bitmap bitmap) {
+                            return bitmap.getRowBytes() * bitmap.getHeight();
                         }
-                    }, new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            Log.e("TAG", error.getMessage(), error);
-                        }
-                    });
-                ```
-        6. ImageRequest的用法
-            1. 示例
-                ```java
-                ImageRequest imageRequest = new ImageRequest("http://developer.android.com/images/home/aw_dac.png",
-                    new Response.Listener<Bitmap>() {
-                        @Override
-                        public void onResponse(Bitmap response) {
-                            imageView.setImageBitmap(response);
-                        }
-                    }, 0, 0, Config.RGB_565, new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            imageView.setImageResource(R.drawable.default_image);
-                        }
-                    });
-                ```
-            2. 第三第四个参数分别用于指定允许图片最大的宽度和高度，如果指定的网络图片的宽度或高度大于这里的最大值，则会对图片进行压缩，指定成0的话就表示不管图片有多大，都不会进行压缩。第五个参数用于指定图片的颜色属性，Bitmap.Config下的几个常量都可以在这里使用，其中ARGB_8888可以展示最好的颜色属性，每个图片像素占据4个字节的大小，而RGB_565则表示每个图片像素占据2个字节大小。
-        7. ImageLoader的用法
-            1. ImageLoader也可以用于加载网络上的图片，并且它的内部也是使用ImageRequest来实现的，不过ImageLoader明显要比ImageRequest更加高效，因为它不仅可以帮我们对图片进行缓存，还可以过滤掉重复的链接，避免重复发送请求。
-            2. 由于ImageLoader已经不是继承自Request的了，所以它的用法也和我们之前学到的内容有所不同，总结起来大致可以分为以下四步:
-                1. 创建一个RequestQueue对象。
-                2. 创建一个ImageLoader对象。
-                3. 获取一个ImageListener对象。
-                4. 调用ImageLoader的get()方法加载网络上的图片。
-            3. 示例
-                ```java
-                ImageLoader imageLoader = new ImageLoader(requestQueue, new ImageCache() {
-                    @Override public void putBitmap(String url, Bitmap bitmap) {}
-                    @Override public Bitmap getBitmap(String url) { return null; }
-                });
-                ImageListener listener = ImageLoader.getImageListener(imageView, R.drawable.proceeding_image, R.drawable.failed_image);
-                imageLoader.get("https://img-my.csdn.net/uploads/201404/13/1397393290_5765.jpeg", listener, 200, 200);
-                ```
-            4. 虽然现在我们已经掌握了ImageLoader的用法，但是刚才介绍的ImageLoader的优点却还没有使用到。为什么呢？因为这里创建的ImageCache对象是一个空的实现，完全没能起到图片缓存的作用。其实写一个ImageCache也非常简单，但是如果想要写一个性能非常好的ImageCache，最好就要借助Android提供的LruCache功能了。
-                ```java
-                public class BitmapCache implements ImageCache {
-                    private LruCache<String, Bitmap> mCache;
-                    public BitmapCache() {
-                        int maxSize = 10 * 1024 * 1024;
-                        mCache = new LruCache<String, Bitmap>(maxSize) {
-                            @Override
-                            protected int sizeOf(String key, Bitmap bitmap) {
-                                return bitmap.getRowBytes() * bitmap.getHeight();
-                            }
-                        };
-                    }
-                    @Override
-                    public Bitmap getBitmap(String url) {
-                        return mCache.get(url);
-                    }
-                    @Override
-                    public void putBitmap(String url, Bitmap bitmap) {
-                        mCache.put(url, bitmap);
-                    }
+                    };
                 }
-                ```
-        8. NetworkImageView的用法
-            1. NetworkImageView控件的用法要比前两种方式更加简单，大致可以分为以下五步：
-                1. 创建一个RequestQueue对象。
-                2. 创建一个ImageLoader对象。
-                3. 在布局文件中添加一个NetworkImageView控件。
-                4. 在代码中获取该控件的实例。
-                5. 设置要加载的图片地址。
-            2. 其中，第一第二步和ImageLoader的用法是完全一样的，因此这里我们就从第三步开始学习了。
-                ```xml
-                <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:orientation="vertical" >
-                    <Button
-                        android:id="@+id/button"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Send Request" />
-                    <com.android.volley.toolbox.NetworkImageView
-                        android:id="@+id/network_image_view"
-                        android:layout_width="200dp"
-                        android:layout_height="200dp"
-                        android:layout_gravity="center_horizontal"/>
-                </LinearLayout>
-                ```
-            3. ``networkImageView = (NetworkImageView) findViewById(R.id.network_image_view);``
+                @Override public Bitmap getBitmap(String url) { return mCache.get(url); }
+                @Override public void putBitmap(String url, Bitmap bitmap) { mCache.put(url, bitmap); }
+            }
+            ```
+    2. NetworkImageView的用法
+        1. NetworkImageView控件的用法要比前两种方式更加简单，大致可以分为以下五步：
+            1. 创建一个RequestQueue对象。
+            1. 创建一个ImageLoader对象。
+            2. 在布局文件中添加一个NetworkImageView控件。
+            3. 在代码中获取该控件的实例。
             4. 设置要加载的图片地址。
-                ```java
-                networkImageView.setDefaultImageResId(R.drawable.default_image);
-                networkImageView.setErrorImageResId(R.drawable.failed_image);
-                networkImageView.setImageUrl("https://img-my.csdn.net/uploads/201404/13/1397393290_5765.jpeg", imageLoader);
-                ```
-            5. NetworkImageView并不需要提供任何设置最大宽高的方法也能够对加载的图片进行压缩。这是由于NetworkImageView是一个控件，在加载图片的时候它会自动获取自身的宽高，然后对比网络图片的宽度，再决定是否需要对图片进行压缩。也就是说，压缩过程是在内部完全自动化的，并不需要我们关心，NetworkImageView会始终呈现给我们一张大小刚刚好的网络图片，不会多占用任何一点内存，这也是NetworkImageView最简单好用的一点吧。当然了，如果你不想对图片进行压缩的话，其实也很简单，只需要在布局文件中把NetworkImageView的layout_width和layout_height都设置成wrap_content就可以了，这样NetworkImageView就会将该图片的原始大小展示出来，不会进行任何压缩。
-    2. 高级用法
-        1. 定制自己的Request
-            1. XmlRequest
-                ```java
-                public class XmlRequest extends Request<XmlPullParser> {
-                    private final Object mLock = new Object();
-                    private Response.Listener<XmlPullParser> mListener;
-                    public XmlRequest(String url, Response.Listener<XmlPullParser> mListener, Response.ErrorListener listener) {
-                        super(url, listener);
-                        this.mListener = mListener;
-                    }
-                    public XmlRequest(int method, String url, Response.Listener<XmlPullParser> mListener, @Nullable Response.ErrorListener listener) {
-                        super(method, url, listener);
-                        this.mListener = mListener;
-                    }
-                    @Override public void cancel() {
-                        super.cancel();
-                        synchronized (mLock) {
-                            mListener = null;
-                        }
-                    }
-                    @Override protected Response<XmlPullParser> parseNetworkResponse(NetworkResponse response) {
-                        String xmlString;
-                        try {
-                            xmlString = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
-                        } catch (UnsupportedEncodingException e) {
-                            // return Response.error(new ParseError(e));
-                            xmlString = new String(response.data);
-                        }
-                        try {
-                            XmlPullParser xmlPullParser = XmlPullParserFactory.newInstance().newPullParser();
-                            xmlPullParser.setInput(new StringReader(xmlString));
-                            return Response.success(xmlPullParser, HttpHeaderParser.parseCacheHeaders(response));
-                        } catch (XmlPullParserException e) {
-                            return Response.error(new ParseError(e));
-                        }
-                    }
-                    @Override protected void deliverResponse(XmlPullParser response) {
-                        Response.Listener<XmlPullParser> listener;
-                        synchronized (mLock) {
-                            listener = mListener;
-                        }
-                        if (listener != null) {
-                            listener.onResponse(response);
-                        }
-                    }
+        2. 其中，第一第二步和ImageLoader的用法是完全一样的，因此这里我们就从第三步开始学习了。
+            ```xml
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:orientation="vertical" >
+                <Button
+                    android:id="@+id/button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Send Request" />
+                <com.android.volley.toolbox.NetworkImageView
+                    android:id="@+id/network_image_view"
+                    android:layout_width="200dp"
+                    android:layout_height="200dp"
+                    android:layout_gravity="center_horizontal"/>
+            </LinearLayout>
+            ```
+        3. ``networkImageView = (NetworkImageView) findViewById(R.id.network_image_view);``
+        4. 设置要加载的图片地址。
+            ```java
+            networkImageView.setDefaultImageResId(R.drawable.default_image);
+            networkImageView.setErrorImageResId(R.drawable.failed_image);
+            networkImageView.setImageUrl("https://img-my.csdn.net/uploads/201404/13/1397393290_5765.jpeg", imageLoader);
+            ```
+        5. NetworkImageView并不需要提供任何设置最大宽高的方法也能够对加载的图片进行压缩。这是由于NetworkImageView是一个控件，在加载图片的时候它会自动获取自身的宽高，然后对比网络图片的宽度，再决定是否需要对图片进行压缩。也就是说，压缩过程是在内部完全自动化的，并不需要我们关心，NetworkImageView会始终呈现给我们一张大小刚刚好的网络图片，不会多占用任何一点内存，这也是NetworkImageView最简单好用的一点吧。当然了，如果你不想对图片进行压缩的话，其实也很简单，只需要在布局文件中把NetworkImageView的layout_width和layout_height都设置成wrap_content就可以了，这样NetworkImageView就会将该图片的原始大小展示出来，不会进行任何压缩。
+4. 高级用法2
+    1. XmlRequest
+        ```java
+        public class XmlRequest extends Request<XmlPullParser> {
+            private final Object mLock = new Object();
+            private Response.Listener<XmlPullParser> mListener;
+            public XmlRequest(String url, Response.Listener<XmlPullParser> mListener, Response.ErrorListener listener) {
+                super(url, listener);
+                this.mListener = mListener;
+            }
+            public XmlRequest(int method, String url, Response.Listener<XmlPullParser> mListener, @Nullable Response.ErrorListener listener) {
+                super(method, url, listener);
+                this.mListener = mListener;
+            }
+            @Override public void cancel() {
+                super.cancel();
+                synchronized (mLock) { mListener = null; }
+            }
+            @Override protected Response<XmlPullParser> parseNetworkResponse(NetworkResponse response) {
+                String xmlString;
+                try {
+                    xmlString = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
+                } catch (UnsupportedEncodingException e) {
+                    // return Response.error(new ParseError(e));
+                    xmlString = new String(response.data);
                 }
-                ```
-            2. GsonRequest
-                ```java
-                public class HTTPSTrustManager implements X509TrustManager {
-                    private static final String TAG = "HTTPSTrustManager";
-                    private static TrustManager[] trustManagers;
-                    private static final X509Certificate[] _AcceptedIssuers = new X509Certificate[]{};
-                    @Override public void checkClientTrusted(X509Certificate[] x509Certificates, String s) {}
-                    @Override public void checkServerTrusted(X509Certificate[] x509Certificates, String s) {}
-                    @Override public X509Certificate[] getAcceptedIssuers() {
-                        return _AcceptedIssuers;
-                    }
-                    public static void allowAllSSL() {
-                        HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
-                            @Override
-                            public boolean verify(String arg0, SSLSession arg1) {
-                                // TODO Auto-generated method stub
-                                return true;
+                try {
+                    XmlPullParser xmlPullParser = XmlPullParserFactory.newInstance().newPullParser();
+                    xmlPullParser.setInput(new StringReader(xmlString));
+                    return Response.success(xmlPullParser, HttpHeaderParser.parseCacheHeaders(response));
+                } catch (XmlPullParserException e) {
+                    return Response.error(new ParseError(e));
+                }
+            }
+            @Override protected void deliverResponse(XmlPullParser response) {
+                Response.Listener<XmlPullParser> listener;
+                synchronized (mLock) { listener = mListener; }
+                if (listener != null) { listener.onResponse(response); }
+            }
+        }
+        ```
+    2. GsonRequest
+        ```java
+        public class HTTPSTrustManager implements X509TrustManager {
+            private static final String TAG = "HTTPSTrustManager";
+            private static TrustManager[] trustManagers;
+            private static final X509Certificate[] _AcceptedIssuers = new X509Certificate[]{};
+            @Override public void checkClientTrusted(X509Certificate[] x509Certificates, String s) {}
+            @Override public void checkServerTrusted(X509Certificate[] x509Certificates, String s) {}
+            @Override public X509Certificate[] getAcceptedIssuers() { return _AcceptedIssuers; }
+            public static void allowAllSSL() {
+                HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
+                    @Override public boolean verify(String arg0, SSLSession arg1) { return true; }
+                });
+                SSLContext context = null;
+                if (trustManagers == null) { trustManagers = new TrustManager[]{new HTTPSTrustManager()}; }
+                try {
+                    context = SSLContext.getInstance("TLS");
+                    context.init(null, trustManagers, new SecureRandom());
+                } catch (NoSuchAlgorithmException e) {
+                    Log.e(TAG, "NoSuchAlgorithmException", e);
+                } catch (KeyManagementException e) {
+                    Log.e(TAG, "KeyManagementException", e);
+                }
+                assert context != null;
+                HttpsURLConnection.setDefaultSSLSocketFactory(context.getSocketFactory());
+            }
+        }
+        ```
+        ```java
+        public abstract class GsonRequest<T> extends Request<T> {
+            private final static Gson gson = new Gson();
+            private final Object mLock = new Object();
+            private Response.Listener<T> mListener;
+            private Class<T> entityClass;
+            public Class<T> getEntityClass() { return entityClass; }
+            public GsonRequest(String url, Response.Listener<T> mListener, Response.ErrorListener listener) {
+                super(url, listener);
+                this.mListener = mListener;
+                ParameterizedType genericSuperclass = (ParameterizedType) getClass().getGenericSuperclass();
+                entityClass = (Class<T>) genericSuperclass.getActualTypeArguments()[0];
+            }
+            public GsonRequest(int method, String url, Response.Listener<T> mListener, @Nullable Response.ErrorListener listener) {
+                super(method, url, listener);
+                this.mListener = mListener;
+                ParameterizedType genericSuperclass = (ParameterizedType) getClass().getGenericSuperclass();
+                entityClass = (Class<T>) genericSuperclass.getActualTypeArguments()[0];
+            }
+            @Override protected Response<T> parseNetworkResponse(NetworkResponse response) {
+                String jsonString;
+                try {
+                    jsonString = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
+                } catch (UnsupportedEncodingException e) {
+                    jsonString = new String(response.data);
+                }
+                return Response.success(gson.fromJson(jsonString, entityClass), HttpHeaderParser.parseCacheHeaders(response));
+            }
+            @Override protected void deliverResponse(T response) {
+                Response.Listener<T> listener;
+                synchronized (mLock) { listener = mListener; }
+                if (listener != null) { listener.onResponse(response); }
+            }
+            @Override public void cancel() {
+                super.cancel();
+                synchronized (mLock) { mListener = null; }
+            }
+        }
+        ```
+    3. 调用
+        ```java
+        private void testGsonRequest() {
+            final Gson gson = new Gson();
+            try {
+                GsonRequest<Weather> gsonRequest = new GsonRequest<Weather>(json_url,
+                        response -> Log.d(TAG, "get json successfully. " + gson.toJson(response)),
+                        error -> Log.e(TAG, "get json failed.", error)){};
+                Log.d(TAG, "gsonRequest's entityClass: " + gsonRequest.getEntityClass().getSimpleName());
+                requestQueue.add(gsonRequest);
+            } catch (Exception e) {
+                Log.e(TAG, "cast error!", e);
+            }
+        }
+        private void testXmlRequest() {
+            XmlRequest xmlRequest = new XmlRequest(xml_url, response -> {
+                Log.d(TAG, "get xml successfully. ");
+                try {
+                    int eventType = response.getEventType();
+                    while (eventType != XmlPullParser.END_DOCUMENT) {
+                        if (eventType == XmlPullParser.START_TAG) {
+                            String nodeName = response.getName();
+                            if ("city".equals(nodeName)) {
+                                String pName = response.getAttributeValue(0);
+                                Log.d(TAG, "pName is " + pName);
                             }
-                        });
-                        SSLContext context = null;
-                        if (trustManagers == null) {
-                            trustManagers = new TrustManager[]{new HTTPSTrustManager()};
                         }
-                        try {
-                            context = SSLContext.getInstance("TLS");
-                            context.init(null, trustManagers, new SecureRandom());
-                        } catch (NoSuchAlgorithmException e) {
-                            Log.e(TAG, "NoSuchAlgorithmException", e);
-                        } catch (KeyManagementException e) {
-                            Log.e(TAG, "KeyManagementException", e);
-                        }
-                        assert context != null;
-                        HttpsURLConnection.setDefaultSSLSocketFactory(context.getSocketFactory());
+                        eventType = response.next();
                     }
+                } catch (XmlPullParserException e) {
+                    Log.d(TAG, "parse xml failed -- XmlPullParserException.", e);
+                } catch (IOException e) {
+                    Log.d(TAG, "parse xml failed -- IOException.", e);
                 }
-                ```
-                ```java
-                public abstract class GsonRequest<T> extends Request<T> {
-                    private final static Gson gson = new Gson();
-                    private final Object mLock = new Object();
-                    private Response.Listener<T> mListener;
-                    private Class<T> entityClass;
-                    public Class<T> getEntityClass() {
-                        return entityClass;
-                    }
-                    public GsonRequest(String url, Response.Listener<T> mListener, Response.ErrorListener listener) {
-                        super(url, listener);
-                        this.mListener = mListener;
-                        ParameterizedType genericSuperclass = (ParameterizedType) getClass().getGenericSuperclass();
-                        entityClass = (Class<T>) genericSuperclass.getActualTypeArguments()[0];
-                    }
-                    public GsonRequest(int method, String url, Response.Listener<T> mListener, @Nullable Response.ErrorListener listener) {
-                        super(method, url, listener);
-                        this.mListener = mListener;
-                        ParameterizedType genericSuperclass = (ParameterizedType) getClass().getGenericSuperclass();
-                        entityClass = (Class<T>) genericSuperclass.getActualTypeArguments()[0];
-                    }
-                    @Override protected Response<T> parseNetworkResponse(NetworkResponse response) {
-                        String jsonString;
-                        try {
-                            jsonString = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
-                        } catch (UnsupportedEncodingException e) {
-                            jsonString = new String(response.data);
-                        }
-                        return Response.success(gson.fromJson(jsonString, entityClass), HttpHeaderParser.parseCacheHeaders(response));
-                    }
-                    @Override protected void deliverResponse(T response) {
-                        Response.Listener<T> listener;
-                        synchronized (mLock) {
-                            listener = mListener;
-                        }
-                        if (listener != null) {
-                            listener.onResponse(response);
-                        }
-                    }
-                    @Override public void cancel() {
-                        super.cancel();
-                        synchronized (mLock) {
-                            mListener = null;
-                        }
-                    }
-                }
-                ```
-            3. 调用
-                ```java
-                private void testGsonRequest() {
-                    final Gson gson = new Gson();
-                    try {
-                        GsonRequest<Weather> gsonRequest = new GsonRequest<Weather>(json_url,
-                                response -> Log.d(TAG, "get json successfully. " + gson.toJson(response)),
-                                error -> Log.e(TAG, "get json failed.", error)){};
-                        Log.d(TAG, "gsonRequest's entityClass: " + gsonRequest.getEntityClass().getSimpleName());
-                        requestQueue.add(gsonRequest);
-                    } catch (Exception e) {
-                        Log.e(TAG, "cast error!", e);
-                    }
-                }
-                private void testXmlRequest() {
-                    XmlRequest xmlRequest = new XmlRequest(xml_url, response -> {
-                        Log.d(TAG, "get xml successfully. ");
-                        try {
-                            int eventType = response.getEventType();
-                            while (eventType != XmlPullParser.END_DOCUMENT) {
-                                if (eventType == XmlPullParser.START_TAG) {
-                                    String nodeName = response.getName();
-                                    if ("city".equals(nodeName)) {
-                                        String pName = response.getAttributeValue(0);
-                                        Log.d(TAG, "pName is " + pName);
-                                    }
-                                }
-                                eventType = response.next();
-                            }
-                        } catch (XmlPullParserException e) {
-                            Log.d(TAG, "parse xml failed -- XmlPullParserException.", e);
-                        } catch (IOException e) {
-                            Log.d(TAG, "parse xml failed -- IOException.", e);
-                        }
-                    }, error -> Log.d(TAG, "get xml failed.", error));
-                    requestQueue.add(xmlRequest);
-                }
-                ```
-        2. 
-2. 源码解读
+            }, error -> Log.d(TAG, "get xml failed.", error));
+            requestQueue.add(xmlRequest);
+        }
+        ```
+5. 高级用法3
+    1. Volley类的四个主要方法
+        * RequestQueue newRequestQueue(Context context, BaseHttpStack stack)
+        * RequestQueue newRequestQueue(Context context, HttpStack stack) @Deprecate
+        * RequestQueue newRequestQueue(Context context, Network network)
+        * RequestQueue newRequestQueue(Context context)
+    2. 自定义 Stack ，只需要继承 BaseHttpStack ，这个类只有一个需要重写的方法: HttpResponse executeRequest(Request<?> request, Map<String, String> additionalHeaders)
+    3. 自定义 Network ，需要重写 NetworkResponse performRequest(Request<?> request)
+    4. 自定义 Cache ，需要重写 get / put / initialize / invalidate / remove / clear
+    5. 自定义 RetryPolicy ，需要重写 getCurrentTimeout / getCurrentRetryCount / retry
+    6. 注意 RequestQueue 里面的两个接口 RequestFinishedListener<T> / RequestFileter
+6. 高级用法4
+    1. Request
+        * setTag(Object tag) / Object getTag(): 可以根据这个 requestQueue.cancelAll 取消所有该 tag 的请求
+        * setRetryPolicy(RetryPolicy retryPolicy) / RetryPolicy getRetryPolicy()
+        * addMarker(String tag)： for debugging
+        * setRequestQueue(RequestQueue requestQueue)
+        * Request<?> setSequence(int sequence) / int getSequence(): 指定 seqNum
+        * setCacheEntry(Cache.Entry entry) / Cache.Entry getCacheEntry()
+        * setShouldCache(boolean shouldCache) / boolean shouldCache()
+        * setShouldRetryServerErrors(boolean shouldRetryServerErrors) / boolean shouldRetryServerErrors()
+        * Priority getPriority(): Priority 有 LOW / NORNAL / HIGH / IMMEDIATE
+        * int getTimeoutMs()
+        * Map<String, String> getHeaders()
+        * String getBodyContentType() / byte[] getBody()
+        * Response.ErrorListener getErrorListener()
+        * int getTrafficStatsTag(): 和 android.net.TrafficStats#setThreadStatsTag(int) 相关  **???**
+        * String getUrl()
+        * String getCacheKey(): 获取缓存相关的 key ，默认是 url
+        * cancel() / boolean isCanceled() / markDelivered()
+        * boolean hasHadResponseDelivered()
+    2. Response
+        * interface Listener<T>: void onResponse(T response);
+        * interface ErrorListener: void onErrorResponse(VolleyError error);
+        * Response<T> success(T result, Cache.Entry cacheEntry)
+        * Response<T> error(VolleyError error)
+        * boolean isSuccess()
+    3. RetryPolicy
+        * int getCurrentTimeout();
+        * int getCurrentRetryCount();
+        * void retry(VolleyError error) throws VolleyError;
+    4. RequestQueue
+        * interface RequestFinishedListener<T>: void onRequestFinished(Request<T> request);
+        * interface RequestFilter: boolean apply(Request<?> request);
+        * Request<T> add(Request<T> request)
+        * cancelAll(RequestFilter filter) / cancelAll(final Object tag)
+        * void addRequestFinishedListener(RequestFinishedListener<T> listener) / void removeRequestFinishedListener(RequestFinishedListener<T> listener)
+        * int getSequenceNumber()
+        * Cache getCache()
+    5. Cache
+        * Entry get(String key);
+        * void put(String key, Entry entry);
+        * void initialize();
+        * void invalidate(String key, boolean fullExpire);
+        * void remove(String key);
+        * void clear()
+        * class Entry
+            * byte[] data / String etag / long serverDate / long lastModified / long ttl / long softTtl
+            * Map<String, String> responseHeaders = Collections.emptyMap()
+            * List<Header> allResponseHeaders
+            * boolean isExpired()
+            * boolean refreshNeeded()
+    6. NoCache
+    7. DiskBasedCache
+    8. VolleyLog
+    9. Authenticator
+    10. AndroidAuthenticator
+    11. ClearCacheRequest
 
 ## NoHttp
+
+0. links
+    * [NoHttp 文档](http://doc.nohttp.net/162186)
+    * [NoHttp github](https://github.com/yanzhenjie/NoHttp)
+1. 
 
 ## android-async-http
 
