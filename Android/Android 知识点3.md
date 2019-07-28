@@ -1246,21 +1246,792 @@ img {
     5. 
 3. 
 
+## Groovy
+
+0. links
+    * 参考博客
+        * [语法基础——Groovy语法基础](https://blog.csdn.net/qq_30379689/article/details/81200026) finished
+        * [groovy了解](https://blog.csdn.net/u011861874/article/category/8297824)
+        * [拥抱 Android Studio 之三：溯源，Groovy 与 Gradle 基础](http://blog.bugtags.com/2016/01/04/embrace-android-studio-groovy-gradle/) finished
+        * [Groovy脚本基础全攻略](https://blog.csdn.net/yanbober/article/details/49047515)
+    * 参考文档
+        * [Groovy Documentation：Groovy 的详细介绍文档](http://www.groovy-lang.org/documentation.html)
+        * [Groovy API Reference：Groovy 的 API 文档，必要的时候查阅](http://www.groovy-lang.org/api.html)
+        * [Groovy脚本基础全攻略](https://blog.csdn.net/yanbober/article/details/49047515)
+        * []()
+1. 特性1
+    1. 使用groovy的groovysh工具可以获得代码提示，获得提示的方法就是输入``'abc'.``，然后按tab键
+    2. groovyConsole 图形工具
+    3. groovy -e "println 'smg'" 简单的指令执行
+    4. groovy自动导入一些常用包: java.util.\*; java.lang.\*; java.io.\*; java.net.\*; java.math.BigDecimal; java.math.BigInteger; groovy.lang.\*; groovy.util.\*;
+    5. 安全导航操作符 ``?.``
+    6. 我们不想处理的或者不适合在代码的当前层次处理的错误异常可以不处理，不像java一定得catch或者throws
+    7. 函数最后一行就是返回值，不一定得有 return
+    8. 类和方法默认是 public
+    9. 静态方法中 this 指代 Class 对象，如下面的 learn 方法就可以使用链式调用了
+        ```groovy
+        class Wizard { def static learn(trick, action) { /* ... */; this } }
+        Wizard.learn(...).learn(...).learn(...)
+        ```
+    10. 可以使用具体参数初始化 JavaBean。下面两个是等价的
+        ```java
+        public class Car {
+            private int miles;
+            private final int year;
+            public Car(year) { this.year = year; }
+            // 省略了 // getYear // getMiles // setMiles
+        }
+        ```
+        ```groovy
+        class Car {
+            def miles = 0  // 如果想让 miles 变为 private ，即 setter 只能在类内进行，那么可以自己写 setter 来抛出错误(不知道需不需要一起重写 getter)
+            final year
+            Car(year) { this.year = year }
+            // 默认提供了 getYear | getMiles | setMiles
+        }
+        ```
+    11. 注意使用 getClass 好于使用 class ，因为 Map 等类对其进行了特殊化处理
+    12. ``import java.nio.file.Files as JFiles``
+    13. ==即equals或者是实现了Comparable接口的compareTo，而is才表示引用是否相等: a.is(b)
+    14. 编译时类型检查默认关闭: groovy编译器不会验证类型，相反它只是强制类型转换，然后将其留给运行时处理。即x=y等价于x=(ClassOfx)y
+    15. groovy中的{}不是新作用域而是闭包
+    16. 类型初始化器
+        ```groovy
+        class Test {
+            def a = 3;  // 这个分号必不可少，否则下面的初始化器会被误认为是闭包
+            { println 'Instance Initializer called' }
+        }
+        println new Test()
+        ```
+    17. groovy创建基本类型的数组
+        ```groovy
+        // int[] a = new int[]{1, 2, 3}  // 报错
+        int[] a = [1, 2, 3]
+        def b = [1, 2, 3] as int[]
+        ```
+    18. **多方法机制**: 导致不同的多态
+    19. **静态类型检查**: @groovy.transform.TypeChecked(可以修饰类、方法、闭包)，并指定方法或者闭包的形参类型；如果使用instanceof检查类型，之后不必进行类型转换。修饰类时如果不想检查某些方法，可以给该方法添加@groovy.transform.TypeChecked(@groovy.transform.TypeCheckingMode.SKIP)来跳过
+    20. **静态编译**: @groovy.transform.CompileStatic
+2. 变量
+    1. 变量类型: groovy变量没有基本数据类型，只有引用类型，尽管定义的基本类型也会被转换成引用类型
+        ```groovy
+        int x = 10
+        println x.class //class java.lang.Integer
+        double y = 10.10
+        println y.class //class java.lang.Double
+        ```
+    2. 弱类型: groovy变量可以有强类型方式和弱类型方式，弱类型方式会自动转换成对应的引用类型
+        ```groovy
+        def z = 'name'
+        println z.class //class java.lang.String
+        def h = 1.34
+        println h.class //class java.math.BigDecimal
+        ``` 
+3. 字符串
+    1. 无格式定义的字符串: 指的是输出的时候，字符串不会带有原本输入的格式 ``def name='Hensen'``
+    2. 有格式定义的字符串: 输出的时候，会按照原本定义的格式进行输出
+        ```groovy
+        def name = '''line one
+        line two'''
+        ```
+    3. GString: groovy提供新的字符串类型GString，用双引号定义的字符串表示可拓展的字符串
+        ```groovy
+        def name = "Hensen"
+        def say = "${name} say : Hello groovy"
+        println say //Hensen say : Hello groovy
+        println say.class //class org.codehaus.groovy.runtime.GStringImpl
+        def sum = "${2 + 3}"
+        println sum //5
+        ```
+    4. 字符串Api
+        ```groovy
+        def str = "groovy"
+        println str.center(10,'1') //11groovy11
+        println str.padLeft(10,'1') //1111groovy
+        println str.padRight(10,'1') //groovy1111
+        def str2 = "java"
+        println str > str2 //false
+        println str[0] //g
+        println str[0..2] //grp
+        def str3 = "a"
+        println str2 - str3 //jva
+        println str.reverse() //yvoorg
+        println str.capitalize() //Groovy
+        println str.isNumber() //false
+        def str4 = "2"
+        println str4.toLong() //2
+        ```
+    5. 注意 execute
+        ```groovy
+        println 'git --help'.execute().text  // 输出在命令行执行 git --help 的结果
+        // execute 会创建一个 groovy 的扩展类 java.lang.ProcessImpl 的实例，相当于对 Runtime.getRuntime().exec 创建的 Process 的一层封装。
+        // .text 相当于 .getText 方法
+        // .execute().getClass().name 是 java.lang.UNIXProcess(unix) | java.lang.ProcessImpl(win)
+        // 如果只是想等指令执行完毕 .execute().waitFor() 或者 .execute().waitForOrKill(millisecond_timeout)
+        // 另外如果在 windows 下想执行 dir 指令，需要 'cmd /C dir'.execute() ，因为 dir 不是程序，而在 unix 上 'ls -l'.execute() 却可以，因为 ls 就是一个程序。
+        ```
+4. 布尔求值
+    1. groovy 中对象如果为 null 则算是 false ，如果对象类型是集合或者数组之类的且为空这也算是 false，否则可以算是 true
+    2. 主要如表
+        | 类型 | 真 |
+        | :-|:- |
+        | Boolean | true |
+        | Collection | 不空 |
+        | Map | 不空 |
+        | Matcher | 至少一个匹配 |
+        | Character | 值不为0 |
+        | CharSequence | 长度大于0 |
+        | Object[] | 长度大于0 |
+        | Number | Double值不为0 |
+        | Enumeration | hasMoreElements() |
+        | Iterator | hasNext() |
+        | 其他引用类型 | 引用不为null |
+    3. 除了groovy内建的布尔求值约定，在自己的类中，还可以通过 asBoolean 方法来编写自己的布尔求值
+5. 特性2
+    1. 操作符重载
+        ```groovy
+        for (ch = 'a'; ch < 'd'; ch++) println(ch)
+        for (ch in 'a'..'c') println(ch)  // ++ 操作符和 for-in 映射的都是 String 类的 next 方法
+        ['hello'] << 'there'  // << 操作符转换为 Collection 类上的 leftShift 方法
+        // >> 映射为 rightShift 方法
+        // + 映射为 plus 方法
+        // - 映射为 minus 方法
+        ```
+    2. 自动装箱: groovy的动态类型特性，groovy会根据实例的使用方式来决定将其视为基本类型还是包装类型。
+        ```groovy
+        int a = 5
+        println a.getClass().name  // Integer
+        ```
+    3. enum与java5基本一致，即类型安全、可打印、可序列化等特性。
+    4. 变长参数: 类似java的...；数组作为末尾形参
+    5. groovy中定义和使用注解的方法与java相同，但groovy对java中与编译相关的注解的处理方式不同，如groovy会忽略@Override
+    6. 静态导入特性与java一致
+    7. 方便使用的注解
+        1. ``@Canonical``: 如果需要重写的toString方法只是简单的显示以逗号风格的字段值
+            ```groovy
+            import groovy.transform.*
+            enum SEX { WOMAN, MAN, UNKNOWN }
+            @Canonical(excludes="lastName, age")
+            class Person { def firstName, lastName, age, sex }
+            println new Person(firstName: 'Sara', lastName: 'Walker', age: 49, sex: SEX.MAN)  // Person(Sara, MAN)
+            ```
+        2. ``@Delegate``: 当派生类是真正可替换的且可代替基类使用时，继承才显示出其优势。存粹的代码复用的角度来看，委托要优于继承。
+            ```groovy
+            class Worker {
+                def work = { println 'get work done' }
+                def analyze = { println 'analyze...' }
+                def writeReport = { println 'get report written' }
+            }
+            class Expert { def analyze = { println 'expert analyze...' } }
+            class Manager {
+                @Delegate Expert expert = new Expert()
+                @Delegate Worker worker = new Worker()  // 这里引入的analyze会被已有的覆盖
+            }
+            def bernie = new Manager()
+            bernie.analyze()  // expert analyze...
+            bernie.work()  // get work done
+            bernie.writeReport()  // get report written
+            ```
+        3. ``@Immutable``: 不可变对象天生是线程安全的，将其字段标记为final是很好的实践选择。使用@Immutable修饰的类的字段会被groovy标记为final，而且额外添加toString、equals、hashCode方法
+        4. ``@Lazy``: 推迟创建耗时对象，而且对象变为volatile，且确保创建期间是线程安全的
+            ```groovy
+            class Heavy { def size = 10; Heavy() { println "creating Heavy with size: $size" } }
+            class AsNeeded {
+                def value
+                @Lazy Heavy heavy1 = new Heavy()
+                @Lazy Heavy heavy2 = { new Heavy(size: value) }()
+                AsNeeded() { println "created AsNeeded with value: $value" }
+            }
+            def asNeeded = new AsNeeded(value: 1000)
+            println "$asNeeded.heavy1.size\n$asNeeded.heavy1.size\n$asNeeded.heavy2.size"
+            // created AsNeeded with value: null
+            // creating Heavy with size: 10
+            // creating Heavy with size: 10
+            // 10
+            // 10
+            // 1000
+            ```
+        5. ``@Newify``: 实现Ruby或Python风格的构造器(new变成方法和根本不需要new)
+            ```groovy
+            @Newify([Person, CreditCard])
+            def fluentCreate() {
+                println Person.new(firstName: 'John', lastName: 'Doe', age: 20)
+                println Person(firstName: 'John', lastName: 'Doe', age: 20)
+                println CreditCard('1234-5678-1234-5678', 2000)
+            }
+            fluentCreate()
+            ```
+        6. ``@Singleton``: 增加静态字段instance和静态方法getInstance以及默认的私有构造函数(自己添加其他构造函数需要加上strict=false)，instance字段类型与类相同，且是线程安全的，而且可以惰性创建，在第一次调用时创建
+            ```groovy
+            @Singleton(lazy=true, strict=false)
+            class TheUnique {
+                private TheUnique() { println 'Instance created' }
+                def hello = { println 'hello' }
+            }
+            println 'Accessing TheUnique'  // Accessing TheUnique
+            TheUnique.instance.hello()  // Instance created\nhello
+            TheUnique.instance.hello()  // hello
+            ```
+        7. ``@InheritConstructors``: 默认实现父类相关的多个构造函数
+    8. 如果方法形参最后一个是闭包，那么可以使用这样的方式调用 ``0.upto(2) { println "$it " }``
+6. 逻辑控制
+    1. switch-case
+        ```groovy
+        def x = 5.2
+        def result
+        switch (x){
+            case 'you': result = "you"; break
+            case [3,4,5,"list"]: result = "inList"; break
+            case 12..30: result = "12 to 30"; break
+            case Integer: result = "Integer Params"; break
+            case BigDecimal: result = "BigDecimal Params"; break
+            default: result = "default result"
+        }
+        println result //BigDecimal Params
+        ```
+    2. for
+        ```groovy
+        // 遍历范围
+        for (i in 0..9) println i
+        // 遍历集合
+        for (i in [0,1,2,3,4,5]) println i
+        // 遍历Map
+        for (i in ["one":1,"two":2,"three":3]) println i.key + " " + i.value
+        // 普通遍历
+        for (int i = 0; i < 3; i++) println i
+        // 特殊遍历
+        0.upto(2) { print "$it " }  // upto产生的方法接受一个闭包，等价于 0.upto(2, { print "$it " })
+        3.times { print "$it " }
+        0.step(10, 2) { print "$it " }
+        // for-each: 注意必须有类型声明或者def声明
+        for (String a : ['a', 'b', 'c']) println a
+        ```
+    3. if / else if / else
+    4. 三元运算符
+    5. while
+    6. try-catch
+        ```groovy
+        def openFile(fileName) {
+            new FileInputStream(fileName)
+        }
+        try {
+            openFile('./nonExistFile.txt')
+        } catch (FileNotFoundException ex) {  // 如果没有类型声明，则捕获所有Exception，但不包括Error和Throwable，需要 catch (Throwable th)
+            println 'deal with: ' + ex
+        }
+        ```
+7. 函数
+    1. 函数创建
+        ```groovy
+        def method1 = { println("Hello World") }
+        def method2(int a) { println "get $a" }
+        int method3(int b) { a + 10 }
+        ```
+    2. 具名实参与多余参数处理: 多余的参数如果是键值对形式会假设第一个参数是Map，然后交给它
+        ```groovy
+        class Robot {
+            def type, height, width  // 一个个的使用 def 来声明也可以
+            def access = { location, weight, fragile -> println("Received fragile: $fragile, weight: $weight, location: $location") }
+        }
+        Robot robot = new Robot(height: 15, width: 21, type: "Robot Type 1")  // 这里的初始化是必须有对应的构造函数或者无参构造函数的时候执行
+        println "$robot.type, $robot.height, $robot.width"  // Robot Type 1, 15, 21
+        robot.access(x: 30, y: 20, z: 10, 50, true)  // Received fragile: true, weight: 50, location: [x:30, y:20, z:10]
+        robot.access(50, true, x: 30, y: 20, z: 10)  // Received fragile: true, weight: 50, location: [x:30, y:20, z:10]
+        robot.access(1, 2, 3)  // Received fragile: 3, weight: 2, location: 1
+        robot.access(1, 2, a: 3, b: 4)  // Received fragile: 2, weight: 1, location: [a:3, b:4]
+        robot.access(1, a: 3, b: 4, 2)  // Received fragile: 2, weight: 1, location: [a:3, b:4]
+        robot.access(2, a: 3, b: 4, 1)  // Received fragile: 1, weight: 2, location: [a:3, b:4]
+        // 这种特性有点混乱，最好还是有类型声明的，或者直接将第一个形参显式的指定为 Map
+        ```
+    3. 可以有默认参数，但默认参数一定得在其他参数后面。groovy会将末尾的数组与具有默认值的参数视为可选参数
+    4. 多返回值: 可以返回一个数组，然后多个接受者以 (rec1, rec2, ..., recn) = splitStr("a,b,c", ",") 这样的形式来接受。还可以使用这样的特性来交换变量 (a, b) = [b, a]。多余的接受者会收到 null ，多余的返回值会丢弃。还可以声明类型，如 def (String a, int b) = ... 。如果多余的变量不能设为 null ，那么会抛出错误。在 groovy 中，一个数字会尽可能的视为 int ，而不是 Integer。
+8. 闭包(groovysh_evaluate$_run_closure1)
+    1. 闭包
+        ```groovy
+        def method = {println "Hello groovy"}  // 无参闭包
+        def method2 = {String name -> println "Hello ${name}"}  // 有参闭包
+        def method3 = {println "Hello ${it}"}  // 默认参数闭包
+        def method4 = {return "Hello ${it}"}  // 带返回值闭包
+        def name = "groovy"  // 闭包的调用
+        method.call()
+        method2(name)
+        ```
+    2. 闭包函数
+        ```groovy
+        int fab (int number) {
+            int result = 1
+            1.upto(number, { num -> result *= num })  // 执行1-number的闭包
+            // number.downto(1, { num -> result *= num })  // 执行number-1的闭包
+            // number.times { num -> num == 0 ? result += 0 : result *= num }  // 执行0-number的闭包
+            result
+        }
+        ```
+    3. 字符串闭包函数
+        ```groovy
+        def intro = "my name is Hensen,my age is 18"
+        // 找到第一个符合条件的字符
+        println intro.find { String s -> s.isNumber() }  // 1
+        // 找到所有符合条件的字符
+        println intro.findAll { String s -> s.isNumber() }  // [1, 8]
+        // 有一项字符符合即可
+        println intro.any { String s -> s.isNumber() }  // true
+        // 所有字符必须符合条件
+        println intro.every { String s -> s.isNumber() }  // false
+        //将字符串转换成集合
+        println intro.collect { it.toUpperCase() }  // [M, Y,  , N, A, M, E,  , I, S,  , H, E, N, S, E, N, ,, M, Y,  , A, G, E,  , I, S,  , 1, 8]
+        //遍历所有字符
+        intro.each { print it.toUpperCase() }  // MY NAME IS HENSEN,MY AGE IS 18
+        ```
+    4. 闭包关键字
+        1. this: 代表当前闭包定义处的类
+        2. owner: 代表当前闭包定义处的类或者对象
+        3. delegate: 代表任意对象，默认与owner一致
+    5. outer里的this、owner、delegate表示同一个对象，inner的this表示outer，owner与delegate表示inner
+        ```groovy
+        def outer = {
+            println "outer this:" + this
+            println "outer owner:" + owner
+            println "outer delegate:" + delegate
+            def inner = {
+                println "inner this:" + this
+                println "inner owner:" + owner
+                println "inner delegate:" + delegate
+            }
+            inner.call()
+        }
+        outer.call()
+        // outer this:Chapter4o4@f48007e
+        // outer owner:Chapter4o4@f48007e
+        // outer delegate:Chapter4o4@f48007e
+        // inner this:Chapter4o4@f48007e
+        // inner owner:Chapter4o4$_run_closure2@11cfefda
+        // inner delegate:Chapter4o4$_run_closure2@11cfefda
+        ```
+    7. 委托策略: delegate关键字跟委托策略有关，委托策略有四种
+        1. DELEGATE_FIRST: 先从Delegate去找委托属性，再从Owner去找委托属性
+        2. DELEGATE_ONLY: 只从Delegate去找委托属性
+        3. OWNER_FIRST: 先从Owner去找委托属性，再先从Delegate去找委托属性
+        4. OWNER_ONLY: 只从Owner去找委托属性
+        5. 例子
+            ```groovy
+                    class Student {
+                String name
+                def content = { "this.name: ${this.name}, owner.name: ${owner.name}, delegate.name: ${delegate.name}, name: ${name}" }
+                // def content = { name = 10; "this.name: ${this.name}, owner.name: ${owner.name}, delegate.name: ${delegate.name}, name: ${name}" }  // 所有的 name 都变成了 10，输出是 this.name: 10, owner.name: 10, delegate.name: 10, name: 10
+                String toString() { content.call() }
+            }
+            class Teacher { String name }
+            def stu = new Student(name: "HensenStudent")
+            def tea = new Teacher(name: "HensenTeacher")
+            println stu.toString()  // this.name: HensenStudent, owner.name: HensenStudent, delegate.name: HensenStudent, name: HensenStudent
+            stu.content.delegate = tea
+            stu.content.resolveStrategy = Closure.DELEGATE_FIRST
+            println Closure.OWNER_FIRST + ", " + Closure.DELEGATE_FIRST + ", " + Closure.OWNER_ONLY + ", " + Closure.DELEGATE_ONLY + ", " + Closure.TO_SELF  // 0, 1, 2, 3, 4
+            println stu.toString()  // this.name: HensenStudent, owner.name: HensenStudent, delegate.name: HensenTeacher, name: HensenTeacher
+            ```
+    8. 科里化
+        ```groovy
+        def tellFortunes(closure) {
+            Date date = new Date("09/20/2012")
+            postFortune = closure.curry(date)
+            postFortune "Your day is filled with ceremony"
+            postFortune "They're features, not bugs"
+        }
+        tellFortunes() { date, fortune -> println "Fortune for ${date} is '${fortune}'" }
+        // curry可以科里化前面的k个参数，如果想要科里化中间或者后面的参数需要使用ncurry传入参数位置与参数值
+        ```
+    9. 重要属性: maximumNumberOfParameters / parameterTypes / owner / delegate / this / resolveStrategy
+    10. 重要方法: rcurry(val) / ncurry(n, val) / ncurry(n, Object... vals) / curry(val) / call() / call(params)
+        ```groovy
+        c = { println 'execute c' }
+        b = c << { println 'before c' }
+        a = b >> { println 'after c' }
+        a()
+        ```
+    11. 如果明确希望闭包不接受参数，得使用``{ -> /*...*/ }``这样的语法，否则像``{ /*...*/ }``这样的默认会有一个参数it传入
+9. 列表(java.lang.ArrayList)
+    1. 定义
+        ```groovy
+        def list = [1, 2, 3, 4]  // 定义列表
+        def array = [1, 2, 3, 4] as int[]  // 定义数组
+        int[] array = [1, 2,3, 4]  // 定义数组
+        println list.toListString()
+        ```
+    2. 增
+        ```groovy
+        def list = [1, 2, 3, 4]
+        list.add(5)
+        list << 6
+        def list2 = list + 7
+        ```
+    3. 删
+        ```groovy
+        def list = [1, 2, 3, 4]
+        list.remove(0)
+        list.remove((Object)4)
+        list.removeAt(0)
+        list.removeElement(4)
+        list.removeAll { it % 2 == 0 }
+        def list2 = list - [2, 3]
+        ```
+    4. 排
+        ```groovy
+        def list = [1, 5, -4, 8, 6, 2]
+        list.sort()
+        list.sort { a, b -> a == b ? 0 : Math.abs(a) > Math.abs(b) ? 1 : -1 }
+        ['abc', '2', 'qwe', 'apple', 'java'].sort { it.size() }
+        ```
+    5. 列表查操作
+        ```groovy
+        def list = [1,5,-4,8,6,2]
+        println list.find { it % 2 == 0 }
+        println list.findAll { it % 2 == 0 }
+        println list.any { it % 2 == 0 }
+        println list.every { it % 2 == 0 }
+        println list.min()
+        println list.max()
+        println list.count { it % 2 == 0 }
+        ```
+    6. 遍历
+        ```groovy
+        [1, 2, 3].each
+        [1, 2, 3].eachWithIndex
+        ```
+10. 映射(java.util.LinkedHashMap)
+    1. 定义
+        ```groovy
+        def colors = [red: '#ff0000', green: '#00ff00', blue: '#0000ff']
+        colors.yellow = '#ffff00'  // 默认找不到字段则为新增字段
+        colors.complex = [a: 1, b: 2]
+        println colors.blue + "\n" + colors.yellow
+        def key = 'key'
+        def map2 = [key: 'value']
+        ```
+    2. 遍历
+        ```groovy
+        def map = [1: [name : 'Hensen', age: '20'], 2: [name : 'Jack', age: '22'], ]
+        map.each { def person -> println "the person name : ${person.key}" + "the person age : ${person.value}" }
+        map.eachWithIndex{ person, index -> println "the index : ${index}" + "the person name : ${person.key}" + "the person age : ${person.value}" }
+        map.eachWithIndex{ key, value, int index -> println "the index : ${index}" + "the person name : ${key}" + "the person age : ${value}" }
+        ```
+    3. 查询
+        ```groovy
+        println map.find { def person -> return person.value.age >= 20}
+        println map.findAll { def person -> return person.value.age >= 20}
+        println map.count { def person -> return person.value.age >= 20}
+        println map.findAll { def person -> return person.value.age >= 20}.collect { return it.value.name}
+        println map.groupBy { def person -> return person.value.age >= 22 ? "大于22岁" : "小于22岁"}
+        println map.sort { def person1, def person2 ->
+            Number age1 = person1.value.age
+            Number age2 = person2.value.age
+            return age1 == age2 ? 0 : age1 > age2 ? 1 : -1
+        }
+        ```
+11. 范围(groovy.lnag.IntRange)
+    1. 定义
+        ```groovy
+        def range = 1..10
+        def range2 = 1..<11
+        println "$range[0]\n$range.contains(2)\n$range.from\n$range.to"
+        ```
+    2. 循环
+        ```groovy
+        range.each { println it }
+        for (i in range) { println i }
+        ```
+    3. 匹配
+        ```groovy
+        def getGrade(Number number) {
+            def result
+            switch (number){
+                case 0..<60: result = "不及格"; break
+                case 60..<90: result = "优秀"; break
+                case 90..100: result = "接近满分"; break
+            }
+            return result
+        }
+        ```
+12. 类/接口/抽象类
+    1. 默认是 public
+    2. 实现接口(抽象类也是这样的方法)
+        1. 匿名接口 ``new Thread( { println Thread.currentThread().name } as Runnable ).start()``
+        2. 重复使用
+            ```groovy
+            def showThreadName = { println Thread.currentThread().name }
+            new Thread(showThreadName as Runnable).start()
+            import java.util.concurrent.*
+            ExecutorService service = Executors.newCachedThreadPool()
+            Future<String> result2 = service.submit(showThreadName as Callable<Void>)
+            result2.get()
+            service.shutdown()
+            def timer = new Timer()
+            timer.schedule(showThreadName as TimerTask, 1000)  // TimerTask 就是抽象类
+            new Thread({ Thread.sleep(2000); timer.cancel() } as Runnable).start()
+            ```
+        3. 如果一个接口有多个方法，也可以使用一个闭包，这种情况下该接口所有的方法实现都是相同的
+        4. 实现多个方法
+            ```groovy
+            def handleFocus = [focusGained: { msgLabel.setText("Good to see you!") }, focusLost: { msgLabel.setText("Come back soon!") }]
+            button.addFocusListener(handleFocus as FocusListener)
+            ```
+        5. 动态
+            ```groovy
+            events = ['WindowListener', 'ComponentListener',]
+            handler = { msgLabel.setText("$it") }
+            for (event in events) frame."add${event}"(handler.asType(Class.forName("java.awt.event.${event}")))
+            ```
+    3. 定义
+        ```groovy
+        interface MyInterface { def interMehtod() }
+        abstract class MyAbstract { abstract def absMethod() }
+        class MyClass extends MyAbstract implements MyInterfac { /* ... */ }
+        ```
+13. 元编程
+    1. 捕获未声明的方法: 如果在调用对象的方法时，该方法未被声明的情况下
+        1. 会被优先级高的 methodMissing() 捕获
+        2. 其次会被优先级低的 invokeMethod() 捕获
+        3. 如果这两个方法都未声明，则程序会报错
+        4. 示例
+            ```groovy
+            class Person {
+                String name
+                Integer age
+                @Override Object invokeMethod(String s, Object arg) { "[invokeMethod] the method is " + s + ", and the params is " + arg }
+                def methodMissing(String s, Object arg) { "[methodMissing] the method is " + s + ", and the params is " + arg }
+            }
+            Person p = new Person(name: "Hensen", age: 22)
+            println p.say("Hello")  // [methodMissing] the method is say, and the params is [Hello]
+            ```
+    2. 动态添加属性和方法
+        ```groovy
+        class Person {
+            String name
+            Integer age
+        }
+        Person.metaClass.sex = "male"  // 动态添加一个属性
+        Person.metaClass.getUpperName = { name.toUpperCase() }  // 动态添加方法
+        Person.metaClass.static.createPerson = { String name, Integer age-> new Person(name: name, age: age) }  // 动态添加静态方法
+        Person p = new Person(name: "Hensen", age: 22)
+        String name = Person.createPerson('Jack',20).name
+        println "$p.sex\n$p.getUpperName()\n$name"
+        ```
+    3. 为第三方类添加属性和方法
+        ```groovy
+        ExpandoMetaClass.enableGlobally()
+        String.metaClass.static.sayHello = { String str -> return "Hello" + str}
+        println String.sayHello("Hensen")
+        ```
+14. Json操作
+    1. 对象转换成Json字符串
+        ```groovy
+        import groovy.json.JsonOutput
+        def list = [new Person(name: 'Hensen',age: 20),new Person(name: 'Jack',age: 22)]
+        def json = JsonOutput.toJson(list)
+        println json //[{"age":20,"name":"Hensen"},{"age":22,"name":"Jack"}]
+        ```
+    2. Json字符串转换成对象
+        ```groovy
+        import groovy.json.JsonSlurper
+        def jsonSlurper = new JsonSlurper()
+        def object = jsonSlurper.parseText(json)
+        println object[0].name //Hensen
+        ```
+    3. 构建Json字符串
+        ```groovy
+        import groovy.json.JsonBuilder
+        def builder2 = new JsonBuilder()
+        builder2.book {
+            isbn '0321774094'
+            title 'Scala for the Impatient'
+            author (['Cay S. Horstmann', 'Hellen'])
+            publisher 'Addison-Wesley Professional'
+            content99 {
+                contentType '1'
+                text 'Hello'
+            }
+        }
+        println(builder2.toPrettyString())
+        println(builder2.content)
+        ```
+15. xml操作 https://www.ibm.com/developerworks/cn/java/j-pg05199/index.html
+    1. 解析xml
+        ```groovy
+        String xml =
+        '''<person>
+        <name id="2">Hensen</name><age>23</age>
+        <name id="3">Jack</name><age>20</age>
+        </person>'''
+        def xmlSlurper = new XmlSlurper()
+        def person = xmlSlurper.parseText(xml)
+        //获取值
+        println person.name[0].text()
+        //获取属性
+        println person.name[0].@id
+        //遍历获取
+        person.each { p ->
+            println p.name.text()
+        }
+        ```
+    2. 遍历xml
+        ```groovy
+        //深度遍历
+        def names = person.depthFirst().findAll{ name ->
+            return name.@id == "2" ? true : false
+        }
+        println names
+        //广度遍历
+        def namess = person.children().findAll { node ->
+            return node.@id == "2" ? true : false
+        }.collect{ node ->
+            return node.@id
+        }
+        println namess
+        ```
+    3. 生成xml
+        ```groovy
+        import groovy.xml.MarkupBuilder
+        class Computer{
+            def name = 'Hensen'
+            def count = 2
+            def languages = [
+                new Language(version: '1.8',value: 'Java'),
+                new Language(version: '3.0',value: 'Python')
+            ]
+        }
+        class Language{
+            def version
+            def value
+        }
+        def sw = new StringWriter()
+        def xmlBuilder = new MarkupBuilder(sw)
+        def computer = new Computer()
+        xmlBuilder.computer(name: computer.name, count: computer.count){
+            //遍历所有子节点
+            computer.languages.each{ lang ->
+                language(version: lang.version, lang.value)
+            }
+        }
+        println sw
+        ```
+16. 文件操作
+    1. 读取文件
+        ```groovy
+        //读取文件的所有行
+        def file = new File("../Groovy.iml")
+        file.eachLine { line ->
+            println line
+        }
+        //读取文件的所有行
+        def text = file.getText()
+        println text
+        //读取文件的前100个字节
+        def reader = file.withReader { reader ->
+            char [] buffer = new char[100]
+            reader.read(buffer)
+            return buffer
+        }
+        println reader
+        ```
+    2. 拷贝文件
+        ```groovy
+        def copy(String srcPath,String destPath){
+            try {
+                def destFile = new File(destPath)
+                if(!destFile.exists()){
+                    destFile.createNewFile()
+                }
+                new File(srcPath).withReader { reader ->
+                    def lines = reader.readLines()
+                    destFile.withWriter { writer ->
+                        lines.each { line ->
+                            writer.append(line + '\r\n')
+                        }
+                    }
+                }
+                return true
+            }catch (Exception e){
+                e.printStackTrace()
+            }
+            return false
+        }
+        ```
+    3. 对象读写
+        ```groovy
+        def saveObject(Object obj,String path){
+            try {
+                def destFile = new File(path)
+                if(!destFile.exists()){
+                    destFile.createNewFile()
+                }
+                destFile.withObjectOutputStream { out ->
+                    out.writeObject(obj)
+                }
+                return true
+            }catch (Exception e){
+                e.printStackTrace()
+            }
+            return false
+        }
+        def readObject(String path){
+            try {
+                def destFile = new File(path)
+                if(destFile ==null || !destFile.exists())return null
+                destFile.withObjectInputStream { input ->
+                    def obj = input.readObject()
+                    return obj
+                }
+            }catch (Exception e){
+                e.printStackTrace()
+            }
+            return null
+        }
+        ```
+17. 正则表达式
+18. 数据库
+19. others
+    1. 方法的默认参数
+        ```groovy
+        def foo(String p1, int p2 = 1) {
+            println(p1)
+            println(p2)
+        }
+        foo("hello")
+        ```
+    2. Field 与 Property: Field 是以各种修饰符修饰的变量。Property是私有变量和自带的 gettters/setters，下面的类具有私有变量 name、age，并自带这两个变量的 getter 和 setter。当变量声明为 final 的时候，默认就没有 setter。
+        ```groovy
+        class Person {
+            String name
+            int age
+        }
+        ```
+    3. Trait: Groovy 提供了一个叫做 Trait 特性实现了多继承，还有很多强大的功能。
+        ```groovy
+        trait Fly {
+            void fly() {
+                println("fly")
+            }
+        }
+        trait Walk {
+            void walk() {
+                println("walk")
+            }
+        }
+        class Duck implements Fly, Walk {}
+        Duck duck = new Duck()
+        duck.fly()
+        duck.walk()
+        ```
+    4. 字符串插值
+        ```groovy
+        def method = 'toString'
+        new Date()."$method"()  // 因为只包含一个变量，所以占位符表达式可以只有$前缀，而没有花括号包裹
+        ```
+    5. 方法的最后一行通常默认返回，即使没有使用return关键字
+
 ## Gradle
 
 0. links
-    1. Groovy
-        * 参考博客
-            * [语法基础——Groovy语法基础](https://blog.csdn.net/qq_30379689/article/details/81200026) finished
-            * [groovy了解](https://blog.csdn.net/u011861874/article/category/8297824)
-            * [拥抱 Android Studio 之三：溯源，Groovy 与 Gradle 基础](http://blog.bugtags.com/2016/01/04/embrace-android-studio-groovy-gradle/) finished
-            * [Groovy脚本基础全攻略](https://blog.csdn.net/yanbober/article/details/49047515)
-        * 参考文档
-            * [Groovy Documentation：Groovy 的详细介绍文档](http://www.groovy-lang.org/documentation.html)
-            * [Groovy API Reference：Groovy 的 API 文档，必要的时候查阅](http://www.groovy-lang.org/api.html)
-            * [Groovy脚本基础全攻略](https://blog.csdn.net/yanbober/article/details/49047515)
-            * []()
-    2. Gradle
+    1. Gradle
         * 参考博客
             * [十分钟理解Gradle](https://www.cnblogs.com/Bonker/p/5619458.html) finished
             * [语法基础——Gradle语法基础](https://blog.csdn.net/qq_30379689/article/details/81432291) finished
@@ -1278,11 +2049,11 @@ img {
             * [gradle-bintray-plugin：bintray 提供的开源插件](https://github.com/bintray/gradle-bintray-plugin)
             * [gradle-node-plugin： 一个运行 NodeJS 脚本的插件](https://github.com/srs/gradle-node-plugin)
             * [linkedin-gradle-plugins： linkedin的 Gradle 插件集合](https://github.com/linkedin/gradle-plugins)
-    3. Proguard
+    2. Proguard
         * [语法基础——Proguard语法基础](https://blog.csdn.net/qq_30379689/article/details/81589428) finished
         * [Android混淆机制](https://juejin.im/post/58c39774da2f605609693761) finished
         * [Android混淆机制](http://www.voidcn.com/article/p-kiqaofhe-bsc.html) finished
-    4. Gradle配置
+    3. Gradle配置
         * [Android local.properties配置文件的使用](https://www.jianshu.com/p/f891fa3eadd8)
         * [Android Studio3.0中dependencies依赖由compile变为implementation的区别](https://blog.csdn.net/silenceoo/article/details/78735687) finished
         * [Android依赖导入全攻略](https://juejin.im/post/5acd6daaf265da238a30ca73) finished
@@ -1423,628 +2194,6 @@ img {
                 }
             }
             ```
-4. Groovy语法基础
-    1. 变量
-        1. 变量类型: groovy变量没有基本数据类型，只有引用类型，尽管定义的基本类型也会被转换成引用类型
-            ```groovy
-            int x = 10
-            println x.class //class java.lang.Integer
-            double y = 10.10
-            println y.class //class java.lang.Double
-            ```
-        2. 弱类型: groovy变量可以有强类型方式和弱类型方式，弱类型方式会自动转换成对应的引用类型
-            ```groovy
-            def z = 'name'
-            println z.class //class java.lang.String
-            def h = 1.34
-            println h.class //class java.math.BigDecimal
-            ```
-    2. 字符串
-        1. 无格式定义的字符串: 指的是输出的时候，字符串不会带有原本输入的格式 ``def name='Hensen'``
-        2. 有格式定义的字符串: 输出的时候，会按照原本定义的格式进行输出
-            ```groovy
-            def name = '''\
-            line one
-            line two
-            line three
-            '''
-            ```
-        3. GString: groovy提供新的字符串类型GString，用双引号定义的字符串表示可拓展的字符串
-            ```groovy
-            def name = "Hensen"
-            def say = "${name} say : Hello groovy"
-            println say //Hensen say : Hello groovy
-            println say.class //class org.codehaus.groovy.runtime.GStringImpl
-            def sum = "${2 + 3}"
-            println sum //5
-            ```
-        4. 字符串Api
-            ```groovy
-            def str = "groovy"
-            println str.center(10,'1') //11groovy11
-            println str.padLeft(10,'1') //1111groovy
-            println str.padRight(10,'1') //groovy1111
-            def str2 = "java"
-            println str > str2 //false
-            println str[0] //g
-            println str[0..2] //grp
-            def str3 = "a"
-            println str2 - str3 //jva
-            println str.reverse() //yvoorg
-            println str.capitalize() //Groovy
-            println str.isNumber() //false
-            def str4 = "2"
-            println str4.toLong() //2
-            ```
-    3. 逻辑控制
-        1. switch-case
-            ```groovy
-            def x = 5.2
-            def result
-            switch (x){
-                case 'you':
-                    result = "you"
-                    break
-                case [3,4,5,"list"]:
-                    result = "inList"
-                    break
-                case 12..30:
-                    result = "12 to 30"
-                    break
-                case Integer:
-                    result = "Integer Params"
-                    break
-                case BigDecimal:
-                    result = "BigDecimal Params"
-                    break
-                default: result = "default result"
-            }
-            println result //BigDecimal Params
-            ```
-        2. for
-            ```groovy
-            //遍历范围
-            def sum = 0
-            for(i in 0..9){
-                sum += i
-            }
-            println sum //45
-            //遍历集合
-            def sum2 = 0
-            for (i in [0,1,2,3,4,5]){
-                sum2 += i
-            }
-            println sum2 //15
-            //遍历Map
-            def sum3 = 0
-            for(i in ["one":1,"two":2,"three":3]){
-                sum3 += i.value
-            }
-            println sum3 //6
-            ```
-    4. 闭包
-        1. 闭包
-            ```groovy
-            //无参闭包
-            def method = {println "Hello groovy"}
-            //有参闭包
-            def method2 = {String name -> println "Hello ${name}"}
-            //默认参数闭包
-            def method3 = {println "Hello ${it}"}
-            //带返回值闭包
-            def method4 = {return "Hello ${it}"}
-            //闭包的调用
-            def name = "groovy"
-            method.call()
-            method2(name)
-            ```
-        2. 闭包函数
-            ```groovy
-            def result = fab(5)
-            def result2 = fab2(5)
-            def result3 = cal(5)
-            println result //120
-            println result2 //120
-            println result3 //11
-            int fab (int number){
-                int result = 1
-                1.upto(number,{ num -> result *= num }) //执行1-number的闭包
-                return result 
-            }
-            int fab2 (int number){
-                int result = 1
-                number.downto(1,{ num -> result *= num }) //执行number-1的闭包
-                return result
-            }
-            int cal (int number){
-                int result = 1
-                number.times { num -> result += num} //执行0-number的闭包
-                return result
-            }
-            ```
-        3. 字符串闭包函数
-            ```groovy
-            def intro = "my name is Hensen,my age is 18"
-            //找到第一个符合条件的字符
-            println intro.find {
-                String s -> s.isNumber() //1
-            }
-            //找到所有符合条件的字符
-            println intro.findAll {
-                String s -> s.isNumber() //[1, 8]
-            }
-            //有一项字符符合即可
-            println intro.any {
-                String s -> s.isNumber() //true
-            }
-            //所有字符必须符合条件
-            println intro.every {
-                String s -> s.isNumber() //false
-            }
-            //将字符串转换成集合
-            println intro.collect {
-                it.toUpperCase() //[M, Y,  , N, A, M, E,  , I, S,  , H, E, N, S, E, N, ,, M, Y,  , A, G, E,  , I, S,  , 1, 8]
-            }
-            //遍历所有字符
-            intro.each {
-                print it.toUpperCase() //MY NAME IS HENSEN,MY AGE IS 18
-            }
-            ```
-        4. 闭包关键字
-            1. this: 代表当前闭包定义处的类
-            2. owner: 代表当前闭包定义处的类或者对象
-            3. delegate: 代表任意对象，默认与owner一致
-        5. 正常闭包: 在这里的this、owner、delegate表示同一个对象，即outer
-            ```groovy
-            def outer = {
-                println "outer this:" + this
-                println "outer owner:" + owner
-                println "outer delegate:" + delegate
-            }
-            outer.call()
-            //输出结果
-            //outer this:Chapter4o4@f48007e
-            //outer owner:Chapter4o4@f48007e
-            //outer delegate:Chapter4o4@f48007e
-            ```
-        6. 嵌套闭包: 在这里的this表示outer2、这里的owner、delegate表示inner
-            ```groovy
-            def outer2 = {
-                println "outer2 this:" + this
-                println "outer2 owner:" + owner
-                println "outer2 delegate:" + delegate
-                def inner = {
-                    println "inner this:" + this
-                    println "inner owner:" + owner
-                    println "inner delegate:" + delegate
-                }
-                inner.call()
-            }
-            outer2.call()
-            //输出结果
-            //inner this:Chapter4o4@f48007e
-            //inner owner:Chapter4o4$_run_closure2@11cfefda
-            //inner delegate:Chapter4o4$_run_closure2@11cfefda
-            ```
-        7. 委托策略: delegate关键字跟委托策略有关，委托策略有四种
-            1. DELEGATE_FIRST: 先从Delegate去找委托属性，再从Owner去找委托属性
-            2. DELEGATE_ONLY: 只从Delegate去找委托属性
-            3. OWNER_FIRST: 先从Owner去找委托属性，再先从Delegate去找委托属性
-            4. OWNER_ONLY: 只从Owner去找委托属性
-            5. 例子
-            ```groovy
-            class Student{
-                String name
-                def content = {"my name is ${name}"}
-                String toString(){
-                    content.call()
-                }
-            }
-            class Teacher{
-                String name
-            }
-            def stu = new Student(name: "HensenStudent")
-            def tea = new Teacher(name: "HensenTeacher")
-            stu.content.delegate = tea
-            stu.content.resolveStrategy = Closure.DELEGATE_FIRST
-            println stu.toString()
-            //输出结果
-            // my name is HensenTeacher
-            ```
-    5. 列表
-        1. 定义
-            ```groovy
-            //定义列表
-            def list = [1,2,3,4]
-            //定义数组
-            def array = [1,2,3,4] as int[] 
-            int[] array = [1,2,3,4]
-            ```
-        2. 列表增操作
-            ```groovy
-            def list = [1,2,3,4]
-            list.add(5)
-            list << 6
-            println list.toListString()
-            def list2 = list + 7
-            println list2.toListString()
-            ```
-        3. 列表删操作
-            ```groovy
-            def list = [1,2,3,4]
-            list.remove(0)
-            list.remove((Object)4)
-            list.removeAt(0)
-            list.removeElement(4)
-            list.removeAll({return it % 2 == 0})
-            println list.toListString()
-            def list2 = list - [2,3]
-            println list2.toListString()
-            ```
-        4. 列表排操作
-            ```groovy
-            def list = [1,5,-4,8,6,2]
-            list.sort()
-            list.sort{a,b -> a == b ? 0 : Math.abs(a) > Math.abs(b) ? 1 : -1}
-            println list.toListString()
-            def strings = ['abc','2','qwe','apple','java']
-            strings.sort{it -> return it.size()}
-            println strings.toListString()
-            ```
-        5. 列表查操作
-            ```groovy
-            def list = [1,5,-4,8,6,2]
-            println list.find{ return it % 2 == 0 }
-            println list.findAll{ return it % 2 == 0 }
-            println list.any{ return it % 2 == 0 }
-            println list.every{ return it % 2 == 0 }
-            println list.min()
-            println list.max()
-            println list.count{ return it % 2 == 0 }
-            ```
-    6. 映射
-        1. 定义
-            ```groovy
-            def colors = [red:'#ff0000',green:'#00ff00',blue:'#0000ff']
-            colors.yellow = '#ffff00' //默认找不到字段则为新增字段
-            colors.complex = [a:1,b:2]
-            println colors.blue
-            println colors.yellow
-            def key = 'key'
-            def map2 = [(key): 'value']
-            ```
-        2. 遍历
-            ```groovy
-            def map = [
-                1:[name : 'Hensen',age : '20'],
-                2:[name : 'Jack',age : '22']
-            ]
-            map.each { def person ->
-                println "the person name : ${person.key}" + "the person age : ${person.value}"
-            }
-            map.eachWithIndex{ def person, int index ->
-                println "the index : ${index}" + "the person name : ${person.key}" + "the person age : ${person.value}"
-            }
-            map.eachWithIndex{ key , value, int index ->
-                println "the index : ${index}" + "the person name : ${key}" + "the person age : ${value}"
-            }
-            ```
-        3. 查询
-            ```groovy
-            println map.find { def person -> return person.value.age >= 20}
-            println map.findAll { def person -> return person.value.age >= 20}
-            println map.count { def person -> return person.value.age >= 20}
-            println map.findAll { def person -> return person.value.age >= 20}.collect { return it.value.name}
-            println map.groupBy { def person -> return person.value.age >= 22 ? "大于22岁" : "小于22岁"}
-            println map.sort { def person1, def person2 ->
-                Number age1 = person1.value.age
-                Number age2 = person2.value.age
-                return age1 == age2 ? 0 : age1 > age2 ? 1 : -1
-            }
-            ```
-    7. 范围
-        1. 定义
-            ```groovy
-            def range = 1..10
-            println range[0]
-            println range.contains(2)
-            println range.from
-            println range.to
-            ```
-        2. 循环
-            ```groovy
-            range.each{
-                println it
-            }
-            for (i in range){
-                println i
-            }
-            ```
-        3. 匹配
-            ```groovy
-            def getGrade(Number number){
-                def result
-                switch (number){
-                    case 0..<60:
-                        result = "不及格"
-                        break
-                    case 60..<90:
-                        result = "优秀"
-                        break
-                    case 90..100:
-                        result = "接近满分"
-                        break
-                }
-                return result
-            }
-            ```
-    8. 元编程
-        1. 捕获未声明的方法: 如果在调用对象的方法时，该方法未被声明的情况下
-            1. 会被优先级高的methodMissing()捕获
-            2. 其次会被优先级低的invokeMethod()捕获
-            3. 如果这两个方法都未声明，则程序会报错
-            4. 示例
-                ```groovy
-                class Person {
-                    String name
-                    Integer age
-                    @Override
-                    Object invokeMethod(String s, Object arg) {
-                        return "[invokeMethod] the method is " + s + ", and the params is " + arg
-                    }
-                    def methodMissing(String s, Object arg){
-                        return "[methodMissing] the method is " + s + ", and the params is " + arg
-                    }
-                }
-                Person p = new Person(name: "Hensen",age: 22)
-                println p.say("Hello") //[methodMissing] the method is say, and the params is [Hello]
-                ```
-        2. 动态添加属性和方法
-            ```groovy
-            class Person{
-                String name
-                Integer age
-            }
-            //动态添加一个属性
-            Person.metaClass.sex = "male"
-            //动态添加方法
-            Person.metaClass.getUpperName = { -> name.toUpperCase() }
-            //动态添加静态方法
-            Person.metaClass.static.createPerson = { String name ,Integer age-> new Person(name: name,age: age) }
-            Person p = new Person(name: "Hensen",age: 22)
-            println p.sex
-            println p.getUpperName()
-            println Person.createPerson("Jack",20).name
-            ```
-        3. 为第三方类添加属性和方法
-            ```groovy
-            ExpandoMetaClass.enableGlobally()
-            String.metaClass.static.sayHello = { String str -> return "Hello" + str}
-            println String.sayHello("Hensen")
-            ```
-    9. Json操作
-        1. 对象转换成Json字符串
-            ```groovy
-            import groovy.json.JsonOutput
-            def list = [new Person(name: 'Hensen',age: 20),new Person(name: 'Jack',age: 22)]
-            def json = JsonOutput.toJson(list)
-            println json //[{"age":20,"name":"Hensen"},{"age":22,"name":"Jack"}]
-            ```
-        2. Json字符串转换成对象
-            ```groovy
-            import groovy.json.JsonSlurper
-            def jsonSlurper = new JsonSlurper()
-            def object = jsonSlurper.parseText(json)
-            println object[0].name //Hensen
-            ```
-        3. 构建Json字符串
-            ```groovy
-            import groovy.json.JsonBuilder
-            def builder2 = new JsonBuilder()
-            builder2.book {
-                isbn '0321774094'
-                title 'Scala for the Impatient'
-                author (['Cay S. Horstmann', 'Hellen'])
-                publisher 'Addison-Wesley Professional'
-                content99 {
-                    contentType '1'
-                    text 'Hello'
-                }
-            }
-            println(builder2.toPrettyString())
-            println(builder2.content)
-            ```
-    10. xml操作 https://www.ibm.com/developerworks/cn/java/j-pg05199/index.html
-        1. 解析xml
-            ```groovy
-            String xml =
-            '''<person>
-            <name id="2">Hensen</name><age>23</age>
-            <name id="3">Jack</name><age>20</age>
-            </person>'''
-            def xmlSlurper = new XmlSlurper()
-            def person = xmlSlurper.parseText(xml)
-            //获取值
-            println person.name[0].text()
-            //获取属性
-            println person.name[0].@id
-            //遍历获取
-            person.each { p ->
-                println p.name.text()
-            }
-            ```
-        2. 遍历xml
-            ```groovy
-            //深度遍历
-            def names = person.depthFirst().findAll{ name ->
-                return name.@id == "2" ? true : false
-            }
-            println names
-            //广度遍历
-            def namess = person.children().findAll { node ->
-                return node.@id == "2" ? true : false
-            }.collect{ node ->
-                return node.@id
-            }
-            println namess
-            ```
-        3. 生成xml
-            ```groovy
-            import groovy.xml.MarkupBuilder
-            class Computer{
-                def name = 'Hensen'
-                def count = 2
-                def languages = [
-                    new Language(version: '1.8',value: 'Java'),
-                    new Language(version: '3.0',value: 'Python')
-                ]
-            }
-            class Language{
-                def version
-                def value
-            }
-            def sw = new StringWriter()
-            def xmlBuilder = new MarkupBuilder(sw)
-            def computer = new Computer()
-            xmlBuilder.computer(name: computer.name, count: computer.count){
-                //遍历所有子节点
-                computer.languages.each{ lang ->
-                    language(version: lang.version, lang.value)
-                }
-            }
-            println sw
-            ```
-    11. 文件操作
-        1. 读取文件
-            ```groovy
-            //读取文件的所有行
-            def file = new File("../Groovy.iml")
-            file.eachLine { line ->
-                println line
-            }
-            //读取文件的所有行
-            def text = file.getText()
-            println text
-            //读取文件的前100个字节
-            def reader = file.withReader { reader ->
-                char [] buffer = new char[100]
-                reader.read(buffer)
-                return buffer
-            }
-            println reader
-            ```
-        2. 拷贝文件
-            ```groovy
-            def copy(String srcPath,String destPath){
-                try {
-                    def destFile = new File(destPath)
-                    if(!destFile.exists()){
-                        destFile.createNewFile()
-                    }
-                    new File(srcPath).withReader { reader ->
-                        def lines = reader.readLines()
-                        destFile.withWriter { writer ->
-                            lines.each { line ->
-                                writer.append(line + '\r\n')
-                            }
-                        }
-                    }
-                    return true
-                }catch (Exception e){
-                    e.printStackTrace()
-                }
-                return false
-            }
-            ```
-        3. 对象读写
-            ```groovy
-            def saveObject(Object obj,String path){
-                try {
-                    def destFile = new File(path)
-                    if(!destFile.exists()){
-                        destFile.createNewFile()
-                    }
-                    destFile.withObjectOutputStream { out ->
-                        out.writeObject(obj)
-                    }
-                    return true
-                }catch (Exception e){
-                    e.printStackTrace()
-                }
-                return false
-            }
-            def readObject(String path){
-                try {
-                    def destFile = new File(path)
-                    if(destFile ==null || !destFile.exists())return null
-                    destFile.withObjectInputStream { input ->
-                        def obj = input.readObject()
-                        return obj
-                    }
-                }catch (Exception e){
-                    e.printStackTrace()
-                }
-                return null
-            }
-            ```
-    12. 正则表达式
-    13. 数据库
-    14. import
-        1. 默认import
-            ```groovy
-            import java.lang.*
-            import java.util.*
-            import java.io.*
-            import java.net.*
-            import groovy.lang.*
-            import groovy.util.*
-            import java.math.BigInteger
-            import java.math.BigDecimal
-            ```
-        2. 别名
-            ```groovy
-            import java.lang.String as KString
-            println(new KString('aaa'))
-            ```
-    15. others
-        1. 方法的默认参数
-            ```groovy
-            def foo(String p1, int p2 = 1) {
-                println(p1)
-                println(p2)
-            }
-            foo("hello")
-            ```
-        2. Field 与 Property: Field 是以各种修饰符修饰的变量。Property是私有变量和自带的 gettters/setters，下面的类具有私有变量 name、age，并自带这两个变量的 getter 和 setter。当变量声明为 final 的时候，默认就没有 setter。
-            ```groovy
-            class Person {
-                String name
-                int age
-            }
-            ```
-        3. Trait: Groovy 提供了一个叫做 Trait 特性实现了多继承，还有很多强大的功能。
-            ```groovy
-            trait Fly {
-                void fly() {
-                    println("fly")
-                }
-            }
-            trait Walk {
-                void walk() {
-                    println("walk")
-                }
-            }
-            class Duck implements Fly, Walk {}
-            Duck duck = new Duck()
-            duck.fly()
-            duck.walk()
-            ```
-        4. 字符串插值
-            ```groovy
-            def method = 'toString'
-            new Date()."$method"()  // 因为只包含一个变量，所以占位符表达式可以只有$前缀，而没有花括号包裹
-            ```
-        5. 方法的最后一行通常默认返回，即使没有使用return关键字
 5. Gradle语法基础
     1. 生命周期: Gradle的构建依次会执行下面的三个生命周期
         1. 初始化阶段(Initialization)：解析整个工程中的所有Project，构建出所有的project对象。主要是依靠settings.gradle。
