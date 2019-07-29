@@ -22,339 +22,317 @@ img {
     * [Kotlin 易百](https://www.yiibai.com/kotlin)
     * [抛弃 Java 改用 Kotlin 的六个月后，我后悔了](https://cloud.tencent.com/developer/news/249347)
     * [Kotlin中文网](https://www.kotlincn.net/)
-1. 基础
-    1. 基础
-        1. 主函数
-            ```kt
-            fun main(args: Array<String>) {
-                println("Hello World")
+1. basic
+    1. 主函数
+        ```kt
+        fun main(args: Array<String>) {
+            println("Hello World")
+        }
+        ```
+    2. 可以省略分号
+    3. val声明时可以不带类型，因为有自动类型转换
+    4. 注释
+        1. 单行: //
+        2. 多行: /**/，而且支持嵌套
+    5. 常量: val修饰常量，编译器规定常量必须初始化，若不想初始化，可用by lazy{}对常量进行懒加载
+        ```kt
+        val a: Int = 1                     // 强类型常量
+        val b = 2                          // 弱类型常量
+        const val c = "Hello"              // 编译器常量
+        val a: String by lazy{"lazy init"} // 懒加载常量
+        ```
+    6. 变量: var修饰变量，编译器规定变量必须初始化，若不想初始化，可用lateinit关键字限制报错。注意，这是2018的版本，现在这个lateinit好像不行。
+        ```kt
+        lateinit var a                       // 未初始化变量
+        var x = 5                            // 初始化变量
+        var x1 = "x is $x"                   // 获取变量的值：$变量
+        var x2 = "${x1.replace("is","was")}" // 内嵌表达式：${表达式}
+        var str = """<html>
+                <a href="">go</a>
+            </html>"""                       // 段落
+        ```
+    7. 空值检测
+        ```kt
+        fun main(args: Array<String>) {
+            println(args?.size)                //if not null
+            println(args?.size ?: "empty")     //if not null and else
+            val value = "str"
+            println(value.firstOrNull() ?: "")  //if not null and get first
+            val a : Int = 1
+            val b : Int = 2
+            val values : Map<String, String> = HashMap<String, String>()
+            values.plus(Pair<String, String>("key", "value"))
+            println(values["key"] ?: a + b)     //if not null and else + 表达式
+            value?.let{ }                       //if not null + 代码块
+            value!!.let{ }                      //告诉编译器不需要判空
+        }
+        ```
+    8. 字符串比较
+        * ==：在kt中相当于java的equals()
+        * ===：在kt中相当于java的==
+2. 数组与函数
+    1. 数组定义
+        ```kt
+        // 每种基本类型都有对应的数组创建方法，类似于定制版
+        var array:IntArray = intArrayOf(1,3,5,7)
+        var array:CharArray = charArrayOf('H','E','L','L','O')
+        // 基于泛性的创建方法，泛型也可省略，类似于通用版
+        var array:Array<Char> = arrayOf('H','E','L','L','O')
+        ```
+    2. 数组和字符串转换
+        ```kt
+        // 第一种形式
+        var array:Array<Char> = arrayOf('H','E','L','L','O')
+        println(array.joinToString(""))
+        // 第二种形式
+        var array:CharArray = charArrayOf('H','E','L','L','O')
+        println(String(array))
+        ```
+    3. 数组遍历
+        ```kt
+        // 第一种形式
+        array.forEach{println(": $it")}
+        // 第二种形式
+        // array.forEach{::println}  // error: overload resolution ambiguity
+        // 第三种形式
+        for((index, value) in array.withIndex()){
+            println("$index -> $value")
+        }
+        ```
+    4. 有返回值的函数
+        ```kt
+        //第一种形式
+        fun sum1(a: Int, b: Int): Int {return a + b}
+        //第二种形式
+        fun sum2(a: Int, b: Int) = println("a + b = ${a + b}")  // return 不允许出现在 = 的函数中
+        //第三种形式
+        fun sum3(a: Int, b: Int) = a + b
+        fun main(args: Array<String>) {
+            println(sum1(10, 20))
+            println(sum2(10, 20))
+            println(sum3(10, 20))
+        }
+        ```
+    5. 无返回值的函数
+        ```kt
+        fun printSum(a: Int, b: Int): Unit { /**/ }
+        fun printSum(a: Int, b: Int) { /**/ }  // 只要里面没有return就是Unit了，相当于java的void
+        ```
+3. 函数进阶
+    1. 默认参数的函数: ``fun foo(a: Int = 0, b: String = "") { /**/ }``
+    2. 变长参数的函数: 变长参数由vararg关键字决定，数组参数可通过*方式传参，第一个参数可以不使用名字指定，最后个参数必须使用具名参数
+        ```kt
+        fun say(double: Double, vararg ints: Int, string: String) { /**/ }
+        val array = intArrayOf(1, 3, 4, 5)
+        say(2.0, *array, string = "Hi")
+        ```
+    3. 扩展函数: 你可以给父类添加一个方法，这个方法将可以在所有子类中使用
+        ```kt
+        fun Activity.toast(message: CharSequence, duration: Int = Toast.LENGTH_SHORT) {
+            Toast.makeText(this, message, duration).show()
+        }
+        ```
+    4. 智能类型推测: 判断一个对象是否为一个类的实例，可以使用is关键字与Java中的instanceof关键字类似，但在Kotlin中如果已经确定了一个对象的类型，可以在接下来的代码块中直接作为这个确定类型使用
+        ```kt
+        fun getStringLength(obj: Any): Int? {
+            if (obj is String) { return obj.length }   // 类型判断后，obj会被系统自动转换为String类型
+            if (obj !is String) {  }                    // 同时还可以使用!is，来取反
+            return null                              // 代码块外部的obj仍然是Any类型的引用
+        }
+        ```
+    5. 复合函数
+        ```kt
+        infix fun <P1, P2, R> Function1<P1, P2>.andThen(function: Function1<P2, R>): Function1<P1, R> {
+            return fun(p1: P1): R { return function.invoke(this.invoke(p1)) }
+        }
+        var add = {i: Int -> i + 5}
+        var plus = {i: Int -> i * 2}
+        var addAndPlus = add andThen plus
+        println(addAndPlus(8))  // (8 + 5) * 2 = 26
+        ```
+    6. 函数的科理化: 指的是函数中传递的多个参数可转换为多个函数来进行链接
+        ```kt
+        //科理化前的函数
+        fun log(tag: String, target: OutputStream, message: Any?) = target.write("$tag $message\n".toByteArray())
+        log("Hensen", System.out,"HelloWorld")
+        //科理化后的函数
+        fun log(tag: String)
+            = fun(target: OutputStream)
+            = fun(message: Any?)
+            = target.write("$tag $message\n".toByteArray())
+        log("Hensen")(System.out)("HelloWorld")
+        ```
+4. Lambda表达式
+    1. 定义Lambda表达式
+        ```kt
+        var sum = { arg1: Int, arg2: Int -> arg1 + arg2 }
+        sum(1,2)  // 使用第一种方式
+        sum.invoke(1,2)  // 第二种
+        ```
+    2. 带有return的Lambda表达式: Lambda表达式并不是函数，如果直接return，会退出当前调用Lambda表达式的函数，而不是退出当前的Lambda表达式，可以使用@别名的方式退出
+        ```kt
+        var array: Array<Char> = arrayOf('H','E','L','L','O')
+        array.forEach ForEach@{
+            if (it == 'L') return@ForEach
+            println(it)
+        }
+        ```
+    3. 带有run的Lambda表达式: 调用某对象的run函数，在函数块内可以通过this指代该对象。返回值为函数块的最后一行或指定return表达式
+        ```kt
+        val a = "string".run { println(this); 3 }
+        println(a)  // 3
+        ```
+    4. 带有let的Lambda表达式
+        ```kt
+        val a = "string".let { println(it); 3 }
+        println(a)  // 3
+        ```
+    5. 带有with的Lambda表达式
+        ```kt
+        val a = with("string") { println(this); 3 }
+        println(a)  // 3
+        ```
+    6. 带有apply的Lambda表达式
+        ```kt
+        val a = "str".apply { println(this)  /* str */ }
+        println(a)  // str
+        ```
+    7. 带有also的Lambda表达式
+        ```kt
+        val a = "str".also { println(it)  /* str */ }
+        println(a)  // str
+        ```
+    8. 小结
+        1. run：使用this指定当前对象，最后一行为返回值
+        2. with：使用this指定当前对象，最后一行为返回值，写法上有区别
+        3. let：使用it指定当前对象，最后一行为返回值
+        4. apply：使用this指定当前对象，返回值为该对象自己
+        5. also：使用it指定当前对象，返回值为该对象自己
+5. 关键字表达式
+    1. when
+        ```kt
+        fun transform(x: Any) {
+            return when (x) {
+                is Int -> println("$x is Int")
+                in 1..100 -> println("$x is in 1-100")
+                0 -> println("$x is 0")
+                "Hello" -> println("Greeting")
+                !in 0..100 -> println("$x is not in 0-100")
+                // else不写则不做默认操作
+                else -> throw IllegalArgumentException("Invalid x param value")
             }
-            ```
-        2. 可以省略分号
-        3. val声明时可以不带类型，因为有自动类型转换
-        4. 注释
-            1. 单行: //
-            2. 多行: /**/，而且支持嵌套
-    2. 变量
-        1. 常量: val修饰常量，编译器规定常量必须初始化，若不想初始化，可用by lazy{}对常量进行懒加载
-            ```kt
-            val a: Int = 1                     // 强类型常量
-            val b = 2                          // 弱类型常量
-            const val c = "Hello"              // 编译器常量
-            val a: String by lazy{"lazy init"} // 懒加载常量
-            ```
-        2. 变量: var修饰变量，编译器规定变量必须初始化，若不想初始化，可用lateinit关键字限制报错。注意，这是2018的版本，现在这个lateinit好像不行。
-            ```kt
-            lateinit var a                       // 未初始化变量
-            var x = 5                            // 初始化变量
-            var x1 = "x is $x"                   // 获取变量的值：$变量 
-            var x2 = "${x1.replace("is","was")}" // 内嵌表达式：${表达式}
-            var str = """<html>
-                    <a href="">go</a>
-                </html>"""                       // 段落
-            ```
-        3. 空值检测
-            ```kt
-            fun main(args: Array<String>) {
-                println(args?.size)                //if not null
-                println(args?.size ?: "empty")     //if not null and else
-                val value = "str"
-                println(value.firstOrNull() ?: "")  //if not null and get first
-                val a : Int = 1
-                val b : Int = 2
-                val values : Map<String, String> = HashMap<String, String>()
-                values.plus(Pair<String, String>("key", "value"))
-                println(values["key"] ?: a + b)     //if not null and else + 表达式
-                value?.let{ }                       //if not null + 代码块
-                value!!.let{ }                      //告诉编译器不需要判空
+        }
+        ```
+    2. try-catch
+        ```kt
+        fun test() {
+            return try { count()
+            } catch (e: ArithmeticException) { throw IllegalStateException(e)
             }
-            ```
-        4. 字符串比较
-            * ==：在kt中相当于java的equals()
-            * ===：在kt中相当于java的==
-    3. 数组
-        1. 定义
-            ```kt
-            // 每种基本类型都有对应的数组创建方法，类似于定制版
-            var array:IntArray = intArrayOf(1,3,5,7)
-            var array:CharArray = charArrayOf('H','E','L','L','O')
-            // 基于泛性的创建方法，泛型也可省略，类似于通用版
-            var array:Array<Char> = arrayOf('H','E','L','L','O')
-            ```
-        2. 数组和字符串转换
-            ```kt
-            // 第一种形式
-            var array:Array<Char> = arrayOf('H','E','L','L','O')
-            println(array.joinToString(""))
-            // 第二种形式
-            var array:CharArray = charArrayOf('H','E','L','L','O')
-            println(String(array))
-            ```
-        3. 数组遍历
-            ```kt
-            // 第一种形式
-            array.forEach{println(": $it")}
-            // 第二种形式
-            // array.forEach{::println}  // error: overload resolution ambiguity
-            // 第三种形式
-            for((index,value) in array.withIndex()){
-                println("$index -> $value")
+        }
+        ```
+    3. if
+        ```kt
+        fun foo (param: Int) {
+            return if (param == 1) { "one"
+            } else if (param == 2) { "two"
+            } else { "three" }
+        }
+        ```
+    4. with
+        ```kotlin
+        class Turtle {
+            fun penDown()
+            fun penUp()
+            fun turn(degrees: Double)
+            fun forward(pixels: Double)
+        }
+        val myTurtle = Turtle()
+        with (myTurtle) { // 画一个 100 像素的正方形
+            penDown()
+            for(i in 1..4) { forward(100.0); turn(90.0); }
+            penUp()
+        }
+        ```
+6. 关键字表达式
+    1. for
+        ```kt
+        val items = listOf("apple", "banana", "kiwifruit")
+        for (item in items) {
+            println(item)
+        }
+        val items = listOf("apple", "banana", "kiwifruit")
+        for (index in items.indices) {
+            println("item at $index is ${items[index]}")
+        }
+        ```
+    2. while
+        ```kt
+        val items = listOf("apple", "banana", "kiwifruit")
+        var index = 0
+        while (index < items.size) {
+            println("item at $index is ${items[index]}")
+            index++
+        }
+        ```
+    3. 中缀表达式 infix
+        ```kt
+        Class Book{
+            infix fun on(any: Any): Boolean{
+                return false
             }
-            ```
-    4. 函数
-        1. 有返回值的函数
-            ```kt
-            //第一种形式
-            fun sum1(a: Int, b: Int): Int {return a + b}
-            //第二种形式
-            fun sum2(a: Int, b: Int) = println("a + b = ${a + b}")  // return 不允许出现在 = 的函数中
-            //第三种形式
-            fun sum3(a: Int, b: Int) = a + b
-            fun main(args: Array<String>) {
-                println(sum1(10, 20))
-                println(sum2(10, 20))
-                println(sum3(10, 20))
+        }
+        Class Desk{}
+        if (Book on Desk) {
+            println("book on the desk") 
+        }
+        ```
+7. 闭包
+    1. 函数内部可以定义函数，属于闭包
+        ```kt
+        fun add(x: Int): (Int)-> Int{
+            return fun(y: Int): Int{
+                return x + y
             }
-            ```
-        2. 无返回值的函数
-            ```kt
-            fun printSum(a: Int, b: Int): Unit { /**/ }
-            fun printSum(a: Int, b: Int) { /**/ }  // 只要里面没有return就是Uint了，相当于java的void
-            ```
-        3. 默认参数的函数
-            ```kt
-            fun foo(a: Int = 0, b: String = "") { /**/ }
-            ```
-        4. 变长参数的函数: 变长参数由vararg关键字决定，数组参数可通过*方式传参，第一个参数可以不使用名字指定，最后个参数必须使用具名参数
-            ```kt
-            fun say(double: Double, vararg ints: Int, string: String) { /**/ }
-            val array = intArrayOf(1, 3, 4, 5)
-            say(2.0, *array, string = "Hi")
-            ```
-        5. 扩展函数: 你可以给父类添加一个方法，这个方法将可以在所有子类中使用
-            ```kt
-            fun Activity.toast(message: CharSequence, duration: Int = Toast.LENGTH_SHORT) {
-                Toast.makeText(this, message, duration).show()
+        }
+        ```
+    2. 闭包持有函数内部的运行状态
+        ```kt
+        fun justCount():() -> Unit{
+            var count = 0 //被函数内部持有
+            return {
+                println(count++)
             }
-            ```
-        6. 智能类型推测: 判断一个对象是否为一个类的实例，可以使用is关键字与Java中的instanceof关键字类似，但在Kotlin中如果已经确定了一个对象的类型，可以在接下来的代码块中直接作为这个确定类型使用
-            ```kt
-            fun getStringLength(obj: Any): Int? {
-                if (obj is String) { return obj.length }   // 类型判断后，obj会被系统自动转换为String类型
-                if (obj !is String) {  }                    // 同时还可以使用!is，来取反
-                return null                              // 代码块外部的obj仍然是Any类型的引用
-            }
-            ```
-        7. 复合函数
-            ```kt
-            infix fun <P1, P2, R> Function1<P1, P2>.andThen(function: Function1<P2, R>): Function1<P1, R>{
-                return fun(p1: P1): R{
-                    return function.invoke(this.invoke(p1))
-                }
-            }
-            var add = {i: Int -> i + 5}
-            var plus = {i: Int -> i * 2}
-            var addAndPlus = add andThen plus
-            println(addAndPlus(8))  // (8 + 5) * 2 = 26
-            ```
-        8. 函数的科理化: 指的是函数中传递的多个参数可转换为多个函数来进行链接
-            ```kt
-            //科理化前的函数
-            fun log(tag: String, target: OutputStream, message: Any?){
-                target.write("$tag $message\n".toByteArray())
-            }
-            log("Hensen",System.out,"HelloWorld")
-            //科理化后的函数
-            fun log(tag: String)
-                = fun(target: OutputStream)
-                = fun(message: Any?)
-                = target.write("$tag $message\n".toByteArray())
-            log("Hensen")(System.out)("HelloWorld")
-            ```
-    5. lambda表达式
-        1. 定义Lambda表达式
-            ```kt
-            var sum = { arg1: Int, arg2: Int -> arg1 + arg2 }
-            sum(1,2)  // 使用第一种方式
-            sum.invoke(1,2)  // 第二种
-            ```
-        2. 带有return的Lambda表达式: Lambda表达式并不是函数，如果直接return，会退出当前调用Lambda表达式的函数，而不是退出当前的Lambda表达式，可以使用@别名的方式退出
-            ```kt
-            var array: Array<Char> = arrayOf('H','E','L','L','O')
-            array.forEach ForEach@{
-                if (it == 'L') return@ForEach
-                println(it)
-            }
-            ```
-        3. 带有run的Lambda表达式: 调用某对象的run函数，在函数块内可以通过this指代该对象。返回值为函数块的最后一行或指定return表达式
-            ```kt
-            val a = "string".run {
-                println(this)
-                3
-            }
-            println(a)  // 3
-            ```
-        4. 带有let的Lambda表达式
-            ```kt
-            val a = "string".let {
-                println(it)
-                3
-            }
-            println(a)  // 3
-            ```
-        5. 带有with的Lambda表达式
-            ```kt
-            val a = with("string") {
-                println(this)
-                3
-            }
-            println(a)  // 3
-            ```
-        6. 带有apply的Lambda表达式
-            ```kt
-            val a = "str".apply {
-                println(this)  // str
-            }
-            println(a)  // str
-            ```
-        7. 带有also的Lambda表达式
-            ```kt
-            val a = "str".also {
-                println(it)  // str
-            }
-            println(a)  // str
-            ```
-        8. 小结
-            1. run：使用this指定当前对象，最后一行为返回值
-            2. with：使用this指定当前对象，最后一行为返回值，写法上有区别
-            3. let：使用it指定当前对象，最后一行为返回值
-            4. apply：使用this指定当前对象，返回值为该对象自己
-            5. also：使用it指定当前对象，返回值为该对象自己
-    6. 表达式
-        1. when
-            ```kt
-            fun transform(x: Int) {
-                return when (x) {
-                    is Int -> println("$x is Int")
-                    in 1..100 -> println("$x is in 1-100")
-                    !in 1..100 -> println("$x is not in 1-100")
-                    // else不写则不做默认操作
-                    else -> throw IllegalArgumentException("Invalid x param value")
-                }
-            }
-            fun describe(obj: Any): String = when (obj) {
-                1          -> "One"
-                "Hello"    -> "Greeting"
-                is Long    -> "Long"
-                !is String -> "Not a string"
-                else       -> "Unknown"
-            }
-            ```
-        2. try-catch
-            ```kt
-            fun test() {
-                val result = try {
-                    count()
-                } catch (e: ArithmeticException) {
-                    throw IllegalStateException(e)
-                }
-            }
-            ```
-        3. if
-            ```kt
-            fun foo (param: Int) {
-                val result = if (param == 1) {
-                    "one"
-                } else if (param == 2) {
-                    "two"
-                } else {
-                    "three"
-                }
-                return result
-            }
-            ```
-        4. with
-            ```kt
-            class Turtle {
-                fun penDown()
-                fun penUp()
-                fun turn(degrees: Double)
-                fun forward(pixels: Double)
-            }
-            val myTurtle = Turtle()
-            with (myTurtle) { // 画一个 100 像素的正方形
-                penDown()
-                for(i in 1..4) {
-                    forward(100.0)
-                    turn(90.0)
-                }
-                penUp()
-            }
-            ```
-        5. for
-            ```kt
-            val items = listOf("apple", "banana", "kiwifruit")
-            for (item in items) {
-                println(item)
-            }
-            val items = listOf("apple", "banana", "kiwifruit")
-            for (index in items.indices) {
-                println("item at $index is ${items[index]}")
-            }
-            ```
-        6. while
-            ```kt
-            val items = listOf("apple", "banana", "kiwifruit")
-            var index = 0
-            while (index < items.size) {
-                println("item at $index is ${items[index]}")
-                index++
-            }
-            ```
-        7. 中缀表达式 infix
-            ```kt
-            Class Book{
-                infix fun on(any: Any): Boolean{
-                    return false
-                }
-            }
-            Class Desk{}
-            if (Book on Desk) {
-                println("book on the desk") 
-            }
-            ```
-    7. 闭包
-        1. 函数内部可以定义函数，属于闭包
-            ```kt
-            fun add(x: Int): (Int)-> Int{
-                return fun(y: Int): Int{
-                    return x + y
-                }
-            }
-            ```
-        2. 闭包持有函数内部的运行状态
-            ```kt
-            fun justCount():() -> Unit{
-                var count = 0 //被函数内部持有
-                return {
-                    println(count++)
-                }
-            }
-            fun main(args: Array<String>) {
-                val count = justCount()
-                count()  // 输出结果：0
-                count()  // 输出结果：1
-                count()  // 输出结果：2
-            }
-            ```
-        3. 自行闭包: 定义闭包的同时直接执行闭包，一般用于初始化上下文环境
-            ```kt
-            println(({ x: Int, y: Int ->
-                println("${x + y}")
-                x + y
-            })(1, 3))
-            ```
-    8. 运算符: 自定义运算符
+        }
+        fun main(args: Array<String>) {
+            val count = justCount()
+            count()  // 输出结果：0
+            count()  // 输出结果：1
+            count()  // 输出结果：2
+        }
+        ```
+    3. 自行闭包: 定义闭包的同时直接执行闭包，一般用于初始化上下文环境
+        ```kt
+        println(({ x: Int, y: Int ->
+            println("${x + y}")
+            x + y
+        })(1, 3))
+        ```
+8. 运算符
+    1. 逻辑运算符
+        ```kt
+        val 一逻辑与 1111 = 1 and 0x00001111
+        val 一逻辑或 1111 = 1 or 0x00001111
+        val 一异或 1111 = 1 xor 0x00001111
+        ```
+    2. 位运算符
+        ```kt
+        val 一右移二 = 1 shr 2
+        val 一左移二 = 1 shl 2
+        val 一无符号右移二 = 1 ushr 2
+        val 一取反 = 1.inv ()
+        ```
+    3. 自定义运算符
         ```kt
         class Complex(var arg1: Double,var arg2: Double){
             operator fun plus(other: Complex): Complex{
@@ -373,358 +351,341 @@ img {
         val c1 = Complex(3.0,4.0)
         val c1 = Complex(2.0,5.0)
         println(c1 + c2) //5.0 and 9.0
-        println(c1 + 5) //8.0 and 4.0 
+        println(c1 + 5) //8.0 and 4.0
         println(c1()) //5
         ```
-    9. 区间语句
-        1. 定义区间
+9. 区间语句
+    1. 定义区间
+        ```kt
+        var range = 0..1024 //[0,1024]闭区间
+        var range = 0 until 1024 //[0,1024)半开区间
+        var range = 0..-1 //空区间
+        ```
+    2. 检查x是否在指定区间里面
+        ```kt
+        val x = 10
+        val y = 9
+        if (x in 1..y+1) {
+            println("fits in range")
+        }
+        ```
+    3. 检查list.size是否在list的索引上
+        ```kt
+        val list = listOf("a", "b", "c")
+        if (-1 !in 0..list.lastIndex) {
+            println("-1 is out of range")
+        }
+        if (list.size !in list.indices) {
+            println("list size is out of valid list indices range too")
+        }
+        ```
+    4. 区间遍历
+        ```kt
+        for (x in 1..10 step 2) {
+            print(x) //13579
+        }
+        for (x in 9 downTo 0 step 3) {
+            print(x) //9630
+        }
+        ```
+10. 集合与映射
+    1. 初始化集合
+        ```kt
+        val mutableList = mutableListOf(0, 1)   //可读写List对象
+        var list = listOf(0, 1, 2)              //可读List对象
+        val set = setOf(1, 2, 4)                //可读Set对象
+        ```
+    2. 集合遍历
+        ```kt
+        val items = listOf("a", "b", "c")
+        for (item in items) {
+            println(item)
+        }
+        ```
+    3. 集合判断
+        ```kt
+        val items = listOf("apple", "balanace", "coffee")
+        when {
+            "orange" in items -> println("juicy")
+            "apple" in items -> println("apple is fine too")
+        }
+        ```
+    1. 初始化map
+        ```kt
+        val map = mutableMapOf("a" to 1, "b" to 2, "c" to 3) //可读写Map对象
+        val map = mapOf("a" to 1, "b" to 2, "c" to 3)        //可读Map对像
+        ```
+    2. 访问map: ``map["key"] = value``
+    3. 遍历map
+        ```kt
+        for ((k, v) in map) {
+            println("$k -> $v")
+        }
+        ```
+11. 构造方法
+    1. 主构造函数
+        1. Kotlin的构造函数可以写在类头中，跟在类名后面，如果有注解还需要加上关键字constructor
             ```kt
-            var range = 0..1024 //[0,1024]闭区间
-            var range = 0 until 1024 //[0,1024)半开区间
-            var range = 0..-1 //空区间
-            ```
-        2. 检查x是否在指定区间里面
-            ```kt
-            val x = 10
-            val y = 9
-            if (x in 1..y+1) {
-                println("fits in range")
-            }
-            ```
-        3. 检查list.size是否在list的索引上
-            ```kt
-            val list = listOf("a", "b", "c")
-            if (-1 !in 0..list.lastIndex) {
-                println("-1 is out of range")
-            }
-            if (list.size !in list.indices) {
-                println("list size is out of valid list indices range too")
-            }
-            ```
-        4. 区间遍历
-            ```kt
-            for (x in 1..10 step 2) {
-                print(x) //13579
-            }
-            for (x in 9 downTo 0 step 3) {
-                print(x) //9630
-            }
-            ```
-    10. 集合
-        1. 初始化
-            ```kt
-            val mutableList = mutableListOf(0, 1)   //可读写List对象
-            var list = listOf(0, 1, 2)              //可读List对象
-            val set = setOf(1, 2, 4)                //可读Set对象
-            ```
-        2. 集合遍历
-            ```kt
-            val items = listOf("a", "b", "c")
-            for (item in items) {
-                println(item)
-            }
-            ```
-        3. 集合判断
-            ```kt
-            val items = listOf("apple", "balanace", "coffee")
-            when {
-                "orange" in items -> println("juicy")
-                "apple" in items -> println("apple is fine too")
-            }
-            ```
-    11. 映射
-        1. 初始化
-            ```kt
-            val map = mutableMapOf("a" to 1, "b" to 2, "c" to 3) //可读写Map对象
-            val map = mapOf("a" to 1, "b" to 2, "c" to 3)        //可读Map对像
-            ```
-        2. 访问map: ``map["key"] = value``
-        3. 遍历map
-            ```kt
-            for ((k, v) in map) {
-                println("$k -> $v")
-            }
-            ```
-    12. 构造方法
-        1. 主构造函数
-            1. Kotlin的构造函数可以写在类头中，跟在类名后面，如果有注解还需要加上关键字constructor
-                ```kt
-                class Person(private val name: String) {
-                    fun sayHello() {
-                        println("hello $name")
-                    }
+            class Person(private val name: String) {
+                fun sayHello() {
+                    println("hello $name")
                 }
-                ```
-            2. 在主构造函数中不能有任何代码实现，如果有额外的代码需要在构造方法中执行，你需要放到init代码块中执行
-                ```kt
-                class Person(private var name: String) {
-                    init {
-                        name = "Zhang Tao"
-                    }
-                    fun sayHello() {
-                        println("hello $name")
-                    }
-                }
-                ```
-        2. 次构造函数: 存在两个或两个以上的构造方法时，可以增加次构造方法
+            }
+            ```
+        2. 在主构造函数中不能有任何代码实现，如果有额外的代码需要在构造方法中执行，你需要放到init代码块中执行
             ```kt
             class Person(private var name: String) {
-                private var description: String? = null
                 init {
                     name = "Zhang Tao"
-                }
-                constructor(name: String, description: String) : this(name) {
-                    this.description = description
                 }
                 fun sayHello() {
                     println("hello $name")
                 }
             }
             ```
-    13. 类与对象
-        1. 输出类名
+    2. 次构造函数: 存在两个或两个以上的构造方法时，可以增加次构造方法
+        ```kt
+        class Person(private var name: String) {
+            private var description: String? = null
+            init {
+                name = "Zhang Tao"
+            }
+            constructor(name: String, description: String) : this(name) {
+                this.description = description
+            }
+            fun sayHello() {
+                println("hello $name")
+            }
+        }
+        ```
+12. 类与对象1
+    1. 输出类名
+        ```kt
+        println(HelloWorld::class.java.simpleName)  // 输出类名: java的
+        println(HelloWorld::class.java.name)  // 输出包名+类名: java的
+        println(HelloWorld.class)
+        println(HelloWorld.javaClass.kotlin)
+        ```
+    2. 创建对象
+        ```kt
+        val rectangle = Rectangle(5.0, 2.0)
+        val triangle = Triangle(3.0, 4.0, 5.0)
+        ```
+    3. 数据类: data修饰的类称之为数据类，当data修饰后，会自动将所有成员用operator声明，即为这些成员生成getter()和setter()
+        ```kt
+        data class Customer(val name: String, val email: String)
+        // 编译器自动从主构造函数中的属性导入下面这些成员函数
+        // equals()
+        // hashCode()
+        // toString()
+        // componentN()：函数返回对应着声明的参数顺序
+        // copy()
+        ```
+    4. 内部类: Kt默认的内部类为静态内部类，可以使用inner关键字将内部类变为非静态内部类，且可使用注解去获取外部类的成员属性
+        ```kt
+        class Outter {
+            var a = 5
+            inner class Inner {
+                var a = 6
+                fun getOutterA () = println(this@Outter.a)
+            }
+        }
+        ```
+    5. 单例类: object关键字表示该类是单例
+        ```kt
+        class Single private constructor() {
+            companion object {
+                fun get(): Single = return Holder.instance
+            }
+            private object Holder { val instance = Single() }
+        }
+        // or
+        object Resource { val name = "Name" }
+        Resource.INSTANCE.name
+        ```
+13. 类与对象2
+    1. 枚举类: 枚举默认没有数值，如果需要固定类型的数值，可在类名后声明参数类型
+        ```kt
+        enum class Programer (val id: Int) {
+            JAVA(0), KOTLIN(1), C(2), CPP(3), ANDROID(4);
+            fun getTag(): String{
+                return "$id + $name"
+            }
+        }
+        // 使用
+        println(Programer.JAVA.getTag())
+        ```
+    2. 密封类
+        1. sealed修饰的类称为密封类，用来表示受限的类层次结构
             ```kt
-            println(HelloWorld::class.java.simpleName)  // 输出类名
-            println(HelloWorld::class.java.name)  // 输出包名+类名
-            ```
-        2. 创建对象
-            ```kt
-            val rectangle = Rectangle(5.0, 2.0)
-            val triangle = Triangle(3.0, 4.0, 5.0)
-            ```
-        3. 数据类: data修饰的类称之为数据类，当data修饰后，会自动将所有成员用operator声明，即为这些成员生成getter()和setter()
-            ```kt
-            data class Customer(val name: String, val email: String)
-            // 编译器自动从主构造函数中的属性导入下面这些成员函数
-            // equals()
-            // hashCode()
-            // toString()
-            // componentN()：函数返回对应着声明的参数顺序
-            // copy()
-            ```
-        4. 内部类: Kt默认的内部类为静态内部类，可以使用inner关键字将内部类变为非静态内部类，且可使用注解去获取外部类的成员属性
-            ```kt
-            class Outter {
-                var a = 5
-                inner class Inner {
-                    var a = 6
-                    fun getOutterA () {
-                        println(this@Outter.a)
-                    }
+            sealed class BaseClass {
+                class Test1 : BaseClass() {
+                    override fun test() { println("Test1实例") }
                 }
+                class Test2 : BaseClass() {
+                    override fun test() { println("Test2实例") }
+                }
+                object Test3 : BaseClass() {
+                    override fun test() { println("Test3实例") }
+                }
+                open fun test() { println("BaseClass实例") }
             }
             ```
-        5. 单例类: object关键字表示该类是单例
-            ```kt
-            class Single private constructor() {
-                companion object {
-                    fun get() : Single {
-                        return Holder.instance
-                    }
+        2. 密封类与枚举的区别：
+            * 密封类是枚举类的扩展
+            * 枚举类型的值集合是受限的，且每个枚举常量只存在一个实例
+            * 密封类的一个子类可以有可包含状态的多个实例
+    3. 继承: 在class中加open关键字即可被继承
+        ```kt
+        open class Person (var name:String, var age:Int) {}
+        ```
+    4. 接口代理: 接口代理表示代理人可直接调用接口代理的方法
+        ```kt
+        // 代理driver和writer，当执行manager.driver()，Manager类会去调用代理的driver.driver()
+        class Manager(val driver: Driver, val writer: Writer) : Driver by driver, Writer by writer
+        interface Driver{ fun driver() }
+        interface Wirter{ fun wirter() }
+        ```
+14. 类与对象3
+    1. 伴生对象: 用companion关键字修饰对象内的方法，我们称companion修饰的对象为伴生对象，本质是静态方法。如果在Java文件中想通过类名的方式去调用静态方法，则需要加入注解才可以使用
+        ```kt
+        class StringUtils {
+            companion object {
+                @JvmStatic
+                fun isEmpty(str: String): Boolean {
+                    return "" == str
                 }
-                private object Holder {
-                    val instance = Single()
-                }
+                @JvmField
+                var TAG = "StringUtils"
             }
-            // or
-            object Resource {
-                val name = "Name"
+        }
+        ```
+    2. 方法重载: 由于Kt中有默认参数的性质，所以方法的重载可以用默认参数来实现，如果在Java文件中想使用Kt重载的话，就需要加入注解才可以使用
+        ```kt
+        class StringUtils {
+            @JvmOverloads
+            fun a(int: Int = 0): Int{
+                return int
             }
-            //使用
-            Resource.INSTANCE.name
-            ```
-        6. 枚举类: 枚举默认没有数值，如果需要固定类型的数值，可在类名后声明参数类型
-            ```kt
-            enum class Programer (val id: Int) {
-                JAVA(0), KOTLIN(1), C(2), CPP(3), ANDROID(4);
-                fun getTag(): String{
-                    return "$id + $name"
-                }
+        }
+        ```
+    3. 匿名对象: 使用object对象表示匿名对象
+        ```kt
+        btn?.setOnClickListener(object : View.OnClickListener{
+            override fun onClick(v: View?) {}
+        })
+        ```
+15. 常用操作符
+    1. 下标操作类
+        * contains：判断是否有指定元素
+        * elementAt：返回对应的元素，越界会抛IndexOutOfBoundsException
+        * indexOf：返回指定元素的下标，没有返回-1
+        * firstOrNull：返回符合条件的第一个元素，没有返回null
+        * lastOrNull：返回符合条件的最后一个元素，没有返回null
+        * singleOrNull：返回符合条件的单个元素，如有没有符合或超过一个，返回null
+    2. 判断类
+        * any：判断集合中 是否有满足条件的元素
+        * all：判断集合中的元素是否都满足条件
+        * none：判断集合中是否都不满足条件，是则返回true
+        * count：查询集合中满足条件的元素个数
+        * reduce：从第一项到最后一项进行累计
+    3. 过滤类
+        * filter：过滤 掉所有满足条件的元素
+        * filterNot：过滤所有不满足条件的元素
+        * filterNotNull：过滤NULL
+        * take：返回前n个元素
+    4. 转换类
+        * map：转换成另一个集合
+        * mapIndexed：除了转换成另一个集合，还可以拿到Index
+        * mapNotNull：执行转换前过滤掉 为 NULL 的元素
+        * flatMap：自定义逻辑合并两个集合
+        * groupBy：按照某个条件分组，返回Map
+    5. 排序类
+        * reversed：反序
+        * sorted：升序
+        * sortedBy：自定义排序
+        * sortedDescending：降序
+    6. 实战操作符
+        ```kt
+        val fruits = listOf("banana", "avocado", "apple", "kiwifruit")
+        fruits
+            .filter { it.startsWith("a") }
+            .sortedBy { it }
+            .map { it.toUpperCase() }
+            .forEach { println(it) }
+        ```
+16. 特性
+    1. 懒加载: ``val p : String by lazy { /* 计算该字符串 */ }``
+    2. 安全类型转换: 父类转成子类会抛出类型转换失败的错误，如果采用as?的方式，则返回null ``var child : Child = parent as? Child``
+    3. 输出可执行文件: 在Gradle添加依赖指定main函数文件，后缀名为Kt。刷新Gradle，在Gradle右边栏点击distribution/installDist，生成的程序在build/install目录下
+        ```kt
+        apply plugin:'application'
+        mainClassName = "com.hensen.android.MyCalcKt"
+        ```
+    4. internal关键字: 在变量中使用internal关键字表示成员变量只允许在模块内能被访问到 ``internal val a``
+    5. 尾递归: 对于递归函数，如果递归函数并未对递归的结果进行操作，则可以使用 tailrec 关键字将递归声明为尾递归，尾递归会优化代码，将递归转换成迭代
+        ```kt
+        data class ListNode(val value: Int, var next: ListNode?)
+        // 对递归的结果并未操作，属于尾递归
+        tailrec fun findListNode(head: ListNode?, value: Int): ListNode? {
+            head ?: return null
+            if(head.value == value) return head
+            return findListNode(head.next, value)
+        }
+        // 对递归的结果进行乘法运算，不属于尾递归
+        fun factorial(n: Long): Long {
+            return n * factorial(n - 1)
+        }
+        ```
+17. Android相关
+    1. view.find: 使用Ktolin的拓展函数，view.find替代findViewById ``var textView = view.find(R.id.textView)``
+    2. observable: Delegates.observable可以监听当前的变量值的变化，改变变量的值，即可触发observable
+        ```kt
+        private var mCurrentState: Int by Delegates.observable(-1) { _, old, new ->
+            if (old != new) {
+                RxBus.getDefault().post(ChannelPK_OnModelChange_Rank_EventArgs(new == 1))
+                MLog.info(PKModelManager.TAG, "rank mode : $old -> $new")
             }
-            // 使用
-            println(Programer.JAVA.getTag())
-            ```
-        7. 密封类
-            1. sealed修饰的类称为密封类，用来表示受限的类层次结构
-                ```kt
-                sealed class BaseClass {
-                    class Test1 : BaseClass() {
-                        override fun test() {
-                            println("Test1实例")
-                        }
-                    }
-                    class Test2 : BaseClass() {
-                        override fun test() {
-                            println("Test2实例")
-                        }
-                    }
-                    object Test3 : BaseClass() {
-                        override fun test() {
-                            println("Test3实例")
-                        }
-                    }
-                    open fun test() {
-                        println("BaseClass实例")
-                    }
-                }
-                ```
-            2. 密封类与枚举的区别：
-                * 密封类是枚举类的扩展
-                * 枚举类型的值集合是受限的，且每个枚举常量只存在一个实例
-                * 密封类的一个子类可以有可包含状态的多个实例
-        8. 继承: 在class中加open关键字即可被继承
+        }
+        fun onModelChange() {
+            mCurrentState = 1 //改变变量的值，即可触发observable
+        }
+        ```
+    3. bundle: 创建bundle已经不需要再去执行其各种put方法
+        ```kt
+        val bundle = bundleOf(
+            "KET_INT" to 1,
+            "KET_LONG" to 2L,
+            "KET_BOOLEAN" to true,
+            "KEY_NULL" to null,
+            "KEY_ARRAY" to arrayOf(1, 2)
+        )
+        ```
+    4. Parcelize
+        1. Parcelize已经不需要再写什么代码了，只需要继承和注解
             ```kt
-            open class Person (var name:String, var age:Int) {}
+            @Parcelize
+            data class User(val name: String, val age: Int): Parcelize
             ```
-        9. 接口代理: 接口代理表示代理人可直接调用接口代理的方法
+        2. @Parcelize的使用需要在gradle声明变量
             ```kt
-            // 代理driver和writer，当执行manager.driver()，Manager类会去调用代理的driver.driver()
-            class Manager(val driver: Driver, val writer: Writer) : Driver by driver, Writer by writer
-            interface Driver{ fun driver() }
-            interface Wirter{ fun wirter() }
-            ```
-        10. 伴生对象: 用companion关键字修饰对象内的方法，我们称companion修饰的对象为伴生对象，本质是静态方法。如果在Java文件中想通过类名的方式去调用静态方法，则需要加入注解才可以使用
-            ```kt
-            class StringUtils {
-                companion object {
-                    @JvmStatic
-                    fun isEmpty(str: String): Boolean {
-                        return "" == str
-                    }
-                    @JvmField
-                    var TAG = "StringUtils"
-                }
-            }
-            ```
-        11. 方法重载: 由于Kt中有默认参数的性质，所以方法的重载可以用默认参数来实现，如果在Java文件中想使用Kt重载的话，就需要加入注解才可以使用
-            ```kt
-            class StringUtils {
-                @JvmOverloads
-                fun a(int: Int = 0): Int{
-                    return int
-                }
-            }
-            ```
-        12. 匿名对象: 使用object对象表示匿名对象
-            ```kt
-            btn?.setOnClickListener(object : View.OnClickListener{
-                override fun onClick(v: View?) {
-                }
-            })
-            ```
-    14. 常用操作符: Kotlin的操作符跟RxJava基本一致
-        1. 下标操作类
-            * contains：判断是否有指定元素
-            * elementAt：返回对应的元素，越界会抛IndexOutOfBoundsException
-            * indexOf：返回指定元素的下标，没有返回-1
-            * firstOrNull：返回符合条件的第一个元素，没有返回null
-            * lastOrNull：返回符合条件的最后一个元素，没有返回null
-            * singleOrNull：返回符合条件的单个元素，如有没有符合或超过一个，返回null
-        2. 判断类
-            * any：判断集合中 是否有满足条件的元素
-            * all：判断集合中的元素是否都满足条件
-            * none：判断集合中是否都不满足条件，是则返回true
-            * count：查询集合中满足条件的元素个数
-            * reduce：从第一项到最后一项进行累计
-        3. 过滤类
-            * filter：过滤 掉所有满足条件的元素
-            * filterNot：过滤所有不满足条件的元素
-            * filterNotNull：过滤NULL
-            * take：返回前n个元素
-        4. 转换类
-            * map：转换成另一个集合
-            * mapIndexed：除了转换成另一个集合，还可以拿到Index
-            * mapNotNull：执行转换前过滤掉 为 NULL 的元素
-            * flatMap：自定义逻辑合并两个集合
-            * groupBy：按照某个条件分组，返回Map
-        5. 排序类
-            * reversed：反序
-            * sorted：升序
-            * sortedBy：自定义排序
-            * sortedDescending：降序
-        6. 实战操作符
-            ```kt
-            val fruits = listOf("banana", "avocado", "apple", "kiwifruit")
-            fruits
-                .filter { it.startsWith("a") }
-                .sortedBy { it }
-                .map { it.toUpperCase() }
-                .forEach { println(it) }
-            ```
-    15. 特性
-        1. 懒加载: ``val p : String by lazy { /* 计算该字符串 */ }``
-        2. 安全类型转换: 父类转成子类会抛出类型转换失败的错误，如果采用as?的方式，则返回null ``var child : Child = parent as? Child``
-        3. 输出可执行文件: 在Gradle添加依赖指定main函数文件，后缀名为Kt。刷新Gradle，在Gradle右边栏点击distribution/installDist，生成的程序在build/install目录下
-            ```kt
-            apply plugin:'application'
-            mainClassName = "com.hensen.android.MyCalcKt"
-            ```
-        4. internal关键字: 在变量中使用internal关键字表示成员变量只允许在模块内能被访问到 ``internal val a``
-        5. 尾递归: 对于递归函数，如果递归函数并未对递归的结果进行操作，则可以使用 tailrec 关键字将递归声明为尾递归，尾递归会优化代码，将递归转换成迭代
-            ```kt
-            data class ListNode(val value: Int, var next: ListNode?)
-            // 对递归的结果并未操作，属于尾递归
-            tailrec fun findListNode(head: ListNode?, value: Int): ListNode? {
-                head ?: return null
-                if(head.value == value) return head
-                return findListNode(head.next, value)
-            }
-            // 对递归的结果进行乘法运算，不属于尾递归
-            fun factorial(n: Long): Long {
-                return n * factorial(n - 1)
+            androidExtensions {
+                experimental = true
             }
             ```
-    16. Android相关
-        1. view.find: 使用Ktolin的拓展函数，view.find替代findViewById ``var textView = view.find(R.id.textView)``
-        2. observable: Delegates.observable可以监听当前的变量值的变化，改变变量的值，即可触发observable
-            ```kt
-            private var mCurrentState: Int by Delegates.observable(-1) { _, old, new ->
-                if (old != new) {
-                    RxBus.getDefault().post(ChannelPK_OnModelChange_Rank_EventArgs(new == 1))
-                    MLog.info(PKModelManager.TAG, "rank mode : $old -> $new")
-                }
-            }
-            fun onModelChange() {
-                mCurrentState = 1 //改变变量的值，即可触发observable
-            }
-            ```
-        3. bundle: 创建bundle已经不需要再去执行其各种put方法
-            ```kt
-            val bundle = bundleOf(
-                "KET_INT" to 1,
-                "KET_LONG" to 2L,
-                "KET_BOOLEAN" to true,
-                "KEY_NULL" to null,
-                "KEY_ARRAY" to arrayOf(1, 2)
-            )
-            ```
-        4. Parcelize
-            1. Parcelize已经不需要再写什么代码了，只需要继承和注解
-                ```kt
-                @Parcelize
-                data class User(val name: String, val age: Int): Parcelize
-                ```
-            2. @Parcelize的使用需要在gradle声明变量
-                ```kt
-                androidExtensions {
-                    experimental = true
-                }
-                ```
-        5. Serializable: 指定Serializable的名字 ``class Book(@SerializedName(TXT) var txt: String)``
-        6. postDelay: 支持闭包和lambda表达式 ``handler.postDelay(50) {  }``
-        7. 注解: 如果说在Java文件中需要使用到KT的变量、静态方法、重载方法等，就需要注解声明
-            * @JvmField：将属性编译为Java变量
-            * @JvmStatic：将伴生对象编译为Java静态方法
-            * @JvmOverloads：默认参数生成重载方法
-            * @file:JvmName：指定Kotlin文件编译后的类名
-    17. xml
-    18. json
-    19. file
-    20. 输入输出
-    21. http/tcp/udp
-    22. 
-2. 深入
-3. 工具
+    5. Serializable: 指定Serializable的名字 ``class Book(@SerializedName(TXT) var txt: String)``
+    6. postDelay: 支持闭包和lambda表达式 ``handler.postDelay(50) {  }``
+    7. 注解: 如果说在Java文件中需要使用到KT的变量、静态方法、重载方法等，就需要注解声明
+        * @JvmField：将属性编译为Java变量
+        * @JvmStatic：将伴生对象编译为Java静态方法
+        * @JvmOverloads：默认参数生成重载方法
+        * @file:JvmName：指定Kotlin文件编译后的类名
+18. xml
+19. json
+20. file
+21. 输入输出
+22. http/tcp/udp
+23. 工具
     1. kotlinc
         ```
         C:\Users\liangyy75>kotlinc -help
@@ -798,6 +759,31 @@ img {
         -Werror                    出现警告时终止编译
         @<文件名>                     从文件读取选项和文件名
         ```
+24. basic2
+    1. 整数类型与位数: Byte(8) / Short(16) / Int(32) / Long(64) / Float(32) / Double(64)
+    2. kotlin优秀的类型推断例子
+        ```kt
+        var i = 32  // Int
+        var l = 123L  // Long
+        var d = 12.34  // Double
+        var f = 56.78f  // Float
+        var x = 0xACF  // 16进制数
+        var b = 0b0100  // 2进制数
+        // kotlin不支持8进制数
+        ```
+    3. 如果整数太多，可以用下画线分隔出千分位或者万分位。如 var a = 1000_1000_1000;
+    4. Kotlin不支持自动扩展数字范围，转换必须手动进行。每一种数字都有一个转换成其他数字类型的函数。 ``toByte() / toShort() / toInt() /toLong() / toFloat() / toDouble() / toChar()``
+    5. toInt 方法只是截取整数部分，并非四舍五入，四舍五入需要Math.round。
+    6. 元组类型 Triple 和 Pair ，各自支持 3 个与 2 个 成员。如
+        ```kt
+        val a = Triple(3, "smg", true)
+        val b = Pair(1, false)
+        a.third
+        b.second
+        ```
+    7. 可空类型: Int? ，在所有类型后面加上 ? 。
+    8. package a.b.c; import a.b.c.Test as MyTest;
+25. 
 
 ## Scala
 
@@ -814,415 +800,414 @@ img {
     * [Flutter中文网](https://flutterchina.club/) -- Dart语言
     * [Flutter文档汇总](https://segmentfault.com/a/1190000014722308)
 1. 基础
-    1. 基础
-        1. 主函数
+    1. 主函数
+        ```dart
+        void main(List<String> args) {
+            print("Hello World");
+        }
+        ```
+    2. 注释: // /**/
+    3. 别名: typedef能对方法进行重命名，且只能使用在function类型，在构造函数中也可以传递方法
+        ```dart
+        typedef int Compare(Object a, Object b);
+        class SortedCollection {
+            Compare compare;
+            SortedCollection(this.compare);
+        }
+        int sort(Object a, Object b) => 0;
+        main() {
+            SortedCollection coll = new SortedCollection(sort);
+            assert(coll.compare is Function);
+            assert(coll.compare is Compare);
+        }
+        ```
+2. 常量与变量
+    1. 如果未初始化的变量，其默认值为null
+        ```dart
+        const a = 10;
+        var b = 10;
+        ```
+    2. Dart没有public、protected、和private关键字，标识符(_)表示私有的意思，其余默认表示public
+    3. final和const都表示常量的意思，其值都不可修改，两者最大的区别
+        1. final属于运行时变量，在初始化的时候去创建的变量
+        2. const属于编译时变量，在编译期间就被创建的变量
+        3. 示例
             ```dart
-            void main(List<String> args) {
-                print("Hello World");
-            }
-            ```
-        2. 注释: // /**/
-        3. 别名: typedef能对方法进行重命名，且只能使用在function类型，在构造函数中也可以传递方法
-            ```dart
-            typedef int Compare(Object a, Object b);
-            class SortedCollection {
-                Compare compare;
-                SortedCollection(this.compare);
-            }
-            int sort(Object a, Object b) => 0;
-            main() {
-                SortedCollection coll = new SortedCollection(sort);
-                assert(coll.compare is Function);
-                assert(coll.compare is Compare);
-            }
-            ```
-    2. 常量与变量
-        1. 如果未初始化的变量，其默认值为null
-            ```dart
-            const a = 10;
-            var b = 10;
-            ```
-        2. Dart没有public、protected、和private关键字，标识符(_)表示私有的意思，其余默认表示public
-        3. final和const都表示常量的意思，其值都不可修改，两者最大的区别
-            1. final属于运行时变量，在初始化的时候去创建的变量
-            2. const属于编译时变量，在编译期间就被创建的变量
-            3. 示例
-                ```dart
+            final a = 10;
+            const b = 10;
+            class Main() {
                 final a = 10;
-                const b = 10;
-                class Main() {
-                    final a = 10;
-                    // 如果const变量在类中，需要加上static
-                    // 因为类未初始化，该值无法被视为编译时变量，否则会报错
-                    static const b = 10;
-                }
-                ```
-        4. dart语法的const相当于java这种写法
-            ```java
-            private static final int a = 10;
+                // 如果const变量在类中，需要加上static
+                // 因为类未初始化，该值无法被视为编译时变量，否则会报错
+                static const b = 10;
+            }
             ```
-        5. 若干个表达式引用为编译时常量，其结果也是编译时常量
-            ```java
-            const a = "Hello";
-            const b = "World";
-            const c = "$a $b";
-            ```
-    3. 类型
-        1. 基本类型
-            * numbers: 只支持int、double
-            * strings
-            * booleans
-            * lists
-            * maps
-            * runes
-            * symbols
-        2. number
-            * 运算符: +、-、*、/、～/、%
-            * 常用属性: isNaN、isEven、isOdd
-            * 常用方法: abs()、round()、floor()、ceil()、toInt()
-            * 特殊运算符: ?.、??、??=
-            * /和～/的区别
-                ```dart
-                int a = 10;
-                int b = 2;
-                print(a / b);  // 5.0
-                print(a ~/ b);  // 5
-                ```
-            * ??和??=的区别
-                ```dart
-                // ??属于条件表达式
-                // 如果b是null，则执行toString()并返回其结果，如果不是null，则返回其值
-                b ?? b.toString();
-                // ??=属于赋值表达式
-                // 如果b是null，则赋值给b，如果不是null，则b的值保持不变
-                b ??= value;
-                ```
-        3. boolean: true和false所创建的对象都是编译时常量。当Dart需要一个布尔值的时候，只有true对象才被认为是true，所有其他的值都是flase
-        4. string
+    4. dart语法的const相当于java这种写法
+        ```java
+        private static final int a = 10;
+        ```
+    5. 若干个表达式引用为编译时常量，其结果也是编译时常量
+        ```java
+        const a = "Hello";
+        const b = "World";
+        const c = "$a $b";
+        ```
+3. 类型
+    1. 基本类型
+        * numbers: 只支持int、double
+        * strings
+        * booleans
+        * lists
+        * maps
+        * runes
+        * symbols
+    2. number
+        * 运算符: +、-、*、/、～/、%
+        * 常用属性: isNaN、isEven、isOdd
+        * 常用方法: abs()、round()、floor()、ceil()、toInt()
+        * 特殊运算符: ?.、??、??=
+        * /和～/的区别
             ```dart
-            String str1 = 'Hello World';  // 普通字符串
-            String str2 = """<html>
-                <a href="">go</a>
-            </html>""";  // 段落
-            String str3 = r'Hello /n Word';  // 不转义
-            print(str3 * 5);  // 重复5次
-            print(str3 == str4);  // 相等
-            print(str3[0]);  // 获取字符
-            print('a + b = ${a + b}');  // 插值表达式
+            int a = 10;
+            int b = 2;
+            print(a / b);  // 5.0
+            print(a ~/ b);  // 5
             ```
-        5. list
+        * ??和??=的区别
             ```dart
-            var list = [1,2,3];
-            var list = const [1,2,3];  // 定义不可变列表
-            var list = new List();
-            var list = new List<String>.generate(1000, (i) => "Item $i");
+            // ??属于条件表达式
+            // 如果b是null，则执行toString()并返回其结果，如果不是null，则返回其值
+            b ?? b.toString();
+            // ??=属于赋值表达式
+            // 如果b是null，则赋值给b，如果不是null，则b的值保持不变
+            b ??= value;
             ```
-        6. map
+    3. boolean: true和false所创建的对象都是编译时常量。当Dart需要一个布尔值的时候，只有true对象才被认为是true，所有其他的值都是flase
+    4. string
+        ```dart
+        String str1 = 'Hello World';  // 普通字符串
+        String str2 = """<html>
+            <a href="">go</a>
+        </html>""";  // 段落
+        String str3 = r'Hello /n Word';  // 不转义
+        print(str3 * 5);  // 重复5次
+        print(str3 == str4);  // 相等
+        print(str3[0]);  // 获取字符
+        print('a + b = ${a + b}');  // 插值表达式
+        ```
+    5. list
+        ```dart
+        var list = [1,2,3];
+        var list = const [1,2,3];  // 定义不可变列表
+        var list = new List();
+        var list = new List<String>.generate(1000, (i) => "Item $i");
+        ```
+    6. map
+        ```dart
+        var map = {'1':'c','2':'java'};
+        var map = const{'1':'c','2':'java'};  // 定义不可变映射
+        var map = new Map();
+        ```
+    7. dynamic
+        ```dart
+        dynamic a = 10;  // 任意类型变量
+        var list = new List<dynamic>();  // 任意类型列表
+        ```
+    8. runes: 代表字符串的Unicode编码
+        ```dart
+        Runes input = new Runes('\u2665  \u{1f605}  \u{1f60e}  \u{1f47b}  \u{1f596}  \u{1f44d}');
+        print(new String.fromCharCodes(input));  //输出一排表情
+        ```
+    9. enum
+        ```dart
+        enum Color {red,green,blue}  // 枚举的定义
+        assert(Color.red.index == 0);  // 枚举索引获取
+        List<Color> colors = Color.values;  // 枚举列表获取
+        ```
+4. 操作符
+    1. operator关键字可以复写操作符
+        ```dart
+        class Vector {
+            final int x;
+            final int y;
+            const Vector(this.x, this.y);
+            /// Overrides + (a + b).
+            Vector operator +(Vector v) {
+                return new Vector(x + v.x, y + v.y);
+            }
+            /// Overrides - (a - b).
+            Vector operator -(Vector v) {
+                return new Vector(x - v.x, y - v.y);
+            }
+        }
+        ```
+5. 函数
+    1. 函数的返回类型和参数类型都是可以省略的。函数的实现体还可以通过符号进行表示
+        ```dart
+        getPerson(name, age) {
+            return new Person(name, age);
+        }
+        /// getPerson(name, age) => new Person(name, age);
+        ```
+    2. 可选参数（重载函数）。花括号参数表示可选命名参数。
+        ```dart
+        getPerson(name, {age, weight}) => new Person(name, age, weight);
+        getPerson("张三", weight: 55);
+        // 方括号参数表示可选位置参数，不需要别名，但是位置必须是固定的参数
+        getPerson(name, [age, weight]) => new Person(name, age, weight);
+        getPerson("张三", 18, 55);
+        ```
+    3. 默认参数
+        ```dart
+        getPerson(name,age=18) => new Person(name,age);
+        ```
+    4. 构造函数
+        1. @required表示必须传参
             ```dart
-            var map = {'1':'c','2':'java'};
-            var map = const{'1':'c','2':'java'};  // 定义不可变映射
-            var map = new Map();
+            class Person {
+                var name;
+                var age;
+                // 这里默认等同于this.name=name，this.age=age
+                Person({@required this.name, this.age}); 
+            }
             ```
-        7. dynamic
+        2. 当前为StatelessWidget组件中的构造方法
             ```dart
-            dynamic a = 10;  // 任意类型变量
-            var list = new List<dynamic>();  // 任意类型列表
+            class MyApp extends StatelessWidget {
+                final List<String> items;
+                MyApp({Key key, @required this.items}): super(Key: key);
+            }
             ```
-        8. runes: 代表字符串的Unicode编码
+        3. 常量构造函数
             ```dart
-            Runes input = new Runes('\u2665  \u{1f605}  \u{1f60e}  \u{1f47b}  \u{1f596}  \u{1f44d}');
-            print(new String.fromCharCodes(input));  //输出一排表情
+            class Point {
+                const Point(this.x, this.y);
+            }
             ```
-        9. enum
+        4. 命名构造函数
             ```dart
-            enum Color {red,green,blue}  // 枚举的定义
-            assert(Color.red.index == 0);  // 枚举索引获取
-            List<Color> colors = Color.values;  // 枚举列表获取
-            ```
-    4. 操作符
-        1. operator关键字可以复写操作符
-            ```dart
-            class Vector {
-                final int x;
-                final int y;
-                const Vector(this.x, this.y);
-                /// Overrides + (a + b).
-                Vector operator +(Vector v) {
-                    return new Vector(x + v.x, y + v.y);
-                }
-                /// Overrides - (a - b).
-                Vector operator -(Vector v) {
-                    return new Vector(x - v.x, y - v.y);
+            class Point {
+                num x;
+                num y;
+                Point(this.x, this.y);
+                // 可以直接命名的构造函数，命名构造函数也是可以直接实例化的
+                Point.fromJson(Map json) {
+                    x = json['x'];
+                    y = json['y'];
                 }
             }
             ```
-    5. 函数
-        1. 函数的返回类型和参数类型都是可以省略的。函数的实现体还可以通过符号进行表示
+        5. 默认情况下，子类的构造函数会自动调用超类的无名无参数的默认构造函数，如果超类没有无名无参数构造函数，则你需要手工的调用超类的其他构造函数，在构造函数参数后使用冒号可以调用超类构造函数。如果提供了一个initializer list（初始化参数列表），则初始化参数列表在超类构造函数执行之前执行。下面是构造函数执行顺序：
+            1. initializer list（初始化参数列表）
+            2. superclass’s no-arg constructor（超类的无名构造函数）
+            3. main class’s no-arg constructor（主类的无名构造函数）
+        6. smg
             ```dart
-            getPerson(name, age) {
-                return new Person(name, age);
+            class Point {
+                num x;
+                num y;
+                Point(this.x, this.y);
+                // 初始化参数列表用冒号展开
+                // 初始化表达式等号右边的部分不能访问this
+                Point.fromJson(Map jsonMap)
+                    : x = jsonMap['x'],
+                        y = jsonMap['y'] {
+                    print('In Point.fromJson(): ($x, $y)');
+                }
             }
-            /// getPerson(name, age) => new Person(name, age);
             ```
-        2. 可选参数（重载函数）。花括号参数表示可选命名参数。
+        7. 重定向构造函数
             ```dart
-            getPerson(name, {age, weight}) => new Person(name, age, weight);
-            getPerson("张三", weight: 55);
-            // 方括号参数表示可选位置参数，不需要别名，但是位置必须是固定的参数
-            getPerson(name, [age, weight]) => new Person(name, age, weight);
-            getPerson("张三", 18, 55);
+            class Point {
+                num x;
+                num y;
+                Point(this.x, this.y);
+                // 类似于重载
+                Point.alongXAxis(num x) : this(x, 0);
+            }
             ```
-        3. 默认参数
+        8. 工厂方法构造函数
             ```dart
-            getPerson(name,age=18) => new Person(name,age);
-            ```
-        4. 构造函数
-            1. @required表示必须传参
-                ```dart
-                class Person {
-                    var name;
-                    var age;
-                    // 这里默认等同于this.name=name，this.age=age
-                    Person({@required this.name, this.age}); 
-                }
-                ```
-            2. 当前为StatelessWidget组件中的构造方法
-                ```dart
-                class MyApp extends StatelessWidget {
-                    final List<String> items;
-                    MyApp({Key key, @required this.items}): super(Key: key);
-                }
-                ```
-            3. 常量构造函数
-                ```dart
-                class Point {
-                    const Point(this.x, this.y);
-                }
-                ```
-            4. 命名构造函数
-                ```dart
-                class Point {
-                    num x;
-                    num y;
-                    Point(this.x, this.y);
-                    // 可以直接命名的构造函数，命名构造函数也是可以直接实例化的
-                    Point.fromJson(Map json) {
-                        x = json['x'];
-                        y = json['y'];
+            class Logger {
+                static final Map<String, Logger> _cache = <String, Logger>{};
+                // 使用factory关键字表示工厂方法，其实现类似于单例模式的实现
+                factory Logger(String name) {
+                    if (_cache.containsKey(name)) {
+                        return _cache[name];
+                    } else {
+                        final logger = new Logger._internal(name);
+                        _cache[name] = logger;
+                        return logger;
                     }
                 }
-                ```
-            5. 默认情况下，子类的构造函数会自动调用超类的无名无参数的默认构造函数，如果超类没有无名无参数构造函数，则你需要手工的调用超类的其他构造函数，在构造函数参数后使用冒号可以调用超类构造函数。如果提供了一个initializer list（初始化参数列表），则初始化参数列表在超类构造函数执行之前执行。下面是构造函数执行顺序：
-                1. initializer list（初始化参数列表）
-                2. superclass’s no-arg constructor（超类的无名构造函数）
-                3. main class’s no-arg constructor（主类的无名构造函数）
-            6. smg
-                ```dart
-                class Point {
-                    num x;
-                    num y;
-                    Point(this.x, this.y);
-                    // 初始化参数列表用冒号展开
-                    // 初始化表达式等号右边的部分不能访问this
-                    Point.fromJson(Map jsonMap)
-                        : x = jsonMap['x'],
-                          y = jsonMap['y'] {
-                        print('In Point.fromJson(): ($x, $y)');
-                    }
-                }
-                ```
-            7. 重定向构造函数
-                ```dart
-                class Point {
-                    num x;
-                    num y;
-                    Point(this.x, this.y);
-                    // 类似于重载
-                    Point.alongXAxis(num x) : this(x, 0);
-                }
-                ```
-            8. 工厂方法构造函数
-                ```dart
-                class Logger {
-                    static final Map<String, Logger> _cache = <String, Logger>{};
-                    // 使用factory关键字表示工厂方法，其实现类似于单例模式的实现
-                    factory Logger(String name) {
-                        if (_cache.containsKey(name)) {
-                            return _cache[name];
-                        } else {
-                            final logger = new Logger._internal(name);
-                            _cache[name] = logger;
-                            return logger;
-                        }
-                    }
-                }
-                ```
-        5. get和set
-            ```dart
-            num get right             => left + width;
-                set right(num value)  => left = value - width;
-            num get bottom            => top + height;
-                set bottom(num value) => top = value - height;
-            ```
-        6. 函数参数
-            1. 函数可以作为参数
-                ```dart
-                final values = [1, 2, 3, 5, 10, 50];
-                values.skip(1).take(3).map(func).forEach(print);  // map和forEach参数里面可以传递函数
-                ```
-            2. forEach的源码实现
-                ```dart
-                void forEach(void f(E element)) {
-                    for (E element in this) f(element);
-                }
-                ```
-        7. 匿名方法
-            ```dart
-            var fun = () { print("Hello World!"); }
-            ```
-        8. 闭包: 闭包最大的作用是可以访问方法体中的成员变量
-            ```dart
-            count(){
-                int count = 0;
-                return (){ print(count++); };
-            }
-            void main(){
-                var fun = count();
-                fun();  // 1
-                fun();  // 2
-                fun();  // 3
             }
             ```
-        9. 所有的函数都返回一个值，如果没有指定返回值，则默认把语句return null;作为函数的最后一个语句执行
-        10. 静态函数不再类实例上执行，所以无法访问this
-    6. 异常
-        1. 异常的捕获可以用on关键字进行捕获对应的异常，或者用rethrow关键字进行重新抛出异常
+    5. get和set
+        ```dart
+        num get right             => left + width;
+            set right(num value)  => left = value - width;
+        num get bottom            => top + height;
+            set bottom(num value) => top = value - height;
+        ```
+    6. 函数参数
+        1. 函数可以作为参数
             ```dart
-            try {
-                breedMoreLlamas();
-            } on OutOfLlamasException {
-                // 指定捕获OutOfLlamasException
-                buyMoreLlamas();
-            } on Exception catch (e) {
-                // 指定捕获Exception类型的异常
-                print('Unknown exception: $e');
-            } catch (e) {
-                // 任意异常
-                print('Something really unknown: $e');
-                rethrow; // 重新抛出该异常
+            final values = [1, 2, 3, 5, 10, 50];
+            values.skip(1).take(3).map(func).forEach(print);  // map和forEach参数里面可以传递函数
+            ```
+        2. forEach的源码实现
+            ```dart
+            void forEach(void f(E element)) {
+                for (E element in this) f(element);
             }
             ```
-    7. 导包
-        1. 指定别名
-            ```dart
-            import 'package:lib1/lib1.dart';
-            import 'package:lib2/lib2.dart' as lib2;
-            Element element1 = new Element();  // 使用lib1的Element类
-            lib2.Element element2 = new lib2.Element();  // 使用lib2的Element类
-            ```
-        2. 导入指定功能: 如果你只使用库的一部分功能，则可以选择需要导入的内容
-            ```dart
-            import 'package:lib1/lib1.dart' show foo;  // 只导入foo库
-            import 'package:lib2/lib2.dart' hide foo;  // 导入除foo库的所有其他库
-            ```
-        3. 延迟导入。下面是一些使用延迟加载库的场景
-            * 减少APP的启动时间
-            * 执行A/B测试，例如尝试各种算法的不同实现
-            * 加载很少使用的功能，例如可选的屏幕和对话框
-            ```dart
-            import 'package:deferred/hello.dart' deferred as hello;
-            // 当需要使用的时候，使用库标识符调用 loadLibrary()函数来加载库，使用 await 关键字暂停代码执行一直到库加载完成
-            greet() async {
-                await hello.loadLibrary();
-                hello.printGreeting();
-            }
-            ```
-    8. 级联调用
-        1. 对象的方法和成员变量都可以进行级联调用，类似于Java的链式调用
-        2. 案例1
-            ```dart
-            void main(){
-                num x = 10;
-                num y = 42; // not used
-                var p = new Point();
-                p
-                    ..log('start')
-                    ..x = x
-                    ..scale(10)
-                    ..log('scaled')
-                    ..x = x + 1
-                    ..y = x + p.x + p.y;
-                print('p.x = ${p.x}, p.y = ${p.y}. x = $x');
-            }
-            ```
-        3. 案例二
-            ```dart
-            front
-                ..beginPath()
-                ..fillStyle = penColor
-                ..arc(tx, ty, penWidth/2+2, 0, PI2, true)
-                ..fill()
-                ..moveTo(wx, wy)
-                ..strokeStyle = "black"
-                ..lineTo(tx, ty)
-                ..closePath()
-                ..stroke();
-            ```
-        4. 案例三
-            ```dart
-            querySelector('#button')  // Get an object.
-                ..text = 'Confirm'  // Use its members.
-                ..classes.add('important')
-                ..onClick.listen((e) => window.alert('Confirmed!'));
-            ```
-        5. 案例四
-            ```dart
-            // 级联调用也可以嵌套
-            final addressBook = (new AddressBookBuilder()
-                ..name = 'jenny'
-                ..email = 'jenny@example.com'
-                ..phone = (new PhoneNumberBuilder()
-                    ..number = '415-555-0100'
-                    ..label = 'home')
-                    .build())
-                .build();
-            ```
-    9. 异步支持
-        1. 使用async和await的代码是异步的，要使用await，其方法必须带有async关键字
-            ```dart
-            checkVersion() async { var version = await lookUpVersion(); }
-            ```
-        2. 可以使用try-catch,和finally来处理使用await的异常
-            ```dart
-            try {
-                server = await HttpServer.bind(InternetAddress.LOOPBACK_IP_V4, 4044);
-            } catch (e) {}
-            ```
-        3. 异步方法返回值为Future类型
-            ```dart
-            String lookUpVersionSync() => '1.0.0';
-            Future<String> lookUpVersion() async => '1.0.0';
-            ```
-        4. 在循环中使用异步
-            ```dart
-            await for (var request in requestServer) {
-                handleRequest(request);
-            }
-            ```
-    10. 类
-        1. 可调用类
-            ```dart
-            // 可以把类当做方法使用
-            class WannabeFunction {
-                call(String a, String b, String c) => '$a $b $c!';
-            }
-            void main() {
-                var wf = new WannabeFunction();
-                var out = wf("Hi", "there,", "gang");
-                print('$out');  // Hi there, gang!
-            }
-            ```
-    11. 注解
+    7. 匿名方法
+        ```dart
+        var fun = () { print("Hello World!"); }
+        ```
+    8. 闭包: 闭包最大的作用是可以访问方法体中的成员变量
+        ```dart
+        count(){
+            int count = 0;
+            return (){ print(count++); };
+        }
+        void main(){
+            var fun = count();
+            fun();  // 1
+            fun();  // 2
+            fun();  // 3
+        }
+        ```
+    9. 所有的函数都返回一个值，如果没有指定返回值，则默认把语句return null;作为函数的最后一个语句执行
+    10. 静态函数不再类实例上执行，所以无法访问this
+6. 异常
+    1. 异常的捕获可以用on关键字进行捕获对应的异常，或者用rethrow关键字进行重新抛出异常
+        ```dart
+        try {
+            breedMoreLlamas();
+        } on OutOfLlamasException {
+            // 指定捕获OutOfLlamasException
+            buyMoreLlamas();
+        } on Exception catch (e) {
+            // 指定捕获Exception类型的异常
+            print('Unknown exception: $e');
+        } catch (e) {
+            // 任意异常
+            print('Something really unknown: $e');
+            rethrow; // 重新抛出该异常
+        }
+        ```
+7. 导包
+    1. 指定别名
+        ```dart
+        import 'package:lib1/lib1.dart';
+        import 'package:lib2/lib2.dart' as lib2;
+        Element element1 = new Element();  // 使用lib1的Element类
+        lib2.Element element2 = new lib2.Element();  // 使用lib2的Element类
+        ```
+    2. 导入指定功能: 如果你只使用库的一部分功能，则可以选择需要导入的内容
+        ```dart
+        import 'package:lib1/lib1.dart' show foo;  // 只导入foo库
+        import 'package:lib2/lib2.dart' hide foo;  // 导入除foo库的所有其他库
+        ```
+    3. 延迟导入。下面是一些使用延迟加载库的场景
+        * 减少APP的启动时间
+        * 执行A/B测试，例如尝试各种算法的不同实现
+        * 加载很少使用的功能，例如可选的屏幕和对话框
+        ```dart
+        import 'package:deferred/hello.dart' deferred as hello;
+        // 当需要使用的时候，使用库标识符调用 loadLibrary()函数来加载库，使用 await 关键字暂停代码执行一直到库加载完成
+        greet() async {
+            await hello.loadLibrary();
+            hello.printGreeting();
+        }
+        ```
+8. 级联调用
+    1. 对象的方法和成员变量都可以进行级联调用，类似于Java的链式调用
+    2. 案例1
+        ```dart
+        void main(){
+            num x = 10;
+            num y = 42; // not used
+            var p = new Point();
+            p
+                ..log('start')
+                ..x = x
+                ..scale(10)
+                ..log('scaled')
+                ..x = x + 1
+                ..y = x + p.x + p.y;
+            print('p.x = ${p.x}, p.y = ${p.y}. x = $x');
+        }
+        ```
+    3. 案例二
+        ```dart
+        front
+            ..beginPath()
+            ..fillStyle = penColor
+            ..arc(tx, ty, penWidth/2+2, 0, PI2, true)
+            ..fill()
+            ..moveTo(wx, wy)
+            ..strokeStyle = "black"
+            ..lineTo(tx, ty)
+            ..closePath()
+            ..stroke();
+        ```
+    4. 案例三
+        ```dart
+        querySelector('#button')  // Get an object.
+            ..text = 'Confirm'  // Use its members.
+            ..classes.add('important')
+            ..onClick.listen((e) => window.alert('Confirmed!'));
+        ```
+    5. 案例四
+        ```dart
+        // 级联调用也可以嵌套
+        final addressBook = (new AddressBookBuilder()
+            ..name = 'jenny'
+            ..email = 'jenny@example.com'
+            ..phone = (new PhoneNumberBuilder()
+                ..number = '415-555-0100'
+                ..label = 'home')
+                .build())
+            .build();
+        ```
+9. 异步支持
+    1. 使用async和await的代码是异步的，要使用await，其方法必须带有async关键字
+        ```dart
+        checkVersion() async { var version = await lookUpVersion(); }
+        ```
+    2. 可以使用try-catch,和finally来处理使用await的异常
+        ```dart
+        try {
+            server = await HttpServer.bind(InternetAddress.LOOPBACK_IP_V4, 4044);
+        } catch (e) {}
+        ```
+    3. 异步方法返回值为Future类型
+        ```dart
+        String lookUpVersionSync() => '1.0.0';
+        Future<String> lookUpVersion() async => '1.0.0';
+        ```
+    4. 在循环中使用异步
+        ```dart
+        await for (var request in requestServer) {
+            handleRequest(request);
+        }
+        ```
+10. 类
+    1. 可调用类
+        ```dart
+        // 可以把类当做方法使用
+        class WannabeFunction {
+            call(String a, String b, String c) => '$a $b $c!';
+        }
+        void main() {
+            var wf = new WannabeFunction();
+            var out = wf("Hi", "there,", "gang");
+            print('$out');  // Hi there, gang!
+        }
+        ```
+11. 注解
         1. 系统自带注解: @deprecated、 @override、@proxy
         2. 自定义注解
             ```dart
@@ -1238,13 +1223,7 @@ img {
                 print('do something');
             }
             ```
-2. 深入学习
-    1. 
-    2. 
-    3. 
-    4. 
-    5. 
-3. 
+12. 
 
 ## Gradle
 

@@ -2158,6 +2158,7 @@ https://blog.csdn.net/new_abc/article/details/53006327
     * [你真的会用Gson吗?Gson使用指南（一）](https://www.jianshu.com/p/e740196225a4)
     * [搞定Gson泛型封装](https://www.jianshu.com/p/d62c2be60617)
     * [Gson github](https://github.com/google/gson)
+    * [HashMap and gson](https://stackoverflow.com/questions/2779251/how-can-i-convert-json-to-a-hashmap-using-gson)
 2. 基础1
     1. Gson的基本用法: Gson提供了fromJson() 和toJson() 两个直接用于解析和生成的方法，前者实现反序列化，后者实现了序列化。同时每个方法都提供了重载方法，我常用的总共有5个。
         1. 基本数据类型的解析
@@ -2456,7 +2457,7 @@ https://blog.csdn.net/new_abc/article/details/53006327
                         public boolean shouldSkipField(FieldAttributes f) {
                             // 这里作判断，决定要不要排除该字段, return true为排除
                             if ("finalField".equals(f.getName())) return true; //按字段名排除
-                            Expose expose = f.getAnnotation(Expose.class); 
+                            Expose expose = f.getAnnotation(Expose.class);
                             if (expose != null && expose.deserialize() == false) return true; //按注解排除
                             return false;
                         }
