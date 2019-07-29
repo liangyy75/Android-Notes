@@ -5,24 +5,34 @@ img {
 }
 </style>
 
-* [Kotlin](##Kotlin)
-* [Scala](##Scala)
-* [React Native](##React%20Native)
-* [Flutter/Dart](##Flutter%2fDart)
-* [Gradle](##Gradle)
-* [Adb等工具](##Adb等工具)
-* [Android权限系统](##Android权限系统)
+- [Kotlin](#kotlin)
+- [Scala](#scala)
+- [React Native](#react-native)
+- [Flutter/Dart](#flutterdart)
+- [Groovy](#groovy)
+- [Gradle](#gradle)
+- [Adb等工具](#adb%e7%ad%89%e5%b7%a5%e5%85%b7)
+- [Android权限系统](#android%e6%9d%83%e9%99%90%e7%b3%bb%e7%bb%9f)
+- [bugclose](#bugclose)
+- [Process/Runtime](#processruntime)
+- [KLog](#klog)
+- [buildSrc](#buildsrc)
+- [firstpublish](#firstpublish)
+- [dexknife](#dexknife)
+- [build-timer](#build-timer)
+- [hysignal](#hysignal)
+- [AndroidShell](#androidshell)
 
 ## Kotlin
 
-0. links
+1. links
     * [Kotlin 知识梳理(1) - Kotlin 基础](https://www.jianshu.com/p/f9e78d6c54bd)
     * [Kotlin学习资料汇总(持续更新...)](https://juejin.im/post/5aa64556f265da238c3a51d3)
     * [语法基础——Kotlin语法基础](https://blog.csdn.net/qq_30379689/article/details/81984443) finished
     * [Kotlin 易百](https://www.yiibai.com/kotlin)
     * [抛弃 Java 改用 Kotlin 的六个月后，我后悔了](https://cloud.tencent.com/developer/news/249347)
     * [Kotlin中文网](https://www.kotlincn.net/)
-1. basic
+2. basic
     1. 主函数
         ```kt
         fun main(args: Array<String>) {
@@ -70,7 +80,7 @@ img {
     8. 字符串比较
         * ==：在kt中相当于java的equals()
         * ===：在kt中相当于java的==
-2. 数组与函数
+3. 数组与函数
     1. 数组定义
         ```kt
         // 每种基本类型都有对应的数组创建方法，类似于定制版
@@ -118,7 +128,7 @@ img {
         fun printSum(a: Int, b: Int): Unit { /**/ }
         fun printSum(a: Int, b: Int) { /**/ }  // 只要里面没有return就是Unit了，相当于java的void
         ```
-3. 函数进阶
+4. 函数进阶
     1. 默认参数的函数: ``fun foo(a: Int = 0, b: String = "") { /**/ }``
     2. 变长参数的函数: 变长参数由vararg关键字决定，数组参数可通过*方式传参，第一个参数可以不使用名字指定，最后个参数必须使用具名参数
         ```kt
@@ -410,13 +420,13 @@ img {
             "apple" in items -> println("apple is fine too")
         }
         ```
-    1. 初始化map
+    4. 初始化map
         ```kt
         val map = mutableMapOf("a" to 1, "b" to 2, "c" to 3) //可读写Map对象
         val map = mapOf("a" to 1, "b" to 2, "c" to 3)        //可读Map对像
         ```
-    2. 访问map: ``map["key"] = value``
-    3. 遍历map
+    5. 访问map: ``map["key"] = value``
+    6. 遍历map
         ```kt
         for ((k, v) in map) {
             println("$k -> $v")
@@ -1352,19 +1362,19 @@ img {
 4. 布尔求值
     1. groovy 中对象如果为 null 则算是 false ，如果对象类型是集合或者数组之类的且为空这也算是 false，否则可以算是 true
     2. 主要如表
-        | 类型 | 真 |
-        | :-|:- |
-        | Boolean | true |
-        | Collection | 不空 |
-        | Map | 不空 |
-        | Matcher | 至少一个匹配 |
-        | Character | 值不为0 |
-        | CharSequence | 长度大于0 |
-        | Object[] | 长度大于0 |
-        | Number | Double值不为0 |
-        | Enumeration | hasMoreElements() |
-        | Iterator | hasNext() |
-        | 其他引用类型 | 引用不为null |
+        | 类型         | 真                |
+        | :----------- | :---------------- |
+        | Boolean      | true              |
+        | Collection   | 不空              |
+        | Map          | 不空              |
+        | Matcher      | 至少一个匹配      |
+        | Character    | 值不为0           |
+        | CharSequence | 长度大于0         |
+        | Object[]     | 长度大于0         |
+        | Number       | Double值不为0     |
+        | Enumeration  | hasMoreElements() |
+        | Iterator     | hasNext()         |
+        | 其他引用类型 | 引用不为null      |
     3. 除了groovy内建的布尔求值约定，在自己的类中，还可以通过 asBoolean 方法来编写自己的布尔求值
 5. 特性2
     1. 操作符重载
@@ -1968,22 +1978,7 @@ img {
 17. 正则表达式
 18. 数据库
 19. others
-    1. 方法的默认参数
-        ```groovy
-        def foo(String p1, int p2 = 1) {
-            println(p1)
-            println(p2)
-        }
-        foo("hello")
-        ```
-    2. Field 与 Property: Field 是以各种修饰符修饰的变量。Property是私有变量和自带的 gettters/setters，下面的类具有私有变量 name、age，并自带这两个变量的 getter 和 setter。当变量声明为 final 的时候，默认就没有 setter。
-        ```groovy
-        class Person {
-            String name
-            int age
-        }
-        ```
-    3. Trait: Groovy 提供了一个叫做 Trait 特性实现了多继承，还有很多强大的功能。
+    1. Trait: Groovy 提供了一个叫做 Trait 特性实现了多继承，还有很多强大的功能。
         ```groovy
         trait Fly {
             void fly() {
@@ -2000,12 +1995,11 @@ img {
         duck.fly()
         duck.walk()
         ```
-    4. 字符串插值
+    2. 字符串插值
         ```groovy
         def method = 'toString'
         new Date()."$method"()  // 因为只包含一个变量，所以占位符表达式可以只有$前缀，而没有花括号包裹
         ```
-    5. 方法的最后一行通常默认返回，即使没有使用return关键字
 
 ## Gradle
 
