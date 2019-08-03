@@ -2115,6 +2115,7 @@ img {
             println new File('D:\\temp.log').text  // 所有的BufferedReader/InputStream/File都有text属性
             new File('D:\\temp.log').eachLine { line -> println line }
             println new File('D:\\temp.log').filterLine({ it =~ /life/ })
+            new File('')
             ```
         4. java.util
     5. 使用扩展模块定制方法
