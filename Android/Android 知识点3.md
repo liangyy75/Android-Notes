@@ -1325,12 +1325,13 @@ img {
         ```
     3. GString: groovy提供新的字符串类型GString，用双引号定义的字符串表示可拓展的字符串
         ```groovy
-        def name = "Hensen"
+        def val = 'John'
+        def name = /Hensen ${val}/
         def say = "${name} say : Hello groovy"
-        println say //Hensen say : Hello groovy
-        println say.class //class org.codehaus.groovy.runtime.GStringImpl
+        println say  // Hensen John say : Hello groovy
+        println say.class  // class org.codehaus.groovy.runtime.GStringImpl
         def sum = "${2 + 3}"
-        println sum //5
+        println sum  // 5
         ```
     4. 字符串Api
         ```groovy
@@ -1349,6 +1350,8 @@ img {
         println str.isNumber() //false
         def str4 = "2"
         println str4.toLong() //2
+        println 'It\'s a rainy day in Seattle'
+        println 'It\'s a rainy day in Seattle' - 'rainy'  // String重载了minus方法
         ```
     5. 注意 execute
         ```groovy
@@ -1385,6 +1388,9 @@ img {
         // >> 映射为 rightShift 方法
         // + 映射为 plus 方法
         // - 映射为 minus 方法
+        // * multiply
+        // -- preivous
+        for (str in 'held'..'helm') println(str)
         ```
     2. 自动装箱: groovy的动态类型特性，groovy会根据实例的使用方式来决定将其视为基本类型还是包装类型。
         ```groovy
@@ -1596,7 +1602,7 @@ img {
         // inner owner:Chapter4o4$_run_closure2@11cfefda
         // inner delegate:Chapter4o4$_run_closure2@11cfefda
         ```
-    7. 委托策略: delegate关键字跟委托策略有关，委托策略有四种
+    6. 委托策略: delegate关键字跟委托策略有关，委托策略有四种
         1. DELEGATE_FIRST: 先从Delegate去找委托属性，再从Owner去找委托属性
         2. DELEGATE_ONLY: 只从Delegate去找委托属性
         3. OWNER_FIRST: 先从Owner去找委托属性，再先从Delegate去找委托属性
@@ -1618,7 +1624,7 @@ img {
             println Closure.OWNER_FIRST + ", " + Closure.DELEGATE_FIRST + ", " + Closure.OWNER_ONLY + ", " + Closure.DELEGATE_ONLY + ", " + Closure.TO_SELF  // 0, 1, 2, 3, 4
             println stu.toString()  // this.name: HensenStudent, owner.name: HensenStudent, delegate.name: HensenTeacher, name: HensenTeacher
             ```
-    8. 科里化
+    7. 科里化
         ```groovy
         def tellFortunes(closure) {
             Date date = new Date("09/20/2012")
@@ -1629,15 +1635,23 @@ img {
         tellFortunes() { date, fortune -> println "Fortune for ${date} is '${fortune}'" }
         // curry可以科里化前面的k个参数，如果想要科里化中间或者后面的参数需要使用ncurry传入参数位置与参数值
         ```
-    9. 重要属性: maximumNumberOfParameters / parameterTypes / owner / delegate / this / resolveStrategy
-    10. 重要方法: rcurry(val) / ncurry(n, val) / ncurry(n, Object... vals) / curry(val) / call() / call(params)
+    8. 重要属性: maximumNumberOfParameters / parameterTypes / owner / delegate / this / resolveStrategy
+    9.  重要方法: rcurry(val) / ncurry(n, val) / ncurry(n, Object... vals) / curry(val) / call() / call(params)
         ```groovy
         c = { println 'execute c' }
         b = c << { println 'before c' }
         a = b >> { println 'after c' }
         a()
         ```
-    11. 如果明确希望闭包不接受参数，得使用``{ -> /*...*/ }``这样的语法，否则像``{ /*...*/ }``这样的默认会有一个参数it传入
+    10. 如果明确希望闭包不接受参数，得使用``{ -> /*...*/ }``这样的语法，否则像``{ /*...*/ }``这样的默认会有一个参数it传入
+    11. 尾递归
+        ```groovy
+        def factorisl
+        factorial = { int number, BigInteger theFactorial ->
+            number == 1 ? theFactorial : factorial.trampoline(number - 1, theFactorial * number)
+        }.trampoline()
+        ```
+    12. 记忆化: memoize() / memoizeAtMost / memoizeAtLeast / memoizeAtLeastBetween ，而且是线程安全的
 9. 列表(java.lang.ArrayList)
     1. 定义
         ```groovy
@@ -1976,8 +1990,25 @@ img {
         }
         ```
 17. 正则表达式
+    1. 使用字符串创建匹配
+        ```groovy
+        obj = ~'Hello'
+        println obj.getClass().name  // java.util.regex.Pattern
+        pattern = ~"(G|g)roovy"
+        text = 'Goovy is Hip'
+        println (text =~ pattern) ? 'match' : 'no match'  // match
+        println (text ==~ pattern) ? 'match' : 'no match'  // no match
+        // =~执行Regex部分匹配，而==~执行Regex精确匹配。=~返回java.util.regex.Matcher对象
+        ```
+    2. replaceFirst和replaceAll方法也是接受正则的
+        ```groovy
+        str = 'Groovy is groovy, really groovy'
+        println str  // Groovy is groovy, really groovy
+        result = (str =~ /groovy/).replaceAll('hip')
+        println result  // Groovy is hip, really groovy
+        ```
 18. 数据库
-19. others
+19. 特性3
     1. Trait: Groovy 提供了一个叫做 Trait 特性实现了多继承，还有很多强大的功能。
         ```groovy
         trait Fly {
@@ -2000,6 +2031,93 @@ img {
         def method = 'toString'
         new Date()."$method"()  // 因为只包含一个变量，所以占位符表达式可以只有$前缀，而没有花括号包裹
         ```
+    3. groovy对Object类的扩展
+        - dump(): 任何对象的实例的详细信息
+        - inspect(): 默认实现是返回toString，但可以自己实现用来说明这个对象/类
+        - with():
+            ```groovy
+            lst = [1, 2]
+            lst.with {
+                add(3)  // 相当于调用了 lst.add(3)
+                add(4)  // 相当于调用了 lst.add(4)
+                println size()  // 相当于调用了 lst.size()
+                println contains(2)  // 相当于调用了 lst.contains(2)
+            }  // 原理是"闭包的delegate属性被设置为了lst"
+            ```
+        - sleep(long milliseconds): 不会响应中断，需要中断请用Thread.sleep(long)
+        - sleep(long milliseconds, interruptedAction)
+            ```groovy
+            def playWithSleep(boolean flag) {
+                Thread.start({  // Thread.startDeamon
+                    println "Thread started"
+                    startTime = Systerm.nanoTime()
+                    new Object().sleep(2000) {
+                        println "Interrupted ... $it"
+                        flag
+                    }
+                    endTime = Systerm.nanoTime()
+                    println "Thread done in ${(endTime - startTime) / 10 ** 9} seconds"
+                }).with {
+                    interrupt()
+                    join()
+                }
+            }
+            playWithSleep(true)  // 0.00437 seconds
+            playWithSleep(false)  // 1.999077 seconds
+            ```
+        - 间接访问属性: ``[]`` (可以动态设定属性了，无论获取还是设置值，会映射到Object里面的getAt与putAt方法中)
+            ```groovy
+            class Car { int miles, fuelLevel }
+            car = new Car(fuelLevel: 80, miles: 25)
+            properties = ['miles', 'fuelLevel']  // 这个是动态的
+            properties.each { println "$it = ${car[it]}" }
+            car[properties[1]] = 100
+            properties.each { println "$it = ${car[it]}" }
+            ```
+        - properties属性: 可以获得对象的所有属性
+        - 间接调用方法: invokeMethod
+            ```groovy
+            class Person {
+                def walk() { println "walking ..." }
+                def walk(int miles) { println "walking $mile miles ..." }
+                def walk(int miles, String where) { println "walking $mile miles $where ..." }
+            }
+            new Person().with {
+                invokeMethod("walk", null)  // walking ...
+                invokeMethod("walk", 10)  // walking 10 miles ...
+                invokeMethod("walk", [2, 'uphill'] as Object[])  // walking 2 miles uphill
+            }
+            ```
+        - getMetaClass
+    4. groovy的其他扩展
+        1. 数组
+            ```groovy
+            println [1, 2, 3, 4, 5][2..4]
+            ```
+        2. java.lang
+            ```groovy
+            String[] command = ['groovy', '-e', '"print \'Groovy\'"']
+            println "Calling ${command.join(' ')}"
+            println command.execute()  // List或者String[]的第一个元素成为了要执行的命令，其他元素视为参数
+            ```
+            ```groovy
+            process = 'wc'.execute()
+            process.out.withWriter {
+                it << 'Let the world know ...\n'
+                it << 'Groovy rocks.\n'
+            }
+            println process.in.text  // 2  6 36(表示2行，6单词，36字符)
+            // Thread.start
+            // Thread.startDeamon
+            ```
+        3. java.io
+            ```groovy
+            println new File('D:\\temp.log').text  // 所有的BufferedReader/InputStream/File都有text属性
+            new File('D:\\temp.log').eachLine { line -> println line }
+            println new File('D:\\temp.log').filterLine({ it =~ /life/ })
+            ```
+        4. java.util
+    5. 使用扩展模块定制方法
 
 ## Gradle
 

@@ -1,0 +1,1 @@
+mvn dependency:get -DremoteRepositories=http://repo1.maven.org/maven2/ -DoutputDirectory=src\main\webapp\WEB-INF\lib -DgroupId=junit -DartifactId=junit -Dversion=4.8.2
