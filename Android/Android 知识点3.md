@@ -1866,28 +1866,20 @@ img {
         </person>'''
         def xmlSlurper = new XmlSlurper()
         def person = xmlSlurper.parseText(xml)
-        //获取值
+        // 获取值
         println person.name[0].text()
-        //获取属性
+        // 获取属性
         println person.name[0].@id
-        //遍历获取
-        person.each { p ->
-            println p.name.text()
-        }
+        // 遍历获取
+        person.each { println it.name.text() }
         ```
     2. 遍历xml
         ```groovy
-        //深度遍历
-        def names = person.depthFirst().findAll{ name ->
-            return name.@id == "2" ? true : false
-        }
+        // 深度遍历
+        def names = person.depthFirst().findAll { it.@id == "2" }
         println names
-        //广度遍历
-        def namess = person.children().findAll { node ->
-            return node.@id == "2" ? true : false
-        }.collect{ node ->
-            return node.@id
-        }
+        // 广度遍历
+        def namess = person.children().findAll { it.@id == "2" }.collect{ it.@id }
         println namess
         ```
     3. 生成xml
@@ -1909,10 +1901,8 @@ img {
         def xmlBuilder = new MarkupBuilder(sw)
         def computer = new Computer()
         xmlBuilder.computer(name: computer.name, count: computer.count){
-            //遍历所有子节点
-            computer.languages.each{ lang ->
-                language(version: lang.version, lang.value)
-            }
+            // 遍历所有子节点
+            computer.languages.each{ language(version: it.version, it.value) }
         }
         println sw
         ```
@@ -2119,10 +2109,41 @@ img {
             ```
         4. java.util
     5. 使用扩展模块定制方法
+        ```groovy
+        package com.liangyy75.extension
+        class PriceExtension {
+            public static double getPrice(String self) {
+                def url = "http://ichart.finance.yahao.com/table.csv?s=$self".toURL()
+                def data = url.readLines()[1].split(',')
+                Double.parseDouble(data[-1])
+            }
+        }
+        package com.liangyy75.extension
+        class PriceStaticExtension {
+            public static double getPrice(String selfType, String ticker) {
+                def url = "http://ichart.finance.yahao.com/table.csv?s=$ticker".toURL()
+                def data = url.readLines()[1].split(',')
+                Double.parseDouble(data[-1])
+            }
+        }
+        // 下面内容放在 META-INF/services 目录下的 org.codehaus.groovy.runtime.ExtensionModule 文件中
+        moduleName=price-module
+        moduleVersion=1.0-test
+        extensionClasses=com.liangyy75.extension.PriceExtension
+        staticExtensionClasses=com.liangyy75.extension.PriceStaticExtension  // 可以用逗号分隔
+        // 之后用下面的目录编译该这两个辅助类，并创建必要的jar文件
+        // groovyc -d classes com/liangyy75/extension/*.groovy
+        // jar -cf priceExtensions.jar -C classes com -C manifest .
+        // 然后是示例的 test.groovy
+        def ticker = "ORCL"
+        println "price for $ticker using instance method is ${String.getPrice(ticker)}"
+        println "price for $ticker using instance method is ${ticker.getPrice()}"
+        // 执行指令: groovy -classpath priceExtensions.jar test.groovy
+        ```
 
 ## Gradle
 
-0. links
+1. links
     1. Gradle
         * 参考博客
             * [十分钟理解Gradle](https://www.cnblogs.com/Bonker/p/5619458.html) finished
@@ -2154,11 +2175,11 @@ img {
         * [教你如何使用android studio发布release 版本（完整版）](https://blog.csdn.net/to_perfect/article/details/69048419)
         * [Gradle Kotlin DSL迁移指南](https://juejin.im/post/5c4190276fb9a049fe3570b6)
         * [Gradle基础 构建生命周期和Hook技术](https://juejin.im/post/5afec54951882542715001f2)
-1. 简介
+2. 简介
     1. **构建工具——Gradle**: Gradle是一个**构建工具**，它是用来**帮助我们构建app**的，**构建包括编译、打包等过程**。我们可以为Gradle指定构建规则，然后它就会根据我们的"命令"自动为我们构建app。Android Studio中默认就使用Gradle来完成应用的构建。有些同学可能会有疑问："我用AS不记得给Gradle指定过什么构建规则呀，最后不还是能搞出来个apk。" 实际上，app的构建过程是大同小异的，有一些过程是"通用"的，也就是每个app的构建都要经历一些公共步骤。因此，在我们在创建工程时，Android Studio自动帮我们生成了一些通用构建规则，很多时候我们甚至完全不用修改这些规则就能完成我们app的构建。
     2. **自定义——Groovy**: 有些时候，我们会有一些个性化的构建需求，比如我们引入了第三方库，或者我们想要在通用构建过程中做一些其他的事情，这时我们就要自己在系统默认构建规则上做一些修改。这时候我们就要自己向Gradle"下命令"了，这时候我们就**需要用Gradle能听懂的话了，也就是Groovy。Groovy是一种基于JVM的动态语言**。
     3. 我们在开头处提到"Gradle是一种构建工具"。实际上，当我们想要更灵活的构建过程时，Gradle就成为了一个编程框架——我们可以通过编程让构建过程按我们的意愿进行。也就是说，当我们把Gradle作为构建工具使用时，我们只需要掌握它的配置脚本的基本写法就OK了；而当我们需要对构建流程进行高度定制时，就务必要掌握Groovy等相关知识了。
-2. 基本部分
+3. 基本部分
     1. **Project与Task**: 在Gradle中，**每一个待构建的工程是一个Project，构建一个Project需要执行一系列Task，比如编译、打包**这些构建过程的子过程都对应着一个Task。具体来说，**一个apk文件的构建包含以下Task：Java源码编译、资源文件编译、Lint检查、打包以生成最终的apk文件等等**。
     2. **插件**: 插件的核心工作有两个，一是定义Task；二是执行Task。也就是说，我们想让Gradle能正常工作，完成整个构建流程中的一系列Task的执行，必须导入合适的插件，这些插件中定义了构建Project中的一系列Task，并且负责执行相应的Task。在新建工程的app模块的build.gradle文件的第一行，往往都是如下这句: ``apply plugin: 'com.android.application'``。这句话的意思就是应用"com.android.application"这个插件来构建app模块，app模块就是Gradle中的一个Project。也就是说，这个插件负责定义并执行Java源码编译、资源文件编译、打包等一系列Task。实际上"com.android.application"整个插件中定义了如下4个顶级任务
         1. **assemble**: 构建项目的输出(apk)
@@ -2218,13 +2239,13 @@ img {
                 compile 'com.android.support:design:23.1.1'
             }
             ```
-3. 常见配置
-    0. 整个工程的build.gradle通常不需我们改动，这里我们介绍下一些对模块目录下build.gradle文件的常见配置。
-    1. **依赖第三方库**: 当我们的项目中用到了了一些第三方库时，我们就需要进行一些配置，以保证能正确导入相关依赖。设置方法很简单，比如我们在app模块中中用到了Fresco，只需要在build.gradle文件中的dependencies块添加如下语句``compile 'com.facebook.fresco:fresco:0.11.0'``。这样一来，Gradle会自动从jcenter仓库下载我们所需的第三方库并导入到项目中。
-    2. **导入本地jar包**: 在使用第三方库时，除了像上面那样从jcenter仓库下载，我们还可以导入本地的jar包。配置方法也很简单，只需要先把jar文件添加到app\libs目录下，然后在相应jar文件上单击右键，选择"Ad As Library"。然后在build.gradle的dependencies块下添加如下语句 ``compile files('libs/xxx.jar')``。实际上我们可以看到，系统为我们创建的build.gradle中就已经包含了如下语句 ``compile fileTree(dir: 'libs', include: ['*.jar'])``。这句话的意思是，将libs目录下的所有jar包都导入。所以实际上我们只需要把jar包添加到libs目录下并"Ad As Library"即可。
-    3. **依赖其它模块**: 假设我们的项目包含了多个模块，并且app模块依赖other模块，那么我们只需app\build.gradle的denpendencies块下添加如下语句 ``compile project(':other')``
-    4. **构建输出为aar文件**: 通常我们构建的输出目标都是apk文件，但如果我们的当前项目时Android Library，我们的目标输出就是aar文件。要想达到这个目的也很容易，只需要把build.gradle的第一句改为如下 ``apply plugin:'com.android.library'``。这话表示我们使用的插件不再是构建Android应用的插件，而是构建Android Library的插件，这个插件定义并执行用于构建Android Library的一系列Task。
-    5. **自动移除不再使用的资源**: 只需进行如下配置
+4. 常见配置
+    1. 整个工程的build.gradle通常不需我们改动，这里我们介绍下一些对模块目录下build.gradle文件的常见配置。
+    2. **依赖第三方库**: 当我们的项目中用到了了一些第三方库时，我们就需要进行一些配置，以保证能正确导入相关依赖。设置方法很简单，比如我们在app模块中中用到了Fresco，只需要在build.gradle文件中的dependencies块添加如下语句``compile 'com.facebook.fresco:fresco:0.11.0'``。这样一来，Gradle会自动从jcenter仓库下载我们所需的第三方库并导入到项目中。
+    3. **导入本地jar包**: 在使用第三方库时，除了像上面那样从jcenter仓库下载，我们还可以导入本地的jar包。配置方法也很简单，只需要先把jar文件添加到app\libs目录下，然后在相应jar文件上单击右键，选择"Ad As Library"。然后在build.gradle的dependencies块下添加如下语句 ``compile files('libs/xxx.jar')``。实际上我们可以看到，系统为我们创建的build.gradle中就已经包含了如下语句 ``compile fileTree(dir: 'libs', include: ['*.jar'])``。这句话的意思是，将libs目录下的所有jar包都导入。所以实际上我们只需要把jar包添加到libs目录下并"Ad As Library"即可。
+    4. **依赖其它模块**: 假设我们的项目包含了多个模块，并且app模块依赖other模块，那么我们只需app\build.gradle的denpendencies块下添加如下语句 ``compile project(':other')``
+    5. **构建输出为aar文件**: 通常我们构建的输出目标都是apk文件，但如果我们的当前项目时Android Library，我们的目标输出就是aar文件。要想达到这个目的也很容易，只需要把build.gradle的第一句改为如下 ``apply plugin:'com.android.library'``。这话表示我们使用的插件不再是构建Android应用的插件，而是构建Android Library的插件，这个插件定义并执行用于构建Android Library的一系列Task。
+    6. **自动移除不再使用的资源**: 只需进行如下配置
         ```groovy
         android {
             ...
@@ -2238,7 +2259,7 @@ img {
             }
         }
         ```
-    6. **忽略Lint错误**: 在我们构建Android项目的过程中，有时候会由于Lint错误而终止。当这些错误来自第三方库中时，我们往往想要忽略这些错误从而继续构建进程。这时候，我们可以只需进行如下配置
+    7. **忽略Lint错误**: 在我们构建Android项目的过程中，有时候会由于Lint错误而终止。当这些错误来自第三方库中时，我们往往想要忽略这些错误从而继续构建进程。这时候，我们可以只需进行如下配置
         ```groovy
         android {
             ...
@@ -2247,7 +2268,7 @@ img {
             }
         }
         ```
-    7. **集成签名配置**: 在构建release版本的Android项目时，每次都手动导入签名文件，键入密码、keyalias等信息十分麻烦。通过将签名配置集成到构建脚本中，我们就不必每次构建发行版本时都手动设置了。
+    8. **集成签名配置**: 在构建release版本的Android项目时，每次都手动导入签名文件，键入密码、keyalias等信息十分麻烦。通过将签名配置集成到构建脚本中，我们就不必每次构建发行版本时都手动设置了。
         1. 具体配置如下
             ```groovy
             signingConfigs {
@@ -3342,10 +3363,10 @@ img {
             1. **compile(api)**: 默认配置，编译主应用时包含的依赖，不仅会将依赖添加至类路径，而且会生成对应的apk。
             2. **apk(runtimeOnly)**: 只会被打包到apk，不会添加到类路径。只在生成apk的时候参与打包，编译时不会参与，很少用。
             3. **provide(compileOnly)**: 依赖只会添加到类路径，不会打包到对应的apk。只在编译时有效，不会参与打包，可以在自己的moudle中使用该方式依赖。比如com.android.support，gson这些使用者常用的库，避免冲突。。apk与provided配置只适用于jar依赖。
-            5. **testCompile(testImplementation)**: 只在单元测试代码的编译以及最终打包测试apk时有效。
-            6. **androidTestCompile**: ...
-            7. **implementation**: 使用了该命令编译的依赖，对该项目有依赖的项目将无法访问到使用该命令编译的依赖中的任何程序，也就是将该依赖隐藏在内部，而不对外部公开。比如我在一个libiary中使用implementation依赖了gson库，然后我的主项目依赖了libiary，那么，我的主项目就无法访问gson库中的方法。这样的好处是编译速度会加快，推荐使用implementation的方式去依赖，如果你需要提供给外部访问，那么就使用api依赖即可。在Google IO 相关话题的中提到了一个建议，就是依赖首先应该设置为implementation的，如果没有错，那就用implementation，如果有错，那么使用api指令，这样会使编译速度增快。
-            8. 此外，Android插件为每个构建variant生成一份配置，如**debugCompile(debugImplementation)**(只在debug模式的编译和最终的debug apk打包时有效)/releaseProvided。
+            4. **testCompile(testImplementation)**: 只在单元测试代码的编译以及最终打包测试apk时有效。
+            5. **androidTestCompile**: ...
+            6. **implementation**: 使用了该命令编译的依赖，对该项目有依赖的项目将无法访问到使用该命令编译的依赖中的任何程序，也就是将该依赖隐藏在内部，而不对外部公开。比如我在一个libiary中使用implementation依赖了gson库，然后我的主项目依赖了libiary，那么，我的主项目就无法访问gson库中的方法。这样的好处是编译速度会加快，推荐使用implementation的方式去依赖，如果你需要提供给外部访问，那么就使用api依赖即可。在Google IO 相关话题的中提到了一个建议，就是依赖首先应该设置为implementation的，如果没有错，那就用implementation，如果有错，那么使用api指令，这样会使编译速度增快。
+            7. 此外，Android插件为每个构建variant生成一份配置，如**debugCompile(debugImplementation)**(只在debug模式的编译和最终的debug apk打包时有效)/releaseProvided。
         9. **语义化版本**: 版本数字的格式一般为 **major.minor.patch**。
             1. 做不兼容的api变化时，major版本添加。
             2. 以向后兼容的方式添加功能时，minor版本添加。
