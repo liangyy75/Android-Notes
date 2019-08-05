@@ -55,6 +55,10 @@ Android源码设计模式解析与实战.pdf
 []()<br>
 [JavaFx官网](http://www.javafxchina.net/blog/docs/tutorial1/)<br>
 []()<br>
+[javabridge](https://pythonhosted.org/javabridge/)<br>
+[jep](https://ninia.github.io/jep/javadoc/3.8/index.html?jep/python/PyCallable.html)<br>
+[jpype](https://jpype.readthedocs.io/en/latest/quickguide.html)<br>
+[py4j](https://www.py4j.org/) [py4j极简例子](https://www.jianshu.com/p/bdcc23a6e4c5)<br>
 
 #### 4.Android系列
 

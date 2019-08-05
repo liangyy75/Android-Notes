@@ -1,0 +1,23 @@
+pip install numpy pandas matplotlib scipy
+pip install Rx
+pip install firebase-python
+pip install opencv-python Pillow
+pip install pyqt5 pygame
+pip install requests lxml BeautifulSoup4
+pip install pymysql pymongo redis sqlalchemy
+pip install flask flask-sqlalchemy
+pip install pyecharts
+pip install echarts-countries-pypkg
+pip install echarts-china-provinces-pypkg
+pip install echarts-china-cities-pypkg
+pip install echarts-china-counties-pypkg
+pip install echarts-china-misc-pypkg
+pip install echarts-united-kingdom-pypkg
+pip install websocket-client
+pip install ipython
+pip install jupyter
+pip install jep Cython py4j jpype1
+
+# https://ninia.github.io/jep/javadoc/3.8/index.html?jep/python/PyCallable.html
+# https://jpype.readthedocs.io/en/latest/quickguide.html
+# https://www.py4j.org/

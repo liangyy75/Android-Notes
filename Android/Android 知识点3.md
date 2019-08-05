@@ -1655,10 +1655,15 @@ img {
 9. 列表(java.lang.ArrayList)
     1. 定义
         ```groovy
-        def list = [1, 2, 3, 4]  // 定义列表
-        def array = [1, 2, 3, 4] as int[]  // 定义数组
-        int[] array = [1, 2,3, 4]  // 定义数组
-        println list.toListString()
+        def list = [1, 2, 3, 4, 5, 6, 7]  // 定义列表
+        def array = [1, 2, 3, 4, 5, 6, 7] as int[]  // 定义数组
+        int[] array = [1, 2, 3, 4, 5, 6, 7]  // 定义数组
+        println "${list.toListString()}; ${list[-1]}; ${list[1..4]}; ${list[-6..-3]}"
+        def subList = list[2..5]  // 不是副本，连浅复制都算不上
+        println subList.dump()  // 列出详细信息
+        println list.join(' ')
+        println [['Be', 'Productive'], 'In', 'Groovy'].flatten()  // 拉平的数组，即 ['Be', 'Productive', 'In', 'Groovy']
+        println list.reverse().join(' ')
         ```
     2. 增
         ```groovy
@@ -1697,18 +1702,27 @@ img {
         ```
     6. 遍历
         ```groovy
-        [1, 2, 3].each
-        [1, 2, 3].eachWithIndex
+        [1, 2, 3].each { println "$it " }
+        [3, 2, 1].reverseEach { println "$it " }
+        [1, 2, 3].eachWithIndex { element, index -> println "$index: $element" }
+        def resultList = list.collect { it * 2 }  // 相当于python的map
+        def firstTargetElement = list.find { it == 2 }
+        def targetList = list.findAll { it % 2 == 0 }
+        ['abc', 'cdef', 'ghissmg'].collect({ it.size() }).sum()  // 使用each需要三行
+        println(['abc', 'cdef', 'ghissmg'].inject(0) { carryOver, element -> carryOver + element.size() })
+        println ['abc', 'cdef', 'ghissmg']*.size()  // 3, 4, 7 ，即类似于list.collect {it.size()}
+        def words = { a, b, c, d -> println "$a $b $c $d" };  words(*list)
         ```
 10. 映射(java.util.LinkedHashMap)
     1. 定义
         ```groovy
-        def colors = [red: '#ff0000', green: '#00ff00', blue: '#0000ff']
+        def colors = [red: '#ff0000', green: '#00ff00', blue: '#0000ff']  // 如果有特殊符号的名称作为key，则需要加引号
         colors.yellow = '#ffff00'  // 默认找不到字段则为新增字段
         colors.complex = [a: 1, b: 2]
         println colors.blue + "\n" + colors.yellow
-        def key = 'key'
+        def key = 'C++'
         def map2 = [key: 'value']
+        println "${colors["red"]}, ${colors.green}, ${map2.'C++'}"
         ```
     2. 遍历
         ```groovy
@@ -1716,6 +1730,8 @@ img {
         map.each { def person -> println "the person name : ${person.key}" + "the person age : ${person.value}" }
         map.eachWithIndex{ person, index -> println "the index : ${index}" + "the person name : ${person.key}" + "the person age : ${person.value}" }
         map.eachWithIndex{ key, value, int index -> println "the index : ${index}" + "the person name : ${key}" + "the person age : ${value}" }
+        map.collect
+        map.reverseEach
         ```
     3. 查询
         ```groovy
@@ -1729,6 +1745,17 @@ img {
             Number age2 = person2.value.age
             return age1 == age2 ? 0 : age1 > age2 ? 1 : -1
         }
+        ```
+    4. 其他的一些便捷方法
+        ```groovy
+        println(map.any { false })  // false
+        println(map.every { true })  // true
+        map = [a1: 'aa', a2: 'ab', a3: 'ac', b1: 'ba', b2: 'bb', b3: 'bc', c1: 'ca', c2: 'cb', c3: 'cc']
+        groupMap = map.groupBy { it.value[0] }
+        groupMap.each { label, map -> println "$label: ${map.collect { key, element -> element }.join(', ')}" }
+        // a: aa, ab, ac
+        // b: ba, bb, bc
+        // c: ca, cb, cc
         ```
 11. 范围(groovy.lnag.IntRange)
     1. 定义
