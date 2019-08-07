@@ -17,7 +17,18 @@ pip install websocket-client
 pip install ipython
 pip install jupyter
 pip install jep Cython py4j jpype1
-
+jupyter==1.0.0
+jupyter-client==5.2.4
+jupyter-console==6.0.0
+jupyter-contrib-core==0.3.3
+jupyter-contrib-nbextensions==0.5.0
+jupyter-core==4.4.0
+jupyter-highlight-selected-word==0.2.0
+jupyter-latex-envs==1.4.6
+jupyter-nbextensions-configurator==0.4.0
+jupyterlab==0.35.4
+jupyterlab-launcher==0.13.1
+jupyterlab-server==0.2.0
 # https://ninia.github.io/jep/javadoc/3.8/index.html?jep/python/PyCallable.html
 # https://jpype.readthedocs.io/en/latest/quickguide.html
 # https://www.py4j.org/
