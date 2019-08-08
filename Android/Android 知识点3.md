@@ -1712,6 +1712,8 @@ img {
         println(['abc', 'cdef', 'ghissmg'].inject(0) { carryOver, element -> carryOver + element.size() })
         println ['abc', 'cdef', 'ghissmg']*.size()  // 3, 4, 7 ，即类似于list.collect {it.size()}
         def words = { a, b, c, d -> println "$a $b $c $d" };  words(*list)
+        list.collectEntries({it.key, it.val})  // list to map
+        list.inject([:], { map, item -> map << [(item.key): item.val] })  // list to map
         ```
 10. 映射(java.util.LinkedHashMap)
     1. 定义
@@ -1886,6 +1888,8 @@ img {
 15. xml操作 https://www.ibm.com/developerworks/cn/java/j-pg05199/index.html
     1. 解析xml
         ```groovy
+        import groovy.util.XmlSlurper
+        import groovy.util.XmlParser
         String xml =
         '''<person>
         <name id="2">Hensen</name><age>23</age>
@@ -1893,6 +1897,7 @@ img {
         </person>'''
         def xmlSlurper = new XmlSlurper()
         def person = xmlSlurper.parseText(xml)
+        // def person = new XmlParser().parseText(xml)
         // 获取值
         println person.name[0].text()
         // 获取属性
@@ -1932,6 +1937,51 @@ img {
             computer.languages.each{ language(version: it.version, it.value) }
         }
         println sw
+        ```
+    4. DOMCategory
+        ```groovy
+        // Arrays.stream(groovy.xml.dom.DOMCategory.class.getMethods()).map(java.lang.reflect.Method::getName).forEach(System.out::println)  // 适用于java
+        testXmlPath = "./languages_${Math.round(Math.random() * 100)}.xml"
+        fileWriter = new FileWriter(testXmlPath)
+        fileWriter.write("""<languages>
+            <language name="C++">
+                <author>Stroustrup</author>
+            </language>
+            <language name="Java">
+                <author>Gosling</author>
+            </language>
+            <language name="Lisp">
+                <author>McCarthy</author>
+            </language>
+            <language name="Modula-2">
+                <author>Wirth</author>
+            </language>
+            <language name="Oberon-2">
+                <author>Wirth</author>
+            </language>
+            <language name="Pascal">
+                <author>Wirth</author>
+            </language>
+        </languages>""")
+        fileWriter.flush()
+        fileWriter.close()
+        document = groovy.xml.DOMBuilder.parse(new FileReader(testXmlPath))
+        rootElement = document.documentElement
+        use(groovy.xml.dom.DOMCategory) {
+            println 'Languages and authors'
+            languages = rootElement.language
+            languages.each { println "${it.'@name'} authored by ${it.author[0].text()}" }
+            def languagesByAuthor = { authorName -> languages.findAll({ it.author[0].text() == authorName }).collect({ it.'@name' }).join(', ') }
+            authorName = 'Wirth'
+            println "${authorName}'s languages are: ${languagesByAuthor(authorName)}"
+        }
+        new File(testXmlPath).delete()
+        ```
+    5. XmlSlurper
+        ```groovy
+        languages = new XmlSlurper().parse('languages.xml')  // 或者.parseText("""....""")
+        // XmlParser与XmlSlurper非常类似，但是XmlParser对大文档时的内存要求高
+        languages.language.each { println "${it.'@name'} authored by ${it.author[0].text()}" }
         ```
 16. 文件操作
     1. 读取文件
@@ -2022,6 +2072,7 @@ img {
         str = 'Groovy is groovy, really groovy'
         println str  // Groovy is groovy, really groovy
         result = (str =~ /groovy/).replaceAll('hip')
+        println str.repleaceAll(~/[groovy]/, { Object[] objs -> 'hip' })  // objs中第一个是整个匹配，后面的是一个个的[]匹配
         println result  // Groovy is hip, really groovy
         ```
 18. 数据库
