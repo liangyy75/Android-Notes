@@ -1,0 +1,13 @@
+INFO  time: initialize in 0.26s
+WARN  no build tool detected in workspace 'd:\workspaces\Vscode Notes\Android-Notes'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. 
+INFO  shutting down Metals
+INFO  time: initialize in 0.58s
+WARN  no build tool detected in workspace 'd:\workspaces\Vscode Notes\Android-Notes'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. 
+Jul 29, 2019 8:26:27 PM org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+пео╒: Unsupported notification method: $/setTraceNotification
+INFO  shutting down Metals
+INFO  time: initialize in 1.76s
+WARN  no build tool detected in workspace 'd:\workspaces\Vscode Notes\Android-Notes'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. 
+INFO  shutting down Metals
+INFO  time: initialize in 0.71s
+WARN  no build tool detected in workspace 'd:\workspaces\Vscode Notes\Android-Notes'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. 

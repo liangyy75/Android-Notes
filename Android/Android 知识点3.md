@@ -1301,6 +1301,7 @@ img {
     18. **多方法机制**: 导致不同的多态
     19. **静态类型检查**: @groovy.transform.TypeChecked(可以修饰类、方法、闭包)，并指定方法或者闭包的形参类型；如果使用instanceof检查类型，之后不必进行类型转换。修饰类时如果不想检查某些方法，可以给该方法添加@groovy.transform.TypeChecked(@groovy.transform.TypeCheckingMode.SKIP)来跳过
     20. **静态编译**: @groovy.transform.CompileStatic
+    21. 类静态字段: ``class Person { @PackageScope String name }``
 2. 变量
     1. 变量类型: groovy变量没有基本数据类型，只有引用类型，尽管定义的基本类型也会被转换成引用类型
         ```groovy
@@ -1469,6 +1470,56 @@ img {
             ```
         7. ``@InheritConstructors``: 默认实现父类相关的多个构造函数
     8. 如果方法形参最后一个是闭包，那么可以使用这样的方式调用 ``0.upto(2) { println "$it " }``
+    9. groovy不支持``try(BufferedReader reader = Files.newBufferedReader(Paths.get("/path/to/file"), Charset.forName("UTF-8"))) { /*...*/ } catch()...``这样的语法，但可以这样
+        ```groovy
+        new File('/path/to/file').eachLine('UTF-8') { println it }
+        new File('/path/to/file').withReader('UTF-8') { reader -> reader.eachLine { println it } }
+        ```
+    10. 静态类基本与Java一致，但是非静态内部类的初始化有差别
+        ```groovy
+        // 静态内部类
+        class A { static class B {} }
+        new A.B()
+        // 匿名内部类
+        import java.util.concurrent.CountDownLatch
+        import java.util.concurrent.TimeUnit
+        CountDownLatch called = new CountDownLatch(1)
+        Timer timer = new Timer()
+        timer.schedule(new TimerTask() { void run() { called.countDown() } }, 0)
+        assert called.await(10, TimeUnit.SECONDS)
+        // 非静态内部类
+        public class X {
+            public class X {}
+            public X foo() { return new X() }
+            public static X createX(Y y) { return new X(y) }
+        }
+        ```
+    11. java/groovy的lambda/闭包与方法引用
+        ```java
+        Runnable run = () -> System.out.println("Run");
+        list.forEach(System.out::println);
+        ```
+        ```groovy
+        Runnable run = { println 'run' }
+        list.each { println it } // or list.each(this.&println)
+        ```
+    12. 类型转换
+           ```groovy
+            println ((char) 'cx') == 'c'  // org.codehaus.groovy.runtime.typehandling.GroovyCastException
+            assert ((char) "c").class == Character
+            assert ("c" as char).class == Character
+            assert ("c".asType(char)).class == Character
+            assert ('cx' as char) == 'c'
+            assert 'cx'.asType(char) == 'c'
+           ```
+    13. groovy中装箱由于扩展，java中相反
+           ```groovy
+           void m(long i) { println "in m(long)" }  // java中优先调用
+           void m(Integer i) { println "in m(Integer)" }  // groovy中优先调用
+           int i
+           m(i)
+           ```
+    14. conversion: http://groovy-lang0org.icopy.site/differences.html
 6. 逻辑控制
     1. switch-case
         ```groovy
@@ -1914,7 +1965,7 @@ img {
         def namess = person.children().findAll { it.@id == "2" }.collect{ it.@id }
         println namess
         ```
-    3. 生成xml
+    3. 生成xml1
         ```groovy
         import groovy.xml.MarkupBuilder
         class Computer{
@@ -1982,6 +2033,32 @@ img {
         languages = new XmlSlurper().parse('languages.xml')  // 或者.parseText("""....""")
         // XmlParser与XmlSlurper非常类似，但是XmlParser对大文档时的内存要求高
         languages.language.each { println "${it.'@name'} authored by ${it.author[0].text()}" }
+    6. 生成xml2
+        ```groovy
+        languages = ['C++': 'Stroustrp', 'Java': 'Gosling', 'Lisp': 'McCarthy', 'Modula-2': 'Wirth', 'Oberon-2': 'Wirth', 'Pascal': 'Wirth']
+        content = languages.collect({ language, author -> "    <language name=${language}>\n        <author>${author}</author>\n    </language>" }).join('\n')
+        content = "<languages>\n${content}\n</languages>"
+        println content
+        // or
+        String getPrettyFormattedXml(String xml) {
+            if (xml) {
+                def stringWriter = new StringWriter()
+                def node = new XmlParser().parseText(xml.toString());
+                new XmlNodePrinter(new PrintWriter(stringWriter)).print(node)
+                return stringWriter.toString()
+            } else {
+                return ''
+            }
+        }
+        def xmlDocument = new StreamingMarkupBuilder().bind {
+            mkp.xmlDeclaration()
+            mkp.declareNamespace(computer: "Computer")
+            languages {
+                comment << "created using StreamingMarkupBuilder"
+                langs.each { key, value -> computer.language(name: key) { author(value) } }
+            }
+        }
+        println getPrettyFormattedXml(xmlDocument.toString())
         ```
 16. 文件操作
     1. 读取文件
@@ -2218,6 +2295,372 @@ img {
         println "price for $ticker using instance method is ${ticker.getPrice()}"
         // 执行指令: groovy -classpath priceExtensions.jar test.groovy
         ```
+20. 扩展的方法1: io -- http://docs.groovy-lang.org/latest/html/groovy-jdk/java/io/ http://docs.groovy-lang.org/latest/html/groovy-jdk/java/nio/file/
+    1. java.io.File
+    2. java.io.InputStream
+    3. java.io.OutputStream
+    4. java.io.Reader
+    5. java.nio.file.Path
+21. 扩展的方法2: collection -- http://docs.groovy-lang.org/latest/html/groovy-jdk/java/util/
+    1. java.util.ArrayList / java.lang.Iterable / java.util.Collection
+        ```groovy
+        a = [1, 2, 3, 4]
+        splitStr = '-' * 10
+        // 增: addAll / add / << / + / push / plus
+        println "${splitStr}add"
+        a.addAll([5, 6, 7])
+        a.add(8)
+        a << 9
+        a = a + 10
+        a.push(0)
+        println "    a.plus(10, [1, 2, 3]) ---- ${a.plus(10, [1, 2, 3])}"
+        println "    a.plus(0, [0]) ---- ${a.plus(0, 0)}"
+        println "    a.plus([11, 12, 13]) ---- ${a.plus([11, 12, 13])}"
+        // 删: remove / removeAt / removeElement / removeAll / - / clear / drop / dropRight / dropWhile / pop / removeLast
+        println "${splitStr}delete"
+        b = a - [10]  // a - 10 也可以
+        b.remove(9 - 1)
+        b.remove((Object)8)
+        b.removeAt(7 - 1)
+        b.removeElement(6)
+        b.removeAll({ it % 2 == 0 })
+        b = b.drop(1).dropRight(1).dropWhile({ it % 3 == 0 })  // drop是从头部删除数字
+        println "    b.pop() ---- ${b.pop()}"
+        println "    b.removeLast() ---- ${b.removeLast()}"
+        b.clear()
+        // 改: putAt / = / 
+        println "${splitStr}update"
+        a[10] = 0
+        a.putAt(3, 23)
+        // 查: contains / containsAll / get / count / countBy / bufferedIterator / find / findAll / first / getAt / head / init / last / tail / take / findIndexValues / findIndexOf / findLastIndexOf
+        println "${splitStr}search"
+        println "    a.contains(9) ---- ${a.contains(9)}"
+        println "    a.containsAll([4, 5, 6]) ---- ${a.containsAll([4, 5, 6])}"
+        println "    a.get(6) ---- ${a.get(6)}"
+        println "    a[6] ---- ${a[6]}"
+        println "    a[2..6] ---- ${a[2..6]}"
+        println "    a.count(3) ---- ${a.count(3)}"
+        println "    a.count([3, 4, 5]) ---- ${a.count([3, 4, 5])}"
+        println "    a.count({ it % 3 }) ---- ${a.count({ it % 3 })}"
+        println "    a.countBy({ it % 3 }) ---- ${a.countBy({ it % 3 })}"
+        assert [1, 2, 3, 4].bufferedIterator().with { [head(), toList()] } == [1, [1, 2, 3, 4]]
+        println "    a.find({ it > 2 }) ---- ${a.find({ it > 2 })}"
+        println "    a.findAll({ it > 2 }) ---- ${a.findAll({ it > 2 })}"
+        println "    a.first() ---- ${a.first()}"
+        println "    a.getAt(1..<4) ---- ${a.getAt(1..<4)}"
+        println "    a.getAt([1, 2, 10]) ---- ${a.getAt([1, 2, 10])}"
+        println "    a.head(), a.init(), a.last(), a.tail() ---- ${a.head()}, ${a.init()}, ${a.last()}, ${a.tail()}"  // init是除去最后一个元素的list
+        println "    a.take(3), a.takeRight(3), a.takeWhile({ it % 3 == 0 }) ---- ${a.take(3)}, ${a.takeRight(3)}, ${a.takeWhile({ it % 3 == 0 })}"  // take是获取头部的num个元素, takewhile是满足要求的前缀
+        println "    a.findIndexValues({ it % 3 == 0 }).collect({ a[it as int] }) ---- ${a.findIndexValues({ it % 3 == 0 }).collect({ a[it as int] })}"
+        // 条件: any / every / grep
+        println "${splitStr}condition"
+        println "    a.any() ---- ${a.any()}"
+        println "    a.any({ it == 1 }) ---- ${a.any({ it == 1 })}"
+        println "    a.every() ---- ${a.every()}"
+        println "    a.every({ it > 0 }) ---- ${a.every({ it > 0 })}"
+        println "    a.grep() ---- ${a.grep()}"  // 只有true的值返回
+        println "    a.grep({ it % 3 == 0 }) ---- ${a.grep({ it % 3 == 0 })}"  // 这里还可以用 a.grep(Object) / a.grep(/a+/)
+        // 转变: asImmutable / asSynchronized / asUnmodifiable / collate / split / flatten / collect / collectEntries / collectMany / collectNested / combinations / join / toSpreadMap / toUnique / reverse
+        println "${splitStr}transform"
+        println "    a.asImmutable() ---- ${a.asImmutable()}"  // 不可修改
+        println "    a.asSynchronized() ---- ${a.asSynchronized()}"
+        println "    a.asUnmodifiable() ---- ${a.asUnmodifiable()}"
+        println "    a.collate(3), a.collate(3, 2) ---- ${a.collate(3)}, ${a.collate(3, 2)}"
+        println "    a.collate(3, 2, false) ---- ${a.collate(3, 2, false)}"
+        println "    a.collate(3, 3, false).flatten() ---- ${a.collate(3, 3, false).flatten()}"
+        println "    a.split({ it % 3 }) ---- ${a.split({ it % 3 })}"
+        println "    a.collect({ \"\$it\" }) ---- ${a.collect({ "$it" })}"
+        println "    a.combinations() ---- ${a.combinations()}"
+        println "    a.join(', ') ---- ${a.join(', ')}"
+        println "    a[0..3].toSpreadMap() ---- ${a[0..3].toSpreadMap()}"
+        println "    a.toUnique(), a.toUnique({ a, b -> a - b }) ---- ${a.toUnique()}, ${a.toUnique({ a, b -> a - b })}"
+        println "    a.unique(), a.unique({ a, b -> a - b }) ---- ${a.unique()}, ${a.unique({ a, b -> a - b })}"  // 还有 unique(bool,Xxx) 类型的，bool表示是否修改原来的数组，而且也会返回
+        println "    a.reverse() ---- ${a.reverse()}"
+        // 遍历: each / reverseEach / eachWithIndex
+        println "${splitStr}iter"
+        print '    a.each { print "$it, " } ---- '
+        a.each { print "$it, " }
+        println()
+        print '    a.reverseEach { print "$it, " } ---- '
+        a.reverseEach { print "$it, " }
+        println()
+        print '    a.eachWithIndex { num, index -> print "$index: $num, " } ---- '
+        a.eachWithIndex { num, index -> print "$index: $num, " }
+        println()
+        // 特殊: execute / intersect / * / swap / subsequences / chop
+        println "${splitStr}special"
+        print "    ['git', '--version'].execute().text ---- ${['git', '--version'].execute().text}"
+        println "    [1, 2, 3, 4].intersect([2, 4, 6, 8]) ---- ${[1, 2, 3, 4].intersect([2, 4, 6, 8])}"  // 交集
+        println "    [1, 2, 3] * 2 ---- ${[1, 2, 3] * 2}"
+        println "    a.swap(0, 1)  ---- ${a.swap(0, 1)}"
+        println "    a[0..2].subsequences() ---- ${a[0..2].subsequences()}"
+        println "    [['a', 'b'], [1, 2]].transpose() ---- ${[['a', 'b'], [1, 2]].transpose()}"
+        println "    a.chop(2, 4, -1) ---- ${a.chop(2, 4, -1)}"
+        /*
+         * inherited from interface java.uitl.Collection:
+         * addAll, addAll, addAll, asBoolean, asImmutable, asSynchronized, asType, asUnmodifiable, collectNested, each, eachWithIndex, find, find, findAll, findAll, flatten, getAt, getIndices, grep,
+         * grep, inject, inject, intersect, intersect, isCase, leftShift, minus, plus, plus, plus, removeAll, removeAll, removeElement, retainAll, retainAll, split, toListString, toListString, toSet,
+         * unique, unique, unique, unique, unique, unique
+         */
+        /*
+         * inherited from interface java.lang.Iterable:
+         * any, asCollection, asList, asType, bufferedIterator, chop, collate, collate, collate, collate, collect, collect, collect, collectEntries, collectEntries, collectEntries, collectEntries,
+         * collectMany, collectMany, collectNested, collectNested, combinations, combinations, contains, containsAll, count, count, countBy, disjoint, drop, dropRight, dropWhile, each, eachCombination,
+         * eachPermutation, eachWithIndex, every, findIndexOf, findIndexOf, findIndexValues, findIndexValues, findLastIndexOf, findLastIndexOf, findResult, findResult, findResults, first, flatten,
+         * flatten, getAt, groupBy, groupBy, groupBy, head, indexed, indexed, init, inits, intersect, intersect, isEmpty, join, last, max, max, max, min, min, min, minus, minus, multiply, permutations,
+         * permutations, plus, plus, size, sort, sort, sort, sort, sort, sum, sum, sum, sum, tail, tails, take, takeRight, takeWhile, toList, toSet, toSorted, toSorted, toSorted, toSpreadMap, toUnique,
+         * toUnique, toUnique, withIndex, withIndex
+         */
+        // collectNested / getIndices / isCase / retainAll / chop / collectMany / disjoint / eachCombination / eachPermutation / findIndexValues / findResult / findResults / groupBy / indexed / init /
+        // inits / join / permutations / tails / withIndex
+        ```
+    2. java.lang.Iterable
+    3. java.util.Collection
+    4. java.util.Date
+    5. java.lang.
+22. 扩展的方法3: lang -- http://docs.groovy-lang.org/latest/html/groovy-jdk/java/lang/ http://docs.groovy-lang.org/latest/html/groovy-jdk/java/math/
+    1. java.lang.**Object**
+        ```groovy
+        /*
+         * any / asBoolean / asType / collect / contains / count / dump / each / eachWithIndex / equals / every / find / findAll / findIndexOf / findIndexValues / findLastIndexOf
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         */
+        // void: addShutdownHook(Closure closure)
+		// Object: findResult(Closure condition)
+		// Object: findResult(Object defaultResult, Closure condition)
+		// Collection: flatten()
+		// Object: getAt(String property)
+		// MetaClass: getMetaClass()
+		// List: getMetaPropertyValues()
+		// Map: getProperties()
+		// Collection: grep()
+		// Collection: grep(Object filter)
+		// Map: groupBy(Object closures)
+		// Map: groupBy(List closures)
+		// MetaProperty: hasProperty(String name)
+		// Object: identity(Closure closure)
+		// Object: inject(Closure closure)
+		// Object: inject(Object initialValue, Closure closure)
+		// String: inspect()
+		// Object: invokeMethod(String method, Object arguments)
+		// boolean: is(Object other)
+		// boolean: isCase(Object switchValue)
+		// Iterator: iterator()
+		// String: join(String separator)
+		// MetaClass: metaClass(Closure closure)
+		// void: print(PrintWriter out)
+		// void: print(Object value)
+		// void: printf(String format, Object arg)
+		// void: printf(String format, Object[] values)
+		// void: println()
+		// void: println(PrintWriter out)
+		// void: println(Object value)
+		// void: putAt(String property, Object newValue)
+		// List: respondsTo(String name)
+		// List: respondsTo(String name, Object[] argTypes)
+		// void: setMetaClass(MetaClass metaClass)
+		// int: size()
+		// static void: sleep(long milliseconds)
+		// static void: sleep(long milliseconds, Closure onInterrupt)
+		// Collection: split(Closure closure)
+		// String: sprintf(String format, Object arg)
+		// String: sprintf(String format, Object[] values)
+		// Object: sum()
+		// Object: sum(Object initialValue)
+		// Object: tap(Closure closure)
+		// String: toArrayString()
+		// SpreadMap: toSpreadMap()
+		// String: toString()
+		// Object: use(Class categoryClass, Closure closure)
+		// Object: use(Object[] array)
+		// Object: use(List categoryClassList, Closure closure)
+		// Object: with(boolean returning, Closure closure)
+		// Object: with(Closure closure)
+		// Object: withTraits(Class traits)
+        ```
+    1. java.lang.**Object[]**
+        ```groovy
+        ```
+    2. java.lang.Throwable
+        ```groovy
+        class MyException extends Throwable { /* ... */ }
+        println new MyException().asString()  // 相当于 printStackTrace
+        ```
+    3. java.lang.**Thread**
+        ```groovy
+        // start(Closure closure)
+        // start(String name, Closure closure)
+        // startDaemon(Closure closure)
+        // startDaemon(String name, Closure closure)
+        ```
+    4. java.lang.**System**
+        ```groovy
+        println System.currentTimeMillis()
+        println System.currentTimeSeconds()  // 添加的
+        ```
+    5. java.lang.**StringBuilder** / java.lang.StringBuffer
+        ```groovy
+        // leftShift(Object value)
+        // plus(String value)
+        // putAt(EmptyRange range, Object value)
+        // putAt(IntRange range, Object value)
+        // size()
+        a = new StringBuilder()
+        a << "a1" << "a3" << "a3"
+        a.putAt(2..<2, "a2")
+        a.putAt(8..9, "a3")
+        println a  // a1a2a3a3a3
+        ```
+    6. java.lang.**CharSequence**
+        ```groovy
+        ```
+    7. java.lang.**String**
+        ```groovy
+        ```
+    8. java.lang.**Process**
+        ```groovy
+        ```
+    9. java.lang.**Number**
+        ```groovy
+        ```
+    10. java.lang.Long
+        ```groovy
+        // abs()
+        // power(Integer exponent)
+        // downto(Number to, Closure closure)
+        // upto(Number to, Closure closure)
+        /* inherited from Number */
+        ```
+    11. java.lang.Integer
+        ```groovy
+        // power(Integer exponent)
+        /* inherited from Number */
+        ```
+    12. java.lang.Float / java.lang.Double
+        ```groovy
+        // abs / upto / downto / round() / round(int precision) / trunc() / trunc(int precision)
+        /* inherited from Number */
+        ```
+    13. java.lang.Comparable
+        ```groovy
+        // int numberAwareCompareTo(Comparable other)
+        println 12.numberAwareCompareTo(15)  // -1
+        ```
+    14. java.lang.**Enum**
+        ```groovy
+        // next / previous
+        /* inherited from Comparable */
+        ```
+    15. java.lang.ClassLoader
+        ```groovy
+        // getRootLoader()
+        ```
+    16. java.lang.Class
+        ```groovy
+        // URL getLocation()
+        // boolean isCase(Object switchValue)  // 用于switch -- 可以比较Class了，而继承Object的也可以重写来实现自己的逻辑，如Integer对IntegerRange做了适配吧
+        // Object newInstance()
+        // Object newInstance(Object[] args)
+        // void setMetaClass(MetaClass metaClass)
+        // MetaClass getMetaClass()
+        // MetaClass metaClass(Closure closure)  // 将给定类的元类设置/更新为闭包
+        // void mixin(Class categoryClass)  // 将目标类的方法拷贝一份到自己类中
+        // void mixin(Class[] categoryClass)
+        // void mixin(List categoryClasses)
+        class A {
+            def name = "A"
+            def a(text) { println "${this.name}, $name: $text" }
+        }
+        @Mixin(A)  // 编译时
+        class B { def name = "B" }
+        class C { def name = "C" }
+        C.mixin(A)  // 运行时
+        A.newInstance().a('text')
+        new B().a('text')
+        new C().a('text')  // 都是"A, A: text"
+        ```
+    17. java.lang.**Character**
+        ```groovy
+        ```
+    18. java.lang.Byte
+        ```groovy
+        // void eachByte(Closure closure)
+        // Writable encodeBase64()
+        // Writable encodeBase64(bool chunked)
+        // Writable encodeBase64Url()
+        // Writable encodeBase64Url(bool pad)
+        // Writable encodeHex()
+        a = [127, 67, 91] as byte[]
+        a.eachByte { print "$it, " }
+        println a.encodeBase64()  // 127, 67, 91, f0Nb
+        origin = 'Yeah'
+        encoded = origin.bytes.encodeBase64().toString()
+        decoded = encoded.decodeBase64()
+        println "${origin} -- ${encoded} -- ${decoded} -- ${new String(decoded)}"  // Yeah -- WWVhaA== -- [89, 101, 97, 104] -- Yeah
+        hexEncoded = origin.bytes.encodeHex().toString()
+        hexDecoded = hexEncoded.decodeHex()
+        println "${origin} -- ${hexEncoded} -- ${hexDecoded} -- ${new String(hexDecoded)}"  // Yeah -- 59656168 -- [89, 101, 97, 104] -- Yeah
+        ```
+    19. java.lang.Boolean
+        ```groovy
+        // Boolean and(Boolean right)
+        // Boolean or(Boolean right)
+        // Boolean implies(Boolean right)  // A真B真 | A假B假 | A假B真 -- 这些情况就为真
+        // Boolean xor(Boolean right)
+        // boolean asBoolean()
+        // Boolean toBoolean()
+        println "${false.and(true)}, ${true.or(false)}, ${true.xor(false)}, ${true.implies(false)}"  // false, true, true, false
+        ```
+    20. java.lang.AutoCloseable
+        ```groovy
+        // Object withCloseable(Closure action)
+        class TestCloseable implements AutoCloseable {
+            void execute() { print('execute -- ') }
+            void close() { println('close') }
+        }
+        new TestCloseable().withCloseable { it.execute() }  // execute -- close
+        ```
+    21. java.lang.Appendable
+        ```groovy
+        // Appendable leftShift(Object value)
+        // Appendable withFormatter(Closure closure)
+        // Appendable withFormatter(Locale locale, Closure closure)
+        final Appendable appendable = new StringWriter()
+        appendable << 'Groovy is Gr8!' << newLine
+        appendable.withFormatter { formatter -> formatter.format(/m r %3$1s %2$1s %1$1s %4$1s%n/, 'k', 'a', 'h', 'i') }
+        appendable.withFormatter(Locale.US) { formatter -> formatter.format("US: " + datePattern, date) }
+        appendable.withFormatter(new Locale('nl')) { formatter -> formatter.format("Dutch: $datePattern", date) }
+        println appendable
+        String getNewLine() { System.getProperty('line.separator') }
+        java.time.LocalDate getDate() { java.time.LocalDate.parse('2013-01-27', 'yyyy-MM-dd') }
+        String getDatePattern() { '%1$tB %1$te, %1$tY%n' }
+        /* Groovy is Gr8!
+        m r h a k i
+        US: January 27, 2013
+        Dutch: januari 27, 2013*/  // https://www.baeldung.com/groovy-string-to-date
+        ```
+        ```xml
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-all</artifactId>
+            <version>2.5.7</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-dateutil</artifactId>
+            <version>2.5.7</version>
+        </dependency>
+        ```
+23. 扩展的方法4: net -- http://docs.groovy-lang.org/latest/html/groovy-jdk/java/net/
+24. 扩展的方法5: sql -- http://docs.groovy-lang.org/latest/html/groovy-jdk/java/sql/
+25. 扩展的方法6: time -- http://docs.groovy-lang.org/latest/html/groovy-jdk/java/time/
+26. 扩展的方法7: awt -- http://docs.groovy-lang.org/latest/html/groovy-jdk/java/awt/
 
 ## Gradle
 
