@@ -60,6 +60,10 @@ Android源码设计模式解析与实战.pdf
 [jpype](https://jpype.readthedocs.io/en/latest/quickguide.html)<br>
 [py4j](https://www.py4j.org/) [py4j极简例子](https://www.jianshu.com/p/bdcc23a6e4c5)<br>
 
+* https://ninia.github.io/jep/javadoc/3.8/index.html?jep/python/PyCallable.html
+* https://jpype.readthedocs.io/en/latest/quickguide.html
+* https://www.py4j.org/
+
 #### 4.Android系列
 
 [谷歌开发者](https://blog.csdn.net/jILRvRTrc)
@@ -168,10 +172,10 @@ https://studygolang.com/topics/8327#reply12 -- go
     7. Session 与 Cookie 的对比(5个: 编码 安全 大小 实现 服务器消耗资源)
     8. SQL注入
     9. XSS攻击
-1. https://www.mzitu.com/
-1. https://github.com/Kerr1Gan/Flesh -- android强大项目
-1. https://www.showapi.com/ -- 强大的数据源
-1. [arm](https://www.veryarm.com/)
+2. https://www.mzitu.com/
+3. https://github.com/Kerr1Gan/Flesh -- android强大项目
+4. https://www.showapi.com/ -- 强大的数据源
+5. [arm](https://www.veryarm.com/)
 
 #### 8.github
 

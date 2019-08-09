@@ -1,38 +1,4 @@
-pip install numpy pandas matplotlib scipy
-pip install Rx
-pip install firebase-python
-pip install opencv-python Pillow
-pip install pyqt5 pygame
-pip install requests lxml BeautifulSoup4
-pip install pymysql pymongo redis sqlalchemy
-pip install flask flask-sqlalchemy
-pip install pyecharts
-pip install echarts-countries-pypkg
-pip install echarts-china-provinces-pypkg
-pip install echarts-china-cities-pypkg
-pip install echarts-china-counties-pypkg
-pip install echarts-china-misc-pypkg
-pip install echarts-united-kingdom-pypkg
-pip install websocket-client
-pip install ipython
-pip install jupyter
-pip install jep Cython py4j jpype1
-jupyter==1.0.0
-jupyter-client==5.2.4
-jupyter-console==6.0.0
-jupyter-contrib-core==0.3.3
-jupyter-contrib-nbextensions==0.5.0
-jupyter-core==4.4.0
-jupyter-highlight-selected-word==0.2.0
-jupyter-latex-envs==1.4.6
-jupyter-nbextensions-configurator==0.4.0
-jupyterlab==0.35.4
-jupyterlab-launcher==0.13.1
-jupyterlab-server==0.2.0
-# https://ninia.github.io/jep/javadoc/3.8/index.html?jep/python/PyCallable.html
-# https://jpype.readthedocs.io/en/latest/quickguide.html
-# https://www.py4j.org/
-
+# pip list | awk '{print $1"=="$2}' | tail -n +3 > requirements.txt
 alabaster==0.7.12
 anaconda-client==1.7.2
 anaconda-navigator==1.9.7
@@ -61,6 +27,8 @@ bleach==3.1.0
 bokeh==1.2.0
 boto==2.49.0
 Bottleneck==1.2.1
+CacheControl==0.12.5
+cachetools==3.1.1
 certifi==2019.6.16
 cffi==1.12.3
 chardet==3.0.4
@@ -84,18 +52,37 @@ decorator==4.4.0
 defusedxml==0.6.0
 distributed==2.1.0
 docutils==0.14
+echarts-china-cities-pypkg==0.0.9
+echarts-china-counties-pypkg==0.0.2
+echarts-china-misc-pypkg==0.0.1
+echarts-china-provinces-pypkg==0.0.3
+echarts-countries-pypkg==0.1.6
+echarts-united-kingdom-pypkg==0.0.1
 entrypoints==0.3
 et-xmlfile==1.0.1
 fastcache==1.1.0
 filelock==3.0.12
+firebase-admin==2.17.0
 Flask==1.1.1
+Flask-SQLAlchemy==2.4.0
 future==0.17.1
 gevent==1.4.0
 glob2==0.7
+google-api-core==1.14.2
+google-api-python-client==1.7.10
+google-auth==1.6.3
+google-auth-httplib2==0.0.3
+google-cloud-core==1.0.3
+google-cloud-firestore==1.3.0
+google-cloud-storage==1.17.0
+google-resumable-media==0.3.2
+googleapis-common-protos==1.6.0
 greenlet==0.4.15
+grpcio==1.22.0
 h5py==2.9.0
 heapdict==1.0.0
 html5lib==1.0.1
+httplib2==0.13.1
 hyperlink==19.0.0
 idna==2.8
 ilua==0.2.1
@@ -111,8 +98,10 @@ isort==4.3.21
 itsdangerous==1.1.0
 jdcal==1.4.1
 jedi==0.13.3
+jep==3.8.2
 Jinja2==2.10.1
 joblib==0.13.2
+JPype1==0.7.0
 json5==0.8.4
 jsonschema==3.0.1
 jupyter==1.0.0
@@ -126,6 +115,7 @@ jupyter-highlight-selected-word==0.2.0
 jupyter-latex-envs==1.4.6
 jupyter-nbextensions-configurator==0.4.1
 jupyterlab==1.0.2
+jupyterlab-launcher==0.13.1
 jupyterlab-server==1.0.0
 keyring==18.0.0
 Kivy==1.11.1
@@ -138,6 +128,7 @@ kiwisolver==1.1.0
 lazy-object-proxy==1.4.1
 libarchive-c==2.8
 llvmlite==0.29.0
+lml==0.0.2
 locket==0.2.0
 lxml==4.3.4
 MarkupSafe==1.1.1
@@ -165,6 +156,7 @@ numexpr==2.6.9
 numpy==1.16.4
 numpydoc==0.9.1
 olefile==0.46
+opencv-python==4.1.0.25
 openpyxl==2.6.2
 packaging==19.0
 pandas==0.24.2
@@ -182,20 +174,30 @@ pipenv==2018.11.26
 pkginfo==1.5.0.1
 pluggy==0.12.0
 ply==3.11
+prettytable==0.7.2
 prometheus-client==0.7.1
 prompt-toolkit==2.0.9
+protobuf==3.9.1
 psutil==5.6.3
 py==1.8.0
 py4j==0.10.8.1
+pyasn1==0.4.6
+pyasn1-modules==0.2.6
 pycodestyle==2.5.0
 pycosat==0.6.3
 pycparser==2.19
 pycrypto==2.6.1
 pycurl==7.43.0.3
+pyecharts==1.3.1
+pyecharts-jupyter-installer==0.0.3
+pyfcm==1.4.7
 pyflakes==2.1.1
+pygame==1.9.6
 Pygments==2.4.2
 PyHamcrest==1.9.0
 pylint==2.3.1
+pymongo==3.8.0
+PyMySQL==0.9.3
 pyodbc==4.0.26
 pyOpenSSL==19.0.0
 pyparsing==2.4.0
@@ -213,6 +215,7 @@ pytest-doctestplus==0.3.0
 pytest-openfiles==0.3.2
 pytest-remotedata==0.3.1
 python-dateutil==2.8.0
+python-firebase==1.2
 pytz==2019.1
 PyWavelets==1.0.3
 pywin32==223
@@ -225,7 +228,9 @@ QtPy==1.8.0
 redis==3.3.2
 requests==2.22.0
 rope==0.14.0
+rsa==4.0
 ruamel-yaml==0.15.46
+Rx==3.0.1
 scikit-image==0.15.0
 scikit-learn==0.21.2
 scipy==1.2.1
@@ -233,6 +238,7 @@ seaborn==0.9.0
 Send2Trash==1.5.0
 setuptools==41.0.1
 simplegeneric==0.8.1
+simplejson==3.16.0
 singledispatch==3.4.0.3
 sip==4.19.8
 six==1.12.0
@@ -266,6 +272,7 @@ traitlets==4.3.2
 Twisted==19.2.1
 txZMQ==0.8.0
 unicodecsv==0.14.1
+uritemplate==3.0.0
 urllib3==1.24.2
 vboxapi==1.0
 virtualenv==16.7.0
