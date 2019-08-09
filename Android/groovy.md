@@ -1134,10 +1134,131 @@
     1. http://docs.groovy-lang.org/latest/html/groovy-jdk/java/io/
     2. http://docs.groovy-lang.org/latest/html/groovy-jdk/java/nio/file/
 1. java.io.File
+    ```groovy
+    /*
+     * append / asWritable / createTempDir / deleteDir / directorySize / eachByte / eachDir / eachDirMatch / eachDirRecurse / eachFile / eachFileMatch / eachFileRecurse / 
+     * eachLine / eachObject / filterLine / getBytes / getText / leftShift / newDataInputStream / newObjectOutputStream / newInputStream / newObjectInputStream / 
+     * newObjectOutputStream / newOutputStream / newPrintWriter / newReader / newWriter / readBytes / readLines / relativePath / renameTo / setBytes / setText / size / 
+     * spltEachLine / traverse / withDateInputStream / withDataOutputStream / withInputStream / withOutputStream / withObjectInputStream / withObjectOutputStream / 
+     * withPrintWriter / withReader / withWriterAppend / write
+     */
+    // http://docs.groovy-lang.org/latest/html/groovy-jdk/java/io/File.html#traverse(java.util.Map,%20groovy.lang.Closure)
+    ```
+    ```groovy
+    // void append(byte[] bytes)
+	// void append(InputStream stream)
+	// void append(Reader reader)
+	// void append(Reader reader, boolean writeBom)
+	// void append(Reader reader, String charset)
+	// void append(Reader reader, String charset, boolean writeBom)
+	// void append(Writer writer)
+	// void append(Writer writer, boolean writeBom)
+	// void append(Writer writer, String charset)
+	// void append(Writer writer, String charset, boolean writeBom)
+	// void append(Object text)
+	// void append(Object text, boolean writeBom)
+	// void append(Object text, String charset)
+	// void append(Object text, String charset, boolean writeBom)
+	// File asWritable()
+	// File asWritable(String encoding)
+	// static File createTempDir()
+    // static File createTempDir(String prefix, String suffix)
+	// boolean deleteDir()
+	// long directorySize()
+	// void eachByte(Closure closure)
+	// void eachByte(int bufferLen, Closure closure)
+	// void eachDir(Closure closure)
+	// void eachDirMatch(Object nameFilter, Closure closure)
+	// void eachDirRecurse(Closure closure)
+	// void eachFile(FileType fileType, Closure closure)
+	// void eachFile(Closure closure)
+	// void eachFileMatch(FileType fileType, Object nameFilter, Closure closure)
+	// void eachFileMatch(Object nameFilter, Closure closure)
+	// void eachFileRecurse(FileType fileType, Closure closure)
+	// void eachFileRecurse(Closure closure)
+	// Object eachLine(Closure closure)
+	// Object eachLine(int firstLine, Closure closure)
+	// Object eachLine(String charset, Closure closure)
+	// Object eachLine(String charset, int firstLine, Closure closure)
+	// void eachObject(Closure closure)
+	// Writable filterLine(Closure closure)
+	// void filterLine(Writer writer, Closure closure)
+	// void filterLine(Writer writer, String charset, Closure closure)
+	// Writable filterLine(String charset, Closure closure)
+    ```
+    ```groovy
+	// byte[] getBytes()
+	// String getText()
+	// String getText(String charset)
+	// File leftShift(byte[] bytes)
+	// File leftShift(InputStream data)
+	// File leftShift(Object text)
+	// DataInputStream newDataInputStream()
+	// DataOutputStream newDataOutputStream()
+	// BufferedInputStream newInputStream()
+	// ObjectInputStream newObjectInputStream()
+	// ObjectInputStream newObjectInputStream(ClassLoader classLoader)
+	// ObjectOutputStream newObjectOutputStream()
+	// BufferedOutputStream newOutputStream()
+	// PrintWriter newPrintWriter()
+	// PrintWriter newPrintWriter(String charset)
+	// BufferedReader newReader()
+	// BufferedReader newReader(String charset)
+	// BufferedWriter newWriter()
+	// BufferedWriter newWriter(boolean append)
+	// BufferedWriter newWriter(String charset)
+	// BufferedWriter newWriter(String charset, boolean append)
+	// BufferedWriter newWriter(String charset, boolean append, boolean writeBom)
+	// byte[] readBytes()
+	// List readLines()
+	// List readLines(String charset)
+	// String relativePath(File to)
+	// boolean renameTo(String newPathName)
+	// void setBytes(byte[] bytes)
+	// void setText(String text)
+	// void setText(String text, String charset)
+	// long size()
+    ```
+    ```groovy
+	// Object splitEachLine(String regex, Closure closure)
+	// Object splitEachLine(String regex, String charset, Closure closure)
+	// Object splitEachLine(Pattern pattern, Closure closure)
+	// Object splitEachLine(Pattern pattern, String charset, Closure closure)
+	// void traverse(Closure closure)
+	// void traverse(Map options)
+	// void traverse(Map options, Closure closure)
+	// Object withDataInputStream(Closure closure)
+	// Object withDataOutputStream(Closure closure)
+	// Object withInputStream(Closure closure)
+	// Object withObjectInputStream(Closure closure)
+	// Object withObjectInputStream(ClassLoader classLoader, Closure closure)
+	// Object withObjectOutputStream(Closure closure)
+	// Object withOutputStream(Closure closure)
+	// Object withPrintWriter(Closure closure)
+	// Object withPrintWriter(String charset, Closure closure)
+	// Object withReader(Closure closure)
+	// Object withReader(String charset, Closure closure)
+	// Object withWriter(Closure closure)
+	// Object withWriter(String charset, Closure closure)
+	// Object withWriterAppend(Closure closure)
+	// Object withWriterAppend(String charset, Closure closure)
+	// void write(String text)
+	// void write(String text, boolean writeBom)
+	// void write(String text, String charset)
+	// void write(String text, String charset, boolean writeBom)
+    ```
 2. java.io.InputStream
 3. java.io.OutputStream
 4. java.io.Reader
-5. java.nio.file.Path
+5. java.io.Writer
+    ```groovy
+    // Writer leftShift(Object value)
+	// PrintWriter newPrintWriter()
+	// Object withPrintWriter(Closure closure)
+	// Object withWriter(Closure closure)
+	// void write(Writable writable)
+    ```
+6. java.nio.file.Path
 
 ### 扩展的方法2: collection
 
@@ -1254,104 +1375,241 @@
     // collectNested / getIndices / isCase / retainAll / chop / collectMany / disjoint / eachCombination / eachPermutation / findIndexValues / findResult / findResults / groupBy / indexed / init /
     // inits / join / permutations / tails / withIndex
     ```
-2. java.lang.Iterable
-3. java.util.Collection
-4. java.util.Date
-5. java.lang.
+2. java.util.Collection
+3. java.util.Date
 
 ### 扩展的方法3: lang
 
-0. links
+1. links
     1. http://docs.groovy-lang.org/latest/html/groovy-jdk/java/lang/
     2. http://docs.groovy-lang.org/latest/html/groovy-jdk/java/math/
-1. java.lang.**Object**
+    3. https://mrhaki.blogspot.com/2009/09/groovy-goodness-use-categories-to-add.html
+2. java.lang.**Object**
     ```groovy
     /*
      * any / asBoolean / asType / collect / contains / count / dump / each / eachWithIndex / equals / every / find / findAll / findIndexOf / findIndexValues / findLastIndexOf
-     * 
-     * 
-     * 
-     * 
-     * 
-     * 
-     * 
+     *  / findResult / flatten / getAt / grep / groupBy / identity / inject / inspect / invokeMethods / is / isCase / iterator / join / print / printf / println / putAt / size
+     *  / sleep / split / sprintf / sum / toArrayString / toSpreadMap / toString / use / with / **withTraits**
+     * 集合: any / collect / contains / count / each / eachWithIndex / every / find / findAll / findIndexOf / findIndexValues / findLastIndexOf / findResult / flatten / getAt /
+     *       groupBy / inject / iterator / join / putAt / size / split / sum / toArrayString / toSpreadMap
+     * Other: asBoolean / asType / dump / equals / identity / inspect / invokeMethods / is / isCase / print / printf / println / sleep / sprintf / toString / use / with / withTraits
      */
-    // void: addShutdownHook(Closure closure)
-
-
-	// Object: findResult(Closure condition)
-	// Object: findResult(Object defaultResult, Closure condition)
-	// Collection: flatten()
-	// Object: getAt(String property)
-	// MetaClass: getMetaClass()
-	// List: getMetaPropertyValues()
-	// Map: getProperties()
-	// Collection: grep()
-	// Collection: grep(Object filter)
-	// Map: groupBy(Object closures)
-	// Map: groupBy(List closures)
-	// MetaProperty: hasProperty(String name)
-	// Object: identity(Closure closure)
-	// Object: inject(Closure closure)
-	// Object: inject(Object initialValue, Closure closure)
-	// String: inspect()
-	// Object: invokeMethod(String method, Object arguments)
-	// boolean: is(Object other)
-	// boolean: isCase(Object switchValue)
-	// Iterator: iterator()
-	// String: join(String separator)
-	// MetaClass: metaClass(Closure closure)
-	// void: print(PrintWriter out)
-	// void: print(Object value)
-	// void: printf(String format, Object arg)
-	// void: printf(String format, Object[] values)
-	// void: println()
-	// void: println(PrintWriter out)
-	// void: println(Object value)
-	// void: putAt(String property, Object newValue)
-	// List: respondsTo(String name)
-	// List: respondsTo(String name, Object[] argTypes)
-	// void: setMetaClass(MetaClass metaClass)
-	// int: size()
-	// static void: sleep(long milliseconds)
-	// static void: sleep(long milliseconds, Closure onInterrupt)
-	// Collection: split(Closure closure)
-	// String: sprintf(String format, Object arg)
-	// String: sprintf(String format, Object[] values)
-	// Object: sum()
-	// Object: sum(Object initialValue)
-	// Object: tap(Closure closure)
-	// String: toArrayString()
-	// SpreadMap: toSpreadMap()
-	// String: toString()
-	// Object: use(Class categoryClass, Closure closure)
-	// Object: use(Object[] array)
-	// Object: use(List categoryClassList, Closure closure)
-	// Object: with(boolean returning, Closure closure)
-	// Object: with(Closure closure)
-	// Object: withTraits(Class traits)
+    /*
+     * void: addShutdownHook(Closure closure)
+     * List: getMetaPropertyValues()
+     * Map: getProperties()
+     * MetaProperty: hasProperty(String name)
+     * MetaClass: metaClass(Closure closure)
+     * List: respondsTo(String name)
+     * List: respondsTo(String name, Object[] argTypes)
+     * void: setMetaClass(MetaClass metaClass)
+     */
+    assert [1, 2, 3, 4].findIndexValues({ it % 2 == 0 }) == [1, 3]  // 返回下标，而且是long，需要as int
+    assert [1, 2, 3].findResult({ if(it > 1) return it }) == 2
+    [1, 2, 3].identity({ println(it) })  // 等同于[1, 2, 3].with，但与tap有区别，tap会返回it，而且注意闭包的委托其实应该都是it，即可以随便使用it的方法与属性，而不必使用it.
+    Object f = new Object(), g = new Object()
+    println "${f.is(f)}, ${f.is(g)}"  // true, false
+    println "${1.isCase(Integer)}, ${1.isCase(0..10)}, ${1.isCase(1)}"  // false, false, true
+    printf("%s", sprintf("%d %d", 100, 20))  // 100 20
+    // use语法: https://mrhaki.blogspot.com/2009/09/groovy-goodness-use-categories-to-add.html
     ```
-1. java.lang.**Object[]**
     ```groovy
+    void addShutdownHook(Closure closure)
+	// boolean any()
+	// boolean any(Closure predicate)
+	// boolean asBoolean()
+	// Object asType(Class clazz)
+	// Collection collect()
+	// List collect(Closure transform)
+	// Collection collect(Collection collector, Closure transform)
+	// boolean contains(Object value)
+	// Number count(Object value)
+	// String dump()
+	// Object each(Closure closure)
+	// Object eachWithIndex(Closure closure)
+	// boolean equals(List right)
+	// boolean every()
+	// boolean every(Closure predicate)
+	// Object find()
+	// Object find(Closure closure)
+	// Collection findAll()
+	// Collection findAll(Closure closure)
+	// int findIndexOf(Closure condition)
+	// int findIndexOf(int startIndex, Closure condition)
+	// List findIndexValues(Closure condition)
+	// List findIndexValues(Number startIndex, Closure condition)
+	// int findLastIndexOf(Closure condition)
+	// int findLastIndexOf(int startIndex, Closure condition)
+	// Object findResult(Closure condition)
+	// Object findResult(Object defaultResult, Closure condition)
+	// Collection flatten()
+	// Object getAt(String property)
+	// MetaClass getMetaClass()
+	// List getMetaPropertyValues()
+	// Map getProperties()
+	// Collection grep()
+	// Collection grep(Object filter)
+	// Map groupBy(Object closures)
+	// Map groupBy(List closures)
+	// MetaProperty hasProperty(String name)
+	// Object identity(Closure closure)
+	// Object inject(Closure closure)
+	// Object inject(Object initialValue, Closure closure)
     ```
-2. java.lang.Throwable
+    ```groovy
+	// String inspect()
+	// Object invokeMethod(String method, Object arguments)
+	// boolean is(Object other)
+	// boolean isCase(Object switchValue)
+	// Iterator iterator()
+	// String join(String separator)
+	// MetaClass metaClass(Closure closure)
+	// void print(PrintWriter out)
+	// void print(Object value)
+	// void printf(String format, Object arg)
+	// void printf(String format, Object[] values)
+	// void println()
+	// void println(PrintWriter out)
+	// void println(Object value)
+	// void putAt(String property, Object newValue)
+	// List respondsTo(String name)
+	// List respondsTo(String name, Object[] argTypes)
+	// void setMetaClass(MetaClass metaClass)
+	// int size()
+	// static void sleep(long milliseconds)
+	// static void sleep(long milliseconds, Closure onInterrupt)
+	// Collection split(Closure closure)
+	// String sprintf(String format, Object arg)
+	// String sprintf(String format, Object[] values)
+	// Object sum()
+	// Object sum(Object initialValue)
+	// Object tap(Closure closure)
+	// String toArrayString()
+	// SpreadMap toSpreadMap()
+	// String toString()
+	// Object use(Class categoryClass, Closure closure)
+	// Object use(Object[] array)
+	// Object use(List categoryClassList, Closure closure)
+	// Object with(boolean returning, Closure closure)
+	// Object with(Closure closure)
+	// Object withTraits(Class traits)
+    ```
+2. java.lang.**Object[]**
+    ```groovy
+    /*
+     * any / chop / collate / collect / collectEntries / collectMany / count / countBy / drop / dropRight / dropWhile / each / eachWithIndex / every / find / findAll / 
+     * findIndexOf / findIndexValues / findLastIndexOf / findResult / findResults / first / getAt / getIndices / grep / groupBy / head / init / inject / iterator / last
+     *  / max / min / minus / plus / reverse / reverseEach / sort / split / stream / sum / swap / tail / take / takeRight / takeWhile / toList / toSorted / toUnique
+     */
+    ```
+    ```groovy
+    // boolean any(Closure predicate)
+	// List chop(int chopSizes)
+	// List collate(int size)
+	// List collate(int size, boolean keepRemainder)
+	// List collate(int size, int step)
+	// List collate(int size, int step, boolean keepRemainder)
+	// List collect(Closure transform)
+	// Collection collect(Collection collector, Closure transform)
+	// Map collectEntries()
+	// Map collectEntries(Closure transform)
+	// Map collectEntries(Map collector)
+	// Map collectEntries(Map collector, Closure transform)
+	// List collectMany(Closure projection)
+	// Number count(Closure closure)
+	// Map countBy(Closure closure)
+	// Object[] drop(int num)
+	// Object[] dropRight(int num)
+	// Object[] dropWhile(Closure condition)
+	// Object[] each(Closure closure)
+	// Object[] eachWithIndex(Closure closure)
+	// boolean every(Closure predicate)
+	// Object find(Closure condition)
+	// Collection findAll()
+	// Collection findAll(Closure condition)
+	// int findIndexOf(Closure condition)
+	// int findIndexOf(int startIndex, Closure condition)
+	// List findIndexValues(Closure condition)
+	// List findIndexValues(Number startIndex, Closure condition)
+	// int findLastIndexOf(Closure condition)
+	// int findLastIndexOf(int startIndex, Closure condition)
+	// Object findResult(Closure condition)
+	// Object findResult(Object defaultResult, Closure condition)
+	// Collection findResults(Closure filteringTransform)
+	// Object first()
+	// List getAt(EmptyRange range)
+	// List getAt(ObjectRange range)
+	// Support the range subscript operator for an Array
+	// List getAt(Collection indices)
+	// IntRange getIndices()
+	// Collection grep()
+	// Collection grep(Object filter)
+	// Map groupBy(Closure closure)
+	// Object head()
+	// Object[] init()
+    ```
+    ```groovy
+	// Object inject(Closure closure)
+	// Object inject(Object initialValue, Closure closure)
+	// Iterator iterator()
+	// Object last()
+	// Object max()
+	// Object max(Closure closure)
+	// Object max(Comparator comparator)
+	// Object min()
+	// Object min(Closure closure)
+	// Object min(Comparator comparator)
+	// Object[] minus(Iterable removeMe)
+	// Object[] minus(Object removeMe)
+	// Object[] minus(Object[] removeMe)
+	// Object[] plus(Iterable right)
+	// Object[] plus(Object right)
+	// Object[] plus(Object[] right)
+	// Object[] plus(Collection right)
+	// Object[] reverse()
+	// Object[] reverse(boolean mutate)
+	// Object[] reverseEach(Closure closure)
+	// Object[] sort()
+	// Object[] sort(boolean mutate)
+	// Object[] sort(boolean mutate, Closure closure)
+	// Object[] sort(boolean mutate, Comparator comparator)
+	// Object[] sort(Closure closure)
+	// Object[] sort(Comparator comparator)
+	// Collection split(Closure closure)
+	// Stream stream()
+	// Object sum(Closure closure)
+	// Object sum(Object initialValue, Closure closure)
+	// Object[] swap(int i, int j)
+	// Object[] tail()
+	// Object[] take(int num)
+	// Object[] takeRight(int num)
+	// Object[] takeWhile(Closure condition)
+	// List toList()
+	// Object[] toSorted()
+	// Object[] toSorted(Closure condition)
+	// Object[] toSorted(Comparator comparator)
+	// Object[] toUnique()
+	// Object[] toUnique(Closure condition)
+	// Object[] toUnique(Comparator comparator)
+    ```
+3. java.lang.Throwable
     ```groovy
     class MyException extends Throwable { /* ... */ }
     println new MyException().asString()  // 相当于 printStackTrace
     ```
-3. java.lang.**Thread**
+4. java.lang.**Thread**
     ```groovy
     // start(Closure closure)
     // start(String name, Closure closure)
     // startDaemon(Closure closure)
     // startDaemon(String name, Closure closure)
     ```
-4. java.lang.**System**
+5. java.lang.**System**
     ```groovy
     println System.currentTimeMillis()
     println System.currentTimeSeconds()  // 添加的
     ```
-5. java.lang.**StringBuilder** / java.lang.StringBuffer
+6. java.lang.**StringBuilder** / java.lang.StringBuffer
     ```groovy
     // leftShift(Object value)
     // plus(String value)
@@ -1364,19 +1622,233 @@
     a.putAt(8..9, "a3")
     println a  // a1a2a3a3a3
     ```
-6. java.lang.**CharSequence**
+7. java.lang.**CharSequence**
     ```groovy
+    /*
+     * asBoolean / asType / bitwiseNegate /capitalize / center / contains / count / denormalize(\n替换为lf/crlf/cr等等可跨平台的换行符) / digest / drop / dropWhile / eachLine / 
+     * eachMatch / endsWithAny / expand / expandLine / find / findAll / getAt / getChars / isAllWhitespace / isBigDecimal / isBigInteger / isBlank / isCase / isDouble / 
+     * isFloat / isInteger / isLong / isNumber / leftShift / matches / md5 / minus / multiply / next / normalize / padLeft / padRight / plus / previous / readLines / replace 
+     * / replaceAll / replaceFirst / reverse / sha256 / size / split / splitEachLine / startsWithAny / stripIndent / stripMargin / take / takeWhile / toBigDecimal / 
+     * toBigInteger / toDouble / toFloat / toInteger / toList / toLong / toSet / toURI / toURL / tokenize / **tr** / uncapitalize / unexpand
+     */
+    ['A', 'BB', 'CCC', 'DDDD'].each{ println '|' + it.center(6) + '|' }  // |  A   |\n|  BB  |\n| CCC  |\n| DDDD |\n
+    ['A', 'BB', 'CCC', 'DDDD'].each{ println '|' + it.center(6, '+') + '|' }  // |++A+++|\n|++BB++|\n|+CCC++|\n|+DDDD+|\n
+    println "${'IamASecret'.md5()}, ${'IamASecret'.digest('MD2')}, ${'IamASecret'.digest('SHA-1'}, ${'IamASecret'.digest('SHA-256')}}"  // md2/md5/sha-1/sha-256/sha-384/sha-512
+    println('abcd|abdc|acbd|acdb'.eachMatch(~/a(.*?)\|/, { print "$it, " }))  // [abcd|, bcd], [abdc|, bdc], [acbd|, cbd], abcd|abdc|acbd|acdb
+    println("${'ab'.endsWithAny('ab')}, ${'ab'.endsWithAny('b')}, ${'ab'.endsWithAny('a')}, ${'ab'.endsWithAny('ba')}")  // true, true, false, false
+    println("${'ab\tcd\nab\tcd\n'.expand()}${'ab\tcd\nab\tcd\n'.expand(6)}${'ab\tcd\nab\tcd\nab\tcd\n'.expandLine(15)}ab\tcd")  // expand将tab变为8空格，expand(n)则是n空格，但expand
+        // Line(n)则只能扩展第一行的tab，其他的tab变成的空格数无法确定
+    assert '  A\n B\nC' == '   A\n  B\n C'.stripIndent()
+    assert 'DEF\n456' == '''ABCDEF\n123456'''.stripIndent(3)
+    assert 'ABC\n123\n456' == '''ABC
+                            |123
+                            |456'''.stripMargin()
+    assert 'ABC\n123\n456' == '''ABC
+                            *123
+                            *456'''.stripMargin('*')
+    println("${'abc acb cab cba bac bca'.tokenize()}, ${'abc$acb$cab$cba$bac$bca'.tokenize('$')}")  // [abc, acb, cab, cba, bac, bca]  // 空格切分，或者设置成别的
+    // http://docs.groovy-lang.org/latest/html/groovy-jdk/java/lang/CharSequence.html#tr(java.lang.CharSequence,%20java.lang.CharSequence)
     ```
-7. java.lang.**String**
     ```groovy
+    // boolean asBoolean()
+	// Object asType(Class c)
+	// Pattern bitwiseNegate()
+	// String capitalize()
+	// String center(Number numberOfChars)
+	// String center(Number numberOfChars, CharSequence padding)
+	// boolean contains(CharSequence text)
+	// int count(CharSequence text)
+	// String denormalize()
+	// String digest(String algorithm)
+	// CharSequence drop(int num)
+	// String dropWhile(Closure condition)
+	// Object eachLine(Closure closure)
+	// Object eachLine(int firstLine, Closure closure)
+	// Object eachMatch(CharSequence regex, Closure closure)
+	// Object eachMatch(Pattern pattern, Closure closure)
+	// boolean endsWithAny(CharSequence suffixes)
+	// String expand()
+	// String expand(int tabStop)
+	// String expandLine(int tabStop)
+	// String find(CharSequence regex)
+	// String find(CharSequence regex, Closure closure)
+	// String find(Pattern pattern)
+	// String find(Pattern pattern, Closure closure)
+	// List findAll(CharSequence regex)
+	// List findAll(CharSequence regex, Closure closure)
+	// List findAll(Pattern pattern)
+	// List findAll(Pattern pattern, Closure closure)
+	// String getAt(EmptyRange range)
+	// CharSequence getAt(IntRange range)
+	// CharSequence getAt(Range range)
+	// CharSequence getAt(int index)
+	// String getAt(Collection indices)
+	// char[] getChars()
+	// boolean isAllWhitespace()
+	// boolean isBigDecimal()
+	// boolean isBigInteger()
+	// boolean isBlank()
+	// boolean isCase(Object switchValue)
+	// boolean isDouble()
+	// boolean isFloat()
+	// boolean isInteger()
     ```
-8. java.lang.**Process**
     ```groovy
+	// boolean isLong()
+	// boolean isNumber()
+	// StringBuilder leftShift(Object value)
+	// boolean matches(Pattern pattern)
+	// String md5()
+	// String minus(Object target)
+	// String minus(Pattern pattern)
+	// String multiply(Number factor)
+	// String next()
+	// String normalize()
+	// String padLeft(Number numberOfChars)
+	// String padLeft(Number numberOfChars, CharSequence padding)
+	// String padRight(Number numberOfChars)
+	// String padRight(Number numberOfChars, CharSequence padding)
+	// String plus(Object value)
+	// String previous()
+	// List readLines()
+	// String replace(int capacity, Map replacements)
+	// String replace(Map replacements)
+	// String replaceAll(CharSequence regex, Closure closure)
+	// String replaceAll(CharSequence regex, CharSequence replacement)
+	// String replaceAll(Pattern pattern, Closure closure)
+	// String replaceAll(Pattern pattern, CharSequence replacement)
+	// String replaceFirst(CharSequence regex, Closure closure)
+	// String replaceFirst(CharSequence regex, CharSequence replacement)
+	// String replaceFirst(Pattern pattern, Closure closure)
+	// String replaceFirst(Pattern pattern, CharSequence replacement)
+	// String reverse()
+	// String sha256()
+	// int size()
+	// String[] split()
+	// Object splitEachLine(CharSequence regex, Closure closure)
+	// Object splitEachLine(Pattern pattern, Closure closure)
+	// boolean startsWithAny(CharSequence prefixes)
+	// String stripIndent()
+	// String stripIndent(int numChars)
+	// String stripMargin()
+	// String stripMargin(char marginChar)
+	// String stripMargin(CharSequence marginChar)
+	// CharSequence take(int num)
+	// String takeWhile(Closure condition)
     ```
-9. java.lang.**Number**
     ```groovy
+	// BigDecimal toBigDecimal()
+	// BigInteger toBigInteger()
+	// Double toDouble()
+	// Float toFloat()
+	// Integer toInteger()
+	// List toList()
+	// Long toLong()
+	// Set toSet()
+	// Short toShort()
+	// URI toURI()
+	// URL toURL()
+	// List tokenize()
+	// List tokenize(CharSequence delimiters)
+	// List tokenize(Character delimiter)
+	// String tr(CharSequence sourceSet, CharSequence replacementSet)
+	// String uncapitalize()
+	// String unexpand()
+	// String unexpand(int tabStop)
+	// String unexpandLine(int tabStop)
     ```
-10. java.lang.Long
+8. java.lang.**String**
+    ```groovy
+    // String collectReplacements(Closure transform)
+    // byte[] decodeBase64()
+    // byte[] decodeBase64Url()
+    // byte[] decodeHex()
+    // Process execute()
+    // Process execute(String[] envp, File dir)
+    // Process execute(List envp, File dir)
+    // Boolean toBoolean()
+    // Character toCharacter()
+    assert "Groovy".collectReplacements{ it == 'o' ? '_O_' : null } == 'Gr_O__O_vy'
+    assert "Groovy".collectReplacements{ it.equalsIgnoreCase('O') ? '_O_' : null } == 'Gr_O__O_vy'
+    assert "Groovy".collectReplacements{ char c -> c == 'o' ? '_O_' : null } == 'Gr_O__O_vy'
+    assert "Groovy".collectReplacements{ Character c -> c == 'o' ? '_O_' : null } == 'Gr_O__O_vy'
+    assert "B&W".collectReplacements{ it == '&' ? '&' : null } == 'B&W'
+    ```
+9. java.lang.**Process**
+    ```groovy
+    // void closeStreams()
+    // Thread consumeProcessErrorStream(OutputStream err)
+    // Thread consumeProcessErrorStream(Appendable error)
+    // void consumeProcessOutput()
+    // void consumeProcessOutput(OutputStream output, OutputStream error)
+    // void consumeProcessOutput(Appendable output, Appendable error)
+    // Thread consumeProcessOutputStream(OutputStream output)
+    // Thread consumeProcessOutputStream(Appendable output)
+    // InputStream getErr()
+    // InputStream getIn()
+    // OutputStream getOut()
+    // String getText()
+    // OutputStream leftShift(byte[] value)
+    // Writer leftShift(Object value)
+    // Process or(Process right)
+    // Process pipeTo(Process right)
+    // void waitForOrKill(long numberOfMillis)
+    // void waitForProcessOutput()
+    // void waitForProcessOutput(OutputStream output, OutputStream error)
+    // void waitForProcessOutput(Appendable output, Appendable error)
+    // void withOutputStream(Closure closure)
+    // void withWriter(Closure closure)
+    def out = new ByteArrayOutputStream()
+    def err = new ByteArrayOutputStream()
+    def proc = command.execute()
+    proc.consumeProcessOutput(out, err)
+    proc.waitFor()
+    println "error stream was ${err.toString()}"
+    ```
+10. java.lang.**Number**
+    ```groovy
+    // int abs()
+    // Number and(Number right)
+    // boolean asBoolean()
+    // Object asType(Class c)
+    // Number bitwiseNegate()
+    // int compareTo(Character right)
+    // int compareTo(Number right)
+    // Number div(Character right)
+    // Number div(Number right)
+    // void downto(Number to, Closure closure)
+    // Number intdiv(Character right)
+    // Number intdiv(Number right)
+    // boolean isCase(Number switchValue)
+    // Number leftShift(Number operand)
+    // Number minus(Character right)
+    // Number minus(Number right)
+    // Number mod(Number right)
+    // Number multiply(Character right)
+    // Number multiply(Number right)
+    // Number next()
+    // Number or(Number right)
+    // Number plus(Character right)
+    // Number plus(Number right)
+    // String plus(String right)
+    // Number power(Number exponent)
+    // Number previous()
+    // Number rightShift(Number operand)
+    // Number rightShiftUnsigned(Number operand)
+    // void step(Number to, Number stepNumber, Closure closure)
+    // void times(Closure closure)
+    // BigDecimal toBigDecimal()
+    // BigInteger toBigInteger()
+    // Double toDouble()
+    // Float toFloat()
+    // Integer toInteger()
+    // Long toLong()
+    // Number unaryMinus()
+    // Number unaryPlus()
+    // void upto(Number to, Closure closure)
+    // Number xor(Number right)
+    ```
+11. java.lang.Long
     ```groovy
     // abs()
     // power(Integer exponent)
@@ -1384,31 +1856,31 @@
     // upto(Number to, Closure closure)
     /* inherited from Number */
     ```
-11. java.lang.Integer
+12. java.lang.Integer
     ```groovy
     // power(Integer exponent)
     /* inherited from Number */
     ```
-12. java.lang.Float / java.lang.Double
+13. java.lang.Float / java.lang.Double
     ```groovy
     // abs / upto / downto / round() / round(int precision) / trunc() / trunc(int precision)
     /* inherited from Number */
     ```
-13. java.lang.Comparable
+14. java.lang.Comparable
     ```groovy
     // int numberAwareCompareTo(Comparable other)
     println 12.numberAwareCompareTo(15)  // -1
     ```
-14. java.lang.**Enum**
+15. java.lang.**Enum**
     ```groovy
     // next / previous
     /* inherited from Comparable */
     ```
-15. java.lang.ClassLoader
+16. java.lang.ClassLoader
     ```groovy
     // getRootLoader()
     ```
-16. java.lang.Class
+17. java.lang.Class
     ```groovy
     // URL getLocation()
     // boolean isCase(Object switchValue)  // 用于switch -- 可以比较Class了，而继承Object的也可以重写来实现自己的逻辑，如Integer对IntegerRange做了适配吧
@@ -1432,10 +1904,33 @@
     new B().a('text')
     new C().a('text')  // 都是"A, A: text"
     ```
-17. java.lang.**Character**
+18. java.lang.**Character**
     ```groovy
+    // boolean asBoolean()
+	// int compareTo(Character right)
+	// int compareTo(Number right)
+	// Number div(Character right)
+	// Number div(Number right)
+	// Number intdiv(Character right)
+	// Number intdiv(Number right)
+	// boolean isDigit()
+	// boolean isLetter()
+	// boolean isLetterOrDigit()
+	// boolean isLowerCase()
+	// boolean isUpperCase()
+	// boolean isWhitespace()
+	// Number minus(Character right)
+	// Number minus(Number right)
+	// Number multiply(Character right)
+	// Number multiply(Number right)
+	// Character next()
+	// Number plus(Character right)
+	// Number plus(Number right)
+	// Character previous()
+	// char toLowerCase()
+	// char toUpperCase()
     ```
-18. java.lang.Byte
+19. java.lang.Byte
     ```groovy
     // void eachByte(Closure closure)
     // Writable encodeBase64()
@@ -1454,7 +1949,7 @@
     hexDecoded = hexEncoded.decodeHex()
     println "${origin} -- ${hexEncoded} -- ${hexDecoded} -- ${new String(hexDecoded)}"  // Yeah -- 59656168 -- [89, 101, 97, 104] -- Yeah
     ```
-19. java.lang.Boolean
+20. java.lang.Boolean
     ```groovy
     // Boolean and(Boolean right)
     // Boolean or(Boolean right)
@@ -1464,7 +1959,7 @@
     // Boolean toBoolean()
     println "${false.and(true)}, ${true.or(false)}, ${true.xor(false)}, ${true.implies(false)}"  // false, true, true, false
     ```
-20. java.lang.AutoCloseable
+21. java.lang.AutoCloseable
     ```groovy
     // Object withCloseable(Closure action)
     class TestCloseable implements AutoCloseable {
@@ -1473,7 +1968,7 @@
     }
     new TestCloseable().withCloseable { it.execute() }  // execute -- close
     ```
-21. java.lang.Appendable
+22. java.lang.Appendable
     ```groovy
     // Appendable leftShift(Object value)
     // Appendable withFormatter(Closure closure)
