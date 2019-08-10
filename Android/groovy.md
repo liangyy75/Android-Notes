@@ -17,17 +17,19 @@
 - [文件操作](#%e6%96%87%e4%bb%b6%e6%93%8d%e4%bd%9c)
 - [正则表达式](#%e6%ad%a3%e5%88%99%e8%a1%a8%e8%be%be%e5%bc%8f)
 - [数据库](#%e6%95%b0%e6%8d%ae%e5%ba%93)
+- [日期](#%e6%97%a5%e6%9c%9f)
+- [方便的使用程序](#%e6%96%b9%e4%be%bf%e7%9a%84%e4%bd%bf%e7%94%a8%e7%a8%8b%e5%ba%8f)
 - [特性3](#%e7%89%b9%e6%80%a73)
-- [扩展的方法1: io](#%e6%89%a9%e5%b1%95%e7%9a%84%e6%96%b9%e6%b3%951-io)
+- [扩展的方法1: io(finished)](#%e6%89%a9%e5%b1%95%e7%9a%84%e6%96%b9%e6%b3%951-iofinished)
 - [扩展的方法2: collection](#%e6%89%a9%e5%b1%95%e7%9a%84%e6%96%b9%e6%b3%952-collection)
-- [扩展的方法3: lang](#%e6%89%a9%e5%b1%95%e7%9a%84%e6%96%b9%e6%b3%953-lang)
+- [扩展的方法3: lang(finished)](#%e6%89%a9%e5%b1%95%e7%9a%84%e6%96%b9%e6%b3%953-langfinished)
 - [扩展的方法5: sql](#%e6%89%a9%e5%b1%95%e7%9a%84%e6%96%b9%e6%b3%955-sql)
 - [扩展的方法6: time](#%e6%89%a9%e5%b1%95%e7%9a%84%e6%96%b9%e6%b3%956-time)
 - [扩展的方法7: awt](#%e6%89%a9%e5%b1%95%e7%9a%84%e6%96%b9%e6%b3%957-awt)
 - [添加的方法1: lang](#%e6%b7%bb%e5%8a%a0%e7%9a%84%e6%96%b9%e6%b3%951-lang)
 - [添加的方法2: io](#%e6%b7%bb%e5%8a%a0%e7%9a%84%e6%96%b9%e6%b3%952-io)
 - [添加的方法3: sql](#%e6%b7%bb%e5%8a%a0%e7%9a%84%e6%96%b9%e6%b3%953-sql)
-****
+
 ### links
 
 * 参考博客
@@ -43,6 +45,8 @@
     * [Groovy中文文档1](http://docs.groovy-lang.org/latest/html/groovy-jdk/java)
     * [Groovy中文文档2](http://docs.groovy-lang.org/latest/html/gapi/groovy/)
     * [Groovy中文文档3](https://docs.groovy-lang.org/docs/latest/html/documentation/)
+* 资源
+    * [maven](https://search.maven.org/search?q=g:org.codehaus.groovy)
 
 ### 特性1
 
@@ -625,6 +629,55 @@
     // b: ba, bb, bc
     // c: ca, cb, cc
     ```
+5. 一些注意事项
+    1. GString的哈希码与等效String的哈希码不同，不应该用GString作为key
+6. 语法增强
+    1. GPath语法糖
+        ```groovy
+        def listOfMaps = [['a': 11, 'b': 12], ['a': 21, 'b': 22]]
+        assert listOfMaps.a == [11, 21] //GPath notation
+        assert listOfMaps*.a == [11, 21] //spread dot notation
+        listOfMaps = [['a': 11, 'b': 12], ['a': 21, 'b': 22], null]
+        assert listOfMaps*.a == [11, 21, null] // caters for null values
+        assert listOfMaps*.a == listOfMaps.collect { it?.a } //equivalent notation
+        // But this will only collect non-null values
+        assert listOfMaps.a == [11, 21]
+        ```
+    2. *运算符
+        ```groovy
+        assert [ 'z': 900, *: ['a': 100, 'b': 200], 'a': 300] == ['a': 300, 'b': 200, 'z': 900]
+        //spread map notation in map definition
+        assert [*: [3: 3, *: [5: 5]], 7: 7] == [3: 3, 5: 5, 7: 7]
+        assert [*: { [1: 'u', 2: 'v', 3: 'w'] }(), 10: 'zz'] == [1: 'u', 10: 'zz', 2: 'v', 3: 'w']
+        //spread map notation in function arguments
+        f = { map -> map.c }
+        assert f(*: ['a': 10, 'b': 20, 'c': 30], 'e': 50) == 30
+        //using spread map notation with mixed unnamed and named arguments
+        f = { m, i, j, k -> [m, i, j, k] }
+        assert f('e': 100, *[4, 5], *: ['a': 10, 'b': 20, 'c': 30], 6) == [["e": 100, "b": 20, "c": 30, "a": 10], 4, 5, 6]
+        ```
+    3. *.运算符
+        ```groovy
+        assert [1, 3, 5] == ['a', 'few', 'words']*.size()
+        class Person { String name; int age }
+        def persons = [new Person(name: 'Hugo', age: 17), new Person(name: 'Sandra', age: 19)]
+        assert [17, 19] == persons*.age
+        ```
+    4. 下标表达式索引列表，数组和映射
+        ```groovy
+        def text = 'nice cheese gromit!'
+        def x = text[2]
+        assert x == 'c'
+        assert x.class == String
+        assert text[5..10] == 'cheese'
+        assert [10, 11, 12, 13][2, 3] == [12, 13]
+        list = 100..200
+        sub = list[1, 3, 20..25, 33]
+        assert sub == [101, 103, 120, 121, 122, 123, 124, 125, 133]
+        assert text[-1] == "!"
+        assert text[-7..-2] == "gromit"
+        assert text[3..1] == 'eci'
+        ```
 
 ### 范围(groovy.lnag.IntRange)
 
@@ -891,58 +944,98 @@
 
 1. 读取文件
     ```groovy
-    //读取文件的所有行
+    // 读取文件的所有行
     def file = new File("../Groovy.iml")
-    file.eachLine { line ->
-        println line
-    }
-    //读取文件的所有行
-    def text = file.getText()
-    println text
-    //读取文件的前100个字节
+    file.eachLine { line -> println line }
+    // 读取文件的所有行
+    println file.text
+    println(file.collect({ it }).join('\n'))
+    println(file as String[])
+    // 读取文件的前100个字节
     def reader = file.withReader { reader ->
         char [] buffer = new char[100]
         reader.read(buffer)
         return buffer
     }
     println reader
+    file.withInputStream { in.eachLine { println it } }
     ```
-2. 拷贝文件
+2. 写入文件
     ```groovy
-    def copy(String srcPath,String destPath){
+    file.withWriter('utf-8') { writer ->
+        writer.writeLine 'line1'
+        writer << 'line2\n'
+    }
+    file << 'line3\n'
+    file.bytes = file.bytes + 'line4\n'.bytes
+    def os = file.newOutputStream()
+    os << 'line4'
+    os.close()
+    file.withOutputStream { os -> os << 'line5\n' }
+    ```
+3. 递归文件夹
+    ```groovy
+    dir.eachFile { file -> println file.name }
+    dir.eachFileMatch(~/.*\.txt/) { file -> println file.name }
+    dir.eachFileRecurse { file -> println file.name }
+    dir.eachFileRecurse(FileType.FILES) { file -> println file.name }
+    dir.traverse { file ->
+        if (file.dirctory && file.name == 'bin') {
+            FileVisitResult.TERMINATE
+        } else {
+            println file.name
+            FileVisitResult.CONTINUE
+        }
+    }
+    ```
+4. (反)序列化
+    1. 使用java.io.DataOutputStream和java.io.DataInputStream类对数据进行序列化和反序列化
+        ```groovy
+        file.withDataOutputStream { out ->
+            out.writeBoolean(false)
+            out.writeUTF('Hello from Groovy')
+        }
+        file.withDataInputStream { input ->
+            assert input.readBoolean() == false
+            assert input.readUTF() == 'Hello from Groovy'
+        }
+        ```
+    2. 如果要序列化的数据实现Serializable接口，则可以继续使用对象输出流
+        ```groovy
+        Person p1 = new Person(name: 'name', age: 18)
+        file.withDataOutputStream { out -> out.writeObject(p1) }
+        file.withDataInputStream { in ->
+            Person p2 = in.readObject()
+            assert p2.name == p1.name && p2.age == p1.age
+        }
+        ```
+5. 拷贝文件
+    ```groovy
+    def copy(String srcPath, String destPath) {
         try {
             def destFile = new File(destPath)
-            if(!destFile.exists()){
+            if (!destFile.exists()) {
                 destFile.createNewFile()
             }
-            new File(srcPath).withReader { reader ->
-                def lines = reader.readLines()
-                destFile.withWriter { writer ->
-                    lines.each { line ->
-                        writer.append(line + '\r\n')
-                    }
-                }
-            }
+            new File(srcPath).withReader { reader -> destFile.withWriter { writer -> reader.readLines().each { line -> writer.append(line + '\r\n') }}}
             return true
-        }catch (Exception e){
+        } catch (Exception e){
             e.printStackTrace()
         }
         return false
     }
     ```
-3. 对象读写
+6. 对象读写
     ```groovy
     def saveObject(Object obj,String path){
         try {
             def destFile = new File(path)
-            if(!destFile.exists()){
+            if (!destFile.exists()) {
                 destFile.createNewFile()
             }
-            destFile.withObjectOutputStream { out ->
-                out.writeObject(obj)
-            }
+            destFile.withObjectOutputStream { out -> out.writeObject(obj) }
             return true
-        }catch (Exception e){
+        } catch (Exception e){
             e.printStackTrace()
         }
         return false
@@ -950,12 +1043,9 @@
     def readObject(String path){
         try {
             def destFile = new File(path)
-            if(destFile ==null || !destFile.exists())return null
-            destFile.withObjectInputStream { input ->
-                def obj = input.readObject()
-                return obj
-            }
-        }catch (Exception e){
+            if (destFile ==null || !destFile.exists()) return null
+            destFile.withObjectInputStream { input -> input.readObject() }
+        } catch (Exception e) {
             e.printStackTrace()
         }
         return null
@@ -985,7 +1075,157 @@
 
 ### 数据库
 
+1. 
 
+### 日期
+
+1. java原生日期类
+    1. [Calendar](https://www.jianshu.com/p/6ef54da8932e)
+    2. [Calendar/Date/TimeZone](https://blog.csdn.net/joyous/article/details/9630893)
+    3. [Date/Time](http://groovy-lang0org.icopy.site/groovy-dev-kit.html#_working_with_date_time_types)
+2. groovy-dateutil模块支持许多扩展，用于处理Java的经典Date和Calendar类。
+    ```xml
+    <dependency>
+        <groupId>org.codehaus.groovy</groupId>
+        <artifactId>groovy-all</artifactId>
+        <version>2.5.8</version>
+    </dependency>
+    <dependency>
+        <groupId>org.codehaus.groovy</groupId>
+        <artifactId>groovy-dateutil</artifactId>
+        <version>2.5.8</version>
+    </dependency>
+    ```
+3. 使用旧版日期/日历类型
+    1. 可以使用常规数组索引表示法访问Date或Calendar的属性，并使用Calendar类中的常量字段编号
+        ```groovy
+        import static java.util.Calendar.*
+        def cal = Calendar.instance
+        cal[YEAR] = 2000
+        cal[MONTH] = JANUARY
+        cal[DAY_OF_MONTH] = 1
+        assert cal[DAY_OF_WEEK] == SATURDAY
+        ```
+    2. Groovy支持Date和Calendar实例之间的算术运算和迭代
+        ```groovy
+        def utc = TimeZone.getTimeZone('UTC')
+        Date date = Date.parse("yyyy-MM-dd HH:mm", "2010-05-23 09:01", utc)
+        def prev = date - 1
+        def next = date + 1
+        assert next - prev == 2
+        int count = 0
+        prev.upto(next) { count++ }
+        assert count == 3
+        ```
+    3. 可以将字符串解析为日期并将日期输出为格式化字符串
+        ```groovy
+        def orig = '2000-01-01'
+        def newYear = Date.parse('yyyy-MM-dd', orig)
+        assert newYear[DAY_OF_WEEK] == SATURDAY
+        assert newYear.format('yyyy-MM-dd') == orig
+        assert newYear.format('dd/MM/yyyy') == '01/01/2000'
+        ```
+    4. 还可根据现有日期或日历创建新的日期或日历
+        ```groovy
+        def newYear = Date.parse('yyyy-MM-dd', '2000-01-01')
+        def newYearsEve = newYear.copyWith(year: 1999, month: DECEMBER, dayOfMonth: 31)
+        assert newYearsEve[DAY_OF_WEEK] == FRIDAY
+        ```
+4. 使用新版日期/时间类型
+    1. groovy-datetime模块支持许多扩展，用于使用Java 8中引入的Date / Time API .本文档将此API定义的数据类型称为"JSR 310类型".
+    2. http://groovy-lang0org.icopy.site/groovy-dev-kit.html#_working_with_date_time_types
+
+### 方便的使用程序
+
+1. ConfigSlurper
+    1. ConfigSlurper是一个实用程序类，用于读取以Groovy脚本形式定义的配置文件。与Java *.properties文件的情况一样，ConfigSlurper允许使用点表示法. 但此外，它允许Closure范围的配置值和任意对象类型。
+        ```groovy
+        def config = new ConfigSlurper().parse('''
+            app.date = new Date()
+            app.age = 42
+            app { name = "Test${42}" }
+            app."person.age" = 42
+        ''')  // 如果点是配置变量名称的一部分，则可以使用单引号或双引号对其进行转义
+        assert config.app.date instanceof Date
+        assert config.app.age == 42
+        assert config.app.name == 'Test42'
+        assert config.test != null  // 尚未指定config.test它在调用时返回ConfigObject
+        assert config.app."person.age" == 42
+        ```
+    2. 此外，ConfigSlurper支持environments。environments方法可用于移交Closure实例，该实例本身可能包含多个部分。假设我们想为开发环境创建一个特定的配置值。在创建ConfigSlurper实例时，我们可以使用ConfigSlurper(String)构造函数来指定目标环境。ConfigSlurper环境不限于任何特定的环境名称。它完全取决于ConfigSlurper客户端代码所支持和解释的值。
+        ```groovy
+        def config = new ConfigSlurper('development').parse('''
+        environments {
+            development { app.port = 8080 }
+            test { app.port = 8082 }
+            production { app.port = 80 }
+        }''')
+        assert config.app.port == 8080
+        ```
+    3. environments方法是内置的，但registerConditionalBlock方法可用于注册除environments名称之外的其他方法名称。
+        ```groovy
+        def slurper = new ConfigSlurper()
+        slurper.registerConditionalBlock('myProject', 'developers')
+        def config = slurper.parse('''
+        sendMail = true
+        myProject {
+            developers { sendMail = false }
+        }''')
+        assert !config.sendMail
+        ```
+    4. 对于Java集成目的，可以使用toProperties方法将ConfigObject转换为可能存储到*.properties文本文件的java.util.Properties对象。请注意，在将配置值添加到新创建的Properties实例期间，配置值将转换为String实例。
+        ```groovy
+        def config = new ConfigSlurper().parse('''
+        app.date = new Date()
+        app.age  = 42
+        app { name = "Test${42}" }''')
+        def properties = config.toProperties()
+        assert properties."app.date" instanceof String
+        assert properties."app.age" == '42'
+        assert properties."app.name" == 'Test42'
+        ```
+2. Expando
+    1. Expando类可用于创建动态可扩展对象. 尽管它的名字，它不使用下面的ExpandoMetaClass。每个Expando对象代表一个独立的动态制作实例，可以在运行时使用属性（或方法）进行扩展。
+        ```groovy
+        def expando = new Expando()
+        expando.name = 'John'
+        assert expando.name == 'John'
+        ```
+    2. 当动态属性注册Closure代码块时会发生特殊情况。一旦注册，就可以调用它，因为它将通过方法调用完成。
+        ```groovy
+        def expando = new Expando()
+        expando.toString = { -> 'John' }
+        expando.say = { String s -> "John says: ${s}" }
+        assert expando as String == 'John'
+        assert expando.say('Hi') == 'John says: Hi'
+        ```
+3. Observable list, map and set
+    1. Groovy带有可观察的列表，地图和集合。当添加，删除或更改元素时，每个集合都会触发java.beans.PropertyChangeEvent事件。请注意，PropertyChangeEvent不仅表示发生了某个事件，而且还包含有关属性名称的信息以及某个属性已更改为的旧/新值。根据发生的更改类型，可观察集合可能会触发更专业的PropertyChangeEvent类型。例如，向可观察列表添加元素会触发ObservableList.ElementAddedEvent事件。
+        ```groovy
+        def event
+        def listener = { if (it instanceof ObservableList.ElementEvent) { event = it } } as PropertyChangeListener
+        def observable = [1, 2, 3] as ObservableList
+        observable.addPropertyChangeListener(listener)
+        observable.add 42
+        assert event instanceof ObservableList.ElementAddedEvent
+        def elementAddedEvent = event as ObservableList.ElementAddedEvent
+        assert elementAddedEvent.changeType == ObservableList.ChangeType.ADDED
+        assert elementAddedEvent.index == 3
+        assert elementAddedEvent.oldValue == null
+        assert elementAddedEvent.newValue == 42
+        ```
+    2. 请注意，添加元素实际上会导致触发两个事件。第一个是ObservableList.ElementAddedEvent类型，第二个是普通的PropertyChangeEvent，它通知监听器有关属性size的更改。ObservableList.ElementClearedEvent事件类型是另一个有趣的事件类型。每当删除多个元素时，例如调用clear()，它会保留从列表中删除的元素.
+        ```groovy
+        def event
+        def listener = { if (it instanceof ObservableList.ElementEvent) { event = it } } as PropertyChangeListener
+        def observable = [1, 2, 3] as ObservableList
+        observable.addPropertyChangeListener(listener)
+        observable.clear()
+        assert event instanceof ObservableList.ElementClearedEvent
+        def elementClearedEvent = event as ObservableList.ElementClearedEvent
+        assert elementClearedEvent.values == [1, 2, 3]
+        assert observable.size() == 0
+        ```
 
 ### 特性3
 
@@ -1131,7 +1371,7 @@
     // 执行指令: groovy -classpath priceExtensions.jar test.groovy
     ```
 
-### 扩展的方法1: io
+### 扩展的方法1: io(finished)
 
 0. links
     1. http://docs.groovy-lang.org/latest/html/groovy-jdk/java/io/
@@ -1604,7 +1844,7 @@
 2. java.util.Collection
 3. java.util.Date
 
-### 扩展的方法3: lang
+### 扩展的方法3: lang(finished)
 
 1. links
     1. http://docs.groovy-lang.org/latest/html/groovy-jdk/java/lang/
