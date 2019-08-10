@@ -24,7 +24,10 @@
 - [扩展的方法5: sql](#%e6%89%a9%e5%b1%95%e7%9a%84%e6%96%b9%e6%b3%955-sql)
 - [扩展的方法6: time](#%e6%89%a9%e5%b1%95%e7%9a%84%e6%96%b9%e6%b3%956-time)
 - [扩展的方法7: awt](#%e6%89%a9%e5%b1%95%e7%9a%84%e6%96%b9%e6%b3%957-awt)
-
+- [添加的方法1: lang](#%e6%b7%bb%e5%8a%a0%e7%9a%84%e6%96%b9%e6%b3%951-lang)
+- [添加的方法2: io](#%e6%b7%bb%e5%8a%a0%e7%9a%84%e6%96%b9%e6%b3%952-io)
+- [添加的方法3: sql](#%e6%b7%bb%e5%8a%a0%e7%9a%84%e6%96%b9%e6%b3%953-sql)
+****
 ### links
 
 * 参考博客
@@ -1133,7 +1136,7 @@
 0. links
     1. http://docs.groovy-lang.org/latest/html/groovy-jdk/java/io/
     2. http://docs.groovy-lang.org/latest/html/groovy-jdk/java/nio/file/
-1. java.io.File
+1. java.io.**File**
     ```groovy
     /*
      * append / asWritable / createTempDir / deleteDir / directorySize / eachByte / eachDir / eachDirMatch / eachDirRecurse / eachFile / eachFileMatch / eachFileRecurse / 
@@ -1143,6 +1146,7 @@
      * withPrintWriter / withReader / withWriterAppend / write
      */
     // http://docs.groovy-lang.org/latest/html/groovy-jdk/java/io/File.html#traverse(java.util.Map,%20groovy.lang.Closure)
+    //// inherited from java.lang.Comparable
     ```
     ```groovy
     // void append(byte[] bytes)
@@ -1247,18 +1251,240 @@
 	// void write(String text, String charset)
 	// void write(String text, String charset, boolean writeBom)
     ```
-2. java.io.InputStream
-3. java.io.OutputStream
-4. java.io.Reader
-5. java.io.Writer
+2. java.io.**Writer**
     ```groovy
     // Writer leftShift(Object value)
 	// PrintWriter newPrintWriter()
 	// Object withPrintWriter(Closure closure)
 	// Object withWriter(Closure closure)
 	// void write(Writable writable)
+    //// inherited from java.lang.Appendable
+    //// inherited from java.lang.AutoCloseable
+    //// inherited from java.io.Closeable
+    ```
+3. java.io.Reader
+    ```groovy
+    // Object eachLine(Closure closure)
+	// Object eachLine(int firstLine, Closure closure)
+	// Writable filterLine(Closure closure)
+	// void filterLine(Writer writer, Closure closure)
+	// String getText()
+	// Iterator iterator()
+	// String readLine()
+	// List readLines()
+	// Object splitEachLine(String regex, Closure closure)
+	// Object splitEachLine(Pattern pattern, Closure closure)
+	// void transformChar(Writer writer, Closure closure)
+	// void transformLine(Writer writer, Closure closure)
+	// Object withReader(Closure closure)
+    //// inherited from java.lang.AutoCloseable
+    //// inherited from java.io.Closeable
+    ```
+4. java.io.InputStream
+    ```groovy
+    // void eachByte(Closure closure)  // { byte -> ... }
+	// void eachByte(int bufferLen, Closure closure)  // { buf, len -> ... }
+	// Object eachLine(Closure closure)  // { line -> } or { line, lineNum -> }
+	// Object eachLine(int firstLine, Closure closure)  // firstLine指第一行行号从哪开始
+	// Object eachLine(String charset, Closure closure)
+	// Object eachLine(String charset, int firstLine, Closure closure)
+	// Writable filterLine(Closure predicate)
+	// void filterLine(Writer writer, Closure predicate)
+	// void filterLine(Writer writer, String charset, Closure predicate)
+	// Writable filterLine(String charset, Closure predicate)
+	// byte[] getBytes()
+	// String getText()
+	// String getText(String charset)
+	// Iterator iterator()
+	// ObjectInputStream newObjectInputStream()
+	// ObjectInputStream newObjectInputStream(ClassLoader classLoader)
+	// BufferedReader newReader()
+	// BufferedReader newReader(String charset)
+	// List readLines()
+	// List readLines(String charset)
+	// Object splitEachLine(String regex, Closure closure)
+	// Object splitEachLine(String regex, String charset, Closure closure)
+	// Object splitEachLine(Pattern pattern, Closure closure)
+	// Object splitEachLine(Pattern pattern, String charset, Closure closure)
+	// Object withObjectInputStream(Closure closure)
+	// Object withObjectInputStream(ClassLoader classLoader, Closure closure)
+	// Object withReader(Closure closure)
+	// Object withReader(String charset, Closure closure)
+	// Object withStream(Closure closure)
+    //// inherited from java.lang.AutoCloseable
+    //// inherited from java.io.Closeable
+    ```
+5. java.io.OutputStream
+    ```groovy
+    // OutputStream leftShift(byte[] value)
+	// OutputStream leftShift(InputStream in)
+	// Writer leftShift(Object value)
+	// ObjectOutputStream newObjectOutputStream()
+	// PrintWriter newPrintWriter()
+	// Writer newWriter()
+	// Writer newWriter(String charset)
+	// void setBytes(byte[] bytes)
+	// Object withObjectOutputStream(Closure closure)
+	// Object withPrintWriter(Closure closure)
+	// Object withStream(Closure closure)
+	// Object withWriter(Closure closure)
+	// Object withWriter(String charset, Closure closure)
+    //// inherited from java.lang.AutoCloseable
+    //// inherited from java.io.Closeable
     ```
 6. java.nio.file.Path
+    ```groovy
+    //// inherited from java.lang.Iterable
+    ```
+    ```groovy
+    // void append(byte[] bytes)
+	// void append(InputStream stream)
+	// void append(Reader reader)
+	// void append(Reader reader, boolean writeBom)
+	// void append(Reader reader, String charset)
+	// void append(Reader reader, String charset, boolean writeBom)
+	// void append(Writer writer)
+	// void append(Writer writer, boolean writeBom)
+	// void append(Writer writer, String charset)
+	// void append(Writer writer, String charset, boolean writeBom)
+	// void append(Object text)
+	// void append(Object text, boolean writeBom)
+	// void append(Object text, String charset)
+	// void append(Object text, String charset, boolean writeBom)
+	// Object asType(Class c)
+	// Path asWritable()
+	// Path asWritable(String encoding)
+	// boolean deleteDir()
+	// void eachByte(Closure closure)
+	// void eachByte(int bufferLen, Closure closure)
+	// void eachDir(Closure closure)
+	// void eachDirMatch(Object nameFilter, Closure closure)
+	// void eachDirRecurse(Closure closure)
+	// void eachFile(FileType fileType, Closure closure)
+	// void eachFile(Closure closure)
+	// void eachFileMatch(FileType fileType, Object nameFilter, Closure closure)
+	// void eachFileMatch(Object nameFilter, Closure closure)
+	// void eachFileRecurse(FileType fileType, Closure closure)
+	// void eachFileRecurse(Closure closure)
+	// Object eachLine(Closure closure)
+	// Object eachLine(int firstLine, Closure closure)
+	// Object eachLine(String charset, Closure closure)
+	// Object eachLine(String charset, int firstLine, Closure closure)
+	// void eachObject(Closure closure)
+    ```
+    ```groovy
+	// Writable filterLine(Closure closure)
+	// void filterLine(Writer writer, Closure closure)
+	// void filterLine(Writer writer, String charset, Closure closure)
+	// Writable filterLine(String charset, Closure closure)
+	// byte[] getBytes()
+	// String getText()
+	// String getText(String charset)
+	// Path leftShift(byte[] bytes)
+	// Path leftShift(InputStream data)
+	// Path leftShift(Object text)
+	// DataInputStream newDataInputStream()
+	// DataOutputStream newDataOutputStream()
+	// BufferedInputStream newInputStream()
+	// ObjectInputStream newObjectInputStream()
+	// ObjectInputStream newObjectInputStream(ClassLoader classLoader)
+	// ObjectOutputStream newObjectOutputStream()
+	// BufferedOutputStream newOutputStream()
+	// PrintWriter newPrintWriter()
+	// PrintWriter newPrintWriter(String charset)
+	// BufferedReader newReader()
+	// BufferedReader newReader(String charset)
+	// BufferedWriter newWriter()
+	// BufferedWriter newWriter(boolean append)
+	// BufferedWriter newWriter(String charset)
+	// BufferedWriter newWriter(String charset, boolean append)
+	// BufferedWriter newWriter(String charset, boolean append, boolean writeBom)
+	// byte[] readBytes()
+	// List readLines()
+	// List readLines(String charset)
+	// boolean renameTo(String newPathName)
+	// boolean renameTo(URI newPathName)
+	// void setBytes(byte[] bytes)
+	// void setText(String text)
+	// void setText(String text, String charset)
+	// long size()
+    ```
+    ```groovy
+	// Object splitEachLine(String regex, Closure closure)
+	// Object splitEachLine(String regex, String charset, Closure closure)
+	// Object splitEachLine(Pattern pattern, Closure closure)
+	// Object splitEachLine(Pattern pattern, String charset, Closure closure)
+	// void traverse(Closure closure)
+	// void traverse(Map options)
+	// void traverse(Map options, Closure closure)
+	// Object withDataInputStream(Closure closure)
+	// Object withDataOutputStream(Closure closure)
+	// Object withInputStream(Closure closure)
+	// Object withObjectInputStream(Closure closure)
+	// Object withObjectInputStream(ClassLoader classLoader, Closure closure)
+	// Object withObjectOutputStream(Closure closure)
+	// Object withOutputStream(Closure closure)
+	// Object withPrintWriter(Closure closure)
+	// Object withPrintWriter(String charset, Closure closure)
+	// Object withReader(Closure closure)
+	// Object withReader(String charset, Closure closure)
+	// Object withWriter(Closure closure)
+	// Object withWriter(String charset, boolean writeBom, Closure closure)
+	// Object withWriter(String charset, Closure closure)
+	// Object withWriterAppend(Closure closure)
+	// Object withWriterAppend(String charset, boolean writeBom, Closure closure)
+	// Object withWriterAppend(String charset, Closure closure)
+	// void write(String text)
+	// void write(String text, boolean writeBom)
+	// void write(String text, String charset)
+	// void write(String text, String charset, boolean writeBom)
+    ```
+7. java.io.Closeable
+    ```groovy
+    // Object withCloseable(Closure action)
+    ```
+8. java.io.BufferedReader
+    ```groovy
+    // String getText()
+    // inherited from java.io.Reader
+    ```
+9. java.io.BufferedWriter
+    ```groovy
+    // void writeLine(String line)
+    // inherited from java.io.Writer
+    ```
+10. java.io.PrintWriter
+    ```groovy
+    // void print(Object value)
+    // void println(Object value)
+    //// inherited from java.io.Writer
+    ```
+11. java.io.PrintStream
+    ```groovy
+    // void print(Object value)
+    // void println(Object value)
+    //// inherited from java.io.OutputStream
+    //// inherited from java.lang.AutoCloseable
+    //// inherited from java.lang.Appendable
+    //// inherited from java.io.Closeable
+    ```
+12. java.io.ObjectInputStream
+    ```groovy
+    // void eachObject(Closure closure)
+    //// inherited from java.io.InputStream
+    //// inherited from java.lang.AutoCloseable
+    ```
+13. java.io.ObjectOutputStream
+    ```groovy
+    // void leftShift(Object value)
+    //// inherited from java.io.OutputStream
+    //// inherited from java.lang.AutoCloseable
+    ```
+14. java.io.DataInputStream
+    ```groovy
+    // Iterator iterator()
+    //// inherited from java.io.InputStream
+    ```
 
 ### 扩展的方法2: collection
 
@@ -2013,3 +2239,53 @@
 ### 扩展的方法7: awt
 
 0. http://docs.groovy-lang.org/latest/html/groovy-jdk/java/awt/
+
+### 添加的方法1: lang
+
+1. groovy.lang.Writable
+    ```groovy
+    // Writer writeTo(Writer writer)
+    'cmd /C npm list -g --depth=0 > D:\\npm.txt'.execute().text
+    def target = new File("D:\\npm.txt")
+    Writable w = target.newInputStream().filterLine({ true })
+    def tempFile = new File("D:\\temp.txt")
+    println w.writeTo(tempFile.newWriter()).class  // class java.io.BufferedWriter
+    println tempFile.text  // npm list -g --depth=0 的内容
+    ```
+2. groovy.lang.TupleX
+    ```groovy
+    // Tuple
+        // Tuple(E... objs)
+        // boolean equals(Object o)
+        // E get(int index)
+        // int hashCode()
+        // int size()
+        // List<E> subList(int fromIndex, int toIndex)
+        // Tuple<E> subTuple(int fromIndex, int toIndex)
+    // Tuple1
+        // Tuple1(T1 obj)
+        // Object get(int index)
+        // T1 getFirst()
+        // int size()
+    // Tuple2
+        // Tuple2(T1 obj1, T2 obj2)
+        // Object get(int index)
+        // T1 getFirst()
+        // T2 getSecond()
+        // int size()
+    // Tuple3 ~ Tuple9
+    ```
+3. groovy.lang.
+
+### 添加的方法2: io
+
+1. java.io.FileType
+2. java.io.FileVisitResult
+3. java.io.EncodingAwareBufferedWriter
+4. java.io.PlatformLineWriter
+5. java.io.LineColumnReader
+6. java.io.GroovyPrintStream
+7. java.io.GroovyPrintWriter
+
+### 添加的方法3: sql
+
