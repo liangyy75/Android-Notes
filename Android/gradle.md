@@ -1,6 +1,7 @@
 - [links](#links)
 - [简介](#%e7%ae%80%e4%bb%8b)
 - [常见配置](#%e5%b8%b8%e8%a7%81%e9%85%8d%e7%bd%ae)
+- [Gradle: 基本项目](#gradle-%e5%9f%ba%e6%9c%ac%e9%a1%b9%e7%9b%ae)
 - [Gradle: 生命周期](#gradle-%e7%94%9f%e5%91%bd%e5%91%a8%e6%9c%9f)
 - [Gradle: Project](#gradle-project)
 - [Gradle: File](#gradle-file)
@@ -205,6 +206,117 @@
         }
         ```
 
+### Gradle: 基本项目
+
+1. 创建项目
+    ```bat
+    > mkdir groovy-demo
+    > cd groovy-demo
+    > gradle init
+    REM 选择 basic 与 groovy
+    > cd ..
+    > mkdir kotlin-demo
+    > cd kotlin-demo
+    > gradle init --dsl kotlin
+    REM 选择 basic
+    ```
+2. 目录结构
+    ```
+    ├── build.gradle(build.gradle.kts)  // 用于配置当前项目的Gradle构建脚本
+    ├── gradle
+    │   └── wrapper
+    │       ├── gradle-wrapper.jar  // Gradle Wrapper可执行JAR
+    │       └── gradle-wrapper.properties  // Gradle Wrapper配置属性
+    ├── gradlew  // 基于Unix的系统的Gradle Wrapper脚本
+    ├── gradlew.bat  // 适用于Windows的Gradle Wrapper脚本
+    └── settings.gradle(settings.gradle.kts)  // 用于配置Gradle构建的Gradle设置脚本
+    // gradle init可以生成各种不同类型的项目，甚至知道如何将简单的pom.xml文件转换为Gradle.
+    ```
+3. 新建任务
+    ```bat
+    > echo Hello, World > src\myfile.txt
+    > vim build.gradle
+    REM 添加代码: task copy(type: Copy, group: "Custom", description: "Copies sources to the dest directory", { from("src"); into("dest") })
+    > .\gradle copy
+    > ls
+    build.gradle  dest  gradle  gradlew  gradlew.bat  settings.gradle  src
+    > rm -rf dest
+    ```
+4. 使用插件
+    ```groovy
+    plugins { id('base') }
+    // ...
+    task zip(type: Zip, group: "Archive", description: "Archives sources in a zip file", { from("src"); setArchiveName("basic-demo-1.0.zip") })
+    // > .\gradlew zip
+    // > cd .\build\distributions && ls && cd ..\..
+    // basic-demo-1.0.zip
+    // > rm -rf .\build
+    ```
+5. 查看任务
+    ```bat
+    D:\workspaces\Gradle\demos\groovy-demo> .\gradlew tasks
+    > Task :tasks
+
+    ------------------------------------------------------------
+    Tasks runnable from root project
+    ------------------------------------------------------------
+
+    Archive tasks
+    -------------
+    zip - Archives sources in a zip file
+
+    Build tasks
+    -----------
+    assemble - Assembles the outputs of this project.
+    build - Assembles and tests this project.
+    clean - Deletes the build directory.
+
+    Build Setup tasks
+    -----------------
+    init - Initializes a new Gradle build.
+    wrapper - Generates Gradle wrapper files.
+
+    Custom tasks
+    ------------
+    copy - Copies sources to the dest directory
+
+    Help tasks
+    ----------
+    buildEnvironment - Displays all buildscript dependencies declared in root project 'groovy-demo'.
+    components - Displays the components produced by root project 'groovy-demo'. [incubating]
+    dependencies - Displays all dependencies declared in root project 'groovy-demo'.
+    dependencyInsight - Displays the insight into a specific dependency in root project 'groovy-demo'.
+    dependentComponents - Displays the dependent components of components in root project 'groovy-demo'. [incubating]
+    help - Displays a help message.
+    model - Displays the configuration model of root project 'groovy-demo'. [incubating]
+    projects - Displays the sub-projects of root project 'groovy-demo'.
+    properties - Displays the properties of root project 'groovy-demo'.
+    tasks - Displays the tasks runnable from root project 'groovy-demo'.
+
+    Verification tasks
+    ------------------
+    check - Runs all checks.
+
+    Rules
+    -----
+    Pattern: clean<TaskName>: Cleans the output files of a task.
+    Pattern: build<ConfigurationName>: Assembles the artifacts of a configuration.
+    Pattern: upload<ConfigurationName>: Assembles and uploads the artifacts belonging to a configuration.
+
+    To see all tasks and more detail, run gradlew tasks --all
+
+    To see more detail about a task, run gradlew help --task <task>
+
+    BUILD SUCCESSFUL in 1s
+    1 actionable task: 1 executed
+    ```
+6. 查看属性
+    ```bat
+    D:\workspaces\Gradle\demos\groovy-demo>.\gradlew properties
+    REM ...
+    REM 这些属性可以在 .\gradle.properties 里面修改
+    ```
+
 ### Gradle: 生命周期
 
 1. 生命周期: Gradle的构建依次会执行下面的三个生命周期
@@ -214,21 +326,11 @@
 2. 生命周期监听
     1. 在项目的build.gradle中，监听配置阶段和执行阶段的生命周期
         ```groovy
-        this.gradle.beforeProject {
-            println "配置阶段开始之前(一)"
-        }
-        this.beforeEvaluate {
-            println "配置阶段开始之前(二)"
-        }
-        this.gradle.afterProject {
-            println "配置阶段执行完毕(一)"
-        }
-        this.afterEvaluate {
-            println "配置阶段执行完毕(二)"
-        }
-        this.gradle.buildFinished {
-            println "执行阶段执行完毕"
-        }
+        this.gradle.beforeProject { println "配置阶段开始之前(一)" }
+        this.beforeEvaluate { println "配置阶段开始之前(二)" }
+        this.gradle.afterProject { println "配置阶段执行完毕(一)" }
+        this.afterEvaluate { println "配置阶段执行完毕(二)" }
+        this.gradle.buildFinished { println "执行阶段执行完毕" }
         ```
     2. 在项目的settings.gradle中，监听初始化阶段的生命周期，直接增加输出即可
         ```groovy
@@ -259,7 +361,8 @@
         2. 如果在工程中或Module中不存在build.gradle文件，那么它就是个文件夹
     2. 对于子Project来说，一个子Project对应一个输出，输出类型是根据build.gradle文件来确定的
         1. 如果build.gradle定义application类型，则输出为apk
-        2. 如果build.gradle定义library类型，则输出为aar
+        2. 如果build.gradle定义library类型，则输出为aar/jar
+    3. 每一个构建都是由一个或多个projects构成的。一个project到底代表什么取决于你想用Gradle做什么。举个例子，一个project可以代表一个JAR或者一个网页应用。它也可能代表一个发布的ZIP压缩包，这个ZIP可能是由许多其他项目的JARs构成的。但是一个project不一定非要代表被构建的某个东西。它可以代表一件要做的事，比如部署你的应用。每一个project是由一个或多个tasks构成的。一个task代表一些更加细化的构建。可能是编译一些classes，创建一个JAR，生成javadoc，或者生成某个目录的压缩文件。
 2. Project相关Api
     1. 获取所有的Project
         ```groovy
