@@ -19,6 +19,7 @@
 - [Gradle for Android 读书笔记: 高级自定义创建](#gradle-for-android-%e8%af%bb%e4%b9%a6%e7%ac%94%e8%ae%b0-%e9%ab%98%e7%ba%a7%e8%87%aa%e5%ae%9a%e4%b9%89%e5%88%9b%e5%bb%ba)
 - [Gradle: Others](#gradle-others-1)
 - [Proguard](#proguard)
+- [interface Script](#interface-script)
 
 ### links
 
@@ -366,23 +367,11 @@
 2. Project相关Api
     1. 获取所有的Project
         ```groovy
-        def getProjects(){
-            this.getAllprojects().eachWithIndex { Project project ,int index ->
-                if(index == 0){
-                    println "Root Project :${project.name}"
-                }else{
-                    println "+--- Project :${project.name}"
-                }
-            }
-        }
+        this.getAllprojects().eachWithIndex { Project project, int index -> println "${index == 0 ? 'Root' : '+---'} Project :${project.name}" }
         ```
     2. 获取所有的子Project
         ```groovy
-        def getProjects(){
-            this.getSubprojects().eachWithIndex { Project project ,int index ->
-                println "+--- Project :${project.name}"
-            }
-        }
+        this.getSubprojects().eachWithIndex { Project project, int index -> println "+--- Project :${project.name}" }
         ```
     3. 获取父Project
         ```groovy
@@ -411,23 +400,14 @@
         ```
     7. 统一配置所有的子Project
         ```groovy
-        subprojects { Project project ->
-            if(project.plugins.hasPlugin('com.android.library')){
-                apply from: '../publishToMaven.gradle'
-            }
-        }
+        subprojects { Project project -> if (project.plugins.hasPlugin('com.android.library')) { apply from: '../publishToMaven.gradle' } }
         ```
 3. Project属性Api
     1. 在根工程或gradle文件中定义全局扩展属性
         ```groovy
-        //在根工程或gradle文件中定义扩展属性
-        ext {
-            android = [compileSdkVersion : 25,
-                    buildToolsVersion : '25.0.0',
-                    versionCode : 1,
-                    versionName : '1.0.0']
-        }
-        //如果在gradle文件中定义扩展属性，需要在子工程引入该gradle文件，然后在子工程使用扩展属性
+        // 在根工程或gradle文件中定义扩展属性
+        ext { android = [compileSdkVersion : 25, buildToolsVersion : '25.0.0', versionCode : 1, versionName : '1.0.0'] }
+        // 如果在gradle文件中定义扩展属性，需要在子工程引入该gradle文件，然后在子工程使用扩展属性
         apply from: '../common.gradle'
         android {
             compileSdkVersion rootProject.ext.android.compileSdkVersion
@@ -441,14 +421,12 @@
         ```
     2. 在gradle.properties中定义全局扩展属性: 在gradle.properties定义全局扩展属性，应该注意命名不能和系统定义的属性重名，否则会报出找不到扩展属性
         ```groovy
-        //在gradle.properties文件中定义全局扩展属性
+        // 在gradle.properties文件中定义全局扩展属性
         isIncludeTestModule = false
         mCompileSdkVersion = 25
-        //在settings.gradle中使用扩展属性
-        if(hasProperty('isIncludeTestModule') ? isIncludeTestModule.toBoolean() : false){
-            include ':Test'
-        }
-        //在build.gradle中使用扩展属性
+        // 在settings.gradle中使用扩展属性
+        if (hasProperty('isIncludeTestModule') ? isIncludeTestModule.toBoolean() : false) { include ':Test' }
+        // 在build.gradle中使用扩展属性
         android {
             compileSdkVersion mCompileSdkVersion.toInteger()
             ......
@@ -468,37 +446,30 @@
     getContent('build.gradle')
     def getContent(String path){
         try{
-            def file = file(path)
-            return file.text
-        }catch(GradleException e){
+            return file(path).text
+        } catch (GradleException e) {
             println 'file not found'
+            return null
         }
-        return null
     }
     ```
 3. 文件拷贝
     ```groovy
-    copy {
-        from file('build/outputs/apk/app-debug.apk')
-        into getRootProject().getBuildDir()
-    }
+    copy { from('build/outputs/apk/app-debug.apk'); into(getRootProject().getBuildDir()) }
     ```
 4. 文件夹拷贝
     ```groovy
     copy {
         from file('build/outputs/apk/')
         into getRootProject().getBuildDir().path + '/apk/'
-        exclude {} //可以对不需要拷贝的文件进行移除
-        rename {} //可以对文件进行重命名
+        exclude {}  // 可以对不需要拷贝的文件进行移除
+        rename {}  // 可以对文件进行重命名
     }
     ```
 5. 文件树遍历
     ```groovy
     fileTree('build/outputs/apk/') { FileTree fileTree ->
-        fileTree.visit { FileTreeElement element ->
-            println element.file
-            println element.file.name
-        }
+        fileTree.visit { FileTreeElement element -> println "$element.file, $element.file.name" }
     }
     ```
 
@@ -507,25 +478,20 @@
 1. 根工程的第三方依赖
     ```groovy
     buildscript {
-        //配置工程的仓库地址
+        // 配置工程的仓库地址
         repositories {
             google()
             jcenter()
             mavenCentral()
             mavenLocal()
-            maven { 
-                name 'netWork' 
+            maven {
+                name 'netWork'
                 url 'http://localhost:8080/nexus/repositories'
-                credentials{
-                    username = 'Hensen'
-                    password = '123456'
-                }
+                credentials { username = 'Hensen'; password = '123456' }
             }
         }
-        //配置工程的插件依赖地址
-        dependencies {
-            classpath 'com.android.tools.build:gradle:3.0.1'
-        }
+        // 配置工程的插件依赖地址
+        dependencies { classpath('com.android.tools.build:gradle:3.0.1') }
     }
     ```
 2. 子工程的第三方依赖
@@ -536,45 +502,60 @@
             exclude module: 'support-v4'
             exclude group: 'com.android.support'
             exclude group: 'com.android.support', module: 'support-v4'
-            transitive false //禁止传递依赖
+            transitive = false // 禁止传递依赖
+            force = true  // 强制使用该版本的依赖，即使有其他的相同的但版本不同的依赖
         }
         provided 'com.android.support:support-v4:26.1.0'
     }
     ```
 3. 概念梳理
-    1. 传递依赖:A依赖B，B依赖C，如果允许传递依赖，那么A可以使用C的内容，否则为禁止传递依赖
-    2. compile:参与编译时期和参与打包过程
-    3. provided:参与编译时期，但不参与打包过程
-    4. provided应用场景：
+    1. 传递依赖: A依赖B，B依赖C，如果允许传递依赖，那么A可以使用C的内容，否则为禁止传递依赖
+    2. compile(api): 参与编译时期和参与打包过程，可以通过 transitive = false 这个属性设置不传递依赖
+    3. provided(compileOnly): 参与编译时期，但不参与打包过程
+    4. provided应用场景
         1. 当前依赖的库只适用于编译时期生成代码的工具库
         2. 当前依赖的库已经存在于根工程的依赖，在子工程中只参与编译
+    5. implementation: 类似与compile，但是不传递依赖
+    6. apk: 
+    7. annotationProcessor: 只在编译的时候执行依赖的库，但是库最终不打包到apk中。结合编译期注解的作用，他是用来生成代码的，本身在运行时是不需要的，如bufferknife和dagger。annotationProcessor作用是编译时生成代码，编译完真的就不需要了，compileOnly是有重复的库，为的是剃除只保留一个库，最终还是需要的。
+    8. 本地aar
+        ```groovy
+        repositories { flatDir { dir("../${targetProject.name}/libs", "libs") } }
+        dependencies { implementation(name: 'junit', ext: 'aar') }  // 单个
+        new File('./app/libs').traverse(nameFilter: ~/.*\.aar/) { implementation(name: file.name.replace('.aar', ''), ext: 'aar') }  // 多个，应放入dependencies中
+        ```
+    9. 本地jar
+        ```groovy
+        implementation(files('./libs/srping.jar', './libs/hibernate.jar'))  // 文件形式
+        implementation(fileTree(dir: './libs', include: ['*.jar']))  // 文件夹形式
+        ```
+    10. 本地so
+        ```groovy
+        sourceSets { main { jniLibs.srcDirs = ['libs'] } }
+        // 或者直接在main目录下新建jniLibs目录，这是so文件默认的放置目录，不过不常用。值得一提的是aar包里面也可以包含so文件，但依赖这种包含so文件的aar包时不需要做特定的配置，编译时so文件会自动包含到引用AAR压缩包的APK中。
+        // 但比较特殊的一点是，so文件需要放到具体的ABI目录下，不能直接放libs目录下。
+        // 所有的x86/x86_64/armeabi-v7a/arm64-v8a设备都支持armeabi架构的so文件。所以为了减小包体积，为了减小apk体积，可以只保留armeabi一个文件夹。但如果你想引入多个平台的，那么需要保持so文件的数量一致，就是说armeabi文件下的每个so文件都要在armeabi-v7a下找到对应的so文件，但这样apk包的体积就会增大。
+        ```
 4. 调用系统指令
     ```groovy
-    task(name: 'apkcopy') {
-        doLast {
-            def srcPath = this.buildDir.path + '/outputs/apk'
-            def destPath = './target/apk'
-            def command = "mv -f ${srcPath} ${destPath}"
-            exec {
+    task(name: 'apkcopy') { doLast { exec {
                 try {
-                    executable 'bash'
-                    args '-c', command
+                    executable('bash');
+                    args('-c', "mv -f ${this.buildDir.path + '/outputs/apk'} ${'./target/apk'}");
                     println 'this command exec success'
-                }catch(GradleException e){
+                } catch(GradleException e) {
                     println 'this command exec error'
                 }
-            }
-        }
-    }
+    } } }
     ```
 5. 调用脚本
     ```groovy
-    task stopTomcat(type:Exec) {
-        //dir
+    task stopTomcat(type: Exec) {
+        // dir
         workingDir '../tomcat/bin'
-        //windows
+        // windows
         commandLine 'cmd', '/c', 'stop.bat'
-        //linux
+        // linux
         commandLine './stop.sh'
     }
     ```
@@ -1998,3 +1979,133 @@
         4. 常见的混淆的方式有两种， **Proguard (免费)和 DexGuard (要钱)**。DexGuard 是基于 ProGuard 的。这就是为什么它是如此的原因很容易升级到DexGuard。但是这两种产品提供广泛不同的功能。ProGuard的是Java字节码通用的优化，同时 DexGuard 提供了先进的 Android 应用程序的保护。在这篇博客中，你会发现 ProGuard，并将 DexGuard 之间的差别的概述。
     2. C/C++层的混淆: native层混淆并没有统一的标准方案，常见的方法是使用**花指令**。使得native层在被反编译时出错。
     3. 资源文件的混淆: 和native层一样并没有统一的标准方案，目前有两个方案，美团和微信两种。微信的已开源 [AndResGuard](https://github.com/shwenzhang/AndResGuard/blob/master/README.zh-cn.md)
+
+### interface Script
+
+1. 每个gradle脚本都实现了Script接口，有一些通用的方法和属性由委托对象(delegate)提供，如构建脚本的Project对象实例和初始化脚本的Gradle对象实例
+2. 通用属性
+    ```groovy
+    // ScriptHandler buildscript: 此脚本的脚本处理程序。您可以使用此处理程序来管理用于编译和执行此脚本的类路径。
+    // Logger logger: 此脚本的记录器。您可以在脚本中使用它来编写日志消息。
+    // LoggingManager logging: 在LoggingManager其可以被用于接收日志记录和控制此脚本标准输出/错误捕获。默认情况下，System.out将重定向到QUIET日志级别的Gradle日志记录系统，System.err将重定向到ERROR日志级别。
+    // ResoureHandler resources: 提供对特定于资源的实用程序方法的访问，例如创建各种资源的工厂方法。
+    ```
+3. 通用方法
+    ```groovy
+    // apply(closure): 使用插件或脚本为此脚本配置委托对象。delegate是org.gradle.api.plugins.ObjectConfigurationAction的对象
+    // apply(options): 使用插件或脚本为此脚本配置委托对象。与上面一样的，只是将方法[from, to, plugin, type]变成属性了而已
+    /* ---------- 未完待续 ---------- */
+    // copy(closure): 复制指定的文件。给定的闭包用于配置一个CopySpec，然后用于复制文件。例：
+    // copySpec(closure): 创建一个CopySpec稍后可用于复制文件或创建存档的文件。给定闭包用于配置CopySpec此方法返回之前的闭包。
+    // delete(paths): 删除文件和目录。
+    // exec(closure): 执行外部命令。闭包配置一个ExecSpec。
+    // exec(action): 执行外部命令。
+    // file(path): 解析相对于包含此脚本的目录的文件路径。这适用于描述Project.file(java.lang.Object)
+    // file(path, validation): 解析相对于包含此脚本的目录的文件路径，并使用给定的方案对其进行验证。请参阅PathValidation可能的验证列表。
+    // fileTree(baseDir): ConfigurableFileTree使用给定的基目录创建新的。给定的baseDir路径按照计算Script.file(java.lang.Object)。
+    // fileTree(baseDir, configureClosure): ConfigurableFileTree使用给定的基目录创建新的。给定的baseDir路径按照计算Script.file(java.lang.Object)。闭包将用于配置新文件树。文件树作为其委托传递给闭包。例：
+    // fileTree(args): ConfigurableFileTree使用提供的参数映射创建一个新的。该地图将作为新文件树的属性应用。例：
+    // files(paths, configureClosure): ConfigurableFileCollection使用给定路径创建新的。使用给定的闭包配置文件集合。该方法的工作原理如下所述Project.files(java.lang.Object, groovy.lang.Closure)。相对路径相对于包含此脚本的目录进行解析。
+    // files(paths): 返回ConfigurableFileCollection包含给定文件的a。这适用于描述Project.files(java.lang.Object[])。相对路径相对于包含此脚本的目录进行解析。
+    // javaexec(closure): 执行Java主类。闭包配置一个JavaExecSpec。
+    // javaexec(action): 执行Java主类。
+    // mkdir(path): 创建一个目录并返回指向它的文件。
+    // relativePath(path): 返回从包含此脚本的目录到给定路径的相对路径。给定的路径对象（逻辑上）如所描述的那样被解析Script.file(java.lang.Object)，从中计算相对路径。
+    // tarTree(tarPath): 创建一个FileTree包含给定TAR文件内容的new 。给定的tarPath路径可以是：
+    // uri(path): 解析相对于包含此脚本的目录的URI的文件路径。按照描述评估提供的路径对象Script.file(java.lang.Object)，但支持任何URI方案，而不仅仅是'file：'URI。
+    // zipTree(zipPath): 创建一个FileTree包含给定ZIP文件内容的新内容。给定的zipPath路径按照计算Script.file(java.lang.Object)。您可以将此方法与Script.copy(groovy.lang.Closure) 解压缩ZIP文件的方法结合使用。
+    ```
+4. interface ScriptHandler
+    1. project.getBuildScript() / script.getBuildScript()
+    2. 方法
+        ```groovy
+        /*
+         * repositories / dependencies / getDependencies / getRepositories
+         * getClassLoader / getConfigurations / getSourceFile / getSourceURI
+         */
+        // void dependencies​(Closure configureClosure): 配置脚本的依赖项。
+        // ClassLoader getClassLoader(): 返回ClassLoader包含此脚本的类路径的内容。
+        // ConfigurationContainer getConfigurations(): 返回此处理程序的配置。
+        // DependencyHandler getDependencies(): 返回脚本的依赖项。
+        // RepositoryHandler getRepositories(): 返回创建存储库的处理程序，用于检索脚本类路径的依赖关系。
+        // File getSourceFile(): 返回包含脚本源的文件（如果有）。
+        // URI getSourceURI(): 返回脚本源的URI（如果有）。
+        // void repositories​(Closure configureClosure): 配置脚本依赖项的存储库。
+        ```
+    3. 属性 ``static final String CLASSPATH_CONFIGURATION  // 用于组装脚本类路径的配置的名称。``
+5. interface Logger
+    1. Logging.getLogger(Class) / Logging.getLogger(String) / project.getLogger() / task.getLogger() / script.getLogger()
+    2. 方法
+        ```groovy
+        /*
+         * quiet / lifecycle / debug / info / warn / error / trace / log(LogLevel, ...)
+         * isLifecycleEnabled() / isQuietEnabled() / isEnabled​(LogLevel level) / isDebugEnabled / isErrorEnabled / isInfoEnabled / isTraceEnabled / isWarnEnabled / getName
+         */
+        // LogLevel -- DEBUG / ERROR / INFO / LIFECYCLE / QUIET / WARN
+        // 部分方法 inherited from SEL4j里面的logger接口，额外添加了lifecycle/quiet
+        ```
+6. interface LoggingManager
+    ```groovy
+    // LoggingManager captureStandardError​(LogLevel level): 请求写入System.err的输出被路由到Gradle的日志记录系统。
+    // LoggingManager captureStandardOutput​(LogLevel level): 请求写入System.out的输出路由到Gradle的日志记录系统。
+    // LogLevel getLevel(): 返回当前日志记录级别。
+    // LogLevel getStandardErrorCaptureLevel(): 返回写入System.err的输出将映射到的日志级别。
+    // LogLevel getStandardOutputCaptureLevel(): 返回写入System.out的输出将映射到的日志级别。
+    // addStandardErrorListener, addStandardOutputListener, removeStandardErrorListener, removeStandardOutputListener  --  inherited from interface org.gradle.api.logging.LoggingOutput
+    ```
+7. ResourceHandler
+    1. TextResourceFactory text: Returns a factory for creating ``TextResources`` from various sources such as strings, files, and archive entries.
+    2. ReadableResource bzip2(Object path): 创建指向给定路径上的bzip2压缩文件的资源。根据Project.file(java.lang.Object)计算路径。
+    3. ReadableResource gzip(Object path): 创建指向给定路径上的gzip压缩文件的资源。根据Project.file(java.lang.Object)计算路径。
+8. interface org.gradle.api.plugins.ObjectConfigurationAction
+    ```groovy
+    // ObjectConfigurationAction from​(Object script): Adds a script to use to configure the target objects.
+    // ObjectConfigurationAction plugin​(Class<? extends Plugin> pluginClass): Adds a Plugin to use to configure the target objects.
+    // ObjectConfigurationAction plugin​(String pluginId): Adds a Plugin to use to configure the target objects.
+    // ObjectConfigurationAction to​(Object... targets): Specifies some target objects to be configured.
+    // ObjectConfigurationAction type​(Class<?> pluginClass): Adds the plugin implemented by the given class to the target.
+    ```
+9. in
+    ```groovy
+    // CopySpec eachFile​(Closure closure): Adds an action to be applied to each file as it about to be copied into its destination.
+    // CopySpec eachFile​(Action<? super FileCopyDetails> action): Adds an action to be applied to each file as it is about to be copied into its destination.
+    // CopySpec exclude​(Closure excludeSpec): Adds an exclude spec.
+    // CopySpec exclude​(Iterable<String> excludes): Adds an ANT style exclude pattern.
+    // CopySpec exclude​(String... excludes): Adds an ANT style exclude pattern.
+    // CopySpec exclude​(Spec<FileTreeElement> excludeSpec): Adds an exclude spec.
+    // CopySpec expand​(Map<String,​?> properties): Expands property references in each file as it is copied.
+    // CopySpec filesMatching​(Iterable<String> patterns, Action<? super FileCopyDetails> action): Configure the FileCopyDetails for each file whose path matches any of the specified Ant-style patterns.
+    // CopySpec filesMatching​(String pattern, Action<? super FileCopyDetails> action): Configure the FileCopyDetails for each file whose path matches the specified Ant-style pattern.
+    // CopySpec filesNotMatching​(Iterable<String> patterns, Action<? super FileCopyDetails> action): Configure the FileCopyDetails for each file whose path does not match any of the specified Ant-style patterns.
+    // CopySpec filesNotMatching​(String pattern, Action<? super FileCopyDetails> action): Configure the FileCopyDetails for each file whose path does not match the specified Ant-style pattern.
+    // CopySpec filter​(Closure closure): Adds a content filter based on the provided closure.
+    // CopySpec filter​(Class<? extends FilterReader> filterType): Adds a content filter to be used during the copy.
+    // CopySpec filter​(Map<String,​?> properties, Class<? extends FilterReader> filterType): Adds a content filter to be used during the copy.
+    // CopySpec filter​(Transformer<String,​String> transformer): Adds a content filter based on the provided transformer.
+    // CopySpec from​(Object... sourcePaths): Specifies source files or directories for a copy.
+    // CopySpec from​(Object sourcePath, Closure c): Specifies the source files or directories for a copy and creates a child CopySourceSpec.
+    // CopySpec from​(Object sourcePath, Action<? super CopySpec> configureAction): Specifies the source files or directories for a copy and creates a child CopySpec.
+    // DuplicatesStrategy getDuplicatesStrategy(): Returns the strategy to use when trying to copy more than one file to the same destination.
+    // String getFilteringCharset(): Gets the charset used to read and write files when filtering.
+    // boolean getIncludeEmptyDirs(): Tells if empty target directories will be included in the copy.
+    // CopySpec include​(Closure includeSpec): Adds an include spec.
+    // CopySpec include​(Iterable<String> includes): Adds an ANT style include pattern.
+    // CopySpec include​(String... includes): Adds an ANT style include pattern.
+    // CopySpec include​(Spec<FileTreeElement> includeSpec): Adds an include spec.
+    // CopySpec into​(Object destPath): Specifies the destination directory for a copy.
+    // CopySpec into​(Object destPath, Closure configureClosure): Creates and configures a child CopySpec with the given destination path.
+    // CopySpec into​(Object destPath, Action<? super CopySpec> copySpec): Creates and configures a child CopySpec with the given destination path.
+    // boolean isCaseSensitive(): Specifies whether case-sensitive pattern matching should be used.
+    // CopySpec rename​(Closure closure): Renames a source file.
+    // CopySpec rename​(String sourceRegEx, String replaceWith): Renames files based on a regular expression.
+    // CopyProcessingSpec rename​(Pattern sourceRegEx, String replaceWith): Renames files based on a regular expression.
+    // CopySpec rename​(Transformer<String,​String> renamer): Renames a source file.
+    // void setCaseSensitive​(boolean caseSensitive): Specifies whether case-sensitive pattern matching should be used for this CopySpec.
+    // void setDuplicatesStrategy​(DuplicatesStrategy strategy): The strategy to use when trying to copy more than one file to the same destination.
+    // CopySpec setExcludes​(Iterable<String> excludes): Set the allowable exclude patterns.
+    // void setFilteringCharset​(String charset): Specifies the charset used to read and write files when filtering.
+    // void setIncludeEmptyDirs​(boolean includeEmptyDirs): Controls if empty target directories should be included in the copy.
+    // CopySpec setIncludes​(Iterable<String> includes): Set the allowable include patterns.
+    // CopySpec with​(CopySpec... sourceSpecs): Adds the given specs as a child of this spec.
+    ```
+10. 
