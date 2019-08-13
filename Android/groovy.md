@@ -1575,6 +1575,13 @@
 6. java.nio.file.Path
     ```groovy
     //// inherited from java.lang.Iterable
+    /*
+     * append / asType / asWritable / deleteDir / eachByte / eachDir / eachDirMatch / eachDirRecurse / eachFile / eachFileRecurse / eachLine / eachObject / 
+     * filterLine / getBytes / getText / leftShift / newDataInputStream / newDataOutputStream / newInputStream / newOutputStream / newObjectInputStream / 
+     * / newObjectOutputStream / newPrintWriter / newReader / newWriter / readBytes / readLines / renameTo / setBytes / setText / size / splitEachLine / 
+     * traverse / withDataInputStream / withDataOutputStream / withInputStream / withOutputStream / withObjectInputStream / withObjectOutputStream / 
+     * withPrintWriter / withReader / withWriter / write
+     */
     ```
     ```groovy
     // void append(byte[] bytes)
