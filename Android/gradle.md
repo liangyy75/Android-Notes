@@ -1995,14 +1995,13 @@
 3. 通用方法
     ```groovy
     /*
-     * apply / copy / copySpec / delete / exec / 
+     * apply / copy / copySpec / delete / exec / file / fileTree / files / javaexec / mkdir / relativePath / tarTree / zipTree / uri
      */
     // apply(closure): 使用插件或脚本为此脚本配置委托对象。delegate是**org.gradle.api.plugins.ObjectConfigurationAction**的对象
     // apply(options): 使用插件或脚本为此脚本配置委托对象。与上面一样的，只是将方法[from, to, plugin, type]变成属性了而已
     // copy(closure): 复制指定的文件。给定的闭包用于配置一个CopySpec，然后用于复制文件。例：
     // copySpec(closure): 创建一个CopySpec稍后可用于复制文件或创建存档的文件。给定闭包用于配置CopySpec此方法返回之前的闭包。
     // delete(paths): 删除文件和目录。
-    /* ---------- 未完待续 ---------- */
     // exec(closure): 执行外部命令。闭包配置一个ExecSpec。
     // exec(action): 执行外部命令。
     // file(path): 解析相对于包含此脚本的目录的文件路径。这适用于描述Project.file(java.lang.Object)
@@ -2074,9 +2073,10 @@
     // ObjectConfigurationAction to​(Object... targets): Specifies some target objects to be configured.
     // ObjectConfigurationAction type​(Class<?> pluginClass): Adds the plugin implemented by the given class to the target.
     ```
-10. interface org.gradle.api.file.CopySpec
+10. interface org.gradle.api.file
     ```groovy
     /*
+     * org.gradle.api.file.CopySpec
      * eachFile / expand / filesMatching / filesNoMatching / filter / exclude / include / from / into / with​ / rename / setExcludes​ / setIncludes
      * isCaseSensitive / setCaseSensitive​ / getDuplicatesStrategy / setDuplicatesStrategy / getFilteringCharset / setFilteringCharset​​ / getIncludeEmptyDirs / setIncludeEmptyDirs​
      **/
@@ -2121,7 +2121,98 @@
     // CopySpec setIncludes​(Iterable<String> includes): Set the allowable include patterns.
     // CopySpec with​(CopySpec... sourceSpecs): Adds the given specs as a child of this spec.
     ```
-11. 
+    ```groovy
+    /*
+     * 
+     */
+    ```
+11. interface org.gradle.process
+    ```groovy
+    /*
+     * org.gradle.process.ExecSpec
+     * args / commandLine / getArgs / getArgumentProviders / setArgs / setCommandLine
+     * inherited from org.gradle.process.BaseExecSpec:
+     * getErrorOutput, setErrorOutput, getStandardInput, setStandardInput, getStandardOutput, setStandardOutput, isIgnoreExitValue, setIgnoreExitValue, getCommandLine
+     * inherited from org.gradle.process.ProcessForkOptions:
+     * copyer: copyTo
+     * addter: environment, environment, executable, workingDir
+     * getter: getEnvironment, getExecutable, getWorkingDir, setEnvironment
+     * setter: setExecutable, setExecutable, setWorkingDir, setWorkingDir
+     */
+    // ExecSpec	args​(Iterable<?> args): Adds arguments for the command to be executed.
+    // ExecSpec	args​(Object... args): Adds arguments for the command to be executed.
+    // ExecSpec	commandLine​(Iterable<?> args): Sets the full command line, including the executable to be executed plus its arguments.
+    // ExecSpec	commandLine​(Object... args): Sets the full command line, including the executable to be executed plus its arguments.
+    // List<String>	getArgs(): Returns the arguments for the command to be executed.
+    // List<CommandLineArgumentProvider> getArgumentProviders(): Argument providers for the application.
+    // ExecSpec	setArgs​(Iterable<?> args): Sets the arguments for the command to be executed.
+    // ExecSpec	setArgs​(List<String> args): Sets the arguments for the command to be executed.
+    // void	setCommandLine​(Iterable<?> args): Sets the full command line, including the executable to be executed plus its arguments.
+    // void	setCommandLine​(Object... args): Sets the full command line, including the executable to be executed plus its arguments.
+    // void	setCommandLine​(List<String> args): Sets the full command line, including the executable to be executed plus its arguments.
+    /*
+     * org.gradle.process.CommandLineArgumentProvider: Iterable<String> asArguments()
+     * org.gradle.process.JavaExecSpec:
+     *   args / getArgs / setArgs / classpath / getClassPath / setClassPath / getArgumentProviders / getMain / setMain
+     *     JavaExecSpec args​(Iterable<?> args): Adds args for the main class to be executed.
+     *     JavaExecSpec args​(Object... args): Adds args for the main class to be executed.
+     *     JavaExecSpec classpath​(Object... paths): Adds elements to the classpath for executing the main class.
+     *     List<String> getArgs(): Returns the arguments passed to the main class to be executed.
+     *     List<CommandLineArgumentProvider> getArgumentProviders(): Argument providers for the application.
+     *     FileCollection getClasspath(): Returns the classpath for executing the main class.
+     *     String getMain(): Returns the fully qualified name of the Main class to be executed.
+     *     JavaExecSpec setArgs​(Iterable<?> args): Sets the args for the main class to be executed.
+     *     JavaExecSpec setArgs​(List<String> args): Sets the args for the main class to be executed.
+     *     JavaExecSpec setClasspath​(FileCollection classpath): Sets the classpath for executing the main class.
+     *     JavaExecSpec setMain​(String main): Sets the fully qualified name of the main class to be executed.
+     *     inherited from org.gradle.process.BaseExecSpec
+     *     inherited from org.gradle.process.ProcessForkOptions
+     *     inherited from org.gradle.process.JavaForkOptions
+    ```
+    ```groovy
+    /*
+     * org.gradle.process.JavaForkOptions:
+     *   getBootstrapClasspath / getAllJvmArgs / getDebug / getDefaultCharacterEncoding / getEnableAssertions / getJvmArgs / getMaxHeapSize / getMinHeapSize / getSystemProperties
+     *   setBootstrapClasspath / setAllJvmArgs / setDebug / setDefaultCharacterEncoding​ / setEnableAssertions​ / setJvmArgs​ / setMaxHeapSize​ / setMinHeapSize​ / setSystemProperties​
+     *   bootstrapClasspath / jvmArgs / getJvmArgumentProviders / copyTo / systemProperties / systemProperty
+     *     JavaForkOptions bootstrapClasspath​(Object... classpath): Adds the given values to the end of the bootstrap classpath for the process.
+     *     JavaForkOptions copyTo​(JavaForkOptions options): Copies these options to the given options.
+     *     List<String> getAllJvmArgs(): Returns the full set of arguments to use to launch the JVM for the process.
+     *     FileCollection getBootstrapClasspath(): Returns the bootstrap classpath to use for the process.
+     *     boolean getDebug(): Determines whether debugging is enabled for the test process.
+     *     String getDefaultCharacterEncoding(): Returns the default character encoding to use.
+     *     boolean getEnableAssertions(): Returns true if assertions are enabled for the process.
+     *     List<String> getJvmArgs(): Returns the extra arguments to use to launch the JVM for the process.
+     *     List<CommandLineArgumentProvider> getJvmArgumentProviders(): Command line argument providers for the java process to fork.
+     *     String getMaxHeapSize(): Returns the maximum heap size for the process, if any.
+     *     String getMinHeapSize(): Returns the minimum heap size for the process, if any.
+     *     Map<String,​Object> getSystemProperties(): Returns the system properties which will be used for the process.
+     *     JavaForkOptions jvmArgs​(Iterable<?> arguments): Adds some arguments to use to launch the JVM for the process.
+     *     JavaForkOptions jvmArgs​(Object... arguments): Adds some arguments to use to launch the JVM for the process.
+     *     void setAllJvmArgs​(Iterable<?> arguments): Sets the full set of arguments to use to launch the JVM for the process.
+     *     void setAllJvmArgs​(List<String> arguments): Sets the full set of arguments to use to launch the JVM for the process.
+     *     void setBootstrapClasspath​(FileCollection classpath): Sets the bootstrap classpath to use for the process.
+     *     void setDebug​(boolean enabled): Enable or disable debugging for the process.
+     *     void setDefaultCharacterEncoding​(String defaultCharacterEncoding): Sets the default character encoding to use.
+     *     void setEnableAssertions​(boolean enabled): Enable or disable assertions for the process.
+     *     void setJvmArgs​(Iterable<?> arguments): Sets the extra arguments to use to launch the JVM for the process.
+     *     void setJvmArgs​(List<String> arguments): Sets the extra arguments to use to launch the JVM for the process.
+     *     void setMaxHeapSize​(String heapSize): Sets the maximum heap size for the process.
+     *     void setMinHeapSize​(String heapSize): Sets the minimum heap size for the process.
+     *     void setSystemProperties​(Map<String,​?> properties): Sets the system properties to use for the process.
+     *     JavaForkOptions systemProperties​(Map<String,​?> properties): Adds some system properties to use for the process.
+     *     JavaForkOptions systemProperty​(String name, Object value): Adds a system property to use for the process.
+     * org.gradle.process.ExecResult:
+     *     ExecResult assertNormalExitValue(): Throws an ExecException if the process exited with a non-zero exit value.
+     *     int getExitValue(): Returns the exit value of the process.
+     *     ExecResult rethrowFailure(): Re-throws any failure executing this process.
+     */
+    ```
+12. interface org.gradle.api
+    ```groovy
+    enum PathValidation { DIRECTORY, FILE, EXISTS, NONE }
+    ```
+13. 
 
 ### interface 
 
