@@ -19,7 +19,9 @@
 - [Gradle for Android 读书笔记: 高级自定义创建](#gradle-for-android-%e8%af%bb%e4%b9%a6%e7%ac%94%e8%ae%b0-%e9%ab%98%e7%ba%a7%e8%87%aa%e5%ae%9a%e4%b9%89%e5%88%9b%e5%bb%ba)
 - [Gradle: Others](#gradle-others-1)
 - [Proguard](#proguard)
-- [interface Script](#interface-script)
+- [interface org.gradle.api.Script](#interface-orggradleapiscript)
+- [interface](#interface)
+- [end](#end)
 
 ### links
 
@@ -1980,7 +1982,7 @@
     2. C/C++层的混淆: native层混淆并没有统一的标准方案，常见的方法是使用**花指令**。使得native层在被反编译时出错。
     3. 资源文件的混淆: 和native层一样并没有统一的标准方案，目前有两个方案，美团和微信两种。微信的已开源 [AndResGuard](https://github.com/shwenzhang/AndResGuard/blob/master/README.zh-cn.md)
 
-### interface Script
+### interface org.gradle.api.Script
 
 1. 每个gradle脚本都实现了Script接口，有一些通用的方法和属性由委托对象(delegate)提供，如构建脚本的Project对象实例和初始化脚本的Gradle对象实例
 2. 通用属性
@@ -1992,12 +1994,15 @@
     ```
 3. 通用方法
     ```groovy
-    // apply(closure): 使用插件或脚本为此脚本配置委托对象。delegate是org.gradle.api.plugins.ObjectConfigurationAction的对象
+    /*
+     * apply / copy / copySpec / delete / exec / 
+     */
+    // apply(closure): 使用插件或脚本为此脚本配置委托对象。delegate是**org.gradle.api.plugins.ObjectConfigurationAction**的对象
     // apply(options): 使用插件或脚本为此脚本配置委托对象。与上面一样的，只是将方法[from, to, plugin, type]变成属性了而已
-    /* ---------- 未完待续 ---------- */
     // copy(closure): 复制指定的文件。给定的闭包用于配置一个CopySpec，然后用于复制文件。例：
     // copySpec(closure): 创建一个CopySpec稍后可用于复制文件或创建存档的文件。给定闭包用于配置CopySpec此方法返回之前的闭包。
     // delete(paths): 删除文件和目录。
+    /* ---------- 未完待续 ---------- */
     // exec(closure): 执行外部命令。闭包配置一个ExecSpec。
     // exec(action): 执行外部命令。
     // file(path): 解析相对于包含此脚本的目录的文件路径。这适用于描述Project.file(java.lang.Object)
@@ -2015,7 +2020,7 @@
     // uri(path): 解析相对于包含此脚本的目录的URI的文件路径。按照描述评估提供的路径对象Script.file(java.lang.Object)，但支持任何URI方案，而不仅仅是'file：'URI。
     // zipTree(zipPath): 创建一个FileTree包含给定ZIP文件内容的新内容。给定的zipPath路径按照计算Script.file(java.lang.Object)。您可以将此方法与Script.copy(groovy.lang.Closure) 解压缩ZIP文件的方法结合使用。
     ```
-4. interface ScriptHandler
+4. interface org.gradle.api.logging.ScriptHandler
     1. project.getBuildScript() / script.getBuildScript()
     2. 方法
         ```groovy
@@ -2033,7 +2038,7 @@
         // void repositories​(Closure configureClosure): 配置脚本依赖项的存储库。
         ```
     3. 属性 ``static final String CLASSPATH_CONFIGURATION  // 用于组装脚本类路径的配置的名称。``
-5. interface Logger
+5. interface org.gradle.api.logging.Logger
     1. Logging.getLogger(Class) / Logging.getLogger(String) / project.getLogger() / task.getLogger() / script.getLogger()
     2. 方法
         ```groovy
@@ -2044,7 +2049,7 @@
         // LogLevel -- DEBUG / ERROR / INFO / LIFECYCLE / QUIET / WARN
         // 部分方法 inherited from SEL4j里面的logger接口，额外添加了lifecycle/quiet
         ```
-6. interface LoggingManager
+6. interface org.gradle.api.logging.LoggingManager
     ```groovy
     // LoggingManager captureStandardError​(LogLevel level): 请求写入System.err的输出被路由到Gradle的日志记录系统。
     // LoggingManager captureStandardOutput​(LogLevel level): 请求写入System.out的输出路由到Gradle的日志记录系统。
@@ -2053,11 +2058,15 @@
     // LogLevel getStandardOutputCaptureLevel(): 返回写入System.out的输出将映射到的日志级别。
     // addStandardErrorListener, addStandardOutputListener, removeStandardErrorListener, removeStandardOutputListener  --  inherited from interface org.gradle.api.logging.LoggingOutput
     ```
-7. ResourceHandler
+7. interface org.gradle.api.logging.StandardOutputListener
+    ```groovy
+    void onOutput​(CharSequence output)
+    ```
+8. ResourceHandler
     1. TextResourceFactory text: Returns a factory for creating ``TextResources`` from various sources such as strings, files, and archive entries.
     2. ReadableResource bzip2(Object path): 创建指向给定路径上的bzip2压缩文件的资源。根据Project.file(java.lang.Object)计算路径。
     3. ReadableResource gzip(Object path): 创建指向给定路径上的gzip压缩文件的资源。根据Project.file(java.lang.Object)计算路径。
-8. interface org.gradle.api.plugins.ObjectConfigurationAction
+9. interface org.gradle.api.plugins.ObjectConfigurationAction
     ```groovy
     // ObjectConfigurationAction from​(Object script): Adds a script to use to configure the target objects.
     // ObjectConfigurationAction plugin​(Class<? extends Plugin> pluginClass): Adds a Plugin to use to configure the target objects.
@@ -2065,14 +2074,18 @@
     // ObjectConfigurationAction to​(Object... targets): Specifies some target objects to be configured.
     // ObjectConfigurationAction type​(Class<?> pluginClass): Adds the plugin implemented by the given class to the target.
     ```
-9. in
+10. interface org.gradle.api.file.CopySpec
     ```groovy
-    // CopySpec eachFile​(Closure closure): Adds an action to be applied to each file as it about to be copied into its destination.
-    // CopySpec eachFile​(Action<? super FileCopyDetails> action): Adds an action to be applied to each file as it is about to be copied into its destination.
-    // CopySpec exclude​(Closure excludeSpec): Adds an exclude spec.
+    /*
+     * eachFile / expand / filesMatching / filesNoMatching / filter / exclude / include / from / into / with​ / rename / setExcludes​ / setIncludes
+     * isCaseSensitive / setCaseSensitive​ / getDuplicatesStrategy / setDuplicatesStrategy / getFilteringCharset / setFilteringCharset​​ / getIncludeEmptyDirs / setIncludeEmptyDirs​
+     **/
+    // CopySpec eachFile​(Closure closure)
+    // CopySpec eachFile​(Action<? super FileCopyDetails> action)
+    // CopySpec exclude​(Closure excludeSpec)
+    // CopySpec exclude​(Spec<FileTreeElement> excludeSpec)
     // CopySpec exclude​(Iterable<String> excludes): Adds an ANT style exclude pattern.
     // CopySpec exclude​(String... excludes): Adds an ANT style exclude pattern.
-    // CopySpec exclude​(Spec<FileTreeElement> excludeSpec): Adds an exclude spec.
     // CopySpec expand​(Map<String,​?> properties): Expands property references in each file as it is copied.
     // CopySpec filesMatching​(Iterable<String> patterns, Action<? super FileCopyDetails> action): Configure the FileCopyDetails for each file whose path matches any of the specified Ant-style patterns.
     // CopySpec filesMatching​(String pattern, Action<? super FileCopyDetails> action): Configure the FileCopyDetails for each file whose path matches the specified Ant-style pattern.
@@ -2108,4 +2121,259 @@
     // CopySpec setIncludes​(Iterable<String> includes): Set the allowable include patterns.
     // CopySpec with​(CopySpec... sourceSpecs): Adds the given specs as a child of this spec.
     ```
-10. 
+11. 
+
+### interface 
+
+
+
+### end
+
+```groovy
+// org.gradle: Classes for embedding Gradle.
+// org.gradle.api: Start Here: Gradle's Project API, which is available from your build files.
+// org.gradle.api.artifacts: Classes for declaring and using artifacts and artifact dependencies.
+// org.gradle.api.artifacts.component: Classes that provide meta-data about software components.
+// org.gradle.api.artifacts.dsl: Classes used in the artifact DSL.
+// org.gradle.api.artifacts.ivy: Classes for declaring and using Ivy modules.
+// org.gradle.api.artifacts.maven: Maven specific classes for dependency management.
+// org.gradle.api.artifacts.query: Classes used for querying the artifacts.
+// org.gradle.api.artifacts.repositories: Classes for declaring and using artifact repositories.
+// org.gradle.api.artifacts.result: Classes that compose the resolution result
+// org.gradle.api.artifacts.transform: Provides classes, interfaces and annotations for registering and implementing artifact transforms.
+// org.gradle.api.artifacts.type: Types related to artifact type definitions.
+// org.gradle.api.attributes: Classes for dealing with configuration and artifact attributes.
+// org.gradle.api.attributes.java: Attributes specific to the Java ecosystem.
+// org.gradle.api.capabilities: Classes for dealing with capabilities.
+// org.gradle.api.component: Types for declaring and using Software Components.
+// org.gradle.api.credentials: general credentials related classes.
+// org.gradle.api.distribution: The main interfaces and classes of the distribution plugin.
+// org.gradle.api.distribution.plugins: The the distribution plugin itself.
+// org.gradle.api.dsl: DSL related classes.
+// org.gradle.api.execution: Classes for managing and monitoring build execution.
+// org.gradle.api.file: Classes for working with files.
+// org.gradle.api.initialization: Classes for managing and monitoring build initialization.
+// org.gradle.api.initialization.definition: Types related to the build definition for included builds.
+// org.gradle.api.initialization.dsl: Classes used in the initialization DSL.
+// org.gradle.api.invocation: Classes for invoking and monitoring gradle builds.
+// org.gradle.api.java.archives: Classes for working with JAR manifests.
+// org.gradle.api.logging: Classes for managing logging in Gradle.
+// org.gradle.api.logging.configuration: Classes for logging configuration.
+// org.gradle.api.model: Classes that operate on the Gradle model.
+// org.gradle.api.plugins: The standard Plugin implementations.
+// org.gradle.api.plugins.announce: A Plugin for generating announcements from your build.
+// org.gradle.api.plugins.antlr: A Plugin for generating parsers from Antlr grammars.
+// org.gradle.api.plugins.buildcomparison.gradle: Build comparision classes that are specific to Gradle, including comparing Gradle upgrades.
+// org.gradle.api.plugins.osgi: The OSGi Plugin implementation.
+// org.gradle.api.plugins.quality: Plugins which measure and enforce code quality.
+// org.gradle.api.plugins.scala: A Plugin which compiles and tests Scala sources.
+// org.gradle.api.provider: The interfaces for value providers.
+// org.gradle.api.publish: Classes that deal with publishing artifacts.
+// org.gradle.api.publish.ivy: Types that deal with publishing in the Ivy format.
+// org.gradle.api.publish.ivy.plugins: Plugins for Ivy publishing.
+// org.gradle.api.publish.ivy.tasks: Tasks for Ivy publishing.
+```
+```groovy
+// org.gradle.api.publish.maven: Types that deal with publishing in the Maven format.
+// org.gradle.api.publish.maven.plugins: Plugins for publishing in the Maven format.
+// org.gradle.api.publish.maven.tasks: Tasks for publishing in the Maven format.
+// org.gradle.api.publish.plugins: Publishing plugin.
+// org.gradle.api.publish.tasks: Tasks used for publishing to a binary repository.
+// org.gradle.api.reflect: Classes and API for the reflection and types.
+// org.gradle.api.reporting: Classes for reporting
+// org.gradle.api.reporting.components: Component reporting tasks.
+// org.gradle.api.reporting.dependencies: Types responsible for generating dependency reports.
+// org.gradle.api.reporting.dependents: Types responsible for generating dependents components reports.
+// org.gradle.api.reporting.model: Configuration model reporting tasks.
+// org.gradle.api.reporting.plugins: Plugins for reporting
+// org.gradle.api.resources: Interfaces and API for the 'Resources' concept.
+// org.gradle.api.specs: Classes for defining general purpose criteria.
+// org.gradle.api.tasks: The standard Task implementations.
+// org.gradle.api.tasks.ant: The Ant integration Task implementations.
+// org.gradle.api.tasks.application
+// org.gradle.api.tasks.bundling: The archive bundling Task implementations.
+// org.gradle.api.tasks.compile: The compilation Task implementations.
+// org.gradle.api.tasks.diagnostics: The diagnostic Task implementations.
+// org.gradle.api.tasks.incremental: API classes for implementing incremental tasks.
+// org.gradle.api.tasks.javadoc: The documentation generation Task implementations.
+// org.gradle.api.tasks.options: Annotations for exposing task properties as command line options.
+// org.gradle.api.tasks.scala: Scala Task implementations.
+// org.gradle.api.tasks.testing: The unit testing Task implementations.
+// org.gradle.api.tasks.testing.junit: JUnit specific testing classes.
+// org.gradle.api.tasks.testing.junitplatform
+// org.gradle.api.tasks.testing.logging: Types related to logging of test related information to the console.
+// org.gradle.api.tasks.testing.testng: TestNG specific testing classes.
+// org.gradle.api.tasks.util: Utility classes used by the standard task implementations.
+// org.gradle.api.tasks.wrapper: The Gradle wrapper Task.
+// org.gradle.authentication: Classes related to transport authentication protocols.
+// org.gradle.authentication.aws: Classes related to transport authentication protocols for S3.
+// org.gradle.authentication.http: Classes related to transport authentication protocols for HTTP.
+// org.gradle.buildinit.plugins: Build init plugins.
+// org.gradle.buildinit.tasks: Build init plugins.
+// org.gradle.caching: Classes for build caches.
+// org.gradle.caching.configuration: Classes for configuring build caches.
+// org.gradle.caching.http: Classes for HTTP build cache service.
+// org.gradle.caching.local: Classes for local build cache services.
+// org.gradle.concurrent: Classes related to Gradle parallelism and concurrency.
+// org.gradle.external.javadoc: Classes to run Javadoc.
+```
+```groovy
+// org.gradle.ide.visualstudio: Model classes for visual studio.
+// org.gradle.ide.visualstudio.plugins: Plugins for Visual Studio integration.
+// org.gradle.ide.visualstudio.tasks: Task classes for visual studio.
+// org.gradle.ide.xcode: Model classes for XCode.
+// org.gradle.ide.xcode.plugins: Plugins for XCode integration.
+// org.gradle.ide.xcode.tasks: Task classes for XCode.
+// org.gradle.ivy: Component types for Ivy modules.
+// org.gradle.jvm: Types for support of JVM runtime.
+// org.gradle.jvm.application.scripts: Classes that enable JVM application script generation.
+// org.gradle.jvm.application.tasks: Tasks for the JVM application plugin.
+// org.gradle.jvm.platform: Classes for managing platform variance
+// org.gradle.jvm.plugins: Base plugins that add support for JVM runtime.
+// org.gradle.jvm.tasks: Tasks that add support for JVM runtime.
+// org.gradle.jvm.tasks.api: Tasks supporting Gradle's "compile avoidance" feature through the generation and use of API classes and ApiJar files.
+// org.gradle.jvm.test: Types for the JVM testing plugin.
+// org.gradle.jvm.toolchain: Defines tools that can build things that run on the JVM.
+// org.gradle.language: Model classes for managing language sources.
+// org.gradle.language.assembler: Model classes for building from Assembler language sources.
+// org.gradle.language.assembler.plugins: Plugins for building from Assembler language sources.
+// org.gradle.language.assembler.tasks: Tasks for assembling Assembler sources for a native runtime.
+// org.gradle.language.base: General purpose types for language support.
+// org.gradle.language.base.artifact: Classes representing artifacts relevant to languages in general.
+// org.gradle.language.base.compile: General purpose types for related to compiling.
+// org.gradle.language.base.plugins: Base plugins for language support.
+// org.gradle.language.base.sources: General purpose types for language sources support.
+// org.gradle.language.c: Model classes for building from C language sources.
+// org.gradle.language.c.plugins: Plugins for building from C language sources.
+// org.gradle.language.c.tasks: Tasks for compiling C sources for a native runtime.
+// org.gradle.language.coffeescript: Language support classes for CoffeeScript
+// org.gradle.language.cpp: Model classes for building from C++ language sources.
+// org.gradle.language.cpp.plugins: Plugins for building from C++ language sources.
+// org.gradle.language.cpp.tasks: Tasks for compiling C++ sources for a native runtime.
+// org.gradle.language.java: Types for Java language support.
+// org.gradle.language.java.artifact: Classes representing artifacts relevant to the Java language.
+// org.gradle.language.java.plugins: Base plugins that add support for Java language.
+// org.gradle.language.java.tasks: Tasks that add support for Java language.
+// org.gradle.language.javascript: Language support classes for javascript
+// org.gradle.language.jvm: Types for support for JVM languages.
+// org.gradle.language.jvm.plugins: Base plugins that add language support for JVM resources.
+// org.gradle.language.jvm.tasks: Tasks for support for JVM languages.
+// org.gradle.language.nativeplatform: Model classes for managing language sources.
+// org.gradle.language.nativeplatform.tasks: Base classes for native language compile tasks.
+```
+```groovy
+// org.gradle.language.objectivec: Model classes for building from Objective-C language sources.
+// org.gradle.language.objectivec.plugins: Plugins for building from Objective-C language sources.
+// org.gradle.language.objectivec.tasks: Tasks for compiling Objective-C sources for a native runtime.
+// org.gradle.language.objectivecpp: Model classes for building from Objective-C++ language sources.
+// org.gradle.language.objectivecpp.plugins: Plugins for building from Objective-C++ language sources.
+// org.gradle.language.objectivecpp.tasks: Tasks for compiling Objective-C++ sources for a native runtime.
+// org.gradle.language.plugins: Base plugins for the native languages.
+// org.gradle.language.rc: Model classes for building from Windows Resource scripts.
+// org.gradle.language.rc.plugins: Plugins for building from Windows Resource scripts.
+// org.gradle.language.rc.tasks: Tasks for compiling Windows resources for a native runtime.
+// org.gradle.language.routes: Language support classes for routes
+// org.gradle.language.scala: Types for Scala language support.
+// org.gradle.language.scala.plugins: Base plugins that add support for Scala language.
+// org.gradle.language.scala.tasks: Tasks that add support for Scala language.
+// org.gradle.language.scala.toolchain: Defines tools that can build scala applications.
+// org.gradle.language.swift: Model classes for building from Swift language sources.
+// org.gradle.language.swift.plugins: Plugins for building from Swift language sources.
+// org.gradle.language.swift.tasks: Tasks for compiling Swift sources for a native runtime.
+// org.gradle.language.twirl: Language support classes for twirl
+// org.gradle.maven: Component types for Maven modules.
+// org.gradle.model: Classes that operate upon the Gradle model.
+// org.gradle.nativeplatform: Classes that model aspects of native component projects.
+// org.gradle.nativeplatform.platform: Classes that allow defining a native binary platform.
+// org.gradle.nativeplatform.plugins: Plugins for building native component projects.
+// org.gradle.nativeplatform.tasks: Tasks for building native component projects.
+// org.gradle.nativeplatform.test: API classes for testing native binaries.
+// org.gradle.nativeplatform.test.cpp: API classes for C++ test integration.
+// org.gradle.nativeplatform.test.cpp.plugins: Plugins for C++ test integration.
+// org.gradle.nativeplatform.test.cunit: API classes for cunit integration.
+// org.gradle.nativeplatform.test.cunit.plugins: Plugins for cunit testing.
+// org.gradle.nativeplatform.test.cunit.tasks: Tasks for cunit integration.
+// org.gradle.nativeplatform.test.googletest: API classes for Google Test integration.
+// org.gradle.nativeplatform.test.googletest.plugins: Plugins for Google Test testing.
+// org.gradle.nativeplatform.test.plugins: Plugin classes for generic support for testing native binaries.
+// org.gradle.nativeplatform.test.tasks: Tasks for test execution.
+// org.gradle.nativeplatform.test.xctest: Model classes for the XCTest plugins.
+// org.gradle.nativeplatform.test.xctest.plugins: Plugins for XCTest testing.
+// org.gradle.nativeplatform.test.xctest.tasks: Tasks for XCTest execution.
+// org.gradle.nativeplatform.toolchain: Classes that allow C++ tool chains to be configured.
+// org.gradle.nativeplatform.toolchain.plugins: Built-in tool chain support.
+// org.gradle.normalization: Interfaces and API for input normalization.
+// org.gradle.platform.base: General purpose types for runtime support.
+// org.gradle.platform.base.binary: General purpose types for binary support.
+// org.gradle.platform.base.component: General purpose types for library support.
+// org.gradle.platform.base.plugins: Base plugins for software model support.
+```
+```groovy
+// org.gradle.play: Classes that model aspects of the Play Framework support in Gradle.
+// org.gradle.play.distribution: Classes related to creating a Play distribution.
+// org.gradle.play.platform: Classes for managing play platform
+// org.gradle.play.plugins: Plugins that add support for the Play framework.
+// org.gradle.play.plugins.ide: Plugins that add support using IDEs with the Play framework.
+// org.gradle.play.tasks: Task classes used for the Play Framework support in Gradle.
+// org.gradle.play.toolchain: Defines tools that can build play applications.
+// org.gradle.plugin.devel: Classes for assisting with plugin development.
+// org.gradle.plugin.devel.plugins: Plugins for assisting with plugin development.
+// org.gradle.plugin.devel.tasks: Tasks for assisting with plugin development.
+// org.gradle.plugin.management: APIs to influence how plugins are resolved.
+// org.gradle.plugin.use: Classes for managing plugin resolution and use.
+// org.gradle.plugins.ear: Support for generating EAR archives in a Gradle build
+// org.gradle.plugins.ear.descriptor: Classes for working with EAR deployment descriptors.
+// org.gradle.plugins.ide: General purpose IDE types.
+// org.gradle.plugins.ide.api: General ide plugin api.
+// org.gradle.plugins.ide.eclipse: A Plugin for generating Eclipse files.
+// org.gradle.plugins.ide.eclipse.model: Classes for the model used by the EclipsePlugin.
+// org.gradle.plugins.ide.idea: A Plugin for generating IDEA files.
+// org.gradle.plugins.ide.idea.model: Classes for the model used by the IdeaPlugin.
+// org.gradle.plugins.javascript.base
+// org.gradle.plugins.javascript.coffeescript
+// org.gradle.plugins.javascript.envjs
+// org.gradle.plugins.javascript.envjs.browser
+// org.gradle.plugins.javascript.envjs.http
+// org.gradle.plugins.javascript.envjs.http.simple
+// org.gradle.plugins.javascript.jshint
+// org.gradle.plugins.javascript.rhino
+// org.gradle.plugins.signing: The signing plugin.
+// org.gradle.plugins.signing.signatory: The signing plugin signatory types.
+// org.gradle.plugins.signing.signatory.pgp: PGP signing support.
+// org.gradle.plugins.signing.type: The signing plugin signature types.
+// org.gradle.plugins.signing.type.pgp: PGP signing support.
+// org.gradle.process: Classes for executing system and Java processes.
+// org.gradle.swiftpm: Model classes that describe a Swift Package Manager package.
+// org.gradle.swiftpm.plugins: Plugins that produce Swift Package Manager manifests from the Gradle model.
+// org.gradle.swiftpm.tasks: Tasks that produce Swift Package Manager manifests from the Gradle model.
+// org.gradle.testfixtures: Classes and interfaces for testing custom task and plugin implementations.
+// org.gradle.testing.base: General purpose types for test suite support.
+// org.gradle.testing.base.plugins: Plugin classes for generic support for testing.
+// org.gradle.testing.jacoco.plugins: Plugins to work with the JaCoCo code coverage library.
+// org.gradle.testing.jacoco.tasks: Tasks to work with the JaCoCo code coverage library.
+// org.gradle.testing.jacoco.tasks.rules: Implementations for Jacoco code coverage rules.
+// org.gradle.testkit.runner: Support for executing contrived Gradle builds for the purpose of testing build logic.
+```
+```groovy
+// org.gradle.tooling: The main interfaces and classes of the Gradle tooling API.
+// org.gradle.tooling.events: The interfaces and classes related to registering for event notifications and listening to dispatched events.
+// org.gradle.tooling.events.configuration: Project configuration specific interfaces and classes related to event notifications.
+// org.gradle.tooling.events.task: Task execution specific interfaces and classes related to event notifications.
+// org.gradle.tooling.events.task.java: Task execution result interfaces specific to Java projects.
+// org.gradle.tooling.events.test: Test execution specific interfaces and classes related to event notifications.
+// org.gradle.tooling.events.transform: Artifact transform execution specific interfaces and classes related to event notifications.
+// org.gradle.tooling.events.work: Work item execution specific interfaces and classes related to event notifications.
+// org.gradle.tooling.exceptions: Exceptions thrown when using the tooling API.
+// org.gradle.tooling.model: The general-purpose tooling model types, provided by the tooling API.
+// org.gradle.tooling.model.build: Tooling models for the build environment, which includes information such as Gradle or Java versions.
+// org.gradle.tooling.model.cpp: Types that represent the tooling model for C++ projects.
+// org.gradle.tooling.model.eclipse: Eclipse-centric tooling models.
+// org.gradle.tooling.model.gradle: The tooling models for Gradle builds and projects.
+// org.gradle.tooling.model.idea: IntelliJ IDEA centric tooling models.
+// org.gradle.tooling.model.java: Java-specific details for tooling models.
+// org.gradle.tooling.provider.model: Interfaces and classes that allow tooling models to be made available to the tooling API client.
+// org.gradle.vcs: Packages for version control systems.
+// org.gradle.vcs.git: The API for dealing with Version Control Systems in Gradle.
+// org.gradle.work: Classes used for implementing units of work.
+// org.gradle.workers: Workers allow running pieces of work in the background, either in-process in isolated classloaders or out-of-process in reusable daemons.
+```
