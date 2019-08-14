@@ -2019,37 +2019,36 @@
     // uri(path): 解析相对于包含此脚本的目录的URI的文件路径。按照描述评估提供的路径对象Script.file(java.lang.Object)，但支持任何URI方案，而不仅仅是'file：'URI。
     // zipTree(zipPath): 创建一个FileTree包含给定ZIP文件内容的新内容。给定的zipPath路径按照计算Script.file(java.lang.Object)。您可以将此方法与Script.copy(groovy.lang.Closure) 解压缩ZIP文件的方法结合使用。
     ```
-4. interface org.gradle.api.logging.ScriptHandler
-    1. project.getBuildScript() / script.getBuildScript()
-    2. 方法
-        ```groovy
-        /*
-         * repositories / dependencies / getDependencies / getRepositories
-         * getClassLoader / getConfigurations / getSourceFile / getSourceURI
-         */
-        // void dependencies​(Closure configureClosure): 配置脚本的依赖项。
-        // ClassLoader getClassLoader(): 返回ClassLoader包含此脚本的类路径的内容。
-        // ConfigurationContainer getConfigurations(): 返回此处理程序的配置。
-        // DependencyHandler getDependencies(): 返回脚本的依赖项。
-        // RepositoryHandler getRepositories(): 返回创建存储库的处理程序，用于检索脚本类路径的依赖关系。
-        // File getSourceFile(): 返回包含脚本源的文件（如果有）。
-        // URI getSourceURI(): 返回脚本源的URI（如果有）。
-        // void repositories​(Closure configureClosure): 配置脚本依赖项的存储库。
-        ```
-    3. 属性 ``static final String CLASSPATH_CONFIGURATION  // 用于组装脚本类路径的配置的名称。``
-5. interface org.gradle.api.logging.Logger
-    1. Logging.getLogger(Class) / Logging.getLogger(String) / project.getLogger() / task.getLogger() / script.getLogger()
-    2. 方法
-        ```groovy
-        /*
-         * quiet / lifecycle / debug / info / warn / error / trace / log(LogLevel, ...)
-         * isLifecycleEnabled() / isQuietEnabled() / isEnabled​(LogLevel level) / isDebugEnabled / isErrorEnabled / isInfoEnabled / isTraceEnabled / isWarnEnabled / getName
-         */
-        // LogLevel -- DEBUG / ERROR / INFO / LIFECYCLE / QUIET / WARN
-        // 部分方法 inherited from SEL4j里面的logger接口，额外添加了lifecycle/quiet
-        ```
-6. interface org.gradle.api.logging.LoggingManager
+4. org.gradle.api.logging
     ```groovy
+    interface org.gradle.api.logging.ScriptHandler
+    project.getBuildScript() / script.getBuildScript()
+    /*
+        * repositories / dependencies / getDependencies / getRepositories
+        * getClassLoader / getConfigurations / getSourceFile / getSourceURI
+        */
+    // void dependencies​(Closure configureClosure): 配置脚本的依赖项。
+    // ClassLoader getClassLoader(): 返回ClassLoader包含此脚本的类路径的内容。
+    // ConfigurationContainer getConfigurations(): 返回此处理程序的配置。
+    // DependencyHandler getDependencies(): 返回脚本的依赖项。
+    // RepositoryHandler getRepositories(): 返回创建存储库的处理程序，用于检索脚本类路径的依赖关系。
+    // File getSourceFile(): 返回包含脚本源的文件（如果有）。
+    // URI getSourceURI(): 返回脚本源的URI（如果有）。
+    // void repositories​(Closure configureClosure): 配置脚本依赖项的存储库。
+    /// static final String CLASSPATH_CONFIGURATION  // 用于组装脚本类路径的配置的名称。
+    ```
+    ```groovy
+    interface org.gradle.api.logging.Logging
+    Logging.getLogger(Class) / Logging.getLogger(String) / project.getLogger() / task.getLogger() / script.getLogger()
+    /*
+        * quiet / lifecycle / debug / info / warn / error / trace / log(LogLevel, ...)
+        * isLifecycleEnabled() / isQuietEnabled() / isEnabled​(LogLevel level) / isDebugEnabled / isErrorEnabled / isInfoEnabled / isTraceEnabled / isWarnEnabled / getName
+        */
+    // LogLevel -- DEBUG / ERROR / INFO / LIFECYCLE / QUIET / WARN
+    // 部分方法 inherited from SEL4j里面的logger接口，额外添加了lifecycle/quiet
+    ```
+    ```groovy
+    interface org.gradle.api.logging.LoggingManager
     // LoggingManager captureStandardError​(LogLevel level): 请求写入System.err的输出被路由到Gradle的日志记录系统。
     // LoggingManager captureStandardOutput​(LogLevel level): 请求写入System.out的输出路由到Gradle的日志记录系统。
     // LogLevel getLevel(): 返回当前日志记录级别。
@@ -2057,26 +2056,27 @@
     // LogLevel getStandardOutputCaptureLevel(): 返回写入System.out的输出将映射到的日志级别。
     // addStandardErrorListener, addStandardOutputListener, removeStandardErrorListener, removeStandardOutputListener  --  inherited from interface org.gradle.api.logging.LoggingOutput
     ```
-7. interface org.gradle.api.logging.StandardOutputListener
     ```groovy
+    interface org.gradle.api.logging.StandardOutputListener
     void onOutput​(CharSequence output)
     ```
-8. ResourceHandler
+5. ResourceHandler
     1. TextResourceFactory text: Returns a factory for creating ``TextResources`` from various sources such as strings, files, and archive entries.
     2. ReadableResource bzip2(Object path): 创建指向给定路径上的bzip2压缩文件的资源。根据Project.file(java.lang.Object)计算路径。
     3. ReadableResource gzip(Object path): 创建指向给定路径上的gzip压缩文件的资源。根据Project.file(java.lang.Object)计算路径。
-9. interface org.gradle.api.plugins.ObjectConfigurationAction
+6. org.gradle.api.plugins
     ```groovy
+    interface org.gradle.api.plugins.ObjectConfigurationAction
     // ObjectConfigurationAction from​(Object script): Adds a script to use to configure the target objects.
     // ObjectConfigurationAction plugin​(Class<? extends Plugin> pluginClass): Adds a Plugin to use to configure the target objects.
     // ObjectConfigurationAction plugin​(String pluginId): Adds a Plugin to use to configure the target objects.
     // ObjectConfigurationAction to​(Object... targets): Specifies some target objects to be configured.
     // ObjectConfigurationAction type​(Class<?> pluginClass): Adds the plugin implemented by the given class to the target.
     ```
-10. interface org.gradle.api.file
+7. org.gradle.api.file
     ```groovy
+    interface org.gradle.api.file.CopySpec
     /*
-     * org.gradle.api.file.CopySpec
      * eachFile / expand / filesMatching / filesNoMatching / filter / exclude / include / from / into / with​ / rename / setExcludes​ / setIncludes
      * isCaseSensitive / setCaseSensitive​ / getDuplicatesStrategy / setDuplicatesStrategy / getFilteringCharset / setFilteringCharset​​ / getIncludeEmptyDirs / setIncludeEmptyDirs​
      **/
@@ -2122,11 +2122,36 @@
     // CopySpec with​(CopySpec... sourceSpecs): Adds the given specs as a child of this spec.
     ```
     ```groovy
-    /*
-     * 
-     */
+    interface org.gradle.api.file.DeleteSpec
+    // DeleteSpec delete(Object ...file)
+    // void setFollowSymlinks​(boolean followSymlinks): Specifies whether or not symbolic links should be followed during deletion.
     ```
-11. interface org.gradle.process
+    ```groovy
+    interface org.gradle.api.file.CopySourceSpec
+    // CopySourceSpec from(Object ...sourcePaths)
+    // CopySourceSpec from(Object sourcePaths, Closure configureClosure)
+    // CopySourceSpec from(Object sourcePaths, Action<? super CopySpec> configureAction)
+    ```
+    ```groovy
+    interface org.gradle.api.file.CopyProcessingSpec
+    // CopyProcessingSpec eachFile​(Closure closure): Adds an action to be applied to each file as it about to be copied into its destination.
+    // CopyProcessingSpec eachFile​(Action<? super FileCopyDetails> action): Adds an action to be applied to each file as it is about to be copied into its destination.
+    // Integer getDirMode(): Returns the Unix permissions to use for the target directories.
+    // Integer getFileMode(): Returns the Unix permissions to use for the target files.
+    // CopyProcessingSpec into​(Object destPath): Specifies the destination directory for a copy.
+    // CopyProcessingSpec rename​(Closure closure): Renames a source file.
+    // CopyProcessingSpec rename​(String sourceRegEx, String replaceWith): Renames files based on a regular expression.
+    // CopyProcessingSpec rename​(Pattern sourceRegEx, String replaceWith): Renames files based on a regular expression.
+    // CopyProcessingSpec rename​(Transformer<String,​String> renamer): Renames a source file.
+    // CopyProcessingSpec setDirMode​(Integer mode): Sets the Unix permissions to use for the target directories.
+    // CopyProcessingSpec setFileMode​(Integer mode): Sets the Unix permissions to use for the target files.
+    //// inherited from org.gradle.api.file.ContentFilterable: expand, filter, filter, filter, filter
+    //// org.gradle.api.Transformer: OUT transform(IN in)
+    ```
+    ```groovy
+    //// ... ////
+    ```
+8. org.gradle.process
     ```groovy
     /*
      * org.gradle.process.ExecSpec
@@ -2208,11 +2233,11 @@
      *     ExecResult rethrowFailure(): Re-throws any failure executing this process.
      */
     ```
-12. interface org.gradle.api
+9.  org.gradle.api
     ```groovy
     enum PathValidation { DIRECTORY, FILE, EXISTS, NONE }
     ```
-13. 
+10. 
 
 ### interface 
 
