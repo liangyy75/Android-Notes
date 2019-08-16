@@ -18,8 +18,10 @@
 - [Gradle for Android 读书笔记: 设置持续集成](#gradle-for-android-%e8%af%bb%e4%b9%a6%e7%ac%94%e8%ae%b0-%e8%ae%be%e7%bd%ae%e6%8c%81%e7%bb%ad%e9%9b%86%e6%88%90)
 - [Gradle for Android 读书笔记: 高级自定义创建](#gradle-for-android-%e8%af%bb%e4%b9%a6%e7%ac%94%e8%ae%b0-%e9%ab%98%e7%ba%a7%e8%87%aa%e5%ae%9a%e4%b9%89%e5%88%9b%e5%bb%ba)
 - [Gradle: Others](#gradle-others-1)
+- [gradle.properties / settings.gradle](#gradleproperties--settingsgradle)
 - [Proguard](#proguard)
-- [interface org.gradle.api.Script](#interface-orggradleapiscript)
+- [org.gradle.api / org.gradle.api.initialization.dsl / org.gradle.api.logging / ResourceHandler](#orggradleapi--orggradleapiinitializationdsl--orggradleapilogging--resourcehandler)
+- [org.gradle.api.plugins / org.gradle.api.file / org.gradle.process](#orggradleapiplugins--orggradleapifile--orggradleprocess)
 - [interface](#interface)
 - [end](#end)
 
@@ -567,40 +569,24 @@
 1. 定义: 由于task运行于配置阶段中，因此在gradle文件中，只要执行其中一个task，则其他task都会执行一遍
     ```groovy
     // 第一种定义方式
-    task helloword(group: 'hensen', description :'hello'){
-        println "Hello World"
-    }
+    task helloword(group: 'hensen', description :'hello') { println "Hello World" }
     // 第二种定义方式
-    this.tasks.create(name: 'helloword'){
-        setGroup('hensen')
-        setDescription('hello')
-        println "Hello Word"
-    }
+    this.tasks.create(name: 'helloword') { setGroup('hensen'); setDescription('hello'); println("Hello Word") }
     // 第三种
-    task('hello') << {
-        println 'Hello World'
-    }
+    task('hello') << { println 'Hello World' }
     ```
 2. 时序
     ```groovy
-    //第一种定义方式
+    // 第一种定义方式
     task helloword(group: 'hensen', description :'hello'){
         println "Hello Word"
-        doFirst {
-            println "doFirst"
-        }
-        doLast {
-            println "doLast"
-        }
+        doFirst { println "doFirst" }
+        doLast { println "doLast" }
     }
-    //第二种定义方式
-    helloword.doFirst {
-        println "doFirst"
-    }
-    //第三种定义方式
-    helloword << {
-        println "doLast"
-    }
+    // 第二种定义方式
+    helloword.doFirst { println "doFirst" }
+    // 第三种定义方式
+    helloword << { println "doLast" }
     // 三种定义方式中，第二种定义方式会比第一种定义方式先执行
     // doFirst:task配置阶段时运行
     // doLast:task执行阶段时运行
@@ -608,54 +594,50 @@
     ```
 3. 计算build执行时长: gradle build执行的时长即task执行阶段的时长
     ```groovy
-    def startTime,endTime
+    def startTime, endTime
     this.afterEvaluate { Project project ->
         def prebuild = project.tasks.getByName('preBuild')
-        prebuild.doFirst {
-            startTime = System.currentTimeMillis()
-        }
+        prebuild.doFirst { startTime = System.currentTimeMillis() }
         def build = project.tasks.getByName('build')
-        build.doLast {
-            endTime = System.currentTimeMillis()
-            println "the build time is : ${endTime - startTime}"
-        }
+        build.doLast { endTime = System.currentTimeMillis(); println "the build time is : ${endTime - startTime}" }
     }
     ```
 4. 依赖关系: task与task之间的依赖
     ```groovy
-    task taskA {
-        doLast {
-            println "taskA run"
-        }
-    }
-    task taskB {
-        doLast {
-            println "taskB run"
-        }
-    }
-    task taskC(dependsOn: [taskA, taskB]) {
-        doLast {
-            println "taskC run"
-        }
-    }
-    //执行taskC后的输出结果
+    task taskA { doLast { println "taskA run" } }
+    task taskB { doLast { println "taskB run" } }
+    task taskC(dependsOn: [taskA, taskB]) { doLast { println "taskC run" } }
+    // 执行taskC后的输出结果
     taskA run
     taskB run
     taskC run
     ```
+    ```groovy
+    for (char ch in 'b'..'f') {
+        String sch = ch as String
+        tasks.create(sch) {
+            // println("configurate " + sch) 这句话在任何任务执行时都会执行，即每个任务都会执行
+            doFirst({ println("before running " + sch) })
+            doLast({ println("running " + sch) })
+        }
+    }
+    tasks.getByName('c').dependsOn('b')
+    tasks.getByName('e').mustRunAfter('d')
+    tasks.getByName('f').dependsOn(['e', 'd'])
+    // .\gradlew c 的结果如下: b\nc\n
+    // .\gradlew e 的结果如下: e\n
+    // .\gradlew f 的结果如下: d\ne\nf\n
+    // dependsOn说明依赖关系，而mustRunAfter则是顺序关系
+    ```
 5. 依赖关系: task与lib间的依赖
     ```groovy
     task taskC {
-        dependsOn this.tasks.findAll { task ->
-            return task.name.startsWith('lib')
-        }
-        doLast {
-            println "taskC run"
-        }
+        dependsOn(tasks.findAll { it.name.startsWith('lib') })
+        doLast { println "taskC run" }
     }
-    task lib1 << {println 'lib1'}
-    task lib2 << {println 'lib2'}
-    task lib3 << {println 'lib3'}
+    task lib1 << { println 'lib1' }
+    task lib2 << { println 'lib2' }
+    task lib3 << { println 'lib3' }
     // 执行taskC后的输出结果
     // lib1
     // lib2
@@ -677,17 +659,15 @@
         inputs.property('versionCode', this.versionCode)
         inputs.property('versionName', this.versionName)
         inputs.property('versionInfo', this.versionInfo)
-        outputs.file this.destFile
+        outputs.file(this.destFile)
         doLast {
-            //将输入的内容写入到输出文件中去
             def data = inputs.getProperties()
             File file = outputs.getFiles().getSingleFile()
             def versionMsg = new VersionMsg(data)
-            //将实体对象写入到xml文件中
             def sw = new StringWriter()
             def xmlBuilder = new MarkupBuilder(sw)
-            if (file.text != null && file.text.size() <= 0) {
-                //没有内容
+            if (file.text == null || file.text != null && file.text.size() <= 0) {
+                // 没有内容
                 xmlBuilder.releases {
                     release {
                         versionCode(versionMsg.versionCode)
@@ -695,18 +675,16 @@
                         versionInfo(versionMsg.versionInfo)
                     }
                 }
-                //直接写入
-                file.withWriter { writer -> 
-                    writer.append(sw.toString())
-                }
+                // 直接写入
+                file.withWriter { writer -> writer.append(sw.toString()) }
             } else {
-                //已有其它版本内容
+                // 已有其它版本内容
                 xmlBuilder.release {
                     versionCode(versionMsg.versionCode)
                     versionName(versionMsg.versionName)
                     versionInfo(versionMsg.versionInfo)
                 }
-                //插入到最后一行前面
+                // 插入到最后一行前面
                 def lines = file.readLines()
                 def lengths = lines.size() - 1
                 file.withWriter { writer ->
@@ -722,48 +700,24 @@
             }
         }
     }
-
     task readTask {
-        //指定输入文件为上一个task的输出
-        inputs.file this.destFile
-        doLast {
-            //读取输入文件的内容并显示
-            def file = inputs.files.singleFile
-            println file.text
-        }
+        // 指定输入文件为上一个task的输出
+        inputs.file(this.destFile)
+        doLast { println inputs.files.singleFile.text  /* 读取输入文件的内容并显示 */ }
     }
-
-    class VersionMsg {
-        String versionCode
-        String versionName
-        String versionInfo
-    }
-
-    this.project.afterEvaluate { project ->
-        def buildTask = project.tasks.getByName('build')
-        buildTask.doLast {
-            writeTask.execute()
-        }
-    }
+    class VersionMsg { String versionCode, versionName, versionInfo }
+    this.project.afterEvaluate { project -> project.tasks.getByName('build').doLast { writeTask.execute() } }
     ```
 7. 执行顺序: 无论三个task的执行顺序是怎么样，它们都会按照指定的顺序taskA taskB taskC执行
     ```groovy
-    task taskA {
-        doLast {
-            println "taskA run"
-        }
-    }
+    task taskA { doLast { println "taskA run" } }
     task taskB {
         mustRunAfter taskA
-        doLast {
-            println "taskB run"
-        }
+        doLast { println "taskB run" }
     }
     task taskC() {
         mustRunAfter taskB
-        doLast {
-            println "taskC run"
-        }
+        doLast { println "taskC run" }
     }
     ```
 
@@ -1765,6 +1719,13 @@
             ```
 2. 
 
+### gradle.properties / settings.gradle
+
+1. JVM 选项可以通过设置环境变量来更改. 您可以使用 GRADLE_OPTS 或者 JAVA_OPTS.
+    1. JAVA_OPTS 是一个用于 JAVA 应用的环境变量. 一个典型的用例是在 JAVA_OPTS 里设置HTTP代理服务器(proxy),
+    2. GRADLE_OPTS 是内存选项. 这些变量可以在 gradle 的一开始就设置或者通过 gradlew 脚本来设置.
+2. 
+
 ### Proguard
 
 1. 启用混淆
@@ -1982,98 +1943,114 @@
     2. C/C++层的混淆: native层混淆并没有统一的标准方案，常见的方法是使用**花指令**。使得native层在被反编译时出错。
     3. 资源文件的混淆: 和native层一样并没有统一的标准方案，目前有两个方案，美团和微信两种。微信的已开源 [AndResGuard](https://github.com/shwenzhang/AndResGuard/blob/master/README.zh-cn.md)
 
-### interface org.gradle.api.Script
+### org.gradle.api / org.gradle.api.initialization.dsl / org.gradle.api.logging / ResourceHandler
 
-1. 每个gradle脚本都实现了Script接口，有一些通用的方法和属性由委托对象(delegate)提供，如构建脚本的Project对象实例和初始化脚本的Gradle对象实例
-2. 通用属性
-    ```groovy
-    // ScriptHandler buildscript: 此脚本的脚本处理程序。您可以使用此处理程序来管理用于编译和执行此脚本的类路径。
-    // Logger logger: 此脚本的记录器。您可以在脚本中使用它来编写日志消息。
-    // LoggingManager logging: 在LoggingManager其可以被用于接收日志记录和控制此脚本标准输出/错误捕获。默认情况下，System.out将重定向到QUIET日志级别的Gradle日志记录系统，System.err将重定向到ERROR日志级别。
-    // ResoureHandler resources: 提供对特定于资源的实用程序方法的访问，例如创建各种资源的工厂方法。
-    ```
-3. 通用方法
-    ```groovy
-    /*
-     * apply / copy / copySpec / delete / exec / file / fileTree / files / javaexec / mkdir / relativePath / tarTree / zipTree / uri
-     */
-    // apply(closure): 使用插件或脚本为此脚本配置委托对象。delegate是**org.gradle.api.plugins.ObjectConfigurationAction**的对象
-    // apply(options): 使用插件或脚本为此脚本配置委托对象。与上面一样的，只是将方法[from, to, plugin, type]变成属性了而已
-    // copy(closure): 复制指定的文件。给定的闭包用于配置一个CopySpec，然后用于复制文件。例：
-    // copySpec(closure): 创建一个CopySpec稍后可用于复制文件或创建存档的文件。给定闭包用于配置CopySpec此方法返回之前的闭包。
-    // delete(paths): 删除文件和目录。
-    // exec(closure): 执行外部命令。闭包配置一个ExecSpec。
-    // exec(action): 执行外部命令。
-    // file(path): 解析相对于包含此脚本的目录的文件路径。这适用于描述Project.file(java.lang.Object)
-    // file(path, validation): 解析相对于包含此脚本的目录的文件路径，并使用给定的方案对其进行验证。请参阅PathValidation可能的验证列表。
-    // fileTree(baseDir): ConfigurableFileTree使用给定的基目录创建新的。给定的baseDir路径按照计算Script.file(java.lang.Object)。
-    // fileTree(baseDir, configureClosure): ConfigurableFileTree使用给定的基目录创建新的。给定的baseDir路径按照计算Script.file(java.lang.Object)。闭包将用于配置新文件树。文件树作为其委托传递给闭包。例：
-    // fileTree(args): ConfigurableFileTree使用提供的参数映射创建一个新的。该地图将作为新文件树的属性应用。例：
-    // files(paths, configureClosure): ConfigurableFileCollection使用给定路径创建新的。使用给定的闭包配置文件集合。该方法的工作原理如下所述Project.files(java.lang.Object, groovy.lang.Closure)。相对路径相对于包含此脚本的目录进行解析。
-    // files(paths): 返回ConfigurableFileCollection包含给定文件的a。这适用于描述Project.files(java.lang.Object[])。相对路径相对于包含此脚本的目录进行解析。
-    // javaexec(closure): 执行Java主类。闭包配置一个JavaExecSpec。
-    // javaexec(action): 执行Java主类。
-    // mkdir(path): 创建一个目录并返回指向它的文件。
-    // relativePath(path): 返回从包含此脚本的目录到给定路径的相对路径。给定的路径对象（逻辑上）如所描述的那样被解析Script.file(java.lang.Object)，从中计算相对路径。
-    // tarTree(tarPath): 创建一个FileTree包含给定TAR文件内容的new 。给定的tarPath路径可以是：
-    // uri(path): 解析相对于包含此脚本的目录的URI的文件路径。按照描述评估提供的路径对象Script.file(java.lang.Object)，但支持任何URI方案，而不仅仅是'file：'URI。
-    // zipTree(zipPath): 创建一个FileTree包含给定ZIP文件内容的新内容。给定的zipPath路径按照计算Script.file(java.lang.Object)。您可以将此方法与Script.copy(groovy.lang.Closure) 解压缩ZIP文件的方法结合使用。
-    ```
-4. org.gradle.api.logging
-    ```groovy
-    interface org.gradle.api.logging.ScriptHandler
-    project.getBuildScript() / script.getBuildScript()
-    /*
-        * repositories / dependencies / getDependencies / getRepositories
-        * getClassLoader / getConfigurations / getSourceFile / getSourceURI
+1. org.gradle.api
+    1. Script
+        ```groovy
+        // 每个gradle脚本都实现了Script接口，有一些通用的方法和属性由委托对象(delegate)提供，如构建脚本的Project对象实例和初始化脚本的Gradle对象实例
+        /// ScriptHandler buildscript: 此脚本的脚本处理程序。您可以使用此处理程序来管理用于编译和执行此脚本的类路径。
+        /// Logger logger: 此脚本的记录器。您可以在脚本中使用它来编写日志消息。
+        /// LoggingManager logging: 在LoggingManager其可以被用于接收日志记录和控制此脚本标准输出/错误捕获。默认情况下，System.out将重定向到QUIET日志级别的Gradle日志记录系统，System.err将重定向到ERROR日志级别。
+        // ResoureHandler resources: 提供对特定于资源的实用程序方法的访问，例如创建各种资源的工厂方法。
+        /*
+        * apply / copy / copySpec / delete / exec / file / fileTree / files / javaexec / mkdir / relativePath / tarTree / zipTree / uri
         */
-    // void dependencies​(Closure configureClosure): 配置脚本的依赖项。
-    // ClassLoader getClassLoader(): 返回ClassLoader包含此脚本的类路径的内容。
-    // ConfigurationContainer getConfigurations(): 返回此处理程序的配置。
-    // DependencyHandler getDependencies(): 返回脚本的依赖项。
-    // RepositoryHandler getRepositories(): 返回创建存储库的处理程序，用于检索脚本类路径的依赖关系。
-    // File getSourceFile(): 返回包含脚本源的文件（如果有）。
-    // URI getSourceURI(): 返回脚本源的URI（如果有）。
-    // void repositories​(Closure configureClosure): 配置脚本依赖项的存储库。
-    /// static final String CLASSPATH_CONFIGURATION  // 用于组装脚本类路径的配置的名称。
-    ```
-    ```groovy
-    interface org.gradle.api.logging.Logging
-    Logging.getLogger(Class) / Logging.getLogger(String) / project.getLogger() / task.getLogger() / script.getLogger()
-    /*
-        * quiet / lifecycle / debug / info / warn / error / trace / log(LogLevel, ...)
-        * isLifecycleEnabled() / isQuietEnabled() / isEnabled​(LogLevel level) / isDebugEnabled / isErrorEnabled / isInfoEnabled / isTraceEnabled / isWarnEnabled / getName
-        */
-    // LogLevel -- DEBUG / ERROR / INFO / LIFECYCLE / QUIET / WARN
-    // 部分方法 inherited from SEL4j里面的logger接口，额外添加了lifecycle/quiet
-    ```
-    ```groovy
-    interface org.gradle.api.logging.LoggingManager
-    // LoggingManager captureStandardError​(LogLevel level): 请求写入System.err的输出被路由到Gradle的日志记录系统。
-    // LoggingManager captureStandardOutput​(LogLevel level): 请求写入System.out的输出路由到Gradle的日志记录系统。
-    // LogLevel getLevel(): 返回当前日志记录级别。
-    // LogLevel getStandardErrorCaptureLevel(): 返回写入System.err的输出将映射到的日志级别。
-    // LogLevel getStandardOutputCaptureLevel(): 返回写入System.out的输出将映射到的日志级别。
-    // addStandardErrorListener, addStandardOutputListener, removeStandardErrorListener, removeStandardOutputListener  --  inherited from interface org.gradle.api.logging.LoggingOutput
-    ```
-    ```groovy
-    interface org.gradle.api.logging.StandardOutputListener
-    void onOutput​(CharSequence output)
-    ```
-5. ResourceHandler
+        // apply(closure): 使用插件或脚本为此脚本配置委托对象。delegate是**org.gradle.api.plugins.ObjectConfigurationAction**的对象
+        // apply(options): 使用插件或脚本为此脚本配置委托对象。与上面一样的，只是将方法[from, to, plugin, type]变成属性了而已
+        // copy(closure): 复制指定的文件。给定的闭包用于配置一个CopySpec，然后用于复制文件。例：
+        // copySpec(closure): 创建一个CopySpec稍后可用于复制文件或创建存档的文件。给定闭包用于配置CopySpec此方法返回之前的闭包。
+        // delete(paths): 删除文件和目录。
+        // exec(closure): 执行外部命令。闭包配置一个ExecSpec。
+        // exec(action): 执行外部命令。
+        // file(path): 解析相对于包含此脚本的目录的文件路径。这适用于描述Project.file(java.lang.Object)
+        // file(path, validation): 解析相对于包含此脚本的目录的文件路径，并使用给定的方案对其进行验证。请参阅PathValidation可能的验证列表。
+        // fileTree(baseDir): ConfigurableFileTree使用给定的基目录创建新的。给定的baseDir路径按照计算Script.file(java.lang.Object)。
+        // fileTree(baseDir, configureClosure): ConfigurableFileTree使用给定的基目录创建新的。给定的baseDir路径按照计算Script.file(java.lang.Object)。闭包将用于配置新文件树。文件树作为其委托传递给闭包。例：
+        // fileTree(args): ConfigurableFileTree使用提供的参数映射创建一个新的。该地图将作为新文件树的属性应用。例：
+        // files(paths, configureClosure): ConfigurableFileCollection使用给定路径创建新的。使用给定的闭包配置文件集合。该方法的工作原理如下所述Project.files(java.lang.Object, groovy.lang.Closure)。相对路径相对于包含此脚本的目录进行解析。
+        // files(paths): 返回ConfigurableFileCollection包含给定文件的a。这适用于描述Project.files(java.lang.Object[])。相对路径相对于包含此脚本的目录进行解析。
+        // javaexec(closure): 执行Java主类。闭包配置一个JavaExecSpec。
+        // javaexec(action): 执行Java主类。
+        // mkdir(path): 创建一个目录并返回指向它的文件。
+        // relativePath(path): 返回从包含此脚本的目录到给定路径的相对路径。给定的路径对象（逻辑上）如所描述的那样被解析Script.file(java.lang.Object)，从中计算相对路径。
+        // tarTree(tarPath): 创建一个FileTree包含给定TAR文件内容的new 。给定的tarPath路径可以是：
+        // uri(path): 解析相对于包含此脚本的目录的URI的文件路径。按照描述评估提供的路径对象Script.file(java.lang.Object)，但支持任何URI方案，而不仅仅是'file：'URI。
+        // zipTree(zipPath): 创建一个FileTree包含给定ZIP文件内容的新内容。给定的zipPath路径按照计算Script.file(java.lang.Object)。您可以将此方法与Script.copy(groovy.lang.Closure) 解压缩ZIP文件的方法结合使用。
+        ```
+    2. Task
+    3. Project
+    4. Plugin
+    5. XmlProvider
+2. org.gradle.api.initialization.dsl
+    1. ScriptHandler
+        ```groovy
+        interface ScriptHandler
+        project.getBuildScript() / script.getBuildScript()
+        /*
+         * repositories / dependencies / getDependencies / getRepositories
+         * getClassLoader / getConfigurations / getSourceFile / getSourceURI
+         */
+        // void dependencies​(Closure configureClosure): 配置脚本的依赖项。
+        // ClassLoader getClassLoader(): 返回ClassLoader包含此脚本的类路径的内容。
+        // ConfigurationContainer getConfigurations(): 返回此处理程序的配置。
+        // DependencyHandler getDependencies(): 返回脚本的依赖项。
+        // RepositoryHandler getRepositories(): 返回创建存储库的处理程序，用于检索脚本类路径的依赖关系。
+        // File getSourceFile(): 返回包含脚本源的文件（如果有）。
+        // URI getSourceURI(): 返回脚本源的URI（如果有）。
+        // void repositories​(Closure configureClosure): 配置脚本依赖项的存储库。
+        /// static final String CLASSPATH_CONFIGURATION  // 用于组装脚本类路径的配置的名称。
+        ```
+3. org.gradle.api.logging
+    1. Logger
+        ```groovy
+        interface Logging extends org.slf4j.Logger
+        Logging.getLogger(Class) / Logging.getLogger(String) / project.getLogger() / task.getLogger() / script.getLogger()
+        /*
+         * quiet / lifecycle / debug / info / warn / error / trace / log(LogLevel, ...)
+         * isLifecycleEnabled() / isQuietEnabled() / isEnabled​(LogLevel level) / isDebugEnabled / isErrorEnabled / isInfoEnabled / isTraceEnabled / isWarnEnabled / getName
+         */
+        // LogLevel -- DEBUG / ERROR / INFO / LIFECYCLE / QUIET / WARN
+        // 部分方法 inherited from SEL4j里面的logger接口，额外添加了lifecycle/quiet
+        ```
+    2. LoggingManager
+        ```groovy
+        interface org.gradle.api.logging.LoggingManager
+        // LoggingManager captureStandardError​(LogLevel level): 请求写入System.err的输出被路由到Gradle的日志记录系统。
+        // LoggingManager captureStandardOutput​(LogLevel level): 请求写入System.out的输出路由到Gradle的日志记录系统。
+        // LogLevel getLevel(): 返回当前日志记录级别。
+        // LogLevel getStandardErrorCaptureLevel(): 返回写入System.err的输出将映射到的日志级别。
+        // LogLevel getStandardOutputCaptureLevel(): 返回写入System.out的输出将映射到的日志级别。
+        ```
+    3. LoggingOutput / StandardOutputListener
+        ```groovy
+        // 1. addStandardErrorListener, addStandardOutputListener, removeStandardErrorListener, removeStandardOutputListener  // 都是添加StandardOutputListener的实例
+        // 2. void onOutput(CharSequence output)
+        ```
+    4. Logging
+        ```groovy
+        // Gradle日志系统的主要入口点
+        static Logger getLogger(Class c)
+        static Logger getLogger(String name)
+        ```
+4. ResourceHandler
     1. TextResourceFactory text: Returns a factory for creating ``TextResources`` from various sources such as strings, files, and archive entries.
     2. ReadableResource bzip2(Object path): 创建指向给定路径上的bzip2压缩文件的资源。根据Project.file(java.lang.Object)计算路径。
     3. ReadableResource gzip(Object path): 创建指向给定路径上的gzip压缩文件的资源。根据Project.file(java.lang.Object)计算路径。
-6. org.gradle.api.plugins
-    ```groovy
-    interface org.gradle.api.plugins.ObjectConfigurationAction
-    // ObjectConfigurationAction from​(Object script): Adds a script to use to configure the target objects.
-    // ObjectConfigurationAction plugin​(Class<? extends Plugin> pluginClass): Adds a Plugin to use to configure the target objects.
-    // ObjectConfigurationAction plugin​(String pluginId): Adds a Plugin to use to configure the target objects.
-    // ObjectConfigurationAction to​(Object... targets): Specifies some target objects to be configured.
-    // ObjectConfigurationAction type​(Class<?> pluginClass): Adds the plugin implemented by the given class to the target.
-    ```
-7. org.gradle.api.file
+
+### org.gradle.api.plugins / org.gradle.api.file / org.gradle.process
+
+1. org.gradle.api.plugins  -- 负责插件，非常重要
+    1. ObjectConfigurationAction
+        ```groovy
+        interface ObjectConfigurationAction
+        // ObjectConfigurationAction from​(Object script): Adds a script to use to configure the target objects.
+        // ObjectConfigurationAction plugin​(Class<? extends Plugin> pluginClass): Adds a Plugin to use to configure the target objects.
+        // ObjectConfigurationAction plugin​(String pluginId): Adds a Plugin to use to configure the target objects.
+        // ObjectConfigurationAction to​(Object... targets): Specifies some target objects to be configured.
+        // ObjectConfigurationAction type​(Class<?> pluginClass): Adds the plugin implemented by the given class to the target.
+        ```
+2. org.gradle.api.file
     ```groovy
     interface org.gradle.api.file.CopySpec
     /*
@@ -2149,51 +2126,163 @@
     //// org.gradle.api.Transformer: OUT transform(IN in)
     ```
     ```groovy
-    //// ... ////
+    interface FileCollection extends Iterable<File>, AntBuilderAware, Buildable
+    /*
+     * contains / filter / getAsFileTree / getAsPath / getElements / getFiles / getSingleFile / isEmpty / minus / plus
+     * addToAntBuilder
+     * inherited from org.gradle.api.Buildable: getBuildDependencies
+     * inherited from java.lang.Iterable: forEach, iterator, spliterator
+     */
+    // Object addToAntBuilder​(Object builder, String nodeName)
+	// void addToAntBuilder​(Object builder, String nodeName, FileCollection.AntType type)
+	// boolean contains​(File file)
+	// FileCollection filter​(Closure filterClosure)
+	// FileCollection filter​(Spec<? super File> filterSpec)
+	// FileTree getAsFileTree()
+	// String getAsPath()
+	// Provider<Set<FileSystemLocation>> getElements()
+	// Set<File> getFiles()
+	// File getSingleFile()
+	// boolean isEmpty()
+	// FileCollection minus​(FileCollection collection)
+	// FileCollection plus​(FileCollection collection)
+    ```
+    ```groovy
+    interface FileVisitor {
+        void visitDir​(FileVisitDetails dirDetails)
+        void visitFile​(FileVisitDetails dirDetails)
+    }
+    interface FileTreeElement {
+        boolean copyTo(File target)
+        void copyTo​(OutputStream output)
+		File getFile()
+		InputStream open()
+		long getLastModified()
+		int getMode()
+		String getName()
+		String getPath()
+		RelativePath getRelativePath()
+		long getSize()
+		boolean isDirectory()
+    }
+    interface FileVisitDetails extends FileTreeElement { void stopVisiting() }
+    enum DuplicatesStrategy { EXCLUDE, FAIL, INCLUDE, INHERIT, WARN }
+    interface ContentFilterable {
+        ContentFilterable expand​(Map<String,​?> properties)
+		ContentFilterable filter​(Closure closure)
+		ContentFilterable filter​(Class<? extends FilterReader> filterType)
+		ContentFilterable filter​(Map<String,​?> properties, Class<? extends FilterReader> filterType)
+		ContentFilterable filter​(Transformer<String,​String> transformer)
+    }
+    interface FileCopyDetails extends FileTreeElement, ContentFilterable {
+        void exclude()
+		DuplicatesStrategy getDuplicatesStrategy()
+		String getName()
+		String getPath()
+		RelativePath getRelativePath()
+		RelativePath getRelativeSourcePath()
+		String getSourceName()
+		String getSourcePath()
+		void setDuplicatesStrategy​(DuplicatesStrategy strategy)
+		void setMode​(int mode)
+		void setName​(String name)
+		void setPath​(String path)
+		void setRelativePath​(RelativePath path)
+    }
+    ```
+    ```groovy
+    interface FileTree extends FileCollection
+    // Project.fileTree(java.util.Map), Project.zipTree(Object)或Project.tarTree(Object)
+    /*
+     * contains / filter / getAsFileTree / getAsPath / getElements / getFiles / getSingleFile / isEmpty / minus / plus / addToAntBuilder / getBuildDependencies / forEach / iterator / spliterator
+     * matching / visit
+     */
+    // FileTree getAsFileTree(): 返回此.
+	// Set<File> getFiles(): 以flattened Set的形式返回此树的内容.
+	// FileTree matching​(Closure filterConfigClosure): 将此树的内容限制为与给定过滤器匹配的文件.
+	// FileTree matching​(Action<? super PatternFilterable> filterConfigAction): 将此树的内容限制为与给定过滤器匹配的文件.
+	// FileTree matching​(PatternFilterable patterns): 将此树的内容限制为与给定过滤器匹配的文件.
+	// FileTree plus​(FileTree fileTree): 返回一个FileTree ，它包含此树和给定树的并集.
+	// FileTree visit​(Closure visitor): 访问此文件树中的文件和目录.
+	// FileTree visit​(Action<? super FileVisitDetails> visitor): 访问此文件树中的文件和目录.
+	// FileTree visit​(FileVisitor visitor): 访问此文件树中的文件和目录.
+    ```
+    ```groovy
+    interface ConfigurableFileCollection extends FileCollection, HasConfigurableValue
+    // get by Project.files(Object...)或ObjectFactory.fileCollection()
+    /*
+     * builtBy / from / getBuiltBy / getFrom / setBuiltBy / setFrom
+     */
+    // ConfigurableFileCollection builtBy​(Object... tasks)
+	// ConfigurableFileCollection from​(Object... paths)
+	// Set<Object> getBuiltBy()
+	// Set<Object> getFrom()
+	// ConfigurableFileCollection setBuiltBy​(Iterable<?> tasks)
+	// void setFrom​(Iterable<?> paths)
+	// void setFrom​(Object... paths)
+    ```
+    ```groovy
+    interface ConfigurableFileTree extends FileTree, DirectoryTree, PatternFilterable, Buildable
+    // get by projects.fileTree(java.util.Map)
+    /*
+     * builtBy / getBuiltBy / setBuiltBy / from / getDir / setDir
+     */
+    // ConfigurableFileTree builtBy​(Object... tasks): 注册构建此集合文件的一些任务.
+	// ConfigurableFileTree from​(Object dir): 使用给定路径指定此文件树的基目录.
+	// Set<Object> getBuiltBy(): 返回构建此集合文件的任务集.
+	// File getDir(): 返回此文件树的基目录.
+	// ConfigurableFileTree setBuiltBy​(Iterable<?> tasks): 设置构建此集合文件的任务.
+	// ConfigurableFileTree setDir​(Object dir): 使用给定路径指定此文件树的基目录.
     ```
 8. org.gradle.process
-    ```groovy
-    /*
-     * org.gradle.process.ExecSpec
-     * args / commandLine / getArgs / getArgumentProviders / setArgs / setCommandLine
-     * inherited from org.gradle.process.BaseExecSpec:
-     * getErrorOutput, setErrorOutput, getStandardInput, setStandardInput, getStandardOutput, setStandardOutput, isIgnoreExitValue, setIgnoreExitValue, getCommandLine
-     * inherited from org.gradle.process.ProcessForkOptions:
-     * copyer: copyTo
-     * addter: environment, environment, executable, workingDir
-     * getter: getEnvironment, getExecutable, getWorkingDir, setEnvironment
-     * setter: setExecutable, setExecutable, setWorkingDir, setWorkingDir
-     */
-    // ExecSpec	args​(Iterable<?> args): Adds arguments for the command to be executed.
-    // ExecSpec	args​(Object... args): Adds arguments for the command to be executed.
-    // ExecSpec	commandLine​(Iterable<?> args): Sets the full command line, including the executable to be executed plus its arguments.
-    // ExecSpec	commandLine​(Object... args): Sets the full command line, including the executable to be executed plus its arguments.
-    // List<String>	getArgs(): Returns the arguments for the command to be executed.
-    // List<CommandLineArgumentProvider> getArgumentProviders(): Argument providers for the application.
-    // ExecSpec	setArgs​(Iterable<?> args): Sets the arguments for the command to be executed.
-    // ExecSpec	setArgs​(List<String> args): Sets the arguments for the command to be executed.
-    // void	setCommandLine​(Iterable<?> args): Sets the full command line, including the executable to be executed plus its arguments.
-    // void	setCommandLine​(Object... args): Sets the full command line, including the executable to be executed plus its arguments.
-    // void	setCommandLine​(List<String> args): Sets the full command line, including the executable to be executed plus its arguments.
-    /*
-     * org.gradle.process.CommandLineArgumentProvider: Iterable<String> asArguments()
-     * org.gradle.process.JavaExecSpec:
-     *   args / getArgs / setArgs / classpath / getClassPath / setClassPath / getArgumentProviders / getMain / setMain
-     *     JavaExecSpec args​(Iterable<?> args): Adds args for the main class to be executed.
-     *     JavaExecSpec args​(Object... args): Adds args for the main class to be executed.
-     *     JavaExecSpec classpath​(Object... paths): Adds elements to the classpath for executing the main class.
-     *     List<String> getArgs(): Returns the arguments passed to the main class to be executed.
-     *     List<CommandLineArgumentProvider> getArgumentProviders(): Argument providers for the application.
-     *     FileCollection getClasspath(): Returns the classpath for executing the main class.
-     *     String getMain(): Returns the fully qualified name of the Main class to be executed.
-     *     JavaExecSpec setArgs​(Iterable<?> args): Sets the args for the main class to be executed.
-     *     JavaExecSpec setArgs​(List<String> args): Sets the args for the main class to be executed.
-     *     JavaExecSpec setClasspath​(FileCollection classpath): Sets the classpath for executing the main class.
-     *     JavaExecSpec setMain​(String main): Sets the fully qualified name of the main class to be executed.
-     *     inherited from org.gradle.process.BaseExecSpec
-     *     inherited from org.gradle.process.ProcessForkOptions
-     *     inherited from org.gradle.process.JavaForkOptions
-    ```
+    1. ExecSpec
+        ```groovy
+        /*
+         * org.gradle.process.ExecSpec
+         * args / commandLine / getArgs / getArgumentProviders / setArgs / setCommandLine
+         * inherited from org.gradle.process.BaseExecSpec:
+         * getErrorOutput, setErrorOutput, getStandardInput, setStandardInput, getStandardOutput, setStandardOutput, isIgnoreExitValue, setIgnoreExitValue, getCommandLine
+         * inherited from org.gradle.process.ProcessForkOptions:
+         * copyer: copyTo
+         * addter: environment, environment, executable, workingDir
+         * getter: getEnvironment, getExecutable, getWorkingDir, setEnvironment
+         * setter: setExecutable, setExecutable, setWorkingDir, setWorkingDir
+         */
+        // ExecSpec	args​(Iterable<?> args): Adds arguments for the command to be executed.
+        // ExecSpec	args​(Object... args): Adds arguments for the command to be executed.
+        // ExecSpec	commandLine​(Iterable<?> args): Sets the full command line, including the executable to be executed plus its arguments.
+        // ExecSpec	commandLine​(Object... args): Sets the full command line, including the executable to be executed plus its arguments.
+        // List<String>	getArgs(): Returns the arguments for the command to be executed.
+        // List<CommandLineArgumentProvider> getArgumentProviders(): Argument providers for the application.
+        // ExecSpec	setArgs​(Iterable<?> args): Sets the arguments for the command to be executed.
+        // ExecSpec	setArgs​(List<String> args): Sets the arguments for the command to be executed.
+        // void	setCommandLine​(Iterable<?> args): Sets the full command line, including the executable to be executed plus its arguments.
+        // void	setCommandLine​(Object... args): Sets the full command line, including the executable to be executed plus its arguments.
+        // void	setCommandLine​(List<String> args): Sets the full command line, including the executable to be executed plus its arguments.
+        ```
+    2. CommandLineArgumentProvider / JavaExecSpec
+        ```groovy
+        /*
+         * org.gradle.process.CommandLineArgumentProvider: Iterable<String> asArguments()
+         * org.gradle.process.JavaExecSpec:
+         *   args / getArgs / setArgs / classpath / getClassPath / setClassPath / getArgumentProviders / getMain / setMain
+         *     JavaExecSpec args​(Iterable<?> args): Adds args for the main class to be executed.
+         *     JavaExecSpec args​(Object... args): Adds args for the main class to be executed.
+         *     JavaExecSpec classpath​(Object... paths): Adds elements to the classpath for executing the main class.
+         *     List<String> getArgs(): Returns the arguments passed to the main class to be executed.
+         *     List<CommandLineArgumentProvider> getArgumentProviders(): Argument providers for the application.
+         *     FileCollection getClasspath(): Returns the classpath for executing the main class.
+         *     String getMain(): Returns the fully qualified name of the Main class to be executed.
+         *     JavaExecSpec setArgs​(Iterable<?> args): Sets the args for the main class to be executed.
+         *     JavaExecSpec setArgs​(List<String> args): Sets the args for the main class to be executed.
+         *     JavaExecSpec setClasspath​(FileCollection classpath): Sets the classpath for executing the main class.
+         *     JavaExecSpec setMain​(String main): Sets the fully qualified name of the main class to be executed.
+         *     inherited from org.gradle.process.BaseExecSpec
+         *     inherited from org.gradle.process.ProcessForkOptions
+         *     inherited from org.gradle.process.JavaForkOptions
+        * /
+        ```
+    3. JavaForkOptions / ExecResult
     ```groovy
     /*
      * org.gradle.process.JavaForkOptions:
