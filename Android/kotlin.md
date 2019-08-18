@@ -1,10 +1,9 @@
 - [links](#links)
-- [basic](#basic)
+- [basic1](#basic1)
 - [数组与函数](#%e6%95%b0%e7%bb%84%e4%b8%8e%e5%87%bd%e6%95%b0)
 - [函数进阶](#%e5%87%bd%e6%95%b0%e8%bf%9b%e9%98%b6)
 - [Lambda表达式](#lambda%e8%a1%a8%e8%be%be%e5%bc%8f)
 - [关键字表达式](#%e5%85%b3%e9%94%ae%e5%ad%97%e8%a1%a8%e8%be%be%e5%bc%8f)
-- [关键字表达式](#%e5%85%b3%e9%94%ae%e5%ad%97%e8%a1%a8%e8%be%be%e5%bc%8f-1)
 - [闭包](#%e9%97%ad%e5%8c%85)
 - [运算符](#%e8%bf%90%e7%ae%97%e7%ac%a6)
 - [区间语句](#%e5%8c%ba%e9%97%b4%e8%af%ad%e5%8f%a5)
@@ -33,37 +32,34 @@
 * [抛弃 Java 改用 Kotlin 的六个月后，我后悔了](https://cloud.tencent.com/developer/news/249347)
 * [Kotlin中文网](https://www.kotlincn.net/)
 
-### basic
+### basic1
 
 1. 主函数
     ```kt
-    fun main(args: Array<String>) {
-        println("Hello World")
-    }
+    fun main(args: Array<String>) { println("Hello World") }
     ```
 2. 可以省略分号
-3. val声明时可以不带类型，因为有自动类型转换
-4. 注释
+3. 注释
     1. 单行: //
     2. 多行: /**/，而且支持嵌套
-5. 常量: val修饰常量，编译器规定常量必须初始化，若不想初始化，可用by lazy{}对常量进行懒加载
+4. 常量: val修饰常量，编译器规定常量必须初始化，若不想初始化，可用by lazy{}对常量进行懒加载。有类型推断
     ```kt
     val a: Int = 1                     // 强类型常量
     val b = 2                          // 弱类型常量
     const val c = "Hello"              // 编译器常量
     val a: String by lazy{"lazy init"} // 懒加载常量
     ```
-6. 变量: var修饰变量，编译器规定变量必须初始化，若不想初始化，可用lateinit关键字限制报错。注意，这是2018的版本，现在这个lateinit好像不行。
+5. 变量: var修饰变量，编译器规定变量必须初始化，若不想初始化，可用lateinit关键字限制报错。有类型推断
     ```kt
-    lateinit var a                       // 未初始化变量
+    lateinit var a: Int                  // 未初始化变量，必须声明类型
     var x = 5                            // 初始化变量
     var x1 = "x is $x"                   // 获取变量的值：$变量
-    var x2 = "${x1.replace("is","was")}" // 内嵌表达式：${表达式}
+    var x2 = "${x1.replace("is", "was")}"// 内嵌表达式：${表达式}
     var str = """<html>
             <a href="">go</a>
         </html>"""                       // 段落
     ```
-7. 空值检测
+6. 空值检测
     ```kt
     fun main(args: Array<String>) {
         println(args?.size)                //if not null
@@ -79,48 +75,73 @@
         value!!.let{ }                      //告诉编译器不需要判空
     }
     ```
-8. 字符串比较
+7. 字符串比较
     * ==：在kt中相当于java的equals()
     * ===：在kt中相当于java的==
+8. 不支持将较小数据类型隐式转换为较大数据类型(在java中支持)。例如，Int不能分配转换为Long或Double，会在编译阶段出错。但又非常明显的转换函数
+    ```kt
+    toByte()
+    toShort()
+    toInt()
+    toLong()
+    toFloat()
+    toDouble()
+    toChar()
+    ```
+9.  输入输出
+    ```kt
+    print(obj: Any?): Unit
+    println(obj: Any? = null): Unit
+    readLine(): String
+    // java.util.Scanner
+    val read = Scanner(System.`in`)
+    read.next()  // nextByte / nextShort / nextInt / nextLong / nextDouble / nextFloat / next / nextChar / nextBoolean
+    // java.io.Console
+    ```
 
 ### 数组与函数
 
 1. 数组定义
     ```kt
     // 每种基本类型都有对应的数组创建方法，类似于定制版
-    var array:IntArray = intArrayOf(1,3,5,7)
-    var array:CharArray = charArrayOf('H','E','L','L','O')
+    var array: IntArray = intArrayOf(1, 3, 5, 7)
+    var array: CharArray = charArrayOf('H', 'E', 'L', 'L', 'O')
     // 基于泛性的创建方法，泛型也可省略，类似于通用版
-    var array:Array<Char> = arrayOf('H','E','L','L','O')
+    var array: Array<Char> = arrayOf('H', 'E', 'L', 'L', 'O')
+    var array: Array<Any?> = Array(5, { null })
     ```
 2. 数组和字符串转换
     ```kt
     // 第一种形式
-    var array:Array<Char> = arrayOf('H','E','L','L','O')
+    var array: Array<Char> = arrayOf('H', 'E', 'L', 'L', 'O')
     println(array.joinToString(""))
     // 第二种形式
-    var array:CharArray = charArrayOf('H','E','L','L','O')
+    var array: CharArray = charArrayOf('H', 'E', 'L', 'L', 'O')
     println(String(array))
     ```
 3. 数组遍历
     ```kt
     // 第一种形式
-    array.forEach{println(": $it")}
+    array.forEach { println(": $it") }
     // 第二种形式
-    // array.forEach{::println}  // error: overload resolution ambiguity
+    // array.forEach { ::println }  // error: overload resolution ambiguity
     // 第三种形式
-    for((index, value) in array.withIndex()){
+    for ((index, value) in array.withIndex()) {
         println("$index -> $value")
+    }
+    for (index in array.indices) {
+        println("marks[$index]: " + marks[index])
     }
     ```
 4. 有返回值的函数
     ```kt
-    //第一种形式
-    fun sum1(a: Int, b: Int): Int {return a + b}
-    //第二种形式
+    // 第一种形式
+    fun sum1(a: Int, b: Int): Int { return a + b }
+    // 第二种形式
     fun sum2(a: Int, b: Int) = println("a + b = ${a + b}")  // return 不允许出现在 = 的函数中
-    //第三种形式
+    // 第三种形式
     fun sum3(a: Int, b: Int) = a + b
+    // test
     fun main(args: Array<String>) {
         println(sum1(10, 20))
         println(sum2(10, 20))
@@ -136,7 +157,7 @@
 ### 函数进阶
 
 1. 默认参数的函数: ``fun foo(a: Int = 0, b: String = "") { /**/ }``
-2. 变长参数的函数: 变长参数由vararg关键字决定，数组参数可通过*方式传参，第一个参数可以不使用名字指定，最后个参数必须使用具名参数
+2. 变长参数的函数: 变长参数由vararg关键字决定，数组参数可通过*方式传参，前面的参数可以不使用名字指定，后面的参数必须使用具名参数
     ```kt
     fun say(double: Double, vararg ints: Int, string: String) { /**/ }
     val array = intArrayOf(1, 3, 4, 5)
@@ -161,29 +182,85 @@
     infix fun <P1, P2, R> Function1<P1, P2>.andThen(function: Function1<P2, R>): Function1<P1, R> {
         return fun(p1: P1): R { return function.invoke(this.invoke(p1)) }
     }
-    var add = {i: Int -> i + 5}
-    var plus = {i: Int -> i * 2}
+    var add = { i: Int -> i + 5 }
+    var plus = { i: Int -> i * 2 }
     var addAndPlus = add andThen plus
     println(addAndPlus(8))  // (8 + 5) * 2 = 26
     ```
 6. 函数的科理化: 指的是函数中传递的多个参数可转换为多个函数来进行链接
     ```kt
-    //科理化前的函数
+    // 科理化前的函数
     fun log(tag: String, target: OutputStream, message: Any?) = target.write("$tag $message\n".toByteArray())
-    log("Hensen", System.out,"HelloWorld")
-    //科理化后的函数
+    log("Hensen", System.out, "HelloWorld")
+    // 科理化后的函数
     fun log(tag: String)
         = fun(target: OutputStream)
         = fun(message: Any?)
         = target.write("$tag $message\n".toByteArray())
     log("Hensen")(System.out)("HelloWorld")
     ```
+7. 尾递归
+    1. 一般递归
+        ```kt
+        fun recursiveSum(n: Long): Long {
+            return if (n <= 1) n else (recursiveSum(n - 1) + n)
+        }
+        ```
+    2. 尾递归声明
+        ```kt
+        tailrec fun recursiveSum(n: Long, semiResult: Long = 0): Long {
+            return if (n <= 0) semiResult else recursiveSum(n - 1, n + semiResult)
+        }
+        ```
+8. 内联函数
+    1. 内联函数使用关键字内联声明，内联函数的使用增强了高阶函数的性能。内联函数告诉编译器将参数和函数复制到调用站点。虚函数或局部函数不能声明为内联。 以下是内联函数内部不支持的一些表达式和声明：
+        - 局部类声明
+        - 内部嵌套类的声明
+        - 函数表达式
+        - 声明局部函数
+        - 局部可选参数的默认值
+    2. 基本示例
+        ```kt
+        fun main(args: Array<String>) {
+            inlineFunc({ println("调用内联函数") })
+        }
+        inline fun inlineFunc(myFunc: () -> Unit) {
+            myFunc()  // 这里会被替换为上面传入的代码
+            println("内联函数内的代码")
+        }
+        // 调用内联函数
+        // 内联函数内的代码
+        ```
+    3. 非局部控制流程
+        ```kt
+        fun main(args: Array<String>) {
+            inlineFunc({ println("调用内联函数"); return }, { println("内联函数中的下一个参数") })
+        }
+        inline fun inlineFunc(myFunc: () -> Unit, nextFunc: () -> Unit) {
+            myFunc()
+            nextFunc()
+            println("内联函数内的代码")
+        }
+        // 调用内联函数
+        ```
+    4. 不希望内联，希望保留函数特征时，可以
+        ```kt
+        inline fun inlineFunc(myFunc: () -> Unit, noinline nextFunc: () -> Unit) { /* ... */ }  // 这时nextFunc不可以使用return语句了，除非不是Unit
+        ```
+    5. crossinline: https://blog.csdn.net/u013009899/article/details/78584994
+9. 函数返回:  一个函数中，如果存在一个lambda表达式，在该lambda中不支持直接进行return退出该函数，但一个内部函数可以，当然如果是。
+    ```kt
+    intArrayOf(1, 3, 4, 6).forEach label1@{
+        if (it % 2 == 1) return@label1
+        println(it)
+    }
+    ```
 
 ### Lambda表达式
 
 1. 定义Lambda表达式
     ```kt
-    var sum = { arg1: Int, arg2: Int -> arg1 + arg2 }
+    var sum: (Int, Int) -> Int = { arg1: Int, arg2: Int -> arg1 + arg2 }
     sum(1,2)  // 使用第一种方式
     sum.invoke(1,2)  // 第二种
     ```
@@ -233,9 +310,12 @@
     ```kt
     fun transform(x: Any) {
         return when (x) {
-            is Int -> println("$x is Int")
+            is Int -> {
+                println("line1: $x is Int")
+                println("line2: $x is Int")
+            }
             in 1..100 -> println("$x is in 1-100")
-            0 -> println("$x is 0")
+            0, -1, -2 -> println("$x is 0 or -1 or -2")
             "Hello" -> println("Greeting")
             !in 0..100 -> println("$x is not in 0-100")
             // else不写则不做默认操作
@@ -246,8 +326,10 @@
 2. try-catch
     ```kt
     fun test() {
-        return try { count()
-        } catch (e: ArithmeticException) { throw IllegalStateException(e)
+        return try {
+            count()
+        } catch (e: ArithmeticException) {
+            throw IllegalStateException(e)
         }
     }
     ```
@@ -258,6 +340,7 @@
         } else if (param == 2) { "two"
         } else { "three" }
     }
+    a = if (a1 > a2) a1 else a2
     ```
 4. with
     ```kotlin
@@ -274,21 +357,21 @@
         penUp()
     }
     ```
-
-### 关键字表达式
-
-1. for
+5. for
     ```kt
     val items = listOf("apple", "banana", "kiwifruit")
-    for (item in items) {
-        println(item)
-    }
+    for (item in items) { println(item) }
+    for (i in 1..5) print(i)
+    for (i in 1..5 step 2) print(i)
+    for (i in 5..1) print(i)  // nothing
+    for (i in 5 downTo 1) print(i)
+    for (i in 5 downTo 1 step 2) print(i)
     val items = listOf("apple", "banana", "kiwifruit")
     for (index in items.indices) {
         println("item at $index is ${items[index]}")
     }
     ```
-2. while
+6. while
     ```kt
     val items = listOf("apple", "banana", "kiwifruit")
     var index = 0
@@ -297,7 +380,48 @@
         index++
     }
     ```
-3. 中缀表达式 infix
+7. do...while: 类似于while，但会先执行一次
+8. break/continue
+    ```kt
+    for (i in 1..5) {
+        if (i == 2) {
+            continue
+        }
+        if (i == 4) {
+            break
+        }
+        print(i)
+    }
+    // 重点
+    println()
+        loop@ for (i in 1..5) {
+        println()
+        for (j in 1..5) {
+            print("($i, $j);")
+            if ((i + j) > 5) {
+                break@loop
+            }
+        }
+    }
+    println()
+    loop@ for (i in 1..5) {
+        println()
+        for (j in 1..5) {
+            print("($i, $j);")
+            if ((i + j) > 5) {
+                continue@loop
+            }
+        }
+    }
+    // (1, 1);(1, 2);(1, 3);(1, 4);(1, 5);
+    //
+    // (1, 1);(1, 2);(1, 3);(1, 4);(1, 5);
+    // (2, 1);(2, 2);(2, 3);(2, 4);
+    // (3, 1);(3, 2);(3, 3);
+    // (4, 1);(4, 2);
+    // (5, 1);
+    ```
+9. 中缀表达式 infix
     ```kt
     Class Book{
         infix fun on(any: Any): Boolean{
@@ -306,7 +430,7 @@
     }
     Class Desk{}
     if (Book on Desk) {
-        println("book on the desk") 
+        println("book on the desk")
     }
     ```
 
@@ -314,16 +438,16 @@
 
 1. 函数内部可以定义函数，属于闭包
     ```kt
-    fun add(x: Int): (Int)-> Int{
-        return fun(y: Int): Int{
+    fun add(x: Int): (Int) -> Int {
+        return fun(y: Int): Int {
             return x + y
         }
     }
     ```
 2. 闭包持有函数内部的运行状态
     ```kt
-    fun justCount():() -> Unit{
-        var count = 0 //被函数内部持有
+    fun justCount(): () -> Unit {
+        var count = 0  // 被函数内部持有
         return {
             println(count++)
         }
@@ -345,20 +469,56 @@
 
 ### 运算符
 
-1. 逻辑运算符
+1. 算数运算符
     ```kt
-    val 一逻辑与 1111 = 1 and 0x00001111
-    val 一逻辑或 1111 = 1 or 0x00001111
-    val 一异或 1111 = 1 xor 0x00001111
+    + plus
+    - minus
+    * times
+    / div
+    % rem
     ```
-2. 位运算符
+2. 关系运算符
     ```kt
-    val 一右移二 = 1 shr 2
-    val 一左移二 = 1 shl 2
-    val 一无符号右移二 = 1 ushr 2
-    val 一取反 = 1.inv ()
+    > a.compareTo(b) > 0
+    < a.compareTo(b) < 0
+    >= a.compareTo(b) >= 0
+    <= a.compareTo(b) <= 0
+    == a?.equals(b) ?: (b === null)
+    != !(a?.equals(b) ?: (b === null))
     ```
-3. 自定义运算符
+3. 赋值运算符
+    ```kt
+    += plusAssign
+    -= minusAssign
+    *= timesAssign
+    /= divAssign
+    %= remAssign
+    ```
+4. 一元运算符
+    ```kt
+    + unaryPlus()
+    - unaryMinus()
+    ++ inc()
+    -- dec()
+    ! not()
+    ```
+5. 按位运算符
+    ```kt
+    && a and b
+    || a or b
+    ! a.not()
+    ```
+6. 逻辑运算符
+    ```kt
+    a.shl(b)  // 符号左移，没有 << 这样的表示形式
+    a.shr(b)  // 符号右移
+    a.ushr(b) // 无符号右移
+    a.and(b)  // 按位与
+    a.or(b)   // 按位或
+    a.xor(b)  // 按位异或
+    a.inv()   // 按位取反
+    ```
+7. 自定义运算符
     ```kt
     class Complex(var arg1: Double,var arg2: Double){
         operator fun plus(other: Complex): Complex{
@@ -367,7 +527,7 @@
         operator fun plus(other: Int): Complex{
             return Complex(arg1 + other,arg2)
         }
-        oprator fun invoke(): Double{
+        operator fun invoke(): Double{
             return Math.hypot(arg1,arg2)
         }
         overide fun toString(): String{
