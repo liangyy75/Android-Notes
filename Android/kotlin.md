@@ -11,7 +11,7 @@
 - [集合与映射](#%e9%9b%86%e5%90%88%e4%b8%8e%e6%98%a0%e5%b0%84)
 - [反射](#%e5%8f%8d%e5%b0%84)
 - [注解](#%e6%b3%a8%e8%a7%a3)
-- [构造方法](#%e6%9e%84%e9%80%a0%e6%96%b9%e6%b3%95)
+- [构造方法与修饰符](#%e6%9e%84%e9%80%a0%e6%96%b9%e6%b3%95%e4%b8%8e%e4%bf%ae%e9%a5%b0%e7%ac%a6)
 - [类与对象1](#%e7%b1%bb%e4%b8%8e%e5%af%b9%e8%b1%a11)
 - [类与对象2](#%e7%b1%bb%e4%b8%8e%e5%af%b9%e8%b1%a12)
 - [类与对象3](#%e7%b1%bb%e4%b8%8e%e5%af%b9%e8%b1%a13)
@@ -154,6 +154,22 @@
     ```kt
     fun printSum(a: Int, b: Int): Unit { /**/ }
     fun printSum(a: Int, b: Int) { /**/ }  // 只要里面没有return就是Unit了，相当于java的void
+    ```
+6. 函数引用
+    ```kt
+    fun isPositive(a: Int) = a > 0
+    fun isPositive(a: String) = s == "Kotlin" || s == "kotlin"
+    val x = 5, y = 5
+    class A(val x: Int)
+    fun main(args: Array<String>) {
+        println(listOf(-10, -5, 0, 5, 10).filter(::isPositive).joinToString(", "))
+        println(listOf("Kotlin", "Java", "kotlin", "Cpp").filter(::isPositive).joinToString(", "))
+        println(::x.get())
+        println(::x.name)
+        println(::y.set(10))
+        val prop = A::x
+        println(prop.get(A(5)))
+    }
     ```
 
 ### 函数进阶
@@ -932,8 +948,26 @@
         annotation class MyClass(val arg1: KClass<*>, val arg2: KClass<out Any>)
         @MyClass(String::class, Int::class) class Foo
         ```
+3. 注解示例
+    ```kt
+    import java.lang.annotaion.ElementType
+    import java.lang.annotaion.Retention
+    import java.lang.annotaion.RetentionPolicy
+    import java.lang.annotaion.Target
+    @Target(ElementType.TYPE)
+    @Retention(RetentionPolicy.RUNTIME)
+    @interface Ann { int value() }
+    // test
+    @Ann(value = 10)
+    class MyTestClass {}
+    fun main(args: Array<String>) {
+        var a = MyTestClass()
+        var c = a.javaClass.getAnnotation(Ann::class.java)
+        c ?: println("value: ${x?.value}")
+    }
+    ```
 
-### 构造方法
+### 构造方法与修饰符
 
 1. 主构造函数
     1. Kotlin的构造函数可以写在类头中，跟在类名后面，如果有注解还需要加上关键字constructor
@@ -944,7 +978,7 @@
             }
         }
         ```
-    2. 在主构造函数中不能有任何代码实现，如果有额外的代码需要在构造方法中执行，你需要放到init代码块中执行
+    2. 在主构造函数中不能有任何代码实现，如果有额外的代码需要在构造方法中执行，你需要放到init代码块中执行。在实例初始化期间，初始化块的执行顺序与它们在类体中出现的顺序相同。
         ```kt
         class Person(private var name: String) {
             init {
@@ -959,33 +993,73 @@
     ```kt
     class Person(private var name: String) {
         private var description: String? = null
-        init {
-            name = "Zhang Tao"
-        }
-        constructor(name: String, description: String) : this(name) {
+        init { name = "Zhang Tao" }
+        constructor(name: String, description: String) : this(name) {  // 同时存在主构造函数与次构造函数时就需要this(name)这样的形式了
             this.description = description
         }
-        fun sayHello() {
-            println("hello $name")
-        }
+        fun sayHello() = println("hello $name")
     }
+    class Test {
+        constructor(id: Int) {}
+        constructor(id: Int, name: String) {}
+        constructor(id: Int, name: String, age: Int): this(id, name) {}  // 当然，其实也可以在一个辅助构造函数中调用同一个类的另一个辅助构造函数
+    }
+    // 要调用父类的辅助构造函数。可使用super关键字完成的，它是继承的概念。
     ```
+3. 修饰符
+    1. 可见性修饰符种类: public / protected / internal / private
+    2. 可以从项目的任何位置访问public修饰符。它是Kotlin中的默认修饰符。如果没有使用任何访问修饰符指定任何类，接口等，则在public范围中使用。所有public声明都可以放在文件的顶部。如果未指定类的成员，则默认为public。
+    3. 类或接口使用protected修饰符仅允许对其类或子类进行可见性。除非明确更改，否则子类中的protected声明在被重写时也是protected修饰符。在Kotlin中，protected修饰符不能在顶层声明。覆盖protected的一种做法
+        ```kt
+        open class Base {
+            protected open val i = 0
+        }
+        class Child : Base() {
+            fun getValue() : Int = i
+            override val i = 10
+        }
+        class Child2 : Base() {
+            public override val i = 10
+        }
+        ```
+    4. internal修饰符是在Kotlin中新添加的，它在Java中不可用。声明要将字段标记为internal字段。internal修饰符使字段仅在实现它的模块内可见。
+    5. private修饰符允许声明仅在声明属性，字段等的块内可访问。private修饰符声明不允许访问范围外部。可以在该特定文件中访问私有包。
 
 ### 类与对象1
 
-1. 输出类名
+1. 注意事项
+    1. 在主构造函数中传入的参数如果没有val或者var修饰，这是普通参数，而不会当成类成员。
+    2. 派生类也可以使用super关键字调用超类方法和属性。
+2. 输出类名
     ```kt
     println(HelloWorld::class.java.simpleName)  // 输出类名: java的
     println(HelloWorld::class.java.name)  // 输出包名+类名: java的
     println(HelloWorld.class)
     println(HelloWorld.javaClass.kotlin)
     ```
-2. 创建对象
-    ```kt
-    val rectangle = Rectangle(5.0, 2.0)
-    val triangle = Triangle(3.0, 4.0, 5.0)
-    ```
-3. 数据类: data修饰的类称之为数据类，当data修饰后，会自动将所有成员用operator声明，即为这些成员生成getter()和setter()
+3. 继承
+    1. 在Kotlin中，派生类在类头中使用冒号(:)操作符来继承基类(在派生类名或构造函数之后)。
+    2. 所有Kotlin类都有一个共同的超类Any，它是没有明确指定超类时使用的默认超类。
+    3. 由于Kotlin类默认为final，因此不能简单地继承它们。在类之前使用open关键字来为其它类继承这个类。
+        ```kt
+        open class A(a: Int) {}
+        open class B(a: Int, b: Long) : A(a) {}
+        ```
+    4. 当继承一个类来派生类时，所有的字段和函数都是继承的，除了private。可以在派生类中使用这些字段和函数。
+    5. 只能继承一个类，但可以继承多个接口。
+        ```kt
+        open class Base {}
+        interface Inter1 {}
+        interface Inter2 {}
+        class Child : Base(), Inter1, Inter2 {}
+        ```
+4. Kotlin方法覆盖的规则
+    1. 父类及要覆盖的方法或属性必须是open的(非final)。
+    2. 基类和派生类的方法名必须相同。
+    3. 方法必须具有与基类相同的参数。
+    4. 在子类中重写的方法必须以override关键字开头。
+    5. 超类的属性也可以在子类中覆盖，这个实现类似于方法。
+5. 数据类: data修饰的类称之为数据类，当data修饰后，会自动将所有成员用operator声明，即为这些成员生成getter()和setter()
     ```kt
     data class Customer(val name: String, val email: String)
     // 编译器自动从主构造函数中的属性导入下面这些成员函数
@@ -995,17 +1069,25 @@
     // componentN()：函数返回对应着声明的参数顺序
     // copy()
     ```
-4. 内部类: Kt默认的内部类为静态内部类，可以使用inner关键字将内部类变为非静态内部类，且可使用注解去获取外部类的成员属性
+6. 内部类: Kt默认的内部类为静态内部类，可以使用inner关键字将内部类变为非静态内部类，且可使用注解去获取外部类的成员属性
     ```kt
     class Outter {
-        var a = 5
+        var a = 5  // 只能访问到自己的a
         inner class Inner {
-            var a = 6
+            var a = 6  // 可以访问外部类的a与自己的a
             fun getOutterA () = println(this@Outter.a)
         }
+        class StaticInner {
+            var a = 7  // 只能访问到自己的a
+        }
+    }
+    fun main(args: Array<String>) {
+        val a = Outer()
+        val b = Outer.StaticInner()
+        val c = a.Inner()
     }
     ```
-5. 单例类: object关键字表示该类是单例
+7. 单例类: object关键字表示该类是单例
     ```kt
     class Single private constructor() {
         companion object {
@@ -1020,21 +1102,64 @@
 
 ### 类与对象2
 
-1. 枚举类: 枚举默认没有数值，如果需要固定类型的数值，可在类名后声明参数类型
+1. 抽象类
+    ```kt
+    abstract class Abs {
+        var x = 0
+        abstract fun abstractDoSomething()
+        fun actuallyDoSomething() {}
+    }
+    class Impl : Abs {
+        override fun abstractDoSomething() {}
+    }
+    // 抽象类可以继承实体类，然后。。。
+    open class Base {
+        open fun deal() {}
+    }
+    abstract class AbsBase : Base() {
+        abstract fun deal()
+    }
+    class BaseImpl : AbsBase {
+        override fun deal() {}
+    }
+    ```
+2. 接口
+    ```kt
+    interface Inter {
+        val id: Int  // abstract property
+        fun absMethod()  // abstract method
+        fun doSomething() {
+            // optional body
+        }  // 这个方法也还可以被override
+    }
+    // 接口冲突
+    interface Inter1 {
+        fun aaa() = println("Inter1 aaa")
+    }
+    interface Inter2 {
+        fun aaa() = println("Inter2 aaa")
+    }
+    class Impl1 : Inter1, Inter2 {}  // 这样调用aaa方法时会报错，除非重写
+    class Impl2 : Inter1, Inter2 {
+        override fun aaa() {
+            super<Inter1>.aaa()
+            super<Inter2>.aaa()
+        }
+    }
+    ```
+3. 枚举类: 枚举默认没有数值，如果需要固定类型的数值，可在类名后声明参数类型
     ```kt
     enum class Programer (val id: Int) {
         JAVA(0), KOTLIN(1), C(2), CPP(3), ANDROID(4);
-        fun getTag(): String{
-            return "$id + $name"
-        }
+        fun getTag(): String = "$id + $name"
     }
-    // 使用
     println(Programer.JAVA.getTag())
     ```
-2. 密封类
-    1. sealed修饰的类称为密封类，用来表示受限的类层次结构
+4. 密封类
+    1. sealed修饰的类称为密封类，用来表示受限的类层次结构。密封类是为继承设计的，是一个抽象类；密封类的子类是确定的，除了已经定义好的子类外，它不能再有其他子类。
         ```kt
         sealed class BaseClass {
+            open fun test() { println("BaseClass实例") }
             class Test1 : BaseClass() {
                 override fun test() { println("Test1实例") }
             }
@@ -1044,40 +1169,70 @@
             object Test3 : BaseClass() {
                 override fun test() { println("Test3实例") }
             }
-            open fun test() { println("BaseClass实例") }
         }
         ```
     2. 密封类与枚举的区别：
         * 密封类是枚举类的扩展
         * 枚举类型的值集合是受限的，且每个枚举常量只存在一个实例
         * 密封类的一个子类可以有可包含状态的多个实例
-3. 继承: 在class中加open关键字即可被继承
+    3. 密封类的子类，要么写在密封类内部，要么写在父类同一个文件里，不能出现在其他地方。但子类的子类可以出现在其他地方。
+    4. 密封类的使用与一般抽象类并无不同，也就是说不能使用密封类实例化对象，只能用它的子类实例化对象。
+    5. 密封类功能更多在于限制继承，起到划分子类的作用。将抽象类定义为密封类，可以禁止外部继承，对于一些只划分为固定类型的数据，可以保证安全。
+    6. 除此以外，密封类唯一的不同之处在于when语句对它有一个优化：因为密封类的子类型是确定的，所以在用when语句遍历密封类的子类时，可以不加else语句。（鸡肋）
+    7. 密封类通过仅在编译时限制类型集来确保类型安全的重要性。
+5. 接口代理: 接口代理表示代理人可直接调用接口代理的方法
     ```kt
-    open class Person (var name:String, var age:Int) {}
-    ```
-4. 接口代理: 接口代理表示代理人可直接调用接口代理的方法
-    ```kt
-    // 代理driver和writer，当执行manager.driver()，Manager类会去调用代理的driver.driver()
-    class Manager(val driver: Driver, val writer: Writer) : Driver by driver, Writer by writer
     interface Driver{ fun driver() }
     interface Wirter{ fun wirter() }
+    class Manager(val driver: Driver, val writer: Writer) : Driver by driver, Writer by writer
+    // 代理driver和writer，当执行manager.driver()，Manager类会去调用代理的driver.driver()
     ```
 
 ### 类与对象3
 
-1. 伴生对象: 用companion关键字修饰对象内的方法，我们称companion修饰的对象为伴生对象，本质是静态方法。如果在Java文件中想通过类名的方式去调用静态方法，则需要加入注解才可以使用
-    ```kt
-    class StringUtils {
-        companion object {
-            @JvmStatic
-            fun isEmpty(str: String): Boolean {
-                return "" == str
-            }
-            @JvmField
-            var TAG = "StringUtils"
+1. 对象
+    1. Kotlin中的对象指的是使用object关键字定义的类型声明，一般用作单例模式和伴生对象。它让创建单例变得十分简单。下面等价
+        ```java
+        public final class Resource {
+            public static final Resource INSTANCE;
+            private static final String name = "Alex";
+            static { new Resource(); }
+            private Resource() { INSTANCE = this; }
+            public static final String getName() { return name; }
+            public static final say() { System.out.println("Hello"); }
         }
-    }
-    ```
+        ```
+        ```kt
+        object Resource {
+            val name = "Alex"
+            fun say() = println("Hello")
+        }
+        ```
+    2. 伴生对象的本质: 实际上是在这个类内部创建了一个名为Companion的静态单例内部类，伴生对象中定义的属性会直接编译为外部类的静态字段，而函数会被编译为伴生对象的方法。 https://zhuanlan.zhihu.com/p/26713535 。用companion关键字修饰对象内的方法，我们称companion修饰的对象为伴生对象，本质是静态方法。如果在Java文件中想通过类名的方式去调用静态方法，则需要加入注解才可以使用
+        ```kt
+        class StringUtils {
+            companion object {
+                @JvmStatic
+                fun isEmpty(str: String): Boolean = "" == str
+                @JvmField
+                var TAG = "StringUtils"
+            }
+        }
+        // 伴生对象只是Kotlin代替Java的static的一种方法。Kotlin中没有static，但是它有
+        // - 伴生对象：主要用于与类有紧密联系的变量和函数；
+        // - 包级属性和包级函数：主要用于全局常量和工具函数；
+        // - @JvmStatic注解：与伴生对象搭配使用，将变量和函数声明为真正的JVM静态成员。
+        ```
+    3. @JvmStatic注解只能用在伴生对象里，修饰伴生对象内的属性和函数，用来告诉编译器将属性和函数编译为真正的JVM静态成员。需要注意到，如果在伴生对象声明里使用@JvmStatic注解，那么没有加该注解的属性和函数将不会被编译为静态成员。
+        ```kt
+        class Person(val name: String) {
+            companion object {
+                @JvmStatic val anonymous = Person("Anonymous")
+                fun say() = println("Hello")
+            }
+        }
+        // anonymous 使用 @JvmStatic 注解修饰，会被编译为 Person 类的静态成员，Kotlin 和 Java 中都可以用 Person.anonymous 来调用它；而 say() 方法没有用 @JvmStatic 注解修饰，会被编译为 Person.Companion 类的成员，Kotlin 中可以用 Person.say() 来调用，但 Java 中只能用 Person.Companion.say() 调用。
+        ```
 2. 方法重载: 由于Kt中有默认参数的性质，所以方法的重载可以用默认参数来实现，如果在Java文件中想使用Kt重载的话，就需要加入注解才可以使用
     ```kt
     class StringUtils {
@@ -1089,9 +1244,31 @@
     ```
 3. 匿名对象: 使用object对象表示匿名对象
     ```kt
-    btn?.setOnClickListener(object : View.OnClickListener{
+    btn?.setOnClickListener(object : View.OnClickListener {
         override fun onClick(v: View?) {}
     })
+    ```
+4. 扩展函数
+    ```kt
+    fun String?.println() = println(this)  // 可以扩展可空类型，被扩展的类型叫做接收器类型，函数则叫扩展函数
+    // Companion扩展
+    class TestClass {
+        companion object {
+            fun fun1() = println("fun1")
+        }
+    }
+    fun TestClass.Companion.fun2() = println("fun2")
+    // 使用
+    "abc".println()
+    TestClass.fun2()
+    ```
+5. 泛型
+    ```kt
+    class TestClass<T>(var a: T) {}
+    interface TestInter<T> {}
+    fun <T> testMethod(a: T) {}
+    fun <T> testMethod(a: ArrayList<T>) {}
+    fun <T> ArrayList<T>.printValue() = this.forEach { println(it) }
     ```
 
 ### 常用操作符
