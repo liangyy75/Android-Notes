@@ -9,6 +9,8 @@
 - [字符串](#%e5%ad%97%e7%ac%a6%e4%b8%b2)
 - [区间语句](#%e5%8c%ba%e9%97%b4%e8%af%ad%e5%8f%a5)
 - [集合与映射](#%e9%9b%86%e5%90%88%e4%b8%8e%e6%98%a0%e5%b0%84)
+- [反射](#%e5%8f%8d%e5%b0%84)
+- [注解](#%e6%b3%a8%e8%a7%a3)
 - [构造方法](#%e6%9e%84%e9%80%a0%e6%96%b9%e6%b3%95)
 - [类与对象1](#%e7%b1%bb%e4%b8%8e%e5%af%b9%e8%b1%a11)
 - [类与对象2](#%e7%b1%bb%e4%b8%8e%e5%af%b9%e8%b1%a12)
@@ -660,7 +662,7 @@
     val flag: boolean = items.contains("apple")
     val flag: boolean = items.containsAll(listOf("apple", "balanace"))
     ```
-4. List常用函数
+4. List
     ```kt
     public interface List<out E> : Collection<E> (source)
     // abstract fun contains(element: E): Boolean
@@ -676,7 +678,7 @@
     // drop dropLast dropWhile
     // indexOf indexOfFirst indexOfLast
     ```
-5. MutableList常用函数
+5. MutableList
     ```kt
     public interface MutableList<E> : List<E>, MutableCollection<E> (source)
     // abstract fun add(element: E): Boolean
@@ -694,7 +696,7 @@
 	// abstract operator fun set(index: Int, element: E): E
 	// abstract fun subList(fromIndex: Int, toIndex: Int): MutableList<E>
     ```
-6. ArrayList常用函数
+6. ArrayList
     ```kt
     // ArrayList<E>()
 	// ArrayList(capacity: Int)
@@ -715,7 +717,7 @@
 	// open fun toString(): String
 	// fun trimToSize()
     ```
-7. Map常用函数
+7. Map
     ```kt
     public interface Map<K, out V> (source)
     // abstract val entries: Set<Entry<K, V>>
@@ -739,7 +741,197 @@
 	// operator fun <K, V> Map<out K, V>.plus(pairs: Iterable<Pair<K, V>>): Map<K, V>
 	// operator fun <K, V> Map<out K, V>.plus(pairs: Sequence<Pair<K, V>>): Map<K, V>
     ```
-8. 
+8. HashMap
+    ```kt
+    // HashMap()
+	// HashMap(initialCapacity: Int, loadFactor: Float = 0f)
+	// HashMap(original: Map<out K, V>)
+	// open fun put(key: K, value: V): V?
+	// open operator fun get(key: K): V?
+    // open fun replace(index: Int, value: V): Unit
+	// open fun containsKey(key: K): Boolean
+	// open fun containsValue(value: V): Boolean
+	// open fun clear()
+	// open fun remove(key: K): V?
+    // keys / size
+    ```
+9. MutableMap
+    ```kt
+    interface MutableMap<K, V> : Map<K, V> (source)
+    // entries: MutableSet<MutableEntry<K, V>>
+	// keys: MutableSet<K>
+	// values: MutableCollection<V>
+	// abstract fun put(key: K, value: V): V?
+	// abstract fun putAll(from: Map<out K, V>)
+	// abstract fun remove(key: K): V?
+	// open fun remove(key: K, value: V): Boolean
+	// abstract fun clear()
+	// operator fun <K, V> Map<out K, V>.contains(key: K): Boolean
+	// abstract fun containsKey(key: K): Boolean
+	// fun <K> Map<out K, *>.containsKey(key: K): Boolean
+	// abstract fun containsValue(value: V): Boolean
+	// fun <K, V> Map<K, V>.containsValue(value: V): Boolean
+	// fun <K, V> Map<out K, V>.count(): Int
+	// operator fun <K, V> Map<out K, V>.get(key: K): V?
+	// fun <K, V> Map<out K, V>.getOrDefault(key: K, defaultValue: V): V
+	// fun <K, V> Map<K, V>.getOrElse(key: K, defaultValue: () -> V ): V
+	// fun <K, V> Map<K, V>.getValue(key: K): V
+    ```
+10. Set
+    ```kt
+    interface Set<out E> : Collection<E> (source)
+    // size / contains / containsAll / isEmpty / iterator / all / any / count / distinct / drop / elementAtOrElse / filter / filterIndexed / filterNot
+    // find / findLast / first / firstOrnull / indexOf / indexOfLast / indexOfFirst / intersect / isNotEmpty / last / lastIndexOf / lastOrnull / max
+    // maxBy / min / minBy / minus / plus / minusElement / plusElement / reversed / single / singleOrnull
+    // abstract val size: Int
+    // abstract fun contains(element: E): Boolean
+	// abstract fun containsAll(elements: Collection<E>): Boolean
+	// abstract fun isEmpty(): Boolean
+	// abstract fun iterator(): Iterator<E>
+	// fun <T> Iterable<T>.all(predicate: (T) -> Boolean): Boolean
+	// fun <T> Iterable<T>.any(): Boolean
+	// fun <T> Iterable<T>.count(predicate: (T) -> Boolean): Int
+	// fun <T> Iterable<T>.distinct(): List<T>
+	// fun <T> Iterable<T>.drop(n: Int): List<T>
+	// fun <T> Iterable<T>.elementAtOrElse(index: Int, defaultValue: (Int) -> T): T
+	// fun <T> Iterable<T>.filter(predicate: (T) -> Boolean): List<T>
+	// fun <T> Iterable<T>.filterIndexed(predicate: (index: Int, T) -> Boolean): List<T>
+	// fun <T> Iterable<T>.filterNot(predicate: (T) -> Boolean): List<T>
+	// fun <T> Iterable<T>.find(predicate: (T) -> Boolean): T?
+	// fun <T> Iterable<T>.findLast(predicate: (T) -> Boolean): T?
+	// fun <T> Iterable<T>.first(): T
+	// fun <T> Iterable<T>.first(predicate: (T) -> Boolean): T
+	// fun <T> Iterable<T>.firstOrnull(): T?
+	// fun <T> Iterable<T>.indexOf(element: T): Int
+	// fun <T> Iterable<T>.indexOfFirst(predicate: (T) -> Boolean): Int
+	// fun <T> Iterable<T>.indexOfLast(predicate: (T) -> Boolean): Int
+	// infix fun <T> Iterable<T>.intersect(other: Iterable<T>): Set<T>
+	// fun <T> Collection<T>.isNotEmpty(): Boolean
+	// fun <T> Iterable<T>.last(): T
+	// fun <T> Iterable<T>.last(predicate: (T) -> Boolean): T
+	// fun <T> Iterable<T>.lastIndexOf(element: T): Int
+	// fun <T> Iterable<T>.lastOrnull(): T?
+	// fun <T> Iterable<T>.lastOrnull(predicate: (T) -> Boolean): T?
+	// fun <T : Comparable<T>> Iterable<T>.max(): T?
+	// fun <T, R : Comparable<R>> Iterable<T>.maxBy(selector: (T) -> R): T?
+	// fun <T : Comparable<T>> Iterable<T>.min(): T?
+	// fun <T, R : Comparable<R>> Iterable<T>.minBy(selector: (T) -> R): T?
+	// operator fun <T> Set<T>.minus(element: T): Set<T>
+	// operator fun <T> Set<T>.minus(elements: Iterable<T>): Set<T>
+	// operator fun <T> Iterable<T>.minus(element: T): List<T>
+	// fun <T> Set<T>.minusElement(element: T): Set<T>
+	// fun <T> Iterable<T>.minusElement(element: T): List<T>
+	// operator fun <T> Set<T>.plus(element: T): Set<T>
+	// operator fun <T> Set<T>.plus(elements: Iterable<T>): Set<T>
+	// operator fun <T> Iterable<T>.plus(element: T): List<T>
+	// fun <T> Set<T>.plusElement(element: T): Set<T>
+	// fun <T> Iterable<T>.plusElement(element: T): List<T>
+	// fun <T> Iterable<T>.reversed(): List<T>
+	// fun <T> Iterable<T>.single(): T
+	// fun <T> Iterable<T>.singleOrnull(): T?
+    ```
+11. MutableSet
+    ```kt
+    interface MutableSet<E> : Set<E>, MutableCollection<E> (source)
+    // abstract fun add(element: E): Boolean
+	// abstract fun addAll(elements: Collection<E>): Boolean
+	// abstract fun clear()
+	// abstract fun iterator(): MutableIterator<E>
+	// abstract fun remove(element: E): Boolean
+	// abstract fun removeAll(elements: Collection<E>): Boolean
+	// abstract fun retainAll(elements: Collection<E>): Boolean
+	// abstract fun contains(element: E): Boolean
+	// abstract fun containsAll(elements: Collection<E>): Boolean
+	// abstract fun isEmpty(): Boolean
+	// fun <T> Iterable<T>.any(): Boolean
+	// fun <T> Iterable<T>.any(predicate: (T) -> Boolean): Boolean
+	// fun <T> Iterable<T>.distinct(): List<T>
+	// fun <T> Iterable<T>.drop(n: Int): List<T>
+	// fun <T> Iterable<T>.elementAt(index: Int): T
+	// fun <T> Iterable<T>.elementAtOrElse(index: Int, defaultValue: (Int) -> T): T
+	// fun <T : Comparable<T>> Iterable<T>.max(): T?
+	// fun <T : Comparable<T>> Iterable<T>.min(): T?
+	// fun <T> MutableCollection<out T>.remove(element: T): Boolean
+	// fun <T> MutableCollection<out T>.removeAll(elements: Collection<T>): Boolean
+	// fun <T> MutableCollection<out T>.retainAll(elements: Collection<T>): Boolean
+	// fun <T> Iterable<T>.reversed(): List<T>
+    ```
+12. HashSet
+    ```kt
+    open class HashSet<E> : AbstractMutableSet<E> (source)
+    // HashSet()
+	// HashSet(initialCapacity: Int, loadFactor: Float = 0f)
+	// HashSet(elements: Collection<E>)
+	// open fun add(element: E): Boolean
+	// open operator fun contains(element: E): Boolean
+	// open fun isEmpty(): Boolean
+	// open fun iterator(): MutableIterator<E>
+	// open fun remove(element: E): Boolean
+	// open fun clear()
+	// open val size: Int
+    ```
+
+### 反射
+
+1. 获取Class
+    ```java
+    person.getClass()
+    Person.class
+    ```
+    ```kt
+    person.javaClass  // JavaClass
+    person.javaClass.kotlin  // KClass
+    Person::class  // KClass
+    person::class.java  // Javaclass
+    Person::class.java  // JavaClass
+    (Person::class as Any).javaClass  // JavaClass
+    ```
+2. KClass
+3. KClasses
+
+### 注解
+
+1. 元注解
+    1. @Target: 它针对可以使用注解进行注解的所有可能类型的元素。
+    2. @Retention: 它指定注解是否存储在已编译的类文件中，或者是否在运行时通过反射显示。
+    3. @Repeatable: 此元注解确定注解在单个代码元素上适用两次或更多次。
+    4. @MustBeDocumented: 此元文档指定注解是公共API的一部分，应包含在类或方法中。
+    5. 示例
+        ```kt
+        @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.EXPRESSION)
+        @Retention(AnnotationRetention.SOURCE)
+        @MustBeDocumented
+        annotation class MyClass {}  // 通过将注解修饰符放在类的前面来声明注解。而且 @Interface 这样的用法依然有效
+        ```
+2. 使用
+    1. 注解构造函数
+        ```kt
+        class MyClass @Inject constructor(dependency: MyDependency) { /*...*/ }
+        ```
+    2. 注解属性访问器
+        ```kt
+        class MyClass {
+            var a: MyDependency? = null
+            @Inject set
+        }
+        ```
+    3. 使用构造函数作为注解
+        ```kt
+        annotation class MyClass(val why: String)
+        @MyClass("parameter") class Foo {}
+        ```
+    4. 用作注解的参数不能是可空类型，这是因为JVM不支持null作为注解属性的值。也可以使用一个注解作为另一个注解的参数，在这种情况下它不能使用前缀@字符。
+        ```kt
+        annotation class ReplaceWith(val expression: String)
+        annotation class Deprecated(val message: String, val replaceWith: ReplaceWith = ReplaceWith(""))
+        @Deprecated("This function is deprecated, use === instead", ReplaceWith("this === other"))
+        ```
+    5. Kotlin还指定一个类可以使用KClass来获取注解的参数。Kotlin编译器自动将它转换为java类，这就像通常看到注解和参数。
+        ```kt
+        import kotlin.reflect.KClass
+        annotation class MyClass(val arg1: KClass<*>, val arg2: KClass<out Any>)
+        @MyClass(String::class, Int::class) class Foo
+        ```
 
 ### 构造方法
 
