@@ -6,6 +6,7 @@
 - [关键字表达式](#%e5%85%b3%e9%94%ae%e5%ad%97%e8%a1%a8%e8%be%be%e5%bc%8f)
 - [闭包](#%e9%97%ad%e5%8c%85)
 - [运算符](#%e8%bf%90%e7%ae%97%e7%ac%a6)
+- [字符串](#%e5%ad%97%e7%ac%a6%e4%b8%b2)
 - [区间语句](#%e5%8c%ba%e9%97%b4%e8%af%ad%e5%8f%a5)
 - [集合与映射](#%e9%9b%86%e5%90%88%e4%b8%8e%e6%98%a0%e5%b0%84)
 - [构造方法](#%e6%9e%84%e9%80%a0%e6%96%b9%e6%b3%95)
@@ -18,7 +19,6 @@
 - [xml](#xml)
 - [json](#json)
 - [file](#file)
-- [输入输出](#%e8%be%93%e5%85%a5%e8%be%93%e5%87%ba)
 - [http/tcp/udp](#httptcpudp)
 - [工具](#%e5%b7%a5%e5%85%b7)
 - [basic2](#basic2)
@@ -541,6 +541,37 @@
     println(c1()) //5
     ```
 
+### 字符串
+
+1. 声明
+    ```kt
+    val a = "Hello, Kotlin"
+    val b = """line1
+    line2"""  // 不可转义的原始字符串
+    ```
+2. 属性
+    ```kt
+    length: Int
+    indices: IntRange
+    lastIndex: Int
+    ```
+3. 函数
+    ```kt
+    // compareTo / get / getOrElse / getOrNull / plus / subSequence / contains / count / elementAt / indexOf / indexOfFirst / indexOfLast / trimMargin
+    drop(n: Int): String  // 返回删除了前面的n个字符的字符串
+    dropLast(n: Int): String
+    dropWhile(predicate: (Char) -> Boolean): String  // 返回一个包含所有字符的字符序列，但满足给定谓词的第一个字符除外。
+    ```
+4. 特殊字符串
+    1. 一般字符串: ``val a: String = "abc"``
+    2. 模板字符串: ``val b: String = "abc ${"abc"}"``
+    3. 原始字符串
+        ```kt
+        val c: String = """line3
+        line2
+        line1"""
+        ```
+
 ### 区间语句
 
 1. 定义区间
@@ -892,9 +923,6 @@
 
 
 ### file
-
-
-### 输入输出
 
 
 ### http/tcp/udp
