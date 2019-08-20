@@ -329,7 +329,11 @@
         return try {
             count()
         } catch (e: ArithmeticException) {
-            throw IllegalStateException(e)
+            // throw IllegalStateException(e)
+            -1
+        } finally {
+            // ...，不影响 return
+            // 注意：如果程序退出(通过调用exitProcess(Int)或导致进程中止的任何错误)，将不执行finally块。
         }
     }
     ```
@@ -432,6 +436,13 @@
     if (Book on Desk) {
         println("book on the desk")
     }
+    ```
+10. is / !is / as / as?
+    ```kt
+    if (a is String) a.length else -1  // 不用将a转换为类型String再来获取length了，默认转化
+    if (a !is String) -1 else a.length  // 不用将a转换为类型String再来获取length了，默认转化
+    val str: String = obj as String  // obj不能是可空类型，但可以是Any/CharSequence等
+    val str: String? = obj as? String?  // 如果无法进行转换，则返回null
     ```
 
 ### 闭包
@@ -610,17 +621,33 @@
 
 ### 集合与映射
 
-1. 初始化集合
+1. 初始化
     ```kt
-    val mutableList = mutableListOf(0, 1)   //可读写List对象
-    var list = listOf(0, 1, 2)              //可读List对象
-    val set = setOf(1, 2, 4)                //可读Set对象
+    // 可修改
+    val mutableList = mutableListOf()
+    val arrayList = arrayListOf()
+    val arrayList2 = ArrayList<String>(10)
+    val map1 = HashMap<String, String>()
+    val map2 = hashMapOf()
+    val map3 = mutableMapOf()
+    val set1 = hashSetOf()
+    val set2 = mutableSetOf()
+    // 不可修改
+    var list = listOf(0, 1, 2)
+    val set = setOf(1, 2, 4)
+    val map = mapOf<Int, String>(1 to "Java", 4 to "Kotlin", 3 to "Python")
     ```
-2. 集合遍历
+2. 遍历
     ```kt
     val items = listOf("a", "b", "c")
     for (item in items) {
         println(item)
+    }
+    for ((k, v) in map) {
+        println("$k -> $v")
+    }
+    for (e in map) {
+        println("${e.key} -> ${e.value}")
     }
     ```
 3. 集合判断
@@ -630,19 +657,89 @@
         "orange" in items -> println("juicy")
         "apple" in items -> println("apple is fine too")
     }
+    val flag: boolean = items.contains("apple")
+    val flag: boolean = items.containsAll(listOf("apple", "balanace"))
     ```
-4. 初始化map
+4. List常用函数
     ```kt
-    val map = mutableMapOf("a" to 1, "b" to 2, "c" to 3) //可读写Map对象
-    val map = mapOf("a" to 1, "b" to 2, "c" to 3)        //可读Map对像
+    public interface List<out E> : Collection<E> (source)
+    // abstract fun contains(element: E): Boolean
+	// abstract fun containsAll(elements: Collection<E>): Boolean
+	// abstract operator fun get(index: Int): E
+	// abstract fun indexOf(element: E): Int
+	// abstract fun isEmpty(): Boolean
+	// abstract fun iterator(): Iterator<E>
+	// abstract fun lastIndexOf(element: E): Int
+	// abstract fun listIterator(): ListIterator<E>
+	// abstract fun listIterator(index: Int): ListIterator<E>
+	// abstract fun subList(fromIndex: Int, toIndex: Int): List
+    // drop dropLast dropWhile
+    // indexOf indexOfFirst indexOfLast
     ```
-5. 访问map: ``map["key"] = value``
-6. 遍历map
+5. MutableList常用函数
     ```kt
-    for ((k, v) in map) {
-        println("$k -> $v")
-    }
+    public interface MutableList<E> : List<E>, MutableCollection<E> (source)
+    // abstract fun add(element: E): Boolean
+	// abstract fun add(index: Int, element: E)
+	// abstract fun addAll(elements: Collection<E>): Boolean
+	// abstract fun clear()
+	// abstract fun listIterator(): MutableListIterator<E>
+	// abstract fun listIterator(index: Int): MutableListIterator<E>
+	// abstract fun remove(element: E): Boolean
+	// abstract fun removeAll(elements: Collection<E>): Boolean
+	// abstract fun removeAll(action: (E) -> Boolean): Boolean
+	// abstract fun removeAt(index: Int): E
+	// abstract fun retainAll(elements: Collection<E>): Boolean  // 只保留的对象，Boolean表示是否需要修改该链表
+    // abstract fun retainAll(action: (E) -> Boolean): Boolean
+	// abstract operator fun set(index: Int, element: E): E
+	// abstract fun subList(fromIndex: Int, toIndex: Int): MutableList<E>
     ```
+6. ArrayList常用函数
+    ```kt
+    // ArrayList<E>()
+	// ArrayList(capacity: Int)
+	// ArrayList(elements: Collection<E>)
+	// open fun add(element: E): Boolean
+	// open fun add(index: Int, element: E)
+	// open fun addAll(elements: Collection<E>): Boolean
+	// open fun addAll(index: Int, elements: Collection<E>): Boolean
+	// open fun clear()
+	// open fun get(index: Int): E
+	// open fun indexOf(element: E): Int
+	// open fun lastIndexOf(element: E): Int
+	// open fun remove(element: E): Boolean
+	// open fun removeAt(index: Int): E
+	// open fun removeRange(startIndex: Int, endIndex: Int)
+	// open fun set(index: Int, element: E): E
+	// open fun toArray(): Array<Any?>
+	// open fun toString(): String
+	// fun trimToSize()
+    ```
+7. Map常用函数
+    ```kt
+    public interface Map<K, out V> (source)
+    // abstract val entries: Set<Entry<K, V>>
+	// abstract val keys: Set<K>
+	// abstract val values: Collection<V>
+	// fun <K, V> Map<key, value>.getValue(key: K): V
+	// operator fun <V, V1 : V> Map<in String,V>.getValue( thisRef: Any?, property: KProperty<*>): V1
+	// operator fun <K, V> Map<out K, V>.contains(key: K): Boolean
+	// fun <K> Map<out K, *>.containsKey(key: K): Boolean
+	// fun <K, V> Map<K, V>.containsValue(value: V): Boolean
+    // fun <K, V> Map<K, V>.get(key: K): V
+	// fun <K, V> Map<out K, V>.getOrDefault(key: K, defaultValue: V ): V
+	// fun <K, V> Map<out K, V>.asIterable(): Iterable<Entry<K, V>>
+	// fun <K, V> Map<out K, V>.asIterable(): Iterable<Entry<K, V>>
+	// fun <K, V> Map<out K, V>.asSequence(): Sequence<Entry<K, V>>
+	// operator fun <K, V> Map<out K, V>.iterator(): Iterator<Entry<K, V>>
+	// operator fun Map.minus(key: K): Map
+	// operator fun <K, V> Map<out K, V>.minus(keys: Iterable<K>): Map<K, V>
+	// operator fun <K, V> Map<out K, V>.minus(keys: Sequence<K>): Map<K, V>
+	// operator fun <K, V> Map<out K, V>.plus(pair: Pair<K, V>): Map<K, V>
+	// operator fun <K, V> Map<out K, V>.plus(pairs: Iterable<Pair<K, V>>): Map<K, V>
+	// operator fun <K, V> Map<out K, V>.plus(pairs: Sequence<Pair<K, V>>): Map<K, V>
+    ```
+8. 
 
 ### 构造方法
 
