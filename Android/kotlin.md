@@ -18,6 +18,7 @@
 - [常用操作符](#%e5%b8%b8%e7%94%a8%e6%93%8d%e4%bd%9c%e7%ac%a6)
 - [特性](#%e7%89%b9%e6%80%a7)
 - [Android相关](#android%e7%9b%b8%e5%85%b3)
+- [正则表达式](#%e6%ad%a3%e5%88%99%e8%a1%a8%e8%be%be%e5%bc%8f)
 - [xml](#xml)
 - [json](#json)
 - [file](#file)
@@ -33,6 +34,7 @@
 * [Kotlin 易百](https://www.yiibai.com/kotlin)
 * [抛弃 Java 改用 Kotlin 的六个月后，我后悔了](https://cloud.tencent.com/developer/news/249347)
 * [Kotlin中文网](https://www.kotlincn.net/)
+* [Kotlin学习之路](https://zhuanlan.zhihu.com/LearningKotlin)
 
 ### basic1
 
@@ -90,7 +92,7 @@
     toDouble()
     toChar()
     ```
-9.  输入输出
+9. 输入输出
     ```kt
     print(obj: Any?): Unit
     println(obj: Any? = null): Unit
@@ -99,6 +101,32 @@
     val read = Scanner(System.`in`)
     read.next()  // nextByte / nextShort / nextInt / nextLong / nextDouble / nextFloat / next / nextChar / nextBoolean
     // java.io.Console
+    ```
+10. 注意扩展函数和扩展属性
+    ```kt
+    fun T MutableList<T>.swap(indexA: Int, indexB: Int) {
+        val temp = this[indexA]
+        this[indexA] = this[indexB]
+        this[indexB] = temp
+    }
+    val Int.isOdd: Boolean
+        get() = this and 1 == 1
+    ```
+    ```kt
+    val list = mutalbeListOf(1, 2, 3)
+    list.swap(0, 1)
+    println(list)
+    val n = 3
+    println(n.isOdd)
+    ```
+    ```java
+    List<Integer> list = Arrays.asList(1, 2, 3);
+    TestKt.swap(list, 0, 1);
+    System.out.println(list);
+    int n = 3;
+    System.out.println(TestKt.isOdd(n));
+    // 实际上，所有的扩展函数和扩展属性都会被编译成一个方法，这个方法的第一个参数就是扩展的接收者，然后才是其它各个参数。
+    // 对于扩展属性来说 ，因为编译后这个属性并不存在，所以不能像一般的类属性那样对它进行初始化，而是要自定义 getter 和 setter 来访问它。
     ```
 
 ### 数组与函数
@@ -273,6 +301,17 @@
         println(it)
     }
     ```
+10. Function
+    1. Kotlin定义了kotlin.Function<out R>接口来抽象所有的函数，它没有定义任何方法。
+    2. kotlin.jvm.functions包里定义了Function0<out R>到Function22<out R>来分别抽象无参到22个参数的函数，它们都继承了kotlin.Function接口，同时定义了一个invoke()函数。
+        ```kt
+        interface Function1<in P1, out R> : Function<R> {
+            operator fun invoke(p1: P1): R
+        }
+        interface Function2<in P1, in P2, out R> : Function<R> {
+            operator fun invoke(p1: P1, p2: P2): R
+        }
+        ```
 
 ### Lambda表达式
 
@@ -321,6 +360,11 @@
     3. let：使用it指定当前对象，最后一行为返回值
     4. apply：使用this指定当前对象，返回值为该对象自己
     5. also：使用it指定当前对象，返回值为该对象自己
+9. 闭包和扩展函数对象
+    ```kt
+    val sum2: (Int, Int) -> Int = fun(a: Int, b: Int) = a + b
+    val sum1: Int.(Int) -> Int = fun Int.(other: Int) = this + other  // 这个就是
+    ```
 
 ### 关键字表达式
 
@@ -635,6 +679,14 @@
     for (x in 9 downTo 0 step 3) {
         print(x) //9630
     }
+    for (x in 1 until 5) {
+        print(x)  // 1234
+    }
+    ```
+5. 相关方法
+    ```
+    1.rangeTo(5)  // 1..5
+    IntRange(1, 5).step(2)
     ```
 
 ### 集合与映射
@@ -886,6 +938,8 @@
 	// open fun clear()
 	// open val size: Int
     ```
+13. Iterable、Iterator 和 Collection https://zhuanlan.zhihu.com/p/26968015
+14. List、Set 和 Map 接口 https://zhuanlan.zhihu.com/p/26985368
 
 ### 反射
 
@@ -1263,13 +1317,33 @@
     TestClass.fun2()
     ```
 5. 泛型
-    ```kt
-    class TestClass<T>(var a: T) {}
-    interface TestInter<T> {}
-    fun <T> testMethod(a: T) {}
-    fun <T> testMethod(a: ArrayList<T>) {}
-    fun <T> ArrayList<T>.printValue() = this.forEach { println(it) }
-    ```
+    1. 基本使用
+        ```kt
+        class TestClass<T>(var a: T) {}
+        interface TestInter<T> {}
+        fun <T> testMethod(a: T) {}
+        fun <T> testMethod(a: ArrayList<T>) {}
+        fun <T> ArrayList<T>.printValue() = this.forEach { println(it) }
+        // 在泛型方法的类型参数里可以用冒号 : 指定上界
+        fun <T : Comparable<T>> sort(list: List<T>) { /* ... */ }
+        // 对于多个上界约束条件，可以用 where 子句
+        fun <T> cloneWhenGreater(list: List<T>, threshold: T): List<T> where T : Comparable, Cloneable {
+            return list.filter(it > threshold).map(it.clone())
+        }
+        ```
+    2. 在Java泛型里，有通配符这种东西，我们要用? extends T指定类型参数的上限，用? super T指定类型参数的下限。Kotlin抛弃了这个系统，引用了生产者和消费者的概念。
+        1. 生产者是那些只能读取数据的对象；
+        2. 消费者是那些只能写入数据的对象；
+        3. 例子
+            ```kt
+            public interface Collection<E> extends Iterable<E> {
+                boolean add(E e);
+                boolean addAll(Collection<? extends E> c);
+            }
+            ```
+        4. out T 等价于 ? extends T，in T 等价于 ? super T，此外还有 * 等价于 ?。
+        5. 可以把那些只能保证读取数据时类型安全的对象叫做生产者，用 out T 标记；把那些只能保证写入数据安全时类型安全的对象叫做消费者，用 in T 标记。
+    3. https://zhuanlan.zhihu.com/p/26965437
 
 ### 常用操作符
 
@@ -1382,16 +1456,24 @@
     * @JvmOverloads：默认参数生成重载方法
     * @file:JvmName：指定Kotlin文件编译后的类名
 
+### 正则表达式
+
+
+
 ### xml
+
 
 
 ### json
 
 
+
 ### file
 
 
+
 ### http/tcp/udp
+
 
 
 ### 工具
@@ -1495,3 +1577,12 @@
     ```
 7. 可空类型: Int? ，在所有类型后面加上 ? 。
 8. package a.b.c; import a.b.c.Test as MyTest;
+9. Unit和Nothing，都是类型
+    ```kt
+    fun fun1(): Uint = println("fun1")
+    fun fun2(): Nothing = throw RuntimeException("Something went wrong")
+    val a = fun1()  // Uint是继承于Any的，是类型，是一个真正的类
+    // Nothing是一个空类型（uninhabited type），也就是说，程序运行时不会出现任何一个Nothing类型对象。Nothing还是其他所有类型的子类型。
+    // 使用返回值为Nothing的执行失败的函数，就不用让返回值接受者的类型改变，而且不会有空的情况出现，只有异常抛出。
+    // https://zhuanlan.zhihu.com/p/26890263
+    ```
