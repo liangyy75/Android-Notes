@@ -51,7 +51,6 @@ Android源码设计模式解析与实战.pdf
 [Java并发编程学习笔记](https://blog.csdn.net/justloveyou_/column/info/14542)<br>
 [Java资源](https://itstorage.github.io/java/goods.html)<br>
 [Java博客网](http://www.jobbole.com/)<br>
-[Java博客网](http://www.importnew.com/)<br>
 []()<br>
 [JavaFx官网](http://www.javafxchina.net/blog/docs/tutorial1/)<br>
 []()<br>
@@ -59,7 +58,7 @@ Android源码设计模式解析与实战.pdf
 [jep](https://ninia.github.io/jep/javadoc/3.8/index.html?jep/python/PyCallable.html)<br>
 [jpype](https://jpype.readthedocs.io/en/latest/quickguide.html)<br>
 [py4j](https://www.py4j.org/) [py4j极简例子](https://www.jianshu.com/p/bdcc23a6e4c5)<br>
-
+[Spring boot/Http/Spring cloud/Java](https://www.bysocket.com/%e9%a1%b9%e7%9b%ae)<br>
 * https://ninia.github.io/jep/javadoc/3.8/index.html?jep/python/PyCallable.html
 * https://jpype.readthedocs.io/en/latest/quickguide.html
 * https://www.py4j.org/
@@ -236,8 +235,6 @@ https://studygolang.com/topics/8327#reply12 -- go
 * [Carlosfu技术系列文章总目录](https://blog.csdn.net/carlosfu/article/details/84740077)
 
 #### 12.后台语言-node+前台语言js
-
-#### 13.kotlin
 
 #### 14.面试
 
