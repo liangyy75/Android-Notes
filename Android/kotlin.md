@@ -16,7 +16,7 @@
 - [类与对象2](#%e7%b1%bb%e4%b8%8e%e5%af%b9%e8%b1%a12)
 - [类与对象3](#%e7%b1%bb%e4%b8%8e%e5%af%b9%e8%b1%a13)
 - [常用操作符](#%e5%b8%b8%e7%94%a8%e6%93%8d%e4%bd%9c%e7%ac%a6)
-- [特性](#%e7%89%b9%e6%80%a7)
+- [basic2](#basic2)
 - [Android相关](#android%e7%9b%b8%e5%85%b3)
 - [正则表达式](#%e6%ad%a3%e5%88%99%e8%a1%a8%e8%be%be%e5%bc%8f)
 - [xml](#xml)
@@ -24,7 +24,6 @@
 - [file](#file)
 - [http/tcp/udp](#httptcpudp)
 - [工具](#%e5%b7%a5%e5%85%b7)
-- [basic2](#basic2)
 
 ### links
 
@@ -1386,29 +1385,44 @@
         .forEach { println(it) }
     ```
 
-### 特性
+### basic2
 
-1. 懒加载: ``val p : String by lazy { /* 计算该字符串 */ }``
-2. 安全类型转换: 父类转成子类会抛出类型转换失败的错误，如果采用as?的方式，则返回null ``var child : Child = parent as? Child``
-3. 输出可执行文件: 在Gradle添加依赖指定main函数文件，后缀名为Kt。刷新Gradle，在Gradle右边栏点击distribution/installDist，生成的程序在build/install目录下
+1. 整数类型与位数: Byte(8) / Short(16) / Int(32) / Long(64) / Float(32) / Double(64)
+2. kotlin优秀的类型推断例子
+    ```kt
+    var i = 32  // Int
+    var l = 123L  // Long
+    var d = 12.34  // Double
+    var f = 56.78f  // Float
+    var x = 0xACF  // 16进制数
+    var b = 0b0100  // 2进制数
+    // kotlin不支持8进制数
+    ```
+3. 如果整数太多，可以用下画线分隔出千分位或者万分位。如 var a = 1000_1000_1000;
+4. Kotlin不支持自动扩展数字范围，转换必须手动进行。每一种数字都有一个转换成其他数字类型的函数。 ``toByte() / toShort() / toInt() /toLong() / toFloat() / toDouble() / toChar()``
+5. toInt 方法只是截取整数部分，并非四舍五入，四舍五入需要Math.round。
+6. 元组类型 Triple 和 Pair ，各自支持 3 个与 2 个 成员。如
+    ```kt
+    val a = Triple(3, "smg", true)
+    val b = Pair(1, false)
+    a.third
+    b.second
+    ```
+7. 可空类型: Int? ，在所有类型后面加上 ? 。
+8. package a.b.c; import a.b.c.Test as MyTest;
+9. Unit和Nothing，都是类型
+    ```kt
+    fun fun1(): Uint = println("fun1")
+    fun fun2(): Nothing = throw RuntimeException("Something went wrong")
+    val a = fun1()  // Uint是继承于Any的，是类型，是一个真正的类
+    // Nothing是一个空类型（uninhabited type），也就是说，程序运行时不会出现任何一个Nothing类型对象。Nothing还是其他所有类型的子类型。
+    // 使用返回值为Nothing的执行失败的函数，就不用让返回值接受者的类型改变，而且不会有空的情况出现，只有异常抛出。
+    // https://zhuanlan.zhihu.com/p/26890263
+    ```
+10. 输出可执行文件: 在Gradle添加依赖指定main函数文件，后缀名为Kt。刷新Gradle，在Gradle右边栏点击distribution/installDist，生成的程序在build/install目录下
     ```kt
     apply plugin:'application'
     mainClassName = "com.hensen.android.MyCalcKt"
-    ```
-4. internal关键字: 在变量中使用internal关键字表示成员变量只允许在模块内能被访问到 ``internal val a``
-5. 尾递归: 对于递归函数，如果递归函数并未对递归的结果进行操作，则可以使用 tailrec 关键字将递归声明为尾递归，尾递归会优化代码，将递归转换成迭代
-    ```kt
-    data class ListNode(val value: Int, var next: ListNode?)
-    // 对递归的结果并未操作，属于尾递归
-    tailrec fun findListNode(head: ListNode?, value: Int): ListNode? {
-        head ?: return null
-        if(head.value == value) return head
-        return findListNode(head.next, value)
-    }
-    // 对递归的结果进行乘法运算，不属于尾递归
-    fun factorial(n: Long): Long {
-        return n * factorial(n - 1)
-    }
     ```
 
 ### Android相关
@@ -1550,39 +1564,4 @@
     -J<标记>                     直接将 <标记> 传递给运行时系统
     -Werror                    出现警告时终止编译
     @<文件名>                     从文件读取选项和文件名
-    ```
-
-### basic2
-
-1. 整数类型与位数: Byte(8) / Short(16) / Int(32) / Long(64) / Float(32) / Double(64)
-2. kotlin优秀的类型推断例子
-    ```kt
-    var i = 32  // Int
-    var l = 123L  // Long
-    var d = 12.34  // Double
-    var f = 56.78f  // Float
-    var x = 0xACF  // 16进制数
-    var b = 0b0100  // 2进制数
-    // kotlin不支持8进制数
-    ```
-3. 如果整数太多，可以用下画线分隔出千分位或者万分位。如 var a = 1000_1000_1000;
-4. Kotlin不支持自动扩展数字范围，转换必须手动进行。每一种数字都有一个转换成其他数字类型的函数。 ``toByte() / toShort() / toInt() /toLong() / toFloat() / toDouble() / toChar()``
-5. toInt 方法只是截取整数部分，并非四舍五入，四舍五入需要Math.round。
-6. 元组类型 Triple 和 Pair ，各自支持 3 个与 2 个 成员。如
-    ```kt
-    val a = Triple(3, "smg", true)
-    val b = Pair(1, false)
-    a.third
-    b.second
-    ```
-7. 可空类型: Int? ，在所有类型后面加上 ? 。
-8. package a.b.c; import a.b.c.Test as MyTest;
-9. Unit和Nothing，都是类型
-    ```kt
-    fun fun1(): Uint = println("fun1")
-    fun fun2(): Nothing = throw RuntimeException("Something went wrong")
-    val a = fun1()  // Uint是继承于Any的，是类型，是一个真正的类
-    // Nothing是一个空类型（uninhabited type），也就是说，程序运行时不会出现任何一个Nothing类型对象。Nothing还是其他所有类型的子类型。
-    // 使用返回值为Nothing的执行失败的函数，就不用让返回值接受者的类型改变，而且不会有空的情况出现，只有异常抛出。
-    // https://zhuanlan.zhihu.com/p/26890263
     ```
