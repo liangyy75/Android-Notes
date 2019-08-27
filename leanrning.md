@@ -104,6 +104,7 @@ Android源码设计模式解析与实战.pdf
 [Flutter 官方](https://flutter.dev/docs/get-started/install/windows)<br>
 [Flutter 中文网](https://flutterchina.club/technical-overview/)<br>
 []()<br>
+[](https://opengapps.org/?source=genymotion) <br>
 
 #### 5.数据结构与算法
 
