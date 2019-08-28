@@ -30,8 +30,10 @@ img {
 - [Glide](#glide)
 - [Fresco](#fresco)
 - [Piscsso](#piscsso)
+- [Protocol](#protocol)
+- [Dagger2](#dagger2)
+- [ButterKnife](#butterknife)
 - [ORM](#orm)
-- [依赖注入](#%e4%be%9d%e8%b5%96%e6%b3%a8%e5%85%a5)
 - [Hermes](#hermes)
 - [适配](#%e9%80%82%e9%85%8d)
 - [KLog](#klog)
@@ -3731,9 +3733,183 @@ https://blog.csdn.net/new_abc/article/details/53006327
     * [picasso-transfrom github](https://github.com/TannerPerrien/picasso-transformations)
 1. Piscsso初识
 
-## ORM
+## Protocol
 
-## 依赖注入
+1. 
+
+## Dagger2
+
+1. 
+
+## ButterKnife
+
+1. links
+    1. [ButterKnife基本使用](https://segmentfault.com/a/1190000016460847)
+    2. [ButterKnife github](https://github.com/JakeWharton/butterknife)
+2. 使用方法1
+    1. 主Module中配置
+        ```groovy
+        android {
+            compileOptions {
+                sourceCompatibility JavaVersion.VERSION_1_8
+                targetCompatibility JavaVersion.VERSION_1_8
+            }
+        }
+        dependencies {
+            implementation "com.jakewharton:butterknife:10.1.0"
+            annotationProcessor 'com.jakewharton:butterknife-compiler:10.1.0'
+        }
+        ```
+    2. 简单使用
+        ```java
+        class ExampleActivity extends Activity {
+            @BindView(R.id.user) EditText etUsername;
+            @BindView(R.id.pass) EditText etPassword;
+            @BindString(R.string.login_error) String loginErrorMsg;
+            @OnClick(R.id.submit) void submit(View v) { /* ... */ }
+            @Override public void onCreate(Bundle savedInstanceState) {
+                super.onCreate(savedInstanceState);
+                setContentView(R.layout.simple_activity);
+                ButterKnife.bind(this);  // 自动生成代码用于将上面的字段初始化和绑定事件  // ButterKnife.bind(this)必须在初始化绑定布局文件之后,否则会报错
+                // use this fields
+            }
+        }
+        ```
+    3. 在Library中配置和使用
+        ```groovy
+        // 在根目录的build.gradle中
+        buildscript {
+            repositories {
+                google()
+                maven()
+                mavenCentral()
+            }
+            dependencies {
+                classpath "com.jakewharton:butterknife-gradle-plugin:10.1.0"
+            }
+        }
+        // 在module的build.gradle中
+        apply plugin: "com.android.library"
+        apply plugin: "com.jakewharton.butterknife"
+        ```
+        ```java
+        class ExampleActivity extends Activity {
+            @BindView(R2.id.user) EditText etUser;
+            @BindView(R2.id.pass) EditText etPass;
+            // ...
+        }
+        ```
+3. 使用方法2
+    1. Activity: ButterKnife.bind(this)必须在初始化绑定布局文件之后,否则会报错
+    2. Fragment: 在Fragment中需要在视图销毁时解绑Butterknife,否则会造成内存泄漏
+        ```java
+        public class ExampleFragment extends Fragment {
+            private Unbinder unbinder;
+            @BindView(R.id.example) Button btnExample;
+            @Nullable @Override public void onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+                View view = View.inflate(getContext(), R.layout.fragment_example, null);
+                unbinder = ButterKnife.bind(this, view);
+                return view;
+            }
+            @Override public void onDestroyView() {
+                super.onDestroyView();
+                unbinder.unbind();
+            }
+        }
+        ```
+    3. Adapter: 在Adapter的ViewHolder中绑定Butterknife
+        ```java
+        @Nullable @Override public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.recy_dynamic_state_item, parent, false);
+            MyViewHolder myViewHolder = new MyViewHolder(itemView);  // 此处将view传入
+            itemView.setOnClickListener(this);
+            return myViewHolder;
+        }
+        public class MyViewHodler extends RecyclerView.ViewHolder {
+            @BindView(R.id.iv_photo) SimpleDraweeView simpleDraweeView;
+            @BindView(R.id.tv_title) TextView tvTitle;
+            @BindView(R.id.tv_detail) TextView tvDetail;
+            @BindView(R.id.date) TextView date;
+            @BindView(R.id.avatar_user) SimpleDraweeView avatarUser;
+            @BindView(R.id.username) TextView userName;
+            public MyViewHolder(View itemView) {
+                super(itemView);
+                ButterKnife.bind(this, itemView);  // 此处进行绑定
+            }
+        }
+        ```
+4. 使用方法3
+    1. 常用字段注解
+        1. 单个控件id注解: @BindView(R.id.user) EditText etUser;
+        2. 布局内多个控件id注解: @BindViews({ R.id.btn1, R.id.btn2, R.id.btn3 }) List<Button> buttons;
+        3. 绑定string字符串: @BindString(R.string.error_msg) String errorMsg;
+        4. 绑定array数组: @BindArray(R.array.weather) String[] weathers;
+            ```xml
+            <resources>
+                <string name="app_name">开眼视频</string>
+                <string-array name="weather">
+                    <item>高温</item>
+                    <item>低温</item>
+                    <item>阴天</item>
+                    <item>雨天</item>
+                    <item>晴天</item>
+                </string-array>
+            </resources>
+            ```
+        5. 绑定颜色值: @BindColor(R.color.colorPrimary) int colorPrimary;
+        6. 绑定Bitmap: @BindBitmap(R.mipmap.ic_launcher) Bitmap bitmap;
+        7. 其他资源绑定:
+            ```java
+            @BindBool(R.bool.is_tablet) boolean isTablet;  // 绑定真假boolean
+            @BindFont(R.font.comic_sans) Typeface comicSans;  // 绑定字体文字
+            @BindDimen(R.dimen.horizontal_gap) int gapPx;  // 绑定尺寸
+            @BindDimen(R.dimen.horizontal_gap) float gap;  // 绑定尺寸
+            @BindAnim(R.anim.fade_in) Animation fadeIn;  // 绑定动画
+            @BindDrawable(R.drawable.placeholder) Drawable placeholder;  // 绑定Drawable
+            ```
+    2. 常用方法注解
+        1. 绑定控件点击事件: ``@OnClick(R.id.button) public void onClick(View v) { /**/ }``  // @OnClick({ R.id.share_wechat,R.id.share_moments,R.id.share_weibo })
+        2. 绑定控件长按事件: ``@OnLongClick({ R.id.btn1, R.id.btn2 }) public boolean onLongClick(View v) { /**/ }``
+        3. 绑定Item点击事件: ``@OnItemClick(R.id.example_list) public void onItemClick(int position) { /**/ }``  // 支持ListView，不知道支不支持RecycleView
+        4. 绑定Item长按事件: ``@OnItemLongClick(R.id.example_list) public boolean onItemLongClick(int position) {}``  // 返回true则可以拦截onItemClick
+        5. 绑定Item选择事件: ``@OnItemSelected(R.id.example_list) public void onItemSelected(int position) {}``
+        6. 绑定选中取消事件: ``@OnCheckedChanged(R.id.example) public void onChecked(boolean checked) { /**/ }``
+        7. 绑定软键盘功能按键: ``@OnEditorAction(R.id.example) public boolean onEditorAction(KeyEvent key) { /**/ }``
+        8. 绑定焦点改变事件: ``@OnFocusChange(R.id.example) public void onFocusChanged(boolean focused) {}``
+        9. 绑定文本变化事件: ``@OnTextChanged(R.id.example) public void onTextChanged(CharSequence text) {}``
+        10. 绑定页面改变事件: ``@OnPageChange(R.id.example_pager) public void onPageSelected(int position) {}``
+        11. 绑定触摸事件: ``@OnTouch(R.id.example) public boolean onTouch() {}``
+    3. Action接口与Setter接口
+        ```java
+        // Action接口主要是为了对View或者Views进行管理初始化等操作，而Setter接口其实就是对view或者views的属性或者值进行操作。使用ButterKnife.apply()方法启用接口。
+        ButterKnife.Action<View> action = new ButterKnife.Action<View>() {
+            @Override public void apply(@NonNull View view, int index) {
+                if (view instanceof Button){
+                    Button button = (Button) view;
+                    button.setText("点击我");
+                }
+            }
+        };
+        ButterKnife.Setter<View,Boolean> setter = new ButterKnife.Setter<View, Boolean>() {
+            @Override
+            public void set(@NonNull View view, Boolean value, int index) {
+                view.setEnabled(value);
+            }
+        };
+        @Override protected void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.activity_main);
+            ButterKnife.bind(this);
+            ButterKnife.apply(buttons, action);  // 初始化或修改每个view的属性值
+            ButterKnife.apply(buttons, setter, true);
+        }
+        ```
+    4. 当熟悉了Butterknife的基本用法后，有时候还是要写很多@BindView()之类的，是不是很烦，没关系，最后教你们一招偷懒的方式，当然是用插件了，嘿嘿。
+        1. 搜索安装Butterknife Zelezny插件
+        2. 右击Generate选择最后的generate butterknife injections
+5. 源码解读1
+
+## ORM
 
 ## Hermes
 
