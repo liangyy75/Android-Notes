@@ -16,7 +16,7 @@ img {
 - [usb挂载](#usb%e6%8c%82%e8%bd%bd)
 - [Arouter](#arouter)
 - [Agora Platform](#agora-platform)
-- [APT](#apt)
+- [APT/SPI](#aptspi)
 - [QPython](#qpython)
 - [EventBus源码阅读](#eventbus%e6%ba%90%e7%a0%81%e9%98%85%e8%af%bb)
 - [RxJava](#rxjava)
@@ -1405,7 +1405,7 @@ https://blog.csdn.net/new_abc/article/details/53006327
 
 [agorq io](https://www.agora.io/cn/)
 
-## APT
+## APT/SPI
 
 1. links
     * [【Android】APT](https://www.jianshu.com/p/7af58e8e3e18)
@@ -1413,13 +1413,16 @@ https://blog.csdn.net/new_abc/article/details/53006327
     * [javapoet github](https://github.com/square/javapoet) finished
     * [JavaPoet 看这一篇就够了](https://juejin.im/entry/58fefebf8d6d810058a610de) finished
     * [Android模块开发之APT技术](https://www.jianshu.com/p/9616f4a462bd)
-2. javapoet
+    * [Android模块开发之SPI](https://www.jianshu.com/p/deeb39ccdc53)
+2. spi
+    1. 
+3. javapoet
     1. javapoet是square公司良心出品，让我们脱离手动凭借字符串来生成Java类的痛苦，可以通过各种姿势来生成Java类。一个Java文件由四部分组成
         1. 包名
         2. 类
         3. 属性
         4. 方法
-    2. 对应到 JavaPoet 中也就是
+    2. 对应到JavaPoet中也就是
         ```java
         JavaFile.builder("liang.example.lib",
             TypeSpec.classBuilder(...)
@@ -1567,7 +1570,7 @@ https://blog.csdn.net/new_abc/article/details/53006327
         //     .addParameter(LogRecord.class, "logRecord")
         //     .returns(LogReceipt.class)
         //     .build();
-        //MethodSpec dismiss = MethodSpec.methodBuilder("dismiss")
+        // MethodSpec dismiss = MethodSpec.methodBuilder("dismiss")
         //    .addJavadoc("Hides {@code message} from the caller's history. Other\n"
         //        + "participants in the conversation will continue to see the\n"
         //        + "message in their own history unless they also delete it.\n")
@@ -1633,7 +1636,7 @@ https://blog.csdn.net/new_abc/article/details/53006327
         * TypeName
         * ParameterizedTypeName
         * CodeBlock
-3. apt
+4. apt
     1. APT，就是 Annotation Processing Tool 的简称，就是可以在代码编译期间对注解进行处理，并且生成Java文件，减少手动的代码输入。注解我们平时用到的比较多的可能会是运行时注解，比如大名鼎鼎的retrofit就是用运行时注解，通过动态代理来生成网络请求。编译时注解平时开发中可能会涉及的比较少，但并不是说不常用，比如我们经常用的轮子Dagger2, ButterKnife, EventBus3 都在用，所以要紧跟潮流来看看APT技术的来龙去脉。
     2. 实例
         1. Route
@@ -1647,34 +1650,18 @@ https://blog.csdn.net/new_abc/article/details/53006327
         2. RouteProcessor
             ```java
             public class RouteProcessor extends AbstractProcessor {
-                /**
-                 * init()方法可以初始化拿到一些使用的工具，比如文件相关的辅助类 Filer;元素相关的辅助类Elements;日志相关的辅助类Messager;
-                 */
+                // init()方法可以初始化拿到一些使用的工具，比如文件相关的辅助类 Filer;元素相关的辅助类Elements;日志相关的辅助类Messager;
                 @Override
-                public synchronized void init(ProcessingEnvironment processingEnvironment) {
-                    super.init(processingEnvironment);
-                }
-                /**
-                 * getSupportedSourceVersion()方法返回 Java 版本;
-                 */
+                public synchronized void init(ProcessingEnvironment processingEnvironment) { super.init(processingEnvironment); }
+                // getSupportedSourceVersion()方法返回 Java 版本;
                 @Override
-                public SourceVersion getSupportedSourceVersion() {
-                    return super.getSupportedSourceVersion();
-                }
-                /**
-                 * getSupportedAnnotationTypes()方法返回要处理的注解的结合;
-                 */
+                public SourceVersion getSupportedSourceVersion() { return SourceVersion.latestSupported(); }
+                // getSupportedAnnotationTypes()方法返回要处理的注解的结合;
                 @Override
-                public Set<String> getSupportedAnnotationTypes() {
-                    return super.getSupportedAnnotationTypes();
-                }
-                /**
-                 * 上面几个方法写法基本都是固定的，重头戏是process()方法。
-                 */
+                public Set<String> getSupportedAnnotationTypes() { return super.getSupportedAnnotationTypes(); }
+                // 上面几个方法写法基本都是固定的，重头戏是process()方法。
                 @Override
-                public boolean process(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
-                    return false;
-                }
+                public boolean process(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) { return false; }
             }
             ```
 
@@ -1720,12 +1707,12 @@ https://blog.csdn.net/new_abc/article/details/53006327
     2. 方法: 
         1. SubscriberMethodFinder(List<SubscriberInfoIndex> subscriberInfoIndexes, boolean strictMethodVerification, boolean ignoreGeneratedIndex);
         2. private FindState prepareFindState(); private SubscriberInfo getSubscriberInfo(FindState findState); private List<SubscriberMethod> getMethodsAndRelease(FindState findState);
-        2. List<SubscriberMethod> findSubscriberMethods(Class<?> subscriberClass);
-        3. private List<SubscriberMethod> findUsingInfo(Class<?> subscriberClass);  // 在**apt**中查找
-        4. private List<SubscriberMethod> findUsingReflection(Class<?> subscriberClass);  // 通过反射获取
-        5. private void findUsingReflectionInSingleClass(FindState findState);  // 通过反射在一个类中获取
-        6. static void clearCaches();
-        6. 
+        3. List<SubscriberMethod> findSubscriberMethods(Class<?> subscriberClass);
+        4. private List<SubscriberMethod> findUsingInfo(Class<?> subscriberClass);  // 在**apt**中查找
+        5. private List<SubscriberMethod> findUsingReflection(Class<?> subscriberClass);  // 通过反射获取
+        6. private void findUsingReflectionInSingleClass(FindState findState);  // 通过反射在一个类中获取
+        7. static void clearCaches();
+        8. 
     3. 静态内部类 FindState 
         1. 成员: 
             1. List<SubscriberMethod> subscriberMethods = new ArrayList<>();
@@ -3739,7 +3726,9 @@ https://blog.csdn.net/new_abc/article/details/53006327
 
 ## Dagger2
 
-1. 
+1. links
+    1. [dagger2 github](https://github.com/google/dagger)
+    2. [神兵利器Dagger2](https://zhuanlan.zhihu.com/p/24454466)
 
 ## ButterKnife
 
