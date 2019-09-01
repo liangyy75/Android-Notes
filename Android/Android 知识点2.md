@@ -33,7 +33,10 @@ img {
 - [Protocol](#protocol)
 - [Dagger2](#dagger2)
 - [ButterKnife](#butterknife)
-- [ORM](#orm)
+- [Android Architecture Components -- lifecycle / livedata / viewmodel](#android-architecture-components----lifecycle--livedata--viewmodel)
+- [Android Architecture Components -- paging / room / navigation](#android-architecture-components----paging--room--navigation)
+- [Android Architecture Components -- WorkManger](#android-architecture-components----workmanger)
+- [greendao](#greendao)
 - [Hermes](#hermes)
 - [适配](#%e9%80%82%e9%85%8d)
 - [KLog](#klog)
@@ -1086,7 +1089,7 @@ img {
             3. auto-patch-plugin(负责提取制作patch包)
             4. patch(负责补丁包的补丁工作)
         3. **AutoPatchBase**: 作为热补丁的基类，主要类是有几个：
-            1. 2个注解分别为@Add（添加新的类）和@Modify（修改当前类的方法）；
+            1. 2个注解分别为@Add(添加新的类)和@Modify(修改当前类的方法)；
             2. 一个Constant类用来保存固定的字符串；
             3. 一个ChangeQuickRedirect接口，用来给plugin确认当前类是否需要patch
         4. **Gradle-Plugin**: 用于插桩的工具。首先进行对Apk检查防止包被篡改，然后在RobustTransform.groovy中
@@ -1415,7 +1418,9 @@ https://blog.csdn.net/new_abc/article/details/53006327
     * [Android模块开发之APT技术](https://www.jianshu.com/p/9616f4a462bd)
     * [Android模块开发之SPI](https://www.jianshu.com/p/deeb39ccdc53)
 2. spi
-    1. 
+    1. Java提供的SPI全名就是Service Provider Interface，下面是一段官方的解释，其实就是为某个接口寻找服务的机制，有点类似IOC的思想，将装配的控制权移交给ServiceLoader。SPI在平时我们用到的会比较少，但是在Android模块开发中就会比较有用，不同的模块可以基于接口编程，每个模块有不同的实现service provider，然后通过SPI机制自动注册到一个配置文件中，就可以实现在程序运行时扫描加载同一接口的不同service provider。这样模块之间不会基于实现类硬编码，可插拔。
+    2. 例子: 一个项目有四个模块(app / interface / adiplay / bdiplay)，后两个是interface模块的实现，例子就是通过点击按钮，加载不同模块实现的方法。
+        1. 
 3. javapoet
     1. javapoet是square公司良心出品，让我们脱离手动凭借字符串来生成Java类的痛苦，可以通过各种姿势来生成Java类。一个Java文件由四部分组成
         1. 包名
@@ -1903,7 +1908,7 @@ https://blog.csdn.net/new_abc/article/details/53006327
         implementation 'io.reactivex.rxjava2:rxjava:2.2.10'
         ```
     3. RxJava Observable [【java】Observer和Observable详解](https://blog.csdn.net/u012250875/article/details/77747878)
-        1. RxJava使用的是观察者模式，其中有两个关键的接口：Observable和Observer。当Observable（被观察的对象）状态改变，所有subscribed（订阅）的Observer（观察者）会收到一个通知。在Observable的接口中有一个方法subscribe()，这样Observer可以调用来进行订阅。同样，在Observer接口中有三个方法，会被Observable回调：
+        1. RxJava使用的是观察者模式，其中有两个关键的接口：Observable和Observer。当Observable(被观察的对象)状态改变，所有subscribed(订阅)的Observer(观察者)会收到一个通知。在Observable的接口中有一个方法subscribe()，这样Observer可以调用来进行订阅。同样，在Observer接口中有三个方法，会被Observable回调：
             - onNext(T value) 提供了一个 T 类型的item给Observer
             - onComplete() 在Observable发送items结束后通知Observer
             - onError(Throwable e) 当Observable发生错误时通知Observer
@@ -2145,7 +2150,7 @@ https://blog.csdn.net/new_abc/article/details/53006327
 ## Gson
 
 1. links
-    * [你真的会用Gson吗?Gson使用指南（一）](https://www.jianshu.com/p/e740196225a4)
+    * [你真的会用Gson吗?Gson使用指南(一)](https://www.jianshu.com/p/e740196225a4)
     * [搞定Gson泛型封装](https://www.jianshu.com/p/d62c2be60617)
     * [Gson github](https://github.com/google/gson)
     * [HashMap and gson](https://stackoverflow.com/questions/2779251/how-can-i-convert-json-to-a-hashmap-using-gson)
@@ -2342,7 +2347,7 @@ https://blog.csdn.net/new_abc/article/details/53006327
                 .setDateFormat("yyyy-MM-dd")
                 // 禁此序列化内部类；注意：内部类(Inner Class)和嵌套类(Nested Class)(就是带有static的)的区别
                 .disableInnerClassSerialization()
-                // 生成不可执行的Json（多了 )]}' 这4个字符）
+                // 生成不可执行的Json(多了 )]}' 这4个字符)
                 .generateNonExecutableJson()
                 // 禁止转义html标签
                 .disableHtmlEscaping()
@@ -2437,7 +2442,7 @@ https://blog.csdn.net/new_abc/article/details/53006327
             System.out.println(gson.toJson(modifierSample));
             // 结果：{"publicField":"public","protectedField":"protected","defaultField":"default"}
             ```
-        5. 基于策略（自定义规则）
+        5. 基于策略(自定义规则)
             1. 优点是功能强大、灵活，缺点是相比其它3种方法稍麻烦一点，但也仅仅只是想对其它3种稍麻烦一点而已。基于策略是利用Gson提供的ExclusionStrategy接口，同样需要使用GsonBuilder，相关API有2个，分别是 addSerializationExclusionStrategy 和 addDeserializationExclusionStrategy 分别针对序列化和反序化时。这里以序列化为例。
             2. 例子
                 ```java
@@ -2468,7 +2473,7 @@ https://blog.csdn.net/new_abc/article/details/53006327
             ```
         2. GsonBuilder提供了 FieldNamingStrategy 接口和 setFieldNamingPolicy 和 setFieldNamingStrategy 两个方法。
         3. 默认实现: GsonBuilder.setFieldNamingPolicy 方法与 Gson 提供的另一个枚举类 FieldNamingPolicy 配合使用，该枚举类提供了5种实现方式分别为：
-            | FieldNamingPolicy            | 结果（仅输出emailAddress字段）         |
+            | FieldNamingPolicy            | 结果(仅输出emailAddress字段)           |
             | :--------------------------- | :------------------------------------- |
             | IDENTITY                     | {"emailAddress":"ikidou@example.com"}  |
             | LOWER_CASE_WITH_DASHES       | {"email-address":"ikidou@example.com"} |
@@ -2491,7 +2496,7 @@ https://blog.csdn.net/new_abc/article/details/53006327
         6. 注意： @SerializedName注解拥有最高优先级，在加有@SerializedName注解的字段上FieldNamingStrategy不生效！
 5. 基础4
     1. TypeAdapter
-        1. TypeAdapter是Gson自2.0（源码注释上说的是2.1）开始版本提供的一个抽象类，用于接管某种类型的序列化和反序列化过程，包含两个注要方法 write(JsonWriter,T) 和 read(JsonReader) 其它的方法都是final方法并最终调用这两个抽象方法。
+        1. TypeAdapter是Gson自2.0(源码注释上说的是2.1)开始版本提供的一个抽象类，用于接管某种类型的序列化和反序列化过程，包含两个注要方法 write(JsonWriter,T) 和 read(JsonReader) 其它的方法都是final方法并最终调用这两个抽象方法。
         2. 注意：TypeAdapter 以及 JsonSerializer 和 JsonDeserializer 都需要与 GsonBuilder.registerTypeAdapter 示或GsonBuilder.registerTypeHierarchyAdapter配合使用，下面将不再重复说明。
         3. 示例
             ```java
@@ -2553,7 +2558,7 @@ https://blog.csdn.net/new_abc/article/details/53006327
                     })
                     .create()
             ```
-        6. 这一接管就要管两样好麻烦呀，我明明只想管序列化（或反列化）的过程的，另一个过程我并不关心，难道没有其它更简单的方法么? 当然有！就是接下来要介绍的 JsonSerializer与JsonDeserializer。
+        6. 这一接管就要管两样好麻烦呀，我明明只想管序列化(或反列化)的过程的，另一个过程我并不关心，难道没有其它更简单的方法么? 当然有！就是接下来要介绍的 JsonSerializer与JsonDeserializer。
     2. JsonSerializer与JsonDeserializer
         1. JsonSerializer 和JsonDeserializer不用像TypeAdapter一样，必须要实现序列化和反序列化的过程，你可以据需要选择，如只接管序列化的过程就用 JsonSerializer ，只接管反序列化的过程就用 JsonDeserializer ，如上面的需求可以用下面的代码。
         2. 防止数字转化失败的示例
@@ -2603,7 +2608,7 @@ https://blog.csdn.net/new_abc/article/details/53006327
             ```
     4. @JsonAdapter注解
         1. JsonAdapter相较之前介绍的SerializedName 、FieldNamingStrategy、Since、Until、Expos这几个注解都是比较特殊的，其它的几个都是用在POJO的字段上，而这一个是用在POJO类上的，接收一个参数，且必须是TypeAdpater，JsonSerializer或JsonDeserializer这三个其中之一。
-        2. 上面说JsonSerializer和JsonDeserializer都要配合GsonBuilder.registerTypeAdapter使用，但每次使用都要注册也太麻烦了，JsonAdapter就是为了解决这个痛点的。使用方法（以User为例）：
+        2. 上面说JsonSerializer和JsonDeserializer都要配合GsonBuilder.registerTypeAdapter使用，但每次使用都要注册也太麻烦了，JsonAdapter就是为了解决这个痛点的。使用方法(以User为例)：
             ```java
             @JsonAdapter(UserTypeAdapter.class) //加在类上
             public class User {
@@ -2687,7 +2692,7 @@ https://blog.csdn.net/new_abc/article/details/53006327
     * [Retrofit关键概念解析](https://www.jianshu.com/p/f085be1c302c)
     * [Retrofit解析3之反射](https://www.jianshu.com/p/2216475cddfe)
     * [你真的会用Retrofit2吗?Retrofit2完全教程](https://www.jianshu.com/p/308f3c54abdd)
-    * [Android Retrofit 2.0 的详细 使用攻略（含实例讲解）](https://www.jianshu.com/p/a3e162261ab6)
+    * [Android Retrofit 2.0 的详细 使用攻略(含实例讲解)](https://www.jianshu.com/p/a3e162261ab6)
     * [Retrofit 从入门到了解【总结】](https://www.cnblogs.com/baiqiantao/p/7494850.html)
     * [Retrofit github](https://github.com/square/retrofit)
     * [OKhttp和Retrofit源码分析](https://blog.csdn.net/new_abc/column/info/13425)
@@ -2707,7 +2712,7 @@ https://blog.csdn.net/new_abc/article/details/53006327
     * [Kalle github](https://github.com/yanzhenjie/Kalle)
     * [xUtil github]()
     * [restful-api-design-references github](https://github.com/aisuhua/restful-api-design-references)
-    * [Android网络编程（六）OkHttp3用法全解析](https://blog.csdn.net/itachi85/article/details/51190687)
+    * [Android网络编程(六)OkHttp3用法全解析](https://blog.csdn.net/itachi85/article/details/51190687)
     * [OKhttp和Retrofit源码分析](https://blog.csdn.net/new_abc/column/info/13425)
 1. OkHttp知识1
     1. 导入
@@ -2757,7 +2762,7 @@ https://blog.csdn.net/new_abc/article/details/53006327
         OkHttpClient client = new OKHttpClient();
         public static final MediaType MEDIA_TYPE_MARKDOWN = MediaType.parse("text/x-markdown; charset=utf-8");
         ```
-    2. Synchronous Get(同步Get): 下载一个文件，打印他的响应头，以string形式打印响应体。响应体的 string() 方法对于小文档来说十分方便、高效。 但是如果响应体太大（超过1MB），应避免适应 string()方法 ，因为他会将把整个文档加载到内存中。对于超过1MB的响应body，应使用流的方式来处理body。
+    2. Synchronous Get(同步Get): 下载一个文件，打印他的响应头，以string形式打印响应体。响应体的 string() 方法对于小文档来说十分方便、高效。 但是如果响应体太大(超过1MB)，应避免适应 string()方法 ，因为他会将把整个文档加载到内存中。对于超过1MB的响应body，应使用流的方式来处理body。
         ```java
         Request request = new Request.Builder().tag(MainActivity.this)
             .url("http://publicobject.com/helloworld.txt").build();
@@ -2799,7 +2804,7 @@ https://blog.csdn.net/new_abc/article/details/53006327
         Log.d("MainActivity-- ", "Server: " + response.header("Server"));
         ```
 3. OkHttp知识3
-    1. Posting a String(Post方式提交String): 使用HTTP POST提交请求到服务。这个例子提交了一个markdown文档到web服务，以HTML方式渲染markdown。 因为整个请求体都在内存中，因此避免使用此api提交大文档（大于1MB）。
+    1. Posting a String(Post方式提交String): 使用HTTP POST提交请求到服务。这个例子提交了一个markdown文档到web服务，以HTML方式渲染markdown。 因为整个请求体都在内存中，因此避免使用此api提交大文档(大于1MB)。
         ```java
         String postBody = "Releases\n"
             + "--------\n"
@@ -2890,7 +2895,7 @@ https://blog.csdn.net/new_abc/article/details/53006327
         ```
 5. OkHttp知识5
     1. Timeouts(超时): OkHttp支持连接，读取和写入超时。``client = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();``
-    2. Per-call Configuration(每个Call的配置): 使用OkHttpClient，所有的HTTP Client配置包括代理设置、超时设置、缓存设置。当你需要为单个call改变配置的时候，clone一个 OkHttpClient。 这个api将会返回一个浅拷贝（shallow copy），你可以用来单独自定义。下面的例子中，我们让一个请求是500ms的超时、另一个是3000ms的超时。
+    2. Per-call Configuration(每个Call的配置): 使用OkHttpClient，所有的HTTP Client配置包括代理设置、超时设置、缓存设置。当你需要为单个call改变配置的时候，clone一个 OkHttpClient。 这个api将会返回一个浅拷贝(shallow copy)，你可以用来单独自定义。下面的例子中，我们让一个请求是500ms的超时、另一个是3000ms的超时。
         ```java
         private final OkHttpClient client = new OkHttpClient();
         OkHttpClient copy1 = client.newBuilder().readTimeout(500, TimeUnit.MILLISECONDS).build();
@@ -3728,7 +3733,188 @@ https://blog.csdn.net/new_abc/article/details/53006327
 
 1. links
     1. [dagger2 github](https://github.com/google/dagger)
-    2. [神兵利器Dagger2](https://zhuanlan.zhihu.com/p/24454466)
+    2. [神兵利器Dagger2](https://zhuanlan.zhihu.com/p/24454466) finished
+2. 使用方法1
+    1. 简介: Dagger2起源于Dagger，是一款基于Java注解来实现的完全在编译阶段完成依赖注入的开源库，主要用于模块间解耦、提高代码的健壮性和可维护性。Dagger2在编译阶段通过apt利用Java注解自动生成Java代码，然后结合手写的代码来自动帮我们完成依赖注入的工作。起初Square公司受到Guice的启发而开发了Dagger，但是Dagger这种半静态半运行时的框架还是有些性能问题(虽说依赖注入是完全静态的，但是其有向无环图(Directed Acyclic Graph)还是基于反射来生成的，这无论在大型的服务端应用还是在Android应用上都不是最优方案)。因此Google工程师Fork了Dagger项目，对它进行了改造。于是变演变出了今天我们要讨论的Dagger2，所以说Dagger2其实就是高配版的Dagger。
+        ```groovy
+        api 'com.google.dagger:dagger:2.x'
+        annotationProcessor 'com.google.dagger:dagger-compiler:2.x'
+        ```
+    2. 依赖注入介绍: Java代码中Car类持有了对Engine实例的引用，我们称之为Car类对Engine类有一个依赖。依赖注入则是指通过注入的方式实现类与类之间的依赖，下面是常见的三种依赖注入的方式。
+        1. 构造注入：通过构造函数传参给依赖的成员变量赋值，从而实现注入。
+            ```java
+            public class Car {
+                private Engine engine;
+                public Car() { engine = new Engine(); }
+            }
+            ```
+        2. 接口注入：实现接口方法，同样以传参的方式实现注入。
+            ```java
+            public interface Injection<T> {
+                void inject(T t);
+            }
+            public class Car implements Injection<Engine> {
+                private Engine engine;
+                public Car() {}
+                public void inject(Engine engine) { this.engine = engine; }
+            }
+            ```
+        3. 注解注入：使用Java注解在编译阶段生成代码实现注入或者是在运行阶段通过反射实现注入。
+            ```java
+            public class Car{
+                @Inject
+                Engine engine;
+                public Car() {}
+            }
+            ```
+        4. 前两种注入方式需要我们编写大量的模板代码，而机智的Dagger2则是通过Java注解在编译期来实现依赖注入的。
+    3. 我们之所是要依赖注入，最重要的就是为了解耦，达到高内聚低耦合的目的，保证代码的健壮性、灵活性和可维护性。下面我们看看同一个业务的两种实现方案：
+        1. 方案A
+            ```java
+            public class Car {
+                private Engine engine;
+                private List<Wheel> wheels;
+                public Car() {
+                    engine = new Engine();
+                    wheels = new ArrayList<>();
+                    for (int i = 0; i < 4; i++) {
+                        wheels.add(new Wheel());
+                    }
+                }
+                public void start() { System.out.println("启动汽车"); }
+            }
+            public class CarTest {
+                public static void main(String[] args) {
+                    Car car = new Car();
+                    car.start();
+                }
+            }
+            ```
+        2. 方案B
+            ```java
+            public class Car {
+                private Engine engine;
+                private List<Wheel> wheels;
+                public Car(Engine engine, List<Wheel> wheels){
+                    this.engine = engine;
+                    this.wheels = wheels;
+                }
+                public void start() { System.out.println("启动汽车"); }
+            }
+            public class CarTest {
+                public static void main(String[] args) {
+                    Engine engine = new Engine();
+                    List<Wheel> wheels = new ArrayList<>();
+                    for (int i = 0; i < 4; i++) {
+                        wheels.add(new Wheel());
+                    }
+                    Car car = new Car(engine, wheels);
+                    car.start();
+                }
+            }
+            ```
+        3. 方案A明显丧失了灵活性，一切依赖都是在Car类的内部创建，Car与Engine和Wheel严重耦合。一旦Engine或者Wheel的创建方式发生了改变，我们就必须要去修改Car类的构造函数(比如说现在创建Wheel实例的构造函数改变了，需要传入Rubber(橡胶)了)；另外我们也没办法替换动态的替换依赖实例(比如我们想把Car的Wheel(轮胎)从邓禄普(轮胎品牌)换成米其林(轮胎品牌)的)。这类问题在大型的商业项目中则更加严重，往往A依赖B、B依赖C、C依赖D、D依赖E；一旦稍有改动便牵一发而动全身，想想都可怕！而依赖注入则很好的帮我们解决了这一问题。
+    4. 使用Dagger2的理由
+        1. 无论是构造函数注入还是接口注入，都避免不了要编写大量的模板代码。机智的猿猿们当然不开心做这些重复性的工作，于是各种依赖注入框架应用而生。但是这么多的依赖注入框架为什么我们却偏爱Dagger2呢？
+        2. 我们先从Spring中的控制反转(IOC)说起。谈起依赖注入，做过J2EE开发的同学一定会想起Spring IOC，那通过迷之XML来配置依赖的方式真的很让人讨厌；而且XML与Java代码分离也导致代码链难以追踪。之后更加先进的Guice(Android端也有个RoboGuice)出现了，我们不再需要通过XML来配置依赖，但其运行时实现注入的方式让我们在追踪和定位错误的时候却又万分痛苦。开篇提到过Dagger就是受Guice的启发而开发出来的；Dagger继承了前辈的思想，在性能又碾压了它的前辈Guice，可谓是长江后浪推前浪，前浪死在沙滩上。
+        3. Dagger是一种半静态半运行时的DI框架，虽说依赖注入是完全静态的，但是生成有向无环图(DAG)还是基于反射来实现，这无论在大型的服务端应用还是在Android应用上都不是最优方案。升级版的Dagger2解决了这一问题，从半静态变为完全静态，从Map式的API变成申明式API(@Module)，生成的代码更优雅高效；而且一旦出错我们在编译期间就能发现。所以Dagger2对开发者的更加友好了，当然Dagger2也因此丧失了一些灵活性，但总体来说利还是远远大于弊的。
+        4. 前面提到这种A B C D E连续依赖的问题，一旦E的创建方式发生了改变就会引发连锁反应，可能会导致A B C D都需要做针对性的修改；但是骚年，你以为为这仅仅是工作量的问题吗？更可怕的是我们创建A时需要按顺序先创建E D C B四个对象，而且必须保证顺序上是正确的。Dagger2就很好的解决了这一问题(不只是Dagger2，在其他DI框架中开发者同样不需要关注这些问题)。
+3. 使用方法2
+    1. Dagger2使用过程中我们通常接触到的注解主要包括：@Inject, @Module, @Provides, @Component, @Qulifier, @Scope, @Singleten。
+        1. @Inject: @Inject有两个作用，一是用来标记需要依赖的变量，二是用来标记构造函数，Dagger2通过@Inject注解可以在需要这个类实例的时候来找到这个构造函数并把相关实例构造出来，以此来为被@Inject标记了的变量提供依赖；
+        2. @Module: @Module用于标注提供依赖的类。很多时候我们需要提供依赖的构造函数是第三方库的，我们没法给它加上@Inject注解，又比如说提供以来的构造函数是带参数的，不能简单的使用@Inject标记它。@Module正是帮我们解决这些问题的。
+        3. @**Provides**: @Provides用于标注Module所标注的类中的方法，该方法在需要提供依赖时被调用，从而把预先提供好的对象当做依赖给标注了@Inject的变量赋值；
+        4. @Component: @Component用于标注接口，是依赖需求方和依赖提供方之间的桥梁。被Component标注的接口在编译时会生成该接口的实现类(若接口为CarComponent，则编译期生成的类为DaggerCarComponent)，我们通过调用这个实现类的方法完成注入；
+        5. @Qulifier: @Qulifier用于自定义注解，也就是说@Qulifier就如同Java提供的几种基本元注解一样用来标记注解类。我们在使用@Module来标注提供依赖的方法时，方法名我们是可以随便定义的(虽然我们定义方法名一般以provide开头，但这并不是强制的，只是为了增加可读性而已)。那么Dagger2怎么知道这个方法是为谁提供依赖呢？答案就是返回值的类型，Dagger2根据返回值的类型来决定为哪个被@Inject标记了的变量赋值。但是问题来了，一旦有多个一样的返回类型Dagger2就懵逼了。@Qulifier的存在正式为了解决这个问题，我们使用@Qulifier来定义自己的注解，然后通过自定义的注解去标注提供依赖的方法和依赖需求方(也就是被@Inject标注的变量)，这样Dagger2就知道为谁提供依赖了。----一个更为精简的定义：当类型不足以鉴别一个依赖的时候，我们就可以使用这个注解标示；
+        6. @Scope: @Scope同样用于自定义注解，我能可以通过@Scope自定义的注解来限定注解作用域，实现局部的单例；
+        7. @Singleton: @Singleton其实就是一个通过@Scope定义的注解，我们一般通过它来实现全局单例。但实际上它并不能提前全局单例，是否能提供全局单例还要取决于对应的Component是否为一个全局对象。
+    2. 我们提到@Inject和@Module都可以提供依赖，那如果我们即在构造函数上通过标记@Inject提供依赖，有通过@Module提供依赖Dagger2会如何选择呢？具体规则如下：
+        1. 首先查找@Module标注的类中是否存在提供依赖的方法。
+        2. 若存在提供依赖的方法，查看该方法是否存在参数。
+            1. 若存在参数，则按从步骤1开始依次初始化每个参数；
+            2. 若不存在，则直接初始化该类实例，完成一次依赖注入。
+        3. 若不存在提供依赖的方法，则查找@Inject标注的构造函数，看构造函数是否存在参数。
+            1. 若存在参数，则从步骤1开始依次初始化每一个参数
+            2. 若不存在，则直接初始化该类实例，完成一次依赖注入。
+    3. 例子1: Inject / Component
+        ```java
+        public class Car {
+            @Inject Engine engine;
+            public Car() { DaggerCarComponent.builder().build().inject(this); }  // 这里的代码在Build之后编写
+            public Engine getEngine() { return this.engine; }
+        }
+        public class Engine {
+            @Inject Engine() {}
+            public void run() { System.out.println("引擎转起来了~~~"); }
+        }
+        @Component public interface CarComponent { void inject(Car car); }
+        ```
+    4. 例子2: Inject / Component / Module / Provides
+        ```java
+        public class Car {
+            @Inject Engine engine;
+            public Car() { DaggerCarComponent.builder().markCarModule(new MarkCarModule()).build().inject(this); }  // 这里的代码在Build之后编写
+            public Engine getEngine() { return this.engine; }
+        }
+        @Moudle public class MarkCarModule {
+            public MarkCarModule() {}
+            @Provides Engine provideEngine() { return new Engine("gear"); }
+        }
+        @Component(modules = {MarkCarModule.class}) public interface CarComponent { void inject(Car car); }
+        public class Engine {
+            private String gear;
+            public Engine(String gear) { this.gear = gear; }
+            public void printGearName() { System.out.println("GearName:" + gear); }
+        }
+        ```
+4. 使用方法3
+    1. 例子3: Inject / Component / Module / Provides / Qualifier
+        ```java
+        @Qualifier @Retention(RetentionPolicy.RUNTIME) public @interface QualifierA {}
+        @Qualifier @Retention(RetentionPolicy.RUNTIME) public @interface QualifierB {}
+        @Module public class MarkCarModule {
+            public MarkCarModule() {}
+            @QualifierA @Provides Engine provideEngineA() { return new Engine("gearA"); }
+            @QualifierB @Provides Engine provideEngineB() { return new Engine("gearB"); }
+        }
+        public class Car {
+            @QualifierA @Inject Engine engineA;
+            @QualifierB @Inject Engine engineB;
+            public Car() {
+                DaggerCarComponent.builder().markCarModule(new MarkCarModule()).build().inject(this);
+            }
+            public Engine getEngineA() { return this.engineA; }
+            public Engine getEngineB() { return this.engineB; }
+        }
+        public class Engine {
+            private String gear;
+            public Engine(String gear) { this.gear = gear; }
+            public void printGearName() { System.out.println("GearName:" + gear); }
+        }
+        ```
+    2. 例子4: Inject / Component / Module / Provides / Scope
+        ```java
+        @Scope @Retention(RetentionPolicy.RUNTIME) public @interface CarScope {}
+        @Module public class MarkCarModule {
+            public MarkCarModule() {}
+            @Provides @CarScope Engine getEngine() { return new Engine("gear"); }
+        }
+        @CarScope @Component(modules = {MarkCarModule.class}) public interface CarComponent { void inject(Car car); }
+        public class Car {
+            @Inject Engine engineA;
+            @Inject Engine engineB;
+            public Car() { DaggerCarComponent.builder().markCarModule(new MarkCarModule()) .build().inject(this); }
+        }
+        public class Engine {
+            private String gear;
+            public Engine(String gear) {
+                System.out.println("Create Engine");
+                this.gear = gear;
+            }
+        }
+        ```
+    3. 原理分析1
+5. 源码解析
 
 ## ButterKnife
 
@@ -3898,7 +4084,21 @@ https://blog.csdn.net/new_abc/article/details/53006327
         2. 右击Generate选择最后的generate butterknife injections
 5. 源码解读1
 
-## ORM
+## Android Architecture Components -- lifecycle / livedata / viewmodel
+
+1. links
+    1. [Android lifecycle 使用详解](https://www.jianshu.com/p/722a9e899c95z)
+    2. **[带你领略Android Jetpack组件的魅力](https://juejin.im/post/5c4e9e8ce51d451bb73ad665)**
+    3. [Android Jetpack](http://liuwangshu.cn/tags/Android-Jetpack/)
+2. 
+
+## Android Architecture Components -- paging / room / navigation
+
+## Android Architecture Components -- WorkManger
+
+## greendao
+
+1. 
 
 ## Hermes
 
