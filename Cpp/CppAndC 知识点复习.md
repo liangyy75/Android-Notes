@@ -135,17 +135,17 @@ printf("hello c");
 fputs(s, stdout);
 ```
 
-数据类型 | 数据格式
-:- |:-
-int | %d
-short | %d
-long | %ld
-float | %f
-double | %lf
-char | %c
-十六进制 | %X
-八进制 | %o
-字符串 | %s
+| 数据类型 | 数据格式 |
+| :------- | :------- |
+| int      | %d       |
+| short    | %d       |
+| long     | %ld      |
+| float    | %f       |
+| double   | %lf      |
+| char     | %c       |
+| 十六进制 | %X       |
+| 八进制   | %o       |
+| 字符串   | %s       |
 
 ### 数组
 
