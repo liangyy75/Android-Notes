@@ -14,6 +14,8 @@ img {
 - [地图](#%e5%9c%b0%e5%9b%be)
 - [插件化](#%e6%8f%92%e4%bb%b6%e5%8c%96)
 - [usb挂载](#usb%e6%8c%82%e8%bd%bd)
+- [省电管理](#%e7%9c%81%e7%94%b5%e7%ae%a1%e7%90%86)
+- [单元测试](#%e5%8d%95%e5%85%83%e6%b5%8b%e8%af%95)
 - [Arouter](#arouter)
 - [Agora Platform](#agora-platform)
 - [APT/SPI](#aptspi)
@@ -1316,6 +1318,25 @@ img {
 ## usb挂载
 
 https://blog.csdn.net/new_abc/article/details/53006327
+
+## 省电管理
+
+1. links
+    1. [Android 省电管理](https://blog.csdn.net/liu362732346/article/category/8520154)
+    2. [Android 8.1 Doze模式分析(五)](https://blog.csdn.net/liu362732346/article/details/85290519#comments)
+    3. [Android 6.0变化之休眠模式](https://blog.csdn.net/xiaorenwu1206/article/details/49358433)
+    4. [Android Developer 休眠模式](https://developer.android.com/training/monitoring-device-state/doze-standby.html?hl=zh-cn)
+    5. [安卓电量优化之WakeLock锁机制全面解析](https://www.cnblogs.com/leipDao/p/8241468.html)
+    6. [针对低电耗模式和应用待机模式进行优化](https://developer.android.com/training/monitoring-device-state/doze-standby.html)
+
+## 单元测试
+
+1. links
+    1. [单元测试](https://www.jianshu.com/nb/12079248)
+    2. [Android 单元测试只看这一篇就够了](https://juejin.im/post/5b57e3fbf265da0f47352618#heading-15)
+    3. [Mockito的使用](https://www.jianshu.com/p/7d602a9f85e3)
+    4. [Android单元测试-Mockito 浅析](https://www.jianshu.com/p/b2084377b340)
+    5. 
 
 ## Arouter
 

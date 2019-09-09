@@ -1,7 +1,8 @@
 <!-- [TOC] -->
 
-- [异常](#%E5%BC%82%E5%B8%B8)
-- [配置](#%E9%85%8D%E7%BD%AE)
+- [异常](#%e5%bc%82%e5%b8%b8)
+- [配置](#%e9%85%8d%e7%bd%ae)
+- [checkstyle](#checkstyle)
 - [zip](#zip)
 - [jar](#jar)
 - [function](#function)
@@ -10,14 +11,14 @@
 - [io](#io)
 - [nio](#nio)
 - [regex](#regex)
-- [网络](#%E7%BD%91%E7%BB%9C)
-- [Java5 Annotation](#Java5-Annotation)
-- [反射](#%E5%8F%8D%E5%B0%84)
-- [工具类](#%E5%B7%A5%E5%85%B7%E7%B1%BB)
-- [Java8 Stream](#Java8-Stream)
-- [Java9 Module](#Java9-Module)
+- [网络](#%e7%bd%91%e7%bb%9c)
+- [Java5 Annotation](#java5-annotation)
+- [反射](#%e5%8f%8d%e5%b0%84)
+- [工具类](#%e5%b7%a5%e5%85%b7%e7%b1%bb)
+- [Java8 Stream](#java8-stream)
+- [Java9 Module](#java9-module)
 - [lucene](#lucene)
-- [ElasticSearch](#ElasticSearch)
+- [ElasticSearch](#elasticsearch)
 - [end](#end)
 
 ## 异常
@@ -105,6 +106,12 @@
     1. 
 1. String newLine = System.getProperty("line.separator");
 2. **System**
+
+## checkstyle
+
+1. links
+    1. [使用checkstyle来规范你的项目](https://www.cnblogs.com/woshimrf/p/using-checkstyle.html)
+    2. [基于华为java编程规范的checkstyle.xml以及格式化模版,注释模版](https://blog.csdn.net/zzq900503/article/details/49617939)
 
 ## zip
 
