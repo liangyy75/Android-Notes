@@ -1419,8 +1419,58 @@ https://blog.csdn.net/new_abc/article/details/53006327
     * [Android模块开发之SPI](https://www.jianshu.com/p/deeb39ccdc53)
 2. spi
     1. Java提供的SPI全名就是Service Provider Interface，下面是一段官方的解释，其实就是为某个接口寻找服务的机制，有点类似IOC的思想，将装配的控制权移交给ServiceLoader。SPI在平时我们用到的会比较少，但是在Android模块开发中就会比较有用，不同的模块可以基于接口编程，每个模块有不同的实现service provider，然后通过SPI机制自动注册到一个配置文件中，就可以实现在程序运行时扫描加载同一接口的不同service provider。这样模块之间不会基于实现类硬编码，可插拔。
-    2. 例子: 一个项目有四个模块(app / interface / adiplay / bdiplay)，后两个是interface模块的实现，例子就是通过点击按钮，加载不同模块实现的方法。
-        1. 
+    2. 例子: 一个项目有四个模块(app / spi_interface / spi_impl1 / spi_impl2)，后两个是interface模块的实现，例子就是通过点击按钮，加载不同模块实现的方法。
+        1. spi_interface
+            ```java
+            package com.liang.example.spi_interface;
+            public interface SpiDisplay { String play(); }
+            ```
+        2. spi_impl1
+            ```java
+            package com.liang.example.spi_impl1;
+            public class SpiDisplay1 implements SpiDisplay { @Override public String display() { return "SpiDisplay1: This is display in module spi_impl1"; } }
+            ```
+            ```
+            com.liang.example.spi_impl1.SpiDisplay1
+            ```
+        3. spi_impl2
+            ```java
+            package com.liang.example.spi_impl1;
+            public class SpiDisplay2 implements SpiDisplay { @Override public String display() { return "SpiDisplay2: This is display in module spi_impl2"; } }
+            ```
+            ```
+            com.liang.example.spi_impl1.SpiDisplay2
+            ```
+        4. app
+            ```java
+            package com.liang.example.apttest.spi;
+            public class SpiDisplay3 implements SpiDisplay { @Override public String display() { return "SpiDisplay3: This is display in module app"; } }
+            // ...
+            package com.liang.example.apttest.spi;
+            public class SpiDisplay4 implements SpiDisplay { @Override public String display() { return "SpiDisplay4: This is display in module app"; } }
+            ```
+            ```
+            // 文件名 -- com.liang.example.spi_interface.SpiDisplay
+            com.liang.example.apttest.spi.SpiDisplay3
+            com.liang.example.apttest.spi.SpiDisplay4
+            ```
+            ```java
+            // MainActivity
+            ServiceLoader<SpiDisplay> loader = ServiceLoader.load(SpiDisplay.class);
+            Iterator<SpiDisplay> iterator = loader.iterator();
+            List<String> dataList = new ArrayList<>();
+            while (iterator.hasNext()) {
+                dataList.add(iterator.next().display());
+            }
+            ((ListView) findViewById(R.id.test_apt_spi_list)).setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, dataList));
+            // loader.reload();
+            ```
+            ```groovy
+            api project(":spi_impl2")
+            api project(":spi_impl1")
+            api project(":spi_interface")
+            // 不需要的时候就没有这个实现了，当然还要在app模块的resources/META-INF/services里面的com.liang.example.spi_interface.SpiDisplay，而且需要注意ServiceLoader的reload方法
+            ```
 3. javapoet
     1. javapoet是square公司良心出品，让我们脱离手动凭借字符串来生成Java类的痛苦，可以通过各种姿势来生成Java类。一个Java文件由四部分组成
         1. 包名
@@ -1643,7 +1693,7 @@ https://blog.csdn.net/new_abc/article/details/53006327
         * CodeBlock
 4. apt
     1. APT，就是 Annotation Processing Tool 的简称，就是可以在代码编译期间对注解进行处理，并且生成Java文件，减少手动的代码输入。注解我们平时用到的比较多的可能会是运行时注解，比如大名鼎鼎的retrofit就是用运行时注解，通过动态代理来生成网络请求。编译时注解平时开发中可能会涉及的比较少，但并不是说不常用，比如我们经常用的轮子Dagger2, ButterKnife, EventBus3 都在用，所以要紧跟潮流来看看APT技术的来龙去脉。
-    2. 实例
+    2. 实例第一步
         1. Route
             ```java
             @Target(ElementType.TYPE)
@@ -1669,6 +1719,109 @@ https://blog.csdn.net/new_abc/article/details/53006327
                 public boolean process(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) { return false; }
             }
             ```
+    3. 实例第二步
+        ```java
+        public class RouteProcessor extends AbstractProcessor {
+            private Filer filer;
+            @Override public synchronized void init(ProcessingEnvironment processingEnvironment) {
+                super.init(processingEnvironment);
+                filer = processingEnvironment.getFiler();
+            }
+            @Override public SourceVersion getSupportedSourceVersion() { return SourceVersion.latestSupported(); }
+            @Override
+            public Set<String> getSupportedAnnotationTypes() {
+                LinkedHashSet<String> types = new LinkedHashSet<>();
+                types.add(Route.class.getCanonicalName());
+                return types;
+            }
+            @Override public boolean process(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
+                HashMap<String, TypeElement> nameMap = new HashMap<>();
+                // StringBuffer sb = new StringBuffer();
+                // for (TypeElement te : set) {
+                //     sb.append(te.getQualifiedName()).append(";");
+                // }
+                // nameMap.put("set", sb.toString());
+                //  --> routeMap.put("set", "com.liang.example.apttest.route.Route;");
+                Set<? extends Element> annotationElements = roundEnvironment.getElementsAnnotatedWith(Route.class);
+                for (Element element : annotationElements) {
+                    Route route = element.getAnnotation(Route.class);
+                    nameMap.put(route.path(), (TypeElement) element);
+                }
+                generateJavaFile(nameMap);
+                return true;
+            }
+        ```
+        ```java
+            private void generateJavaFile(Map<String, TypeElement> nameMap) {
+                // constructor
+                MethodSpec.Builder constructorBuilder = MethodSpec.constructorBuilder()
+                        .addModifiers(Modifier.PUBLIC)
+                        .addStatement("routeMap = new $T<>()", HashMap.class);
+                for (Map.Entry<String, TypeElement> entry : nameMap.entrySet()) {
+                    constructorBuilder.addStatement("routeMap.put(\"$N\", $T.class)", entry.getKey(), ClassName.get(entry.getValue()));
+                }
+                MethodSpec constructor = constructorBuilder.build();
+                // getActivityName
+                MethodSpec getActivityName = MethodSpec.methodBuilder("getActivityName")
+                        .addModifiers(Modifier.PUBLIC)
+                        .returns(Class.class)
+                        .addParameter(String.class, "routeName")
+                        .beginControlFlow("if (routeMap != null && !routeMap.isEmpty())")
+                        .addStatement("return routeMap.get(routeName)")
+                        .endControlFlow()
+                        .addStatement("return null")
+                        .build();
+                // class
+                TypeSpec typeSpec = TypeSpec.classBuilder("Route$Finder")
+                        .addModifiers(Modifier.PUBLIC)
+                        // .addSuperinterface(Provider.class)
+                        .addField(ParameterizedTypeName.get(HashMap.class, String.class, Class.class), "routeMap", Modifier.PRIVATE)
+                        .addMethod(constructor)
+                        .addMethod(getActivityName)
+                        .build();
+                // final generation
+                try {
+                    JavaFile javaFile = JavaFile.builder("com.liang.example.apttest.route", typeSpec).build();
+                    javaFile.writeTo(filer);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        ```
+    3. 实例第三步
+        ```java
+        // TODO: Class.forName来做~
+        public class RouteManager {
+            private static volatile RouteManager instance;
+            private Route$Finder finder;
+
+            private RouteManager() {
+                finder = new Route$Finder();
+            }
+
+            public static RouteManager getInstance() {
+                if (instance == null) {
+                    synchronized (RouteManager.class) {
+                        if (instance == null) {
+                            instance = new RouteManager();
+                        }
+                    }
+                }
+                return instance;
+            }
+
+            public boolean navigate(Activity activity, String path) {
+                Class clazz = finder.getActivityName(path);
+                if (clazz != null) {
+                    activity.startActivity(new Intent(activity, clazz));
+                    return true;
+                }
+                return false;
+            }
+        }
+        ```
+5. AutoService
 
 ## QPython
 

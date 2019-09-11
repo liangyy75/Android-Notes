@@ -16,6 +16,7 @@
 * [dart学习笔记](http://www.cndartlang.com/user/2)
 * [dart 官网](https://dart.dev/guides)
 * [语法基础——Dart语法基础](https://blog.csdn.net/qq_30379689/article/details/87260932)
+* [Flutter中文网](https://book.flutterchina.club)
 * [flutter 菜鸟教程](https://blog.csdn.net/duo_shine/column/info/25090)
 * [Flutter 入门系列](https://blog.csdn.net/mengks1987/article/details/84868953)
 * [Flutter中文网](https://flutterchina.club/) -- Dart语言
@@ -25,9 +26,7 @@
 
 1. 主函数
     ```dart
-    void main(List<String> args) {
-        print("Hello World");
-    }
+    void main(List<String> args) { print("Hello World"); }
     ```
 2. 注释: // /**/
 3. 别名: typedef能对方法进行重命名，且只能使用在function类型，在构造函数中也可以传递方法
