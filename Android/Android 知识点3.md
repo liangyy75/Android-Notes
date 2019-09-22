@@ -5,6 +5,7 @@ img {
 }
 </style>
 
+- [Vector](#vector)
 - [Adb等工具](#adb%e7%ad%89%e5%b7%a5%e5%85%b7)
 - [Android权限系统](#android%e6%9d%83%e9%99%90%e7%b3%bb%e7%bb%9f)
 - [bugclose](#bugclose)
@@ -15,6 +16,13 @@ img {
 - [dexknife](#dexknife)
 - [build-timer](#build-timer)
 - [AndroidShell](#androidshell)
+
+## Vector
+
+1. links
+    1. [Android Vector曲折的兼容之路](https://www.jianshu.com/p/e3614e7abc03)
+2. 注意点
+    1. vector中的width/height不能用?attr/actionBarSize这样的表示
 
 ## Adb等工具
 

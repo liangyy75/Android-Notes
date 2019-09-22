@@ -1,4 +1,5 @@
 - [android.R](#androidr)
+- [Canvas](#canvas)
 - [View properties](#view-properties)
 - [View events](#view-events)
 - [View AutoFill](#view-autofill)
@@ -7,6 +8,7 @@
 - [Button](#button)
 - [EditText](#edittext)
 - [LinearLayout](#linearlayout)
+- [???](#)
 
 ## android.R
 
@@ -158,6 +160,43 @@
 11. **style**
 12. **drawable**
 13. **attr**
+
+## Canvas
+
+1. 基本
+    1. int getWidth()
+    2. int getHeight()
+    3. int getDensity()
+    4. void setDensity(int density)
+    5. void setBitmap(Bitmap bitmap)
+    6. void setScreenDensity(int density)
+    7. int getMaximumBitmapWidth() / int getMaximumBitmapHeight() ==> MAXMIMUM_BITMAP_SIZE = 32766
+    8. void enableZ()
+    9. void disableZ()
+    10. boolean isOpaque()
+2. 保存: 
+    1. @Saveflags
+        1. MATRIX_SAVE_FLAG
+        2. CLIP_SAVE_FLAG
+        3. HAS_ALPHA_LAYER_SAVE_FLAG
+        4. FULL_COLOR_LAYER_SAVE_FLAG
+        5. CLIP_TO_LAYER_SAVE_FLAG
+        6. ALL_SAVE_FLAG
+    2. methods
+        1. int save()
+        2. int save(@Saveflags int saveFlags)
+        3. int saveLayer(@Nullable RectF bounds, @Nullable Paint paint, @Saveflags int saveFlags)
+        4. int saveLayer(@Nullable RectF bounds, @Nullable Paint paint)
+        5. int saveLayer(float left, float top, float right, float bottom, @Nullable Paint paint, @Saveflags int saveFlags)
+        6. int saveLayer(float left, float top, float right, float bottom, @Nullable Paint paint)
+        7. int saveLayerAlpha(@Nullable RectF bounds, int alpha, @Saveflags int saveFlags)
+        8.  int saveLayerAlpha(@Nullable RectF bounds, int alpha)
+        9.  int saveLayerAlpha(float left, float top, float right, float bottom, int alpha, @Saveflags int saveFlags)
+        10. int saveLayerAlpha(float left, float top, float right, float bottom, int alpha)
+        11. void restore()
+        12. int getSaveCount()
+        13. void restoreToCount(int saveCount)
+3. 
 
 ## View properties
 
@@ -490,3 +529,7 @@
 
 ## LinearLayout
 
+## ???
+
+1. links
+    1. [七大主流抗锯齿浅析](https://blog.csdn.net/u013467442/article/details/40628121)
