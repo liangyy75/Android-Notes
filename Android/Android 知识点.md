@@ -2680,42 +2680,17 @@ Android 信息.md
         1. 在 /java/test/utils/ 下添加 JniDemo.java
             ```java
             package utils;
-
             public class JniDemo {
-
                 public static int COUNT = 8;
-
-                public static String getHelloWorld() {
-                    return "Hello World: from java static method";
-                }
-
+                public static String getHelloWorld() { return "Hello World: from java static method"; }
                 private String msg;
                 private int[] counts;
-
-                public JniDemo() {
-                    this("default constructor");
-                }
-
-                public JniDemo(String msg) {
-                    this.msg = msg;
-                    this.counts = null;
-                }
-
-                public String getMessage() {
-                    return this.msg + ": from java getter method";
-                }
-
-                public int[] getCounts() {
-                    return this.counts;
-                }
-
-                public void setCounts(int[] counts) {
-                    this.counts = counts;
-                }
-
-                public String append(String str, int i) {
-                    return str + i;
-                }
+                public JniDemo() { this("default constructor"); }
+                public JniDemo(String msg) { this.msg = msg; this.counts = null; }
+                public String getMessage() { return this.msg + ": from java getter method"; }
+                public int[] getCounts() { return this.counts; }
+                public void setCounts(int[] counts) { this.counts = counts; }
+                public String append(String str, int i) { return str + i; }
             }
             ```
         2. 在 /cpp/test/jni/ 目录下添加 test.cpp
@@ -2725,30 +2700,24 @@ Android 信息.md
             #include <cstdio>
             #include <windows.h>
             #include "jni.h"
-
             using namespace std;
-
             int main(int argc, char const *argv[]) {
                 JavaVM *jvm;
                 JNIEnv *env;
                 JavaVMOption *options = new JavaVMOption[3];
                 JavaVMInitArgs vm_args;
-
                 options[0].optionString = "-Djava.compiler=NONE";
                 options[1].optionString = "-Djava.class.path=.;..\\..\\..\\java\\test\\";
                 options[2].optionString = "-verbose:gc,class";
-
                 vm_args.version = JNI_VERSION_1_8;
                 vm_args.nOptions = 3;
                 vm_args.options = options;
                 vm_args.ignoreUnrecognized = JNI_FALSE;
-
                 HMODULE hLibModule = LoadLibrary("D:\\software\\Java\\jdk1.8.0_181\\jre\\bin\\server\\jvm.dll");
                 typedef jint(WINAPI * PFunCreateJavaVM)(JavaVM **, void **, void *);
                 PFunCreateJavaVM funCreateJavaVM = (PFunCreateJavaVM)GetProcAddress(hLibModule, "JNI_CreateJavaVM");
                 (*funCreateJavaVM)(&jvm, (void **)&env, &vm_args);
                 delete[] options;
-
                 jclass cls = env->FindClass("utils/JniDemo");
                 jobject obj = env->AllocObject(cls);
                 jmethodID appendMethodId = env->GetMethodID(cls, "append", "(Ljava/lang/String;I)Ljava/lang/String;");
@@ -2757,7 +2726,6 @@ Android 信息.md
                 jstring jmsg = (jstring)env->CallObjectMethod(obj, appendMethodId, jstr, 12);
                 const char *cmsg = env->GetStringUTFChars(jmsg, JNI_FALSE);  // 使用中文会有中文乱码
                 printf("%s\n", cmsg);
-
                 jvm->DestroyJavaVM();
                 FreeLibrary(hLibModule);
             }

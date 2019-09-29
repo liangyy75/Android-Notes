@@ -104,6 +104,9 @@ Android源码设计模式解析与实战.pdf
 [Flutter 中文网](https://flutterchina.club/technical-overview/)<br>
 []()<br>
 [](https://opengapps.org/?source=genymotion) <br>
+[Android网上源码](https://www.androidos.net.cn/android/9.0.0_r8/xref)<br>
+[genymotion](https://opengapps.org/?source=genymotion)<br>
+[crystax ndk](https://www.crystax.net/android/ndk)<br>
 
 #### 5.数据结构与算法
 
@@ -159,6 +162,7 @@ https://studygolang.com/topics/8327#reply12 -- go
 * [qt](https://www.qt.io/download)
 * [Qt 快速入门系列教程](https://wizardforcel.gitbooks.io/qt-beginning/content/)
 * [Qt教程](http://c.biancheng.net/qt/)
+* [Linux编程学习 -- IO / 管道 / 信号 / 进程](https://www.cnblogs.com/mickole/category/496206.html)
 
 #### 7.其他
 
