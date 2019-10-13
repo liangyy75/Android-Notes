@@ -2812,6 +2812,7 @@ Android 信息.md
             J <--> long
             F <--> float
             D <--> double
+            V <--> void
             L fully-qualified-class ; <--> fully-qualified-class
             [ type <--> type[]
             ( arg-types ) ret-type <--> method type

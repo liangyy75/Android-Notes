@@ -223,6 +223,9 @@ https://studygolang.com/topics/8327#reply12 -- go
 * [Real World Haskell 中文版](http://cnhaskell.com/index.html)
 <br>
 * [Lua](https://github.com/wsdjeg/lua-tutorial-cn)
+* [关于C或C++的#include搜索路径，lib库搜索路径](https://blog.csdn.net/yjk13703623757/article/details/83154578)
+* [windows下编译lua5.3源代码](https://www.iteye.com/blog/cwqcwk1-2324267)
+* [使用g++命令生成dll文件实现lua调用C代码](https://blog.csdn.net/wsnbb123456789/article/details/78844643)
 
 #### 11.后台语言--go
 
