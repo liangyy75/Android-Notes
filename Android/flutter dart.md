@@ -3,6 +3,7 @@
 - [常量与变量](#%e5%b8%b8%e9%87%8f%e4%b8%8e%e5%8f%98%e9%87%8f)
 - [类型](#%e7%b1%bb%e5%9e%8b)
 - [操作符](#%e6%93%8d%e4%bd%9c%e7%ac%a6)
+- [控制语句](#%e6%8e%a7%e5%88%b6%e8%af%ad%e5%8f%a5)
 - [函数](#%e5%87%bd%e6%95%b0)
 - [异常](#%e5%bc%82%e5%b8%b8)
 - [导包](#%e5%af%bc%e5%8c%85)
@@ -10,6 +11,19 @@
 - [异步支持](#%e5%bc%82%e6%ad%a5%e6%94%af%e6%8c%81)
 - [类](#%e7%b1%bb)
 - [注解](#%e6%b3%a8%e8%a7%a3)
+- [collection](#collection)
+- [regex](#regex)
+- [io](#io)
+- [time](#time)
+- [thread](#thread)
+- [process](#process)
+- [socket](#socket)
+- [json](#json)
+- [xml](#xml)
+- [database](#database)
+- [作业: 贪吃蛇](#%e4%bd%9c%e4%b8%9a-%e8%b4%aa%e5%90%83%e8%9b%87)
+- [作业: dart client / dart server](#%e4%bd%9c%e4%b8%9a-dart-client--dart-server)
+- [作业: dart charts](#%e4%bd%9c%e4%b8%9a-dart-charts)
 
 ### links
 
@@ -88,11 +102,11 @@
     * runes
     * symbols
 2. number
-    * 运算符: +、-、*、/、～/、%
+    * 运算符: +、-、*、/、~/、%
     * 常用属性: isNaN、isEven、isOdd
     * 常用方法: abs()、round()、floor()、ceil()、toInt()
     * 特殊运算符: ?.、??、??=
-    * /和～/的区别
+    * /和~/的区别
         ```dart
         int a = 10;
         int b = 2;
@@ -108,18 +122,19 @@
         // 如果b是null，则赋值给b，如果不是null，则b的值保持不变
         b ??= value;
         ```
-3. boolean: true和false所创建的对象都是编译时常量。当Dart需要一个布尔值的时候，只有true对象才被认为是true，所有其他的值都是flase
+    * 16进制 -- final a = 0x100;
+3. boolean: true和false所创建的对象都是编译时常量。当Dart需要一个布尔值的时候，只有true对象才被认为是true，所有其他的值都是false
 4. string
     ```dart
     String str1 = 'Hello World';  // 普通字符串
     String str2 = """<html>
         <a href="">go</a>
     </html>""";  // 段落
-    String str3 = r'Hello /n Word';  // 不转义
+    String str3 = r' Hello /n Word';  // 不转义
     print(str3 * 5);  // 重复5次
     print(str3 == str4);  // 相等
     print(str3[0]);  // 获取字符
-    print('a + b = ${a + b}');  // 插值表达式
+    print('a + b = c ==> $a + $b = ${a + b}');  // 插值表达式
     ```
 5. list
     ```dart
@@ -131,7 +146,7 @@
 6. map
     ```dart
     var map = {'1':'c','2':'java'};
-    var map = const{'1':'c','2':'java'};  // 定义不可变映射
+    var map = const {'1':'c','2':'java'};  // 定义不可变映射
     var map = new Map();
     ```
 7. dynamic
@@ -153,7 +168,31 @@
 
 ### 操作符
 
-1. operator关键字可以复写操作符
+1. links
+    1. [Dart学习-操作符](https://www.jianshu.com/p/64a6ed7581aa)
+2. 操作符: 操作符表中，操作符的优先级由其所在行定义，上面行内的操作符优先级大于下面行内的操作符
+
+    | 类型           | 操作符                                     |
+    | :------------- | :----------------------------------------- |
+    | 一元后缀       | expr++ expr-- () [] . ?.                   |
+    | 一元前缀       | -expr ！expr ~expr ++expr --expr           |
+    | 乘法类型       | * / % ~/                                   |
+    | 加法类型       | + -                                        |
+    | 移动位运算     | << >>                                      |
+    | 与位运算       | &                                          |
+    | 异或位运算     | ^                                          |
+    | 或位运算       | \|                                         |
+    | 关系和类型测试 | >= <= > < as is is!                        |
+    | 等式           | == !=                                      |
+    | 逻辑与         | &&                                         |
+    | 逻辑或         | \|\|                                       |
+    | 条件           | expr1 ? expr2 : expr3                      |
+    | 级联           | ..                                         |
+    | 赋值           | = *= /= ~/= %= += -= <<= >>= &= ^= \|= ??= |
+
+3. 在极少数情况下，您需要知道两个对象是否是完全相同的对象，请改用experation()函数
+4. 类型测试操作符: is is! as
+5. operator关键字可以复写操作符
     ```dart
     class Vector {
         final int x;
@@ -170,6 +209,53 @@
     }
     ```
 
+### 控制语句
+
+```dart
+if (false) {
+    print("a");
+} else if (false) {
+    print("b");
+} else {
+    print("c");
+}
+
+for (int i = 0; i < 3; i++) {
+    print("$i");
+}
+var list = [0, 1, 2];
+list.forEach(print);
+for (var x in list) {
+    print(x);
+}
+
+import 'dart:math';
+Random r = new Random();
+while (true) {
+    if (r.nextInt(2) == 0) break; else continue;
+}
+do {
+    print("do ... while (false);");
+} while (false);
+
+String command = "OPEN";
+switch (command) {
+    case 'CLOSED':
+        print('CLOSED')
+        continue nowClosed
+    nowClosed:
+    case 'NOW_CLOSED':
+        print('NOW_CLOSED')
+        break;
+    case 'OPEN':  // 会 fall-through ，即执行 'NOW_OPEN' 块的内容
+    case 'NOW_OPEN':
+        print('OPEN');
+        break;
+    default:
+        print('Default');
+}
+```
+
 ### 函数
 
 1. 函数的返回类型和参数类型都是可以省略的。函数的实现体还可以通过符号进行表示
@@ -179,9 +265,10 @@
     }
     /// getPerson(name, age) => new Person(name, age);
     ```
-2. 可选参数（重载函数）。花括号参数表示可选命名参数。
+2. 可选参数（重载函数）。
     ```dart
-    getPerson(name, {age, weight}) => new Person(name, age, weight);
+    // 花括号参数表示可选命名参数。
+    getPerson(name, {age=18, weight}) => new Person(name, age, weight);  // weight默认为null
     getPerson("张三", weight: 55);
     // 方括号参数表示可选位置参数，不需要别名，但是位置必须是固定的参数
     getPerson(name, [age, weight]) => new Person(name, age, weight);
@@ -198,7 +285,7 @@
             var name;
             var age;
             // 这里默认等同于this.name=name，this.age=age
-            Person({@required this.name, this.age}); 
+            Person({@required this.name, this.age});
         }
         ```
     2. 当前为StatelessWidget组件中的构造方法
@@ -287,17 +374,16 @@
         ```
     2. forEach的源码实现
         ```dart
-        void forEach(void f(E element)) {
-            for (E element in this) f(element);
-        }
+        var forEach = (void f(E element)) = for (E element in this) f(element);
         ```
 7. 匿名方法
     ```dart
     var fun = () { print("Hello World!"); }
+    var add = (a, b) => a + b;
     ```
 8. 闭包: 闭包最大的作用是可以访问方法体中的成员变量
     ```dart
-    count(){
+    count() {
         int count = 0;
         return (){ print(count++); };
     }
@@ -327,7 +413,14 @@
         // 任意异常
         print('Something really unknown: $e');
         rethrow; // 重新抛出该异常
+    } finally {
+        // ...
     }
+    ```
+2. 抛出异常
+    ```dart
+    throw new ExpectException('值必须大于0！');
+    throw '值必须大于0!';
     ```
 
 ### 导包
@@ -362,7 +455,7 @@
 1. 对象的方法和成员变量都可以进行级联调用，类似于Java的链式调用
 2. 案例1
     ```dart
-    void main(){
+    void main(List<String> args){
         num x = 10;
         num y = 42; // not used
         var p = new Point();
@@ -419,7 +512,7 @@
     ```dart
     try {
         server = await HttpServer.bind(InternetAddress.LOOPBACK_IP_V4, 4044);
-    } catch (e) {}
+    } catch (e) {} finally {}
     ```
 3. 异步方法返回值为Future类型
     ```dart
@@ -447,6 +540,30 @@
         print('$out');  // Hi there, gang!
     }
     ```
+2. Dart是一门使用类和单继承的面向对象语言，所有的对象都是类的实例，并且所有的类都是Object的子类
+3. 类的定义用class关键字，如果未显式定义构造函数，会默认一个空的构造函数，使用new关键字和构造函数来创建对象，未定义父类的时候，默认继承自Object
+4. 如果只是简单的参数传递，可以在构造函数的参数前加this关键字定义，或者参数后加 : 再赋值
+    ```dart
+    class MyPoint {
+        num x, y, z;
+        MyPoint(this.x, this.y, z) {
+            this.z = z;
+        }
+        MyPoint.fromList(var list): this.x = list[0], y = list[1], z = list[2] {}
+        String toString() => 'x: $x, y: $y, z: $z';
+    }
+    main(List<String> args) {
+        print("${new MyPoint(1, 2, 3)}, ${new MyPoint.fromList([1, 2, 3])}, ${MyImmutablePoint.origin}");
+    }
+    ```
+5. 如果你要创建一个不可变的对象，你可以定义编译时常量对象，需要在构造函数前加const
+    ```dart
+    class MyImmutablePoint {
+        final num x, y, z;
+        const MyImmutablePoint(this.x, this.y, this.z);  // 常量构造函数
+        static final MyImmutablePoint origin = const MyImmutablePoint(1, 2, 3); // 创建一个常量对象不能用new，要用const
+    }
+    ```
 
 ### 注解
 
@@ -465,3 +582,30 @@
         print('do something');
     }
     ```
+3. 
+
+### collection
+
+### regex
+
+### io
+
+### time
+
+### thread
+
+### process
+
+### socket
+
+### json
+
+### xml
+
+### database
+
+### 作业: 贪吃蛇
+
+### 作业: dart client / dart server
+
+### 作业: dart charts
