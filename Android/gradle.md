@@ -37,6 +37,8 @@
         * [Gradle脚本基础全攻略](https://blog.csdn.net/yanbober/article/details/49314255)
     * 参考文档
         * [Gradle User Manual](https://docs.gradle.org/current/userguide/userguide.html)
+        * [Gradle 中文文档](https://s0docs0gradle0org.icopy.site/current/userguide/userguide.html)
+        * [Gradle DSL 中文](https://s0docs0gradle0org.icopy.site/current/dsl/)
         * [Gradle Build Language Reference：Gradle DSL 参考，重点的几个 DSL 过一下，其他的用到再查](https://docs.gradle.org/current/dsl/)
         * [Android Plugin DSL Reference：使用 Android 插件必备](http://google.github.io/android-gradle-dsl/current/index.html)
         * [邓凡平老师的 Gradle 介绍](http://blog.csdn.net/innost/article/details/48228651)

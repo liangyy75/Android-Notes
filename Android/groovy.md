@@ -6,7 +6,7 @@
 - [特性2](#%e7%89%b9%e6%80%a72)
 - [逻辑控制](#%e9%80%bb%e8%be%91%e6%8e%a7%e5%88%b6)
 - [函数](#%e5%87%bd%e6%95%b0)
-- [闭包(groovysh_evaluate$_run_closure1)](#%e9%97%ad%e5%8c%85groovyshevaluaterunclosure1)
+- [闭包](#%e9%97%ad%e5%8c%85)
 - [列表(java.lang.ArrayList)](#%e5%88%97%e8%a1%a8javalangarraylist)
 - [映射(java.util.LinkedHashMap)](#%e6%98%a0%e5%b0%84javautillinkedhashmap)
 - [范围(groovy.lnag.IntRange)](#%e8%8c%83%e5%9b%b4groovylnagintrange)
@@ -29,6 +29,15 @@
 - [添加的方法1: lang](#%e6%b7%bb%e5%8a%a0%e7%9a%84%e6%96%b9%e6%b3%951-lang)
 - [添加的方法2: io](#%e6%b7%bb%e5%8a%a0%e7%9a%84%e6%96%b9%e6%b3%952-io)
 - [添加的方法3: sql](#%e6%b7%bb%e5%8a%a0%e7%9a%84%e6%96%b9%e6%b3%953-sql)
+- [sys](#sys)
+- [time](#time)
+- [thread](#thread)
+- [process](#process)
+- [socket](#socket)
+- [test](#test)
+- [async](#async)
+- [log](#log)
+- [image](#image)
 
 ### links
 
@@ -119,7 +128,7 @@
     println z.class //class java.lang.String
     def h = 1.34
     println h.class //class java.math.BigDecimal
-    ``` 
+    ```
 
 ### 字符串
 
@@ -405,7 +414,7 @@
 3. 可以有默认参数，但默认参数一定得在其他参数后面。groovy会将末尾的数组与具有默认值的参数视为可选参数
 4. 多返回值: 可以返回一个数组，然后多个接受者以 (rec1, rec2, ..., recn) = splitStr("a,b,c", ",") 这样的形式来接受。还可以使用这样的特性来交换变量 (a, b) = [b, a]。多余的接受者会收到 null ，多余的返回值会丢弃。还可以声明类型，如 def (String a, int b) = ... 。如果多余的变量不能设为 null ，那么会抛出错误。在 groovy 中，一个数字会尽可能的视为 int ，而不是 Integer。
 
-### 闭包(groovysh_evaluate$_run_closure1)
+### 闭包
 
 1. 闭包
     ```groovy
@@ -475,7 +484,7 @@
     4. OWNER_ONLY: 只从Owner去找委托属性
     5. 例子
         ```groovy
-                class Student {
+        class Student {
             String name
             def content = { "this.name: ${this.name}, owner.name: ${owner.name}, delegate.name: ${delegate.name}, name: ${name}" }
             // def content = { name = 10; "this.name: ${this.name}, owner.name: ${owner.name}, delegate.name: ${delegate.name}, name: ${name}" }  // 所有的 name 都变成了 10，输出是 this.name: 10, owner.name: 10, delegate.name: 10, name: 10
@@ -2536,3 +2545,21 @@
 
 ### 添加的方法3: sql
 
+
+### sys
+
+### time
+
+### thread
+
+### process
+
+### socket
+
+### test
+
+### async
+
+### log
+
+### image

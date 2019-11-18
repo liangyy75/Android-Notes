@@ -259,6 +259,15 @@ https://studygolang.com/topics/8327#reply12 -- go
 * [史上最简单的 IntelliJ IDEA 教程](https://blog.csdn.net/qq_35246620/column/info/14873)
 * [IntelliJ IDEA使用教程 （总目录篇）](https://blog.csdn.net/qq_27093465/article/details/77449117)
 * [UMLet使用教程](https://www.awaimai.com/1448.html)
+* [VMware Workstation Pro 15.5.0下载和序列号](https://blog.csdn.net/coco56/article/details/102208658)
+* [Download MacOS X 10.4 - 10.15 original - All versions](https://applehint.com/t/download-macos-x-10-4-10-15-original-all-versions/376)
+* [https://blog.csdn.net/systemino/article/details/98387202](https://blog.csdn.net/systemino/article/details/98387202)
+* [macOs 15 iso](https://gofile.io/?c=MmX49O)
+* [macOS下载](https://www.applex.net/pages/macos/)
+* [macOS Unlocker v3.0.2 for VMware 解锁 3.0.2](https://www.applex.net/downloads/macos-unlocker-v3-0-2-for-vmware.902/)
+* [在普通PC 电脑上使用VMware虚拟机安装苹果 macOS系统](https://www.applex.net/threads/pc-vmware-macos.92998/)
+* [](http://www.pc6.com/mac/671828.html)
+* [](https://www.applex.net/threads/87766/)
 
 #### 16.电脑
 
@@ -282,6 +291,6 @@ https://studygolang.com/topics/8327#reply12 -- go
 * [系统学习iOS动画之零：说明和目录](https://www.jianshu.com/p/8e383db362f1)
 * **[Swift 基础](https://www.cnswift.org/the-basics)**
 * [](https://github.com/Tim9Liu9/TimLiu-iOS)
-* **[iOS 基础知识总结汇总](https://www.imooc.com/article/32476)**
+* **[iOS 基础知识总结汇总](https://www.jianshu.com/nb/3681542)**
 * **[](https://github.com/halfrost/Halfrost-Field)**
-* **[官网](https://developer.apple.com/documentation/)**
+* **[官网](https://developer.apple.com/documentation/)** https://developer.apple.com/swift/
