@@ -11,6 +11,10 @@ img {
 - [热更新/热修复](#%e7%83%ad%e6%9b%b4%e6%96%b0%e7%83%ad%e4%bf%ae%e5%a4%8d)
 - [自定义View](#%e8%87%aa%e5%ae%9a%e4%b9%89view)
 - [蓝牙/wifi](#%e8%93%9d%e7%89%99wifi)
+- [传感器](#%e4%bc%a0%e6%84%9f%e5%99%a8)
+- [视频](#%e8%a7%86%e9%a2%91)
+- [音频](#%e9%9f%b3%e9%a2%91)
+- [Protobuf](#protobuf)
 - [地图](#%e5%9c%b0%e5%9b%be)
 - [插件化](#%e6%8f%92%e4%bb%b6%e5%8c%96)
 - [usb挂载](#usb%e6%8c%82%e8%bd%bd)
@@ -19,6 +23,8 @@ img {
 - [Arouter](#arouter)
 - [Agora Platform](#agora-platform)
 - [APT/SPI](#aptspi)
+- [AspectJ](#aspectj)
+- [Javassist](#javassist)
 - [QPython](#qpython)
 - [EventBus源码阅读](#eventbus%e6%ba%90%e7%a0%81%e9%98%85%e8%af%bb)
 - [RxJava](#rxjava)
@@ -35,20 +41,23 @@ img {
 - [Protocol](#protocol)
 - [Dagger2](#dagger2)
 - [ButterKnife](#butterknife)
-- [Android Architecture Components -- lifecycle / livedata / viewmodel](#android-architecture-components----lifecycle--livedata--viewmodel)
-- [Android Architecture Components -- paging / room / navigation](#android-architecture-components----paging--room--navigation)
-- [Android Architecture Components -- WorkManger](#android-architecture-components----workmanger)
+- [Android Architecture Components -- lifecycle / livedata / viewmodel / dataBinding](#android-architecture-components----lifecycle--livedata--viewmodel--databinding)
+- [Android Architecture Components -- paging / room / navigation / workManger](#android-architecture-components----paging--room--navigation--workmanger)
+- [Android Architecture Components -- appCompat / androidKTX / Multidex / Test](#android-architecture-components----appcompat--androidktx--multidex--test)
+- [Android Architecture Components -- downloadManager / media&Playback / sharing / slices](#android-architecture-components----downloadmanager--mediaplayback--sharing--slices)
+- [Android Architecture Components -- notifications / permissions / fragment / layout](#android-architecture-components----notifications--permissions--fragment--layout)
+- [Android Architecture Components -- palette / emoji / animation&Transitions / auto,TV&Wear](#android-architecture-components----palette--emoji--animationtransitions--autotvwear)
+- [Android Architecture Components -- CameraX](#android-architecture-components----camerax)
 - [greendao](#greendao)
 - [Hermes](#hermes)
 - [适配](#%e9%80%82%e9%85%8d)
 - [KLog](#klog)
 - [工具](#%e5%b7%a5%e5%85%b7)
-- [SDK](#sdk)
 - [大项目](#%e5%a4%a7%e9%a1%b9%e7%9b%ae)
 
 [你还在被触摸事件困扰吗？看看这篇吧](https://www.jianshu.com/p/06574d8f10bf)
 
-## RecyclerView
+### RecyclerView
 
 1. RecyclerView.ViewHolder
     ```java
@@ -740,11 +749,11 @@ img {
     ```
 7. 
 
-## ViewPager
+### ViewPager
 
 1. links
     1. [ViewPager 超详解：玩出十八般花样](https://juejin.im/post/5a4c2f496fb9a044fd122631#heading-5)
-    2. [自定义View 之利用ViewPager 实现画廊效果（滑动放大缩小）](https://blog.csdn.net/lisdye2/article/details/52315008)
+    2. [自定义View 之利用ViewPager 实现画廊效果(滑动放大缩小)](https://blog.csdn.net/lisdye2/article/details/52315008)
     3. [FuCardPager](https://github.com/smallnew/FuCardPager)
     4. [FragmentPagerAdapter和FragmentStatePagerAdapter源码中的三宝](https://segmentfault.com/a/1190000012455727)
 2. ViewPager
@@ -766,7 +775,7 @@ img {
     3. ViewPager默认缓存左右相邻界面，为了避免不必要的重新数据加载(重复调用onCreateView())，因为有4个tab，因此将离线缓存的半径设置为3，即 setOffscreenPageLimit(3)。
     4. 
 
-## 性能优化
+### 性能优化
 
 1. RecyclerView [RecyclerView性能优化](https://www.jianshu.com/p/bd432a3527d6) [RecyclerView一些你可能需要知道的优化技术](https://www.jianshu.com/p/1d2213f303fc)
     1. 数据处理与视图绑定分离: 在onBindViewHolder方法中，应该只是将数据set到视图中，而不应进行业务的处理。
@@ -820,7 +829,7 @@ img {
     12. 推荐 asynclistdiffer 代替 DiffUtils 。
 2. ListView
 
-## 热更新/热修复
+### 热更新/热修复
 
 0. link
     * **[Android热更新系列](https://www.jianshu.com/nb/35349338)**
@@ -1202,7 +1211,7 @@ img {
 2. 
 3. 
 
-## 自定义View
+### 自定义View
 
 0. 链接
     0. [Android layout属性大全](https://blog.csdn.net/ican87/article/details/37566679)
@@ -1304,27 +1313,391 @@ img {
 2. 从继承上看所有View:
     1. 
 
-## 蓝牙/wifi
+### 蓝牙/wifi
 
-[android wifi操作大全](https://blog.csdn.net/q908555281/article/details/48546417)
-[android开发中Wifi功能总结](https://blog.csdn.net/qq_34773981/article/details/79163579)
-[android wifi/蓝牙系列](https://blog.csdn.net/a1533588867/article/list/2?)
-[Android 蓝牙开发之搜索、配对、连接、通信大全](https://www.cnblogs.com/lanzhi/p/6467243.html) [android bluetooth——蓝牙的开启、搜索、配对与连接](https://blog.csdn.net/yehui928186846/article/details/52710112)
-[Android 蓝牙篇](https://blog.csdn.net/zqf_888/article/details/81060606)
-[Android蓝牙开发系列文章](https://blog.csdn.net/huangliniqng/article/details/82185635)
+1. links
+    1. [android wifi操作大全](https://blog.csdn.net/q908555281/article/details/48546417)
+    2. [android开发中Wifi功能总结](https://blog.csdn.net/qq_34773981/article/details/79163579)
+    3. [android wifi/蓝牙系列](https://blog.csdn.net/a1533588867/article/list/2?)
+    4. [Android 蓝牙开发之搜索、配对、连接、通信大全](https://www.cnblogs.com/lanzhi/p/6467243.html)
+    5. [android bluetooth——蓝牙的开启、搜索、配对与连接](https://blog.csdn.net/yehui928186846/article/details/52710112)
+    6. [Android 蓝牙篇](https://blog.csdn.net/zqf_888/article/details/81060606)
+    7. [Android蓝牙开发系列文章](https://blog.csdn.net/huangliniqng/article/details/82185635)
+2. 
 
-## 地图
+### 传感器
+
+1. links
+    1. [Android 传感器开发详解](https://blog.csdn.net/Airsaid/article/details/52902299)
+    2. 
+
+### 视频
+
+### 音频
+
+### Protobuf
+
+1. links
+    1. [proto3 官方文档](https://developers.google.com/protocol-buffers/docs/proto3)
+    2. [protobuf在java, Android下的使用总结](https://blog.csdn.net/yyz_1987/article/details/81146925)
+    3. [Android项目使用Protobuf教程(结合Retrofit+RxJava及HttpURLConnection使用)](https://blog.csdn.net/qq137722697/article/details/81630666)
+    4. [[翻译] ProtoBuf 官方文档(二)- 语法指引(proto2)](https://www.jianshu.com/p/6f68fb2c7d19) [finished]
+    5. [[翻译] ProtoBuf 官方文档(一)- 开发者指南](https://www.jianshu.com/p/bdd94a32fbd1) [finished]
+2. proto2-basic1
+    1. 定义消息类型
+        ```groovy
+        message Field {
+            optional string url = 1;
+        }
+        message SearchRequest {
+            required Field field = 5;
+            required string query = 1;  // 查询字符串
+            optional int32 page_number = 2;  // 第几页
+            optional int32 result_per_page = 3;  // 每页的结果数
+            repeated int32 samples = 4 [packed=true];
+        }
+        // message定义中的每个字段都有唯一编号。这些数字会以[message的特定二进制格式](https://www.jianshu.com/p/82ff31c6adc6)标识你的字段，并且一旦你的message被使用，这些编号就无法再更改。请注意，1到15范围内的字段编号需要一个字节进行编码，编码结果将同时包含编号和类型(你可以在[Protocol Buffer编码](https://www.jianshu.com/p/82ff31c6adc6)中找到更多相关信息)。16到2047范围内的字段编号占用两个字节。因此，你应该为非常频繁出现的message元素保留字段编号1到15。请记住为将来可能添加的常用元素预留出一些空间。
+        // 可以指定的最小字段数为1，最大字段数为2^29-1或536,870,911。不能使用19000到19999范围内的数字，因为它们是为Protocol Buffers的实现保留的。
+        ```
+    2. 字段处理类型
+        1. required: 必须包含该字段一次。
+        2. optional: 可以包含该字段零次或一次(不超过一次)。
+        3. repeated: 该字段可以重复任意多次(包括零)。其中重复值的顺序会被保留。由于一些历史原因，标量数字类型的repeated字段不能尽可能高效地编码。新代码应使用特殊选项 [packed = true]来获得更高效的编码 ``repeated int32 samples = 4 [packed=true];``
+    3. 一个.proto文件可以包含多个message。
+    4. 注释: // /* ... */
+    5. 如果通过注释掉字段或者直接删除字段的方法来更新message，而未来一些用户在做他们的修改或更新时就可能会再次使用这些字段编号，这时会需要加载相同protobuf的旧版本，这可能会导致一些严重问题，包括数据损坏，隐私错误等。确保不会发生这种情况的一种方法是指定已删除字段的字段编号(有时也需要指定名称为保留状态，英文名称可能会导致JSON序列化问题)为"保留"状态。如果将来的任何用户尝试使用这些字段标识符，protocol buffer编译器将会抱怨。
+        ```groovy
+        message Foo {
+            reserved 2, 15, 9 to 11;
+            reserved "foo", "bar";  // 不能同时使用字段名和字段编号
+        }
+        ```
+    6. 标量值类型
+
+        | .proto Type | Notes                                                                     | C++ Type | Java Type  | Python Type[2] | Go Type  |
+        | :---------- | :------------------------------------------------------------------------ | :------- | :--------- | :------------- | :------- |
+        | double      |                                                                           | double   | double     | float          | *float64 |
+        | float       |                                                                           | float    | float      | float          | *float32 |
+        | int32       | 使用可变长度编码。编码负数的效率低 - 如果你的字段可能有负值，请改用sint32 | int32    | int        | int            | *int32   |
+        | int64       | 使用可变长度编码。编码负数的效率低 - 如果你的字段可能有负值，请改用sint64 | int64    | long       | int/long[3]    | *int64   |
+        | uint32      | 使用可变长度编码                                                          | uint32   | int[1]     | int/long[3]    | *uint32  |
+        | uint64      | 使用可变长度编码                                                          | uint64   | long[1]    | int/long[3]    | *uint64  |
+        | sint32      | 使用可变长度编码。有符号的int值。这些比常规int32对负数能更有效地编码      | int32    | int        | int            | *int32   |
+        | sint64      | 使用可变长度编码。有符号的int值。这些比常规int64对负数能更有效地编码      | int64    | long       | int/long[3]    | *int64   |
+        | fixed32     | 总是四个字节。如果值通常大于228，则比uint32更有效。                       | uint32   | int[1]     | int/long[3]    | *uint32  |
+        | fixed64     | 总是八个字节。如果值通常大于256，则比uint64更有效。                       | uint64   | long[1]    | int/long[3]    | *uint64  |
+        | sfixed32    | 总是四个字节                                                              | int32    | int        | int            | *int32   |
+        | sfixed64    | 总是八个字节                                                              | int64    | long       | int/long[3]    | *int64   |
+        | bool        |                                                                           | bool     | boolean    | bool           | *bool    |
+        | string      | 字符串必须始终包含 UTF-8 编码或 7 位 ASCII 文本                           | string   | String     | str/unicode[4] | *string  |
+        | bytes       | 可以包含任意字节序列                                                      | string   | ByteString | str            | []byte   |
+
+        1. [1] 在Java中，无符号的32位和64位整数使用它们对应的带符号表示，第一个bit位只是简单的存储在符号位中。
+        2. [2] 在所有情况下，设置字段的值将执行类型检查以确保其有效。
+        3. [3] 64位或无符号32位整数在解码时始终表示为long，但如果在设置字段时给出int，则可以为int。在所有情况下，该值必须适合设置时的类型。见[2]。
+        4. [4] Python字符串在解码时表示为unicode，但如果给出了ASCII字符串，则可以是str(这条可能会发生变化)。
+3. proto2-basic2
+    1. optional int32 result_per_page = 3 [default = 10];  // 如果没有default，那么就会有各自类型的默认值。对于字符串，默认值为空字符串。对于bool，默认值为false。对于数字类型，默认值为零。对于枚举，默认值是枚举类型定义中列出的第一个值。
+    2. 枚举
+        ```groovy
+        message SearchRequest {
+            required string query = 1;
+            optional int32 page_number = 2;
+            optional int32 result_per_page = 3 [default = 10];
+            enum Corpus {
+                option allow_alias = true;
+                UNIVERSAL = 0;
+                WEB = 1;
+                IMAGES = 2;
+                LOCAL = 3;
+                NEWS = 4;
+                PRODUCTS = 5;
+                VIDEO = 6;
+                // 可以通过为不同的枚举常量指定相同的值来定义别名。需要将allow_alias选项设置为true
+                VIDEO_ALIAS = 6;
+            }
+            optional Corpus corpus = 4 [default = UNIVERSAL];
+        }
+        // 枚举器常量必须在32位整数范围内。由于enum值在线上使用[varinten coding](https://www.jianshu.com/p/82ff31c6adc6)，负值效率低，因此不推荐使用。你可以在message中定义enums，如上例所示的那样。或者将其定义在message外部-这样这些enum就可以在.proto文件中的任何message定义中重用。你还可以使用一个message中声明的enum类型作为不同message中字段的类型，使用语法MessageType.EnumType来实现。
+        // [代码生成指南](https://developers.google.com/protocol-buffers/docs/reference/overview)
+        ```
+    3. 导入
+        ```groovy
+        import "myproject/other_protos.proto";  // 简单的导入
+        // 文件移动后
+        /* new.proto */ /* all definitions are moved here */
+        /* old.proto */ import public "new.proto"; import "other.proto";
+        /* usage.proto */ import "old.proto";  // 只能使用new.proto和old.proto，但不能使用other.proto
+        ```
+4. proto2-basic3
+    1. message可以嵌套，而别的message使用一个message的内部message的时候，需要ParentMessage.SubMessage
+    2. groups depreated
+    3. message更新
+        1. 勿更改任何现有字段的字段编号
+        2. 添加的任何新字段都应该是optional或repeated。为这些元素设置合理的默认值
+        3. 删除字段使用reserved
+        4. 只要类型和编号保持不变，非必填字段就可以转换为扩展[extensions](https://developers.google.com/protocol-buffers/docs/proto#extensions)，反之亦然
+        5. int32，uint32，int64，uint64和bool都是兼容的-这意味着你可以将字段从这些类型更改为另一种类型，而不会破坏向前或向后兼容性。如果从中解析出一个不符合相应类型的数字，你将获得与在C++中将该数字转换为该类型时相同的效果(例如，如果将64位数字作为int32读取，它将被截断为32位)
+        6. sint32和sint64彼此兼容，但与其他整数类型不兼容
+        7. 只要字节是有效的UTF-8，string和bytes就是兼容的
+        8. 如果字节包含message的编码版本，则嵌入message与bytes兼容
+        9. fixed32与sfixed32兼容，fixed64与sfixed64兼容
+        10. optional与repeated兼容。给定重复字段的序列化数据作为输入，期望该字段为optional的客户端将采用最后一个输入值(如果它是基本类型字段)或合并所有输入元素(如果它是message类型字段)
+        11. 更改默认值通常是正常的，只要你记住永远不会通过网络发送默认值。因此，如果程序接收到未设置特定字段的消息，则程序将看到该程序的协议版本中定义的默认值。它不会看到发件人代码中定义的默认值。
+        12. enum与int32，uint32，int64和uint64兼容(注意，如果它们不适合，值将被截断)，但要注意message反序列化时客户端代码对待它们将有所不同。值得注意的是，当message被反序列化时，将丢弃无法识别的enum值，这使得字段的has..访问器返回false并且其getter返回enum定义中列出的第一个值，或者如果指定了一个默认值则返回默认值。在repeated枚举字段的情况下，任何无法识别的值都将从列表中删除。但是，整数字段将始终保留其值。因此，在有可能接收超出范围的枚举值时，对整数升级为enum这一操作需要非常小心。
+        13. 在当前的Java和C++实现中，当删除无法识别的enum值时，它们与其他未知字段一起存储。请注意，如果此数据被序列化，然后由识别这些值的客户端重新解析，则会导致奇怪的行为。在optional可选字段的情况下，即使在反序列化原始message之后写入新值，旧值仍然可以被客户端识别。在repeated字段的情况下，旧值将出现在任何已识别和新添加的值之后，这意味着顺序将不被保留。
+        14. 将单个optional值更改为new oneof的成员是安全且二进制兼容的。如果你确定没有代码一次设置多个，则将多个optional字段移动到新的oneof中可能是安全的。但是将任何字段移动到现有的oneof是不安全的。
+    4. 扩展
+        1. 通过扩展，你可以声明message中的一系列字段编号用于第三方扩展。扩展名是那些未由原始.proto文件定义的字段的占位符。这允许通过使用这些字段编号来定义部分或全部字段从而将其它.proto文件定义的字段添加到当前message定义中。
+            ```groovy
+            message Foo { extensions 100 to 199; /* ... */ }  /* extensions 1000 to max */
+            ```
+        2. 这表示Foo中的字段数[100, 199]的范围是为扩展保留的。其他用户现在可以使用指定范围内的字段编号在他们自己的.proto文件中为Foo添加新字段，例如：
+            ```groovy
+            extend Foo { optional int32 bar = 126; /* ... */ }
+            ```
+        3. 当用户的Foo消息被编码时，其格式与用户在Foo中常规定义新字段的格式完全相同。但是，在应用程序代码中访问扩展字段的方式与访问常规字段略有不同-生成的数据访问代码具有用于处理扩展的特殊访问器。那么，举个例子，下面就是如何在C++中设置bar的值：
+            ```c++
+            Foo foo;
+            foo.setExtension(bar, 15);
+            // 类似地，Foo类定义模板化访问器HasExtension()，ClearExtension()，GetExtension()，MutableExtension()和AddExtension()
+            ```
+        4. 可以在另一种message类型内部声明扩展
+            ```groovy
+            message Baz { extend Foo { optional int32 bar = 126; /* ... */ } /* ... */ }
+            ```
+            ```c++
+            foo.SetExtension(Baz::bar, 15);
+            ```
+        5. 在一个message类型中声明嵌套的扩展块并不意味着外部类型和扩展类型之间存在任何关系。特别是，上面的例子并不意味着Baz是Foo的任何子类。这意味着符号栏是在Baz范围内声明的；它仅仅只是一个静态成员而已。
+5. proto2-basic4
+    1. 如果你的message包含许多可选字段，并且最多只能同时设置其中一个字段，则可以使用oneof功能强制执行此行为并节省内存。Oneof字段类似于可选字段，除了oneof共享内存中的所有字段，并且最多只能同时设置一个字段。设置oneof的任何成员会自动清除所有其他成员。你可以使用特殊的case()或WhichOneof()方法检查oneof字段中当前是哪个值(如果有)被设置，具体方法取决于你选择的语言。
+    2. 要在.proto中定义oneof，请使用oneof关键字，后跟你的oneof名称，在本例中为
+        ```groovy
+        message SampleMessage {
+            oneof test_oneof {
+                string name = 4;
+                SubMessage sub_message = 9;
+                // 可以添加任何类型的字段，但不能使用required，optional或repeated关键字。如果需要向oneof添加重复字段，可以使用包含重复字段的message。
+            }  // 在生成的代码中，oneof字段与常规optional方法具有相同的getter和setter。你还可以使用特殊方法检查oneof中的值(如果有)
+        }
+        ```
+    3. 使用
+        ```java
+        SampleMessage message;
+        message.set_name("name");
+        CHECK(message.has_name());
+        message.mutable_sub_message();   // Will clear name field.
+        CHECK(!message.has_name());
+        ```
+    4. 如果解析器遇到同一个oneof的多个成员，则在解析的消息中仅使用看到的最后一个成员。
+    5. oneof不支持扩展
+    6. oneof不能使用repeated
+    7. 反射API适用于oneof字段
+    8. 如果你使用的是C++，请确保你的代码不会导致内存崩溃。以下示例代码将崩溃，因为已通过调用set_name()方法删除了sub_message。
+        ```c++
+        SampleMessage message;
+        SubMessage* sub_message = message.mutable_sub_message();
+        message.set_name("name");  // Will delete sub_message
+        sub_message->set_...            // Crashes here
+        ```
+    9. 添加或删除其中一个字段时要小心。如果检查oneof的值返回None/NOT_SET，则可能意味着oneof尚未设置或已设置为oneof的另一个字段。这种情况是无法区分的，因为无法知道未知字段是否是oneof成员。
+    10. 注意点
+        1. 将optional可选字段移入或移出oneof：在序列化和解析message后，你可能会丢失一些信息(某些字段将被清除)。但是，你可以安全地将单个字段移动到新的oneof中，并且如果已知只有一个字段被设置，则可以移动多个字段。
+        2. 删除oneof字段并将其重新添加回去：在序列化和解析message后，这可能会清除当前设置的oneof字段。
+        3. 拆分或合并oneof：这与移动常规的optional字段有类似的问题。
+6. proto2-basic5
+    1. maps
+        1. 创建: ``map<key_type, value_type> map_field = N;`` 其中key_type可以是任何整数或字符串类型(任何标量类型除浮点类型和bytes)。请注意，枚举不是有效的key_type。value_type可以是除map之外的任何类型
+        2. maps不支持扩展
+        3. maps不能是repeated、optional、required
+        4. map值的格式排序和map迭代排序未定义，因此你不能依赖于特定顺序的map项
+        5. 生成.proto 的文本格式时，maps按键排序。数字键按数字排序
+        6. 当解析或合并时，如果有重复的map键，则使用最后看到的键。从文本格式解析map时，如果存在重复键，则解析可能会失败
+        7. 向后兼容性
+            ```groovy
+            message MapFieldEntry {
+                optional key_type key = 1;
+                optional value_type value = 2;
+            }
+            repeated MapFieldEntry map_field = N;  // map语法等效于以下内容，因此不支持map的protocol buffers实现仍可处理你的数据
+            // 任何支持maps的protocol buffers实现都必须生成和接受上述定义所能接受的数据。
+            ```
+    2. packages
+        1. 包名可选，是为了避免message名字冲突
+            ```groovy
+            // 1.proto
+            package one.two;
+            message A { /*...*/ }
+            // 2.proto
+            message B { /*...*/ required one.two.A a = 1; }
+            ```
+        2. 生成的代码的方式取决于所选择的语言
+            1. 在C++中，生成的类包含在C++命名空间中。例如，Open将位于命名空间foo::bar中。
+            2. 在Java中，除非在.proto文件中明确提供选项java_package，否则该包将用作Java包
+            3. 在Python中，package指令被忽略，因为Python模块是根据它们在文件系统中的位置进行组织的
+            4. 请注意，即使package指令不直接影响生成的代码，但是例如在Python中，仍然强烈建议指定.proto文件的包，否则可能导致描述符中的命名冲突并使proto对于其他语言不方便。
+7. proto2-basic5
+    1. 如果要将message类型与RPC(远程过程调用)系统一起使用，则可以在.proto文件中定义RPC服务接口，protocolbuffer编译器将使用你选择的语言生成服务接口代码和存根。
+        ```groovy
+        message SearchRequest { /***/ }
+        message SearchResponse { /***/ }
+        service SearchService {
+            rpc Search(SearchRequest) returns (SearchResponse);
+        }
+        ```
+    2. 默认情况下，protocol编译器将生成一个名为SearchService的抽象接口和相应的"存根"实现。存根转发所有对RpcChannel的调用，而RpcChannel又是一个抽象接口，你必须根据自己的RPC系统自行定义。例如，你可以实现一个RpcChannel，它将message序列化并通过HTTP将其发送到服务器。换句话说，生成的存根提供了一个类型安全的接口，用于进行基于protocol-buffer的RPC调用，而不会将你锁定到任何特定的RPC实现中。所以，在C++中，你可能会得到这样的代码
+        ```c++
+        using groovy::protobuf;
+        protobuf::RpcChannel* channel;
+        protobuf::RpcController* controller;
+        SearchService* service;
+        SearchRequest request;
+        SearchResponse response;
+        void DoSearch() {
+            // You provide classes MyRpcChannel and MyRpcController, which implement the abstract interfaces protobuf::RpcChannel and protobuf::RpcController.
+            channel = new MyRpcChannel("somehost.example.com:1234");
+            controller = new MyRpcController;
+            // The protocol compiler generates the SearchService class based on the definition given above.
+            service = new SearchService::Stub(channel);
+            // Set up the request.
+            request.set_query("protocol buffers");
+            // Execute the RPC.
+            service->Search(controller, request, response, protobuf::NewCallback(&Done));
+        }
+        void Done() {
+            delete service;
+            delete channel;
+            delete controller;
+        }
+        ```
+    3. 所有服务类还实现了Service接口，它提供了一种在编译时不知道方法名称或其输入和输出类型的情况下来调用特定方法的方法。在服务器端，可用于实现一个可以注册服务的RPC服务器。
+        ```groovy
+        using google::protobuf;
+        class ExampleSearchService : public SearchService {
+            public:
+            void Search(protobuf::RpcController* controller, const SearchRequest* request, SearchResponse* response, protobuf::Closure* done) {
+                if (request->query() == "google") {
+                    response->add_result()->set_url("http://www.google.com");
+                } else if (request->query() == "protocol buffers") {
+                    response->add_result()->set_url("http://protobuf.googlecode.com");
+                }
+                done->Run();
+            }
+        };
+        int main() {
+            // You provide class MyRpcServer.  It does not have to implement any particular interface; this is just an example.
+            MyRpcServer server;
+            protobuf::Service* service = new ExampleSearchService;
+            server.ExportOnPort(1234, service);
+            server.Run();
+            delete service;
+            return 0;
+        }
+        ```
+    4. 如果你不想插入自己现有的RPC系统，现在可以使用[gRPC](https://github.com/grpc/grpc-common):一个由谷歌开发的与语言和平台无关的开源RPC系统。gRPC特别适用于protocol buffers，并允许你使用特殊的protocol buffers编译器插件直接从.proto文件生成相关的RPC代码。但是，由于使用proto2和proto3生成的客户端和服务器之间存在潜在的兼容性问题，我们建议你使用proto3来定义gRPC服务。你可以在Proto3语言指南中找到有关proto3语法的更多信息。如果你确实希望将proto2与gRPC一起使用，则需要使用3.0.0或更高版本的protocol buffers编译器和库。
+8. proto2-basic6
+    1. .proto文件中的各个声明可以使用许多选项进行注释。选项不会更改声明的整体含义，但可能会影响在特定上下文中处理它的方式。可用选项的完整列表在google/protobuf/descriptor.proto中定义。一些选项是文件级选项，这意味着它们应该在顶级范围内编写，而不是在任何消息，枚举或服务定义中。一些选项是message消息级选项，这意味着它们应该写在message消息定义中。一些选项是字段级选项，这意味着它们应该写在字段定义中。选项也可以写在枚举类型、枚举值、服务类型和服务方法上，但是，目前在这几个项目上并没有任何有用的选项。
+    2. 以下是一些最常用的选项：
+        1. java_package(文件选项)：要用于生成的Java类的包。如果.proto文件中没有给出显式的java_package选项，那么默认情况下将使用proto包(使用.proto文件中的"package"关键字指定)。但是，proto包通常不能生成好的Java包，因为proto包不会以反向域名开头。如果不生成Java代码，则此选项无效。  ``option java_package = "com.example.foo";``
+        2. java_outer_classname(文件选项)：要生成的最外层Java类(以及文件名)的类名。如果.proto文件中没有指定显式的java_outer_classname，则通过将.proto文件名转换为camel-case来构造类名(因此foo_bar.proto变为FooBar.java)。如果不生成Java代码，则此选项无效。  ``option java_outer_classname = "Ponycopter";``
+        3. optimize_for(文件选项)：可以设置为SPEED，CODE_SIZE或LITE_RUNTIME。这会以下列方式影响C++和Java的代码生成器(可能还有第三方生成器)
+            1. SPEED(默认值)：protocol buffer编译器将生成用于对message类型进行序列化，解析和执行其他常见操作的代码。此代码经过高度优化。
+            2. CODE_SIZE：protocol buffer编译器将生成最少的类，并依赖于基于反射的共享代码来实现序列化，解析和各种其他操作。因此，生成的代码将比使用SPEED小得多，但操作会更慢。类仍将实现与SPEED模式完全相同的公共API。此模式在包含大量.proto文件的应用程序中最有用，并且不需要所有这些文件都非常快。
+            3. LITE_RUNTIME：protocol buffer编译器将生成仅依赖于"lite"运行时库(libprotobuf-lite而不是libprotobuf)的类。精简版运行时比整个库小得多(大约小一个数量级)，但省略了描述符和反射等特定功能。这对于在移动电话等受限平台上运行的应用程序尤其有用。编译器仍将生成所有方法的快速实现，就像在SPEED模式下一样。生成的类将仅实现每种语言的MessageLite接口，该接口仅提供完整Message接口的方法的子集。
+        4. others -- https://www.jianshu.com/p/6f68fb2c7d19
+    3. 自定义选项。由于选项是由google/protobuf/descriptor.proto(如FileOptions或FieldOptions)中定义的消息定义的，因此定义你自己的选项只需要扩展这些消息。例如
+        ```groovy
+        import "google/protobuf/descriptor.proto";
+        extend google.protobuf.MessageOptions {
+            optional string my_option = 51234;
+        }
+        message MyMessage {
+            option (my_option) = "Hello world!";
+        }  // 然后，当我们使用该选项时，必须将选项名称括在括号中以指示它是扩展名。我们现在可以在C++中读取my_option的值
+        ```
+        ```c++
+        string value = MyMessage::descriptor()->options().GetExtension(my_option);
+        // java: String value = MyProtoFile.MyMessage.getDescriptor().getOptions().getExtension(MyProtoFile.myOption);
+        // python: value = my_proto_file_pb2.MyMessage.DESCRIPTOR.GetOptions().Extensions[my_proto_file_pb2.my_option]
+        ```
+    4. 可以在 Protocol Buffers 语言中为每种结构自定义选项。这是一个使用各种选项的示例
+        ```groovy
+        import "google/protobuf/descriptor.proto";
+        extend google.protobuf.FileOptions { optional string my_file_option = 50000; }
+        extend google.protobuf.MessageOptions { optional int32 my_message_option = 50001; }
+        extend google.protobuf.FieldOptions { optional float my_field_option = 50002; }
+        extend google.protobuf.EnumOptions { optional bool my_enum_option = 50003; }
+        extend google.protobuf.EnumValueOptions { optional uint32 my_enum_value_option = 50004; }
+        extend google.protobuf.ServiceOptions { optional MyEnum my_service_option = 50005; }
+        extend google.protobuf.MethodOptions { optional MyMessage my_method_option = 50006; }
+        option (my_file_option) = "Hello world!";
+        message MyMessage {
+        	option (my_message_option) = 1234;
+        	optional int32 foo = 1 [(my_field_option) = 4.5];
+        	optional string bar = 2;
+        }
+        enum MyEnum {
+        	option (my_enum_option) = true;
+        	FOO = 1 [(my_enum_value_option) = 321];
+        	BAR = 2;
+        }
+        message RequestType {}
+        message ResponseType {}
+        service MyService {
+        	option (my_service_option) = FOO;
+        	rpc MyMethod(RequestType) returns(ResponseType) {
+        		// Note:	my_method_option has type MyMessage.	We can set each field
+        		//	 within it using a separate "option" line.
+        		option (my_method_option).foo = 567;
+        		option (my_method_option).bar = "Some string";
+        	}
+        }
+        ```
+    5. 请注意，如果要在除定义它之外的包(如果有定义包)中使用自定义选项，则必须在选项名称前加上包名称，就像对类型名称一样。
+    6. 最后一件事：由于自定义选项是扩展名，因此必须为其分配字段编号，就像任何其他字段或扩展名一样。在上面的示例中，我们使用了50000-99999范围内的字段编号。此范围保留供个别组织内部使用，因此你可以自由使用此范围内的数字用于内部应用程序。但是，如果你打算在公共应用程序中使用自定义选项，则务必确保你的字段编号是全局唯一的。要获取全球唯一的字段编号，请发送请求以向[protobuf全球扩展注册表](https://github.com/google/protobuf/blob/master/docs/options.md)添加条目。通常你只需要一个扩展号。你可以通过将多个选项放在子消息中来实现一个扩展号声明多个选项
+    7. 另请注意，每种选项类型(文件级别，消息级别，字段级别等)都有自己的数字空间，例如，你可以使用相同的数字声明FieldOptions和MessageOptions的扩展名。
+9. 生成类
+    1. 要生成Java，Python或C++代码，你需要使用.proto文件中定义的message类型，你需要在.proto上运行protocolbuffer编译器protoc。如果尚未安装编译器，请下载软件包并按照README文件中的说明进行操作。 ``protoc --proto_path=IMPORT_PATH --cpp_out=DST_DIR --java_out=DST_DIR --python_out=DST_DIR path/to/file.proto``
+    2. IMPORT_PATH指定在解析导入指令时查找.proto文件的目录。如果省略，则使用当前目录。可以通过多次传递--proto_path选项来指定多个导入目录；他们将按顺序搜索。-I=IMPORT_PATH可以用作--proto_path的缩写形式。
+    3. 可以提供一个或多个输出指令：
+        1. --cpp_out在DST_DIR中生成C++代码。有关详细信息，请参阅C++生成的代码参考。
+        2. --java_out在DST_DIR中生成Java代码。有关更多信息，请参阅Java生成的代码参考。
+        3. --python_out在DST_DIR中生成Python代码。有关更多信息，请参阅Python生成的代码。
+        4. 为了方便起见，如果DST_DIR以.zip或.jar结尾，编译器会将输出写入到具有给定名称的单个ZIP格式的存档文件。.jar输出还将根据Java JAR规范的要求提供清单文件。请注意，如果输出存档已存在，则会被覆盖；编译器不够智能，无法将文件添加到现有存档中。
+    4. 你必须提供一个或多个.proto文件作为输入。可以一次指定多个.proto文件。虽然文件是相对于当前目录命名的，但每个文件必须驻留在其中一个IMPORT_PATH中，以便编译器可以确定其规范名称。
+10. proto3-basic1
+    1. 定义消息类型
+        ```groovy
+        syntax = "proto3";
+        message SearchRequest {
+            string query = 1;
+            int32 page_number = 2;
+            int32 result_per_page = 3;
+        }
+        ```
+    2. 指定字段规则
+11. proto3-basic2
+    1. 
+12. proto3-basic3
+13. https://www.jianshu.com/u/38b24d657925
+14. c++: https://developers.google.com/protocol-buffers/docs/cpptutorial
+15. java: https://developers.google.com/protocol-buffers/docs/javatutorial
+16. python: https://developers.google.com/protocol-buffers/docs/pythontutorial
+
+### 地图
 
 
 
-## 插件化
+### 插件化
 
 
-## usb挂载
+
+### usb挂载
 
 https://blog.csdn.net/new_abc/article/details/53006327
 
-## 省电管理
+### 省电管理
 
 1. links
     1. [Android 省电管理](https://blog.csdn.net/liu362732346/article/category/8520154)
@@ -1334,7 +1707,7 @@ https://blog.csdn.net/new_abc/article/details/53006327
     5. [安卓电量优化之WakeLock锁机制全面解析](https://www.cnblogs.com/leipDao/p/8241468.html)
     6. [针对低电耗模式和应用待机模式进行优化](https://developer.android.com/training/monitoring-device-state/doze-standby.html)
 
-## 单元测试
+### 单元测试
 
 1. links
     1. [单元测试](https://www.jianshu.com/nb/12079248)
@@ -1343,7 +1716,7 @@ https://blog.csdn.net/new_abc/article/details/53006327
     4. [Android单元测试-Mockito 浅析](https://www.jianshu.com/p/b2084377b340)
     5. 
 
-## Arouter
+### Arouter
 
 0. links
     * [Arouter解析](https://my.oschina.net/JiangTun?tab=newest&catalogId=3687878)
@@ -1430,19 +1803,21 @@ https://blog.csdn.net/new_abc/article/details/53006327
     5. SPI技术
     6. 页面注册源码解析
 
-## Agora Platform
+### Agora Platform
 
 [agorq io](https://www.agora.io/cn/)
 
-## APT/SPI
+### APT/SPI
 
 1. links
-    * [【Android】APT](https://www.jianshu.com/p/7af58e8e3e18)
+    * [【Android】APT](https://www.jianshu.com/p/7af58e8e3e18) finished
     * [反射注解与动态代理综合使用](https://www.jianshu.com/p/fad15887a05e) finished
     * [javapoet github](https://github.com/square/javapoet) finished
     * [JavaPoet 看这一篇就够了](https://juejin.im/entry/58fefebf8d6d810058a610de) finished
-    * [Android模块开发之APT技术](https://www.jianshu.com/p/9616f4a462bd)
-    * [Android模块开发之SPI](https://www.jianshu.com/p/deeb39ccdc53)
+    * [Android模块开发之APT技术](https://www.jianshu.com/p/9616f4a462bd) finished
+    * [Android模块开发之SPI](https://www.jianshu.com/p/deeb39ccdc53) finished
+    * [编译时注解处理方法](https://www.jianshu.com/p/745655cb431a) finished
+    * [Android Model正确使用姿势——AutoValue](https://blog.csdn.net/guijiaoba/article/details/53465012)
 2. spi
     1. Java提供的SPI全名就是Service Provider Interface，下面是一段官方的解释，其实就是为某个接口寻找服务的机制，有点类似IOC的思想，将装配的控制权移交给ServiceLoader。SPI在平时我们用到的会比较少，但是在Android模块开发中就会比较有用，不同的模块可以基于接口编程，每个模块有不同的实现service provider，然后通过SPI机制自动注册到一个配置文件中，就可以实现在程序运行时扫描加载同一接口的不同service provider。这样模块之间不会基于实现类硬编码，可插拔。
     2. 例子: 一个项目有四个模块(app / spi_interface / spi_impl1 / spi_impl2)，后两个是interface模块的实现，例子就是通过点击按钮，加载不同模块实现的方法。
@@ -1847,13 +2222,178 @@ https://blog.csdn.net/new_abc/article/details/53006327
             }
         }
         ```
-5. AutoService
+5. android-apt(depearted)
+    1. 原始的处理方式有如下几个问题：
+        1. 注解处理类不应该被打包到APK中来增加apk的大小，它只有在编译时被用到
+        2. 要在指定的目录下建立文件，并且还要把注解处理类，写入其中，这个导致很容易出错
+    2. Anroid-apt是用在Android Studio中处理注解处理的插件。它有两方面的作用：
+        1. 只允许配置编译时注解处理器依赖，但在最终APK或者Library中不包含注解处理器的代码。
+        2. 这个插件可以自动的帮你为生成的代码创建目录，使注解处理器生成的代码能被Android Studio正确的引用，让生成的代码编译到APK里面去(若你的项目依赖于注解处理器模块的源代码，貌似就不用apt插件，也可以引用生成的代码)
+6. AnnotationProcessor
+    1. Gradle从2.2版本开始支持annotationProcessor功能来代替Android-apt。另外，和android-apt只支持javac编译器相比，annotationProcessor同时支持javac和jack编译器。
+    2. 类似 implementation / compile / api 这些一样使用。
+    3. 参数配置修改
+        ```groovy
+        defaultConfig {
+            javaCompileOptions {
+                annotationProcessorOptions {
+                    arguments = [ eventBusIndex : 'org.greenrobot.eventbusperf.MyEventBusIndex' ]
+                }
+            }
+        }
+        // 可以在AbstractProcessor类中的init(ProcessingEnvironment processingEnv)方法里面获取配置
+        public synchronized void init(ProcessingEnvironment processingEnv) {
+            Map<String, String> options = processingEnv.getOptions();
+            if (MapUtils.isNotEmpty(options)) {
+                moduleName = options.get('eventBusIndex');
+            }
+        }
+        ```
+7. AutoService
+    1. 无需再关注 META-INF/services/的创建以注解处理器的注册了
+    2. 基本使用例子
+        ```java
+        @AutoService(Processor.class)
+        // 对应getSupportedSourceVersion方法
+        @SupportedSourceVersion(SourceVersion.lastestSupported())
+        // 对应getSupportedAnnotationTypes方法
+        @SupportedAnnotationTypes({ "cn.trinea.java.test.annotation.MethodInfo" })
+        public class MethodInfoProcessor extends AbstractProcessor {
+            @Override public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment env) {
+                HashMap<String, String> map = new HashMap<String, String>();
+                for (TypeElement te : annotations) {
+                    for (Element element : env.getElementsAnnotatedWith(te)) {
+                        MethodInfo methodInfo = element.getAnnotation(MethodInfo.class);
+                        map.put(element.getEnclosingElement().toString(), methodInfo.author());
+                    }
+                }
+                return false;  // process 函数返回值表示这组annotations是否被这个Processor 接受，如果接受后续子的 processor 不会再对这个Annotations进行处理，简单点说就是当一个方法被2个该注解处理器能处理的注解修饰后，若第一个注解处理器的process方法返回了true，那么第二个注解处理器就不会处理该方法了
+            }
+            @Override public synchronized void init(ProcessingEnvironment processingEnv) {
+                super.init(processingEnv);
+                elementUtils = processingEnv.getElementUtils();
+            }
+            // ...
+        }
+        ```
+    3. implementation "com.google.auto.service:auto-service:1.0-rc6"
+8. AutoValue / Lambook / Immutables
+    1. 
 
-## QPython
+### AspectJ
+
+1. links
+    1. [关于AspectJ，你需要知道的一切](http://linbinghe.com/2017/65db25bc.html)
+    2. [AspectJ 全面剖析 in Android](https://juejin.im/entry/588d45365c497d0056c471ef)
+    3. [AspectJ在Android埋点的实践](https://zhuanlan.zhihu.com/p/40008022)
+2. AOP介绍
+    1. 一般而言，我们管切入到指定类指定方法的代码片段称为切面，而切入到哪些类、哪些方法则叫切入点。
+    2. 有了AOP，我们就可以把几个类共有的代码，抽取到一个切面中，等到需要时再切入对象中去，从而改变其原有的行为。这样看来，AOP其实只是OOP的补充而已。
+    3. OOP从横向上区分出一个个的类来，而AOP则从纵向上向对象中加入特定的代码。有了AOP，OOP变得立体了，从技术上来说，AOP基本上是通过代理机制实现的。
+    4. 综上所述，也就是说，如果几个或更多个逻辑过程中，有重复的操作行为，AOP就可以将其提取出来，运用代理机制，实现程序功能的统一维护，这么说来可能太含蓄，如果说到权限判断，日志记录等，可能就明白了。如果我们单纯使用OOP，那么权限判断怎么办？在每个操作前都加入权限判断？日志记录怎么办？在每个方法里的开始、结束、异常的地方手动添加日志？所有，如果使用AOP就可以借助代理完成这些重复的操作，就能够在逻辑过程中，降低各部分之间的耦合了。二者扬长补短，互相结合最好。OOP与AOP都是方法论，难学的都不是语法或者实现方式，难的是其中包含的看待问题的方法，以及如何从不同的角度来设计解决方案。
+3. AOP的一些概念
+    1. 切面(Aspect)：一个关注点的模块化，这个关注点实现可能另外横切多个对象。其实就是共有功能的实现。如日志切面、权限切面、事务切面等。
+    2. 通知(Advice)：是切面的具体实现。以目标方法为参照点，根据放置的地方不同，可分为前置通知(Before)、后置通知(AfterReturning)、异常通知(AfterThrowing)、最终通知(After)与环绕通知(Around)5种。在实际应用中通常是切面类中的一个方法，具体属于哪类通知由配置指定的。
+    3. 切入点(Pointcut)：用于定义通知应该切入到哪些连接点上。不同的通知通常需要切入到不同的连接点上，这种精准的匹配是由切入点的正则表达式来定义的。
+    4. 连接点(Joinpoint)：就是程序在运行过程中能够插入切面的地点。例如，方法调用、异常抛出或字段修改等。
+    5. 目标对象(Target Object)：包含连接点的对象，也被称作被通知或被代理对象。这些对象中已经只剩下干干净净的核心业务逻辑代码了，所有的共有功能等代码则是等待AOP容器的切入。
+    6. AOP代理(AOP Proxy)：将通知应用到目标对象之后被动态创建的对象。可以简单地理解为，代理对象的功能等于目标对象的核心业务逻辑功能加上共有功能。代理对象对于使用者而言是透明的，是程序运行过程中的产物。
+    7. 编织(Weaving)：将切面应用到目标对象从而创建一个新的代理对象的过程。这个过程可以发生在编译期、类装载期及运行期，当然不同的发生点有着不同的前提条件。譬如发生在编译期的话，就要求有一个支持这种AOP实现的特殊编译器(如AspectJ编译器)；发生在类装载期，就要求有一个支持AOP实现的特殊类装载器；只有发生在运行期，则可直接通过Java语言的反射机制与动态代理机制来动态实现(如Spring)。
+    8. 引入(Introduction)：添加方法或字段到被通知的类。
+4. 原理
+    1. 动态代理: AOP的实现手段之一是建立在Java语言的反射机制与动态代理机制之上的。业务逻辑组件在运行过程中，AOP容器会动态创建一个代理对象供使用者调用，该代理对象已经按程序员的意图将切面成功切入到目标方法的连接点上，从而使切面的功能与业务逻辑的功能都得以执行。从原理上讲，调用者直接调用的其实是AOP容器动态生成的代理对象，再由代理对象调用目标对象完成原始的业务逻辑处理，而代理对象则已经将切面与业务逻辑方法进行了合成。
+    2. 与AspectJ的联系: AspectJ会通过生成新的AOP代理类来对目标类进行增强，有兴趣的同学可以去查看经过ajc编译前后的代码，比照一下就会发现，假设我们要切入一个方法，那么AspectJ会重构一个新的方法，并且将原来的方法替代为这个新的方法，这个新的方法就会根据配置在调用目标方法的前后等指定位置插入特定代码，这样系统在调用目标方法的时候，其实是调用的被AspectJ增强后的代理方法，而这个代理类会在编译结束时生成好，所以属于静态织入的方式。
+5. AspectJ介绍
+    1. 是对AOP编程思想的一个实践，当然，除了AspectJ以外，还有很多其它的AOP实现，例如ASMDex，但目前最好、最方便的，依然是AspectJ。AspectJ可以干净地模块化横切关注点，基本上可以实现无侵入，同时学习成本低，功能强大(甚至可以通过修改字节码来实现多继承)，可扩展性高。
+    2. AspectJ意思就是Java的Aspect，Java的AOP。它其实不是一个新的语言，它就是一个代码编译器(也就是AJC)，在Java编译器的基础上增加了一些它自己的关键字识别和编译方法。因此，ajc也可以编译Java代码。它在编译期将开发者编写的Aspect程序编织到目标程序中，对目标程序作了重构，目的就是建立目标程序与Aspect程序的连接(耦合，获得对方的引用(默认情况下，也就是不使用this或target来约束切点的情况下，那么获得的是声明类型，不是运行时类型)和上下文信息)，从而达到AOP的目的(这里在编译期还是修改了原来程序的代码，但是是AJC替我们做的)。
+    3. 使用AspectJ有两种方法，一种是完全使用AspectJ的语言。这语言一点也不难，和Java几乎一样，也能在AspectJ中调用Java的任何类库。AspectJ只是多了一些关键词罢了。另一种是或者使用纯Java语言开发，然后使用AspectJ注解，也就是@AspectJ。当然不论哪种方法，最后都需要AspectJ的编译工具AJC来编译。
+    4. Spring AOP采用的动态织入，而AspectJ是静态织入。静态织入：指在编译时期就织入，即：编译出来的class文件，字节码就已经被织入了。织入又再分静动两种，静则指织入过程只在第一次调用时执行；动则指根据代码动态运行的中间状态来决定如何操作，每次调用Target Object的时候都执行。
+    5. 使用Spring自己原生的AOP，你需要实现大量的接口，继承大量的类，所以Spring AOP一度被人所诟病，这与它的无侵入，低耦合完全冲突。不过Spring对开源的优秀框架，组件向来是采用兼容，并入的态度。所以，后来的Spring就提供了Aspectj支持，也就是我们后来所说的基于纯POJO的AOP。
+6. AspectJ使用1
+    1. AOP的用处非常广，从Spring到Android，各个地方都有使用，特别是在后端，Spring中已经使用的非常方便了，而且功能非常强大，但是在Android中，AspectJ的实现是有所阉割的版本，并不是所有功能都支持，但对于一般的客户端开发来说，已经完全足够用了。在Android上集成AspectJ实际上是比较复杂的，不是一行配置就能解决的，但是究其原理其实就是把java编译器替换为AJC。目前Github上已有多个可以应用在Android Studio上的插件，通过这些插件可以简单地在Android上集成AspectJ。
+        1. [AspectJX](https://github.com/HujiangTechnology/gradle_plugin_android_aspectjx)
+        2. [Hugo](https://github.com/JakeWharton/hugo)
+        3. [gradle-android-aspectj-plugin](https://github.com/uPhyca/gradle-android-aspectj-plugin)
+        4. [T-MVP](https://github.com/north2016/T-MVP)
+    2. 如果想自己集成的话，可以通过上述插件进行学习，实现方式都差不多，也可以通过Google自己查找相关资料，不过AspectJ的资料并不是很多，可能花费比较多的时间在试验上，所以这里直接给出方案。
+        1. 首先在项目级的build.gradle中添加classpath: ``classpath 'org.aspectj:aspectjtools:1.8.9'``
+        2. 接着在需要集成AspectJ的Module的build.gradle中添加依赖: ``api 'org.aspectj:aspectjrt:1.8.9'``
+        3. 最后在需要集成AspectJ的Module的build.gradle中添加如下代码:
+            ```groovy
+            import org.aspectj.bridge.IMessage
+            import org.aspectj.bridge.MessageHandler
+            import org.aspectj.tools.ajc.Main
+            final def log = project.logger
+            final def variants = project.android.applicationVariants
+            variants.all { variant ->
+            log.error "========================";
+            log.error "Aspectj切片开始编织Class!";
+            log.error "========================";
+            JavaCompile javaCompile = variant.javaCompile
+            javaCompile.doLast {
+                String[] args = ["-showWeaveInfo", "-1.8",
+                                    "-inpath", javaCompile.destinationDir.toString(),
+                                    "-aspectpath", javaCompile.classpath.asPath,
+                                    "-d", javaCompile.destinationDir.toString(),
+                                    "-classpath", javaCompile.classpath.asPath,
+                                    "-bootclasspath", project.android.bootClasspath.join(File.pathSeparator)]
+                log.debug "ajc args: " + Arrays.toString(args)
+                MessageHandler handler = new MessageHandler(true);
+                new Main().run(args, handler);
+                for (IMessage message : handler.getMessages(null, true)) {
+                    switch (message.getKind()) {
+                        case IMessage.ABORT:
+                        case IMessage.ERROR:
+                        case IMessage.FAIL:
+                            log.error message.message, message.thrown
+                            break;
+                        case IMessage.WARNING:
+                            log.warn message.message, message.thrown
+                            break;
+                        case IMessage.INFO:
+                            log.info message.message, message.thrown
+                            break;
+                        case IMessage.DEBUG:
+                            log.debug message.message, message.thrown
+                            break;
+                    }
+                }
+            }
+            ```
+    3. AspectJ东西比较多，但是AOP做为方法论，它的学习和体会是需要一步一步，并且一定要结合实际来的。如果一下子学太多，反而会疲倦，一股脑把所有高级应用什么的都囫囵吞枣地学一遍，反而得不偿失。这就是是方法论学习和其他知识学习不一样的地方。
+
+### Javassist
+
+1. links
+    1. [Android AOP三剑客之Javassist](https://www.jianshu.com/p/dfc4681f8090) finished
+    2. 
+2. 介绍
+    1. Javassist作用是在编译器间修改class文件，与之相似的ASM(热修复框架女娲)也有这个功能，可以让我们直接修改编译后的class二进制代码，首先我们得知道什么时候编译完成，并且我们要赶在class文件被转化为dex文件之前去修改。在Transfrom这个api出来之前，想要在项目被打包成dex之前对class进行操作，必须自定义一个Task，然后插入到predex或者dex之前，在自定义的Task中可以使用javassist或者asm对class进行操作。而Transform则更为方便，Transfrom会有他自己的执行时机，不需要我们插入到某个Task前面。Tranfrom一经注册便会自动添加到Task执行序列中，并且正好是项目被打包成dex之前。
+    2. build.gradle引入: ``implementation 'org.javassist:javassist:3.26.0-GA'`` ``implementation 'com.android.tools.build:gradle:3.5.1'``(后面一个是为了使用Transform)
+    3. 简单例子插件
+        ```groovy
+        public class JavassistPlugin implements Plugin<Project> {
+            void apply(Project project) {
+                println('------------------ begin my-groovy-plugin-javassist ------------------')
+                project.android.registerTransform(new JavassistTransform(project))
+                println('------------------ end my-groovy-plugin-javassist ------------------')
+            }
+        }
+        ```
+    4. 简单例子Transform
+        ```groovy
+        ```
+    5. 使用Transform原因(不使用DefaultTask)
+        1. Gradle是通过一个一个Task执行完成整个流程的，其中肯定也有将所有class打包成dex的task。(在gradle plugin 1.5 以上和以下版本有些不同)
+        2. 1.5以下，preDex这个task会将依赖的module编译后的class打包成jar，然后dex这个task则会将所有class打包成dex
+        3. 1.5以上，preDex和Dex这两个task已经消失，取而代之的是TransfromClassesWithDexForDebug
+3. 使用
+
+### QPython
 
 [Python on Android](http://www.qpython.com/)
 
-## EventBus源码阅读
+### EventBus源码阅读
 
 [浅析EventBus 3.0实现思想](https://www.jianshu.com/p/7f982f294fc2)
 [EventBus后续深入知识点整理](https://www.jianshu.com/p/f8fd67eef9aa)
@@ -2060,7 +2600,7 @@ https://blog.csdn.net/new_abc/article/details/53006327
     5. 事件过滤: EventBus是基于事件的，也就是订阅方法参数，用户要关心不同的事件，就需要定义不同的事件对象。
     6. 不支持跨进程: 目前EventBus只支持跨线程，而不支持跨进程。如果一个app的service起到了另一个进程中，那么注册监听的模块则会收不到另一个进程的EventBus发出的事件。
 
-## RxJava
+### RxJava
 
 0. links
     * [RxJava/RxAndroid 使用实例实践](https://www.jianshu.com/p/031745744bfa)
@@ -2326,7 +2866,7 @@ https://blog.csdn.net/new_abc/article/details/53006327
         3. serialize
         4. tryOnError(Throwable t)
 
-## Gson
+### Gson
 
 1. links
     * [你真的会用Gson吗?Gson使用指南(一)](https://www.jianshu.com/p/e740196225a4)
@@ -2865,7 +3405,7 @@ https://blog.csdn.net/new_abc/article/details/53006327
 6. 基础5
     1. TypeBuilder
 
-## Retrofit2
+### Retrofit2
 
 0. links
     * [Retrofit关键概念解析](https://www.jianshu.com/p/f085be1c302c)
@@ -2881,7 +3421,7 @@ https://blog.csdn.net/new_abc/article/details/53006327
 3. 知识3
 4. 知识4
 
-## OKHttp
+### OKHttp
 
 0. links
     * [OkHttp官方教程解析-彻底入门OkHttp使用](https://blog.csdn.net/u013651026/article/details/79738059) finished
@@ -3118,7 +3658,7 @@ https://blog.csdn.net/new_abc/article/details/53006327
     7. FormBody
     8. Callback
 
-## Volley
+### Volley
 
 1. links
     * [Android Volley完全解析系列](https://blog.csdn.net/guolin_blog/article/details/17482095) finished(除了最后的源码解读那一篇)
@@ -3438,18 +3978,18 @@ https://blog.csdn.net/new_abc/article/details/53006327
     10. AndroidAuthenticator
     11. ClearCacheRequest
 
-## NoHttp
+### NoHttp
 
 0. links
     * [NoHttp 文档](http://doc.nohttp.net/162186)
     * [NoHttp github](https://github.com/yanzhenjie/NoHttp)
 1. 
 
-## android-async-http
+### android-async-http
 
-## Ksoap2 与 REST
+### Ksoap2 与 REST
 
-## Glide
+### Glide
 
 1. links
     * [Android实战——Glide的使用，加载图片只要一句话](https://blog.csdn.net/qq_30379689/article/details/60373696) finished
@@ -3834,7 +4374,7 @@ https://blog.csdn.net/new_abc/article/details/53006327
             3. 使用Target
         7. 有时候你会发现网络加载完了之后会有拉伸现象，而你的控件大小明明是自适应的呀，这是为什么呢，请你检查下你是否设置了占位图，有的话请去掉就ok了。
 
-## Fresco
+### Fresco
 
 0. links
     * [Android高效加载大图、多图解决方案，有效避免程序OOM](https://blog.csdn.net/guolin_blog/article/details/9316683)
@@ -3897,18 +4437,18 @@ https://blog.csdn.net/new_abc/article/details/53006327
             - 图片不再显示时，从内存中移除；
     3. https://frescolib.org/docs/shipping.html 让App更小，尽管Fresco这么大
 
-## Piscsso
+### Piscsso
 
 0. links
     * [picasso github](https://github.com/square/picasso)
     * [picasso-transfrom github](https://github.com/TannerPerrien/picasso-transformations)
 1. Piscsso初识
 
-## Protocol
+### Protocol
 
 1. 
 
-## Dagger2
+### Dagger2
 
 1. links
     1. [dagger2 github](https://github.com/google/dagger)
@@ -4095,7 +4635,7 @@ https://blog.csdn.net/new_abc/article/details/53006327
     3. 原理分析1
 5. 源码解析
 
-## ButterKnife
+### ButterKnife
 
 1. links
     1. [ButterKnife基本使用](https://segmentfault.com/a/1190000016460847)
@@ -4263,30 +4803,204 @@ https://blog.csdn.net/new_abc/article/details/53006327
         2. 右击Generate选择最后的generate butterknife injections
 5. 源码解读1
 
-## Android Architecture Components -- lifecycle / livedata / viewmodel
+### Android Architecture Components -- lifecycle / livedata / viewmodel / dataBinding
 
 1. links
     1. [Android lifecycle 使用详解](https://www.jianshu.com/p/722a9e899c95z)
     2. **[带你领略Android Jetpack组件的魅力](https://juejin.im/post/5c4e9e8ce51d451bb73ad665)**
     3. [Android Jetpack](http://liuwangshu.cn/tags/Android-Jetpack/)
-2. 
+2. 架构整体
+    1. Android Jetpack组件的优势：
+        1. 轻松管理应用程序的生命周期
+        2. 构建可观察的数据对象，以便在基础数据库更改时通知视图
+        3. 存储在应用程序轮换中未销毁的UI相关数据，在界面重建后恢复数据
+        4. 轻松的实现SQLite数据库
+        5. 系统自动调度后台任务的执行，优化使用性能
+    2. 架构组件的大致功能如下：
+        1. Activity和Fragment负责产品与用户的交互
+        2. ViewModel作为数据的存储和驱动
+        3. Resposity负责调度数据的获取
+        4. Room储存本地序列化的数据
+        5. Retrofit获取远程数据的数据
+    3. 重点核心类
+        1. androidx.arch.core.internal.SafeIterableMap
+        2. androidx.arch.core.internal.FastSafeIterableMap
+        3. androidx.arch.core.util.Function
+        4. androidx.arch.core.executor.TaskExecutor
+        5. androidx.arch.core.executor.DefaultTaskExecutor
+        6. androidx.arch.core.executor.ArchTaskExecutor
+3. LifeCycle
+    1. Lifecycler是一个生命周期感知组件，执行操作以响应另一个组件(例如活动和片段)的生命周期状态的更改，简单来说它可以监听活动组件声明周期的变化，在每个声明周期执行相应的方法，不同于以往想在生命周期中执行相应的方法需要设置接口，然后在声明周期中回调接口，这样会造成代码的耦合，也会引发声明周期的问题；
+    2. 优点
+        1. Lifecycler实现了执行的逻辑和活动的分离，代码解耦并且增加了代码的可读性
+        2. Lifecycler在活动结束时自定移除监听，避免了生命周期的问题
+    3. Lifecycler的实现主要使用两个主要枚举来跟踪其关联组件的生命周期状态
+        1. Event：从框架和Lifecycle类派发的生命周期事件。 这些事件映射到活动和片段中的回调事件。
+        2. State：由Lifecycle对象跟踪的组件的当前状态。
+    4. 引入
+        ```groovy
+        // ViewModel and LiveData
+        implementation "android.arch.lifecycle:extensions:$lifecycle_version"
+        // alternatively - just ViewModel
+        implementation "android.arch.lifecycle:viewmodel:$lifecycle_version" // use -ktx for Kotlin
+        // alternatively - just LiveData
+        implementation "android.arch.lifecycle:livedata:$lifecycle_version"
+        // alternatively - Lifecycles only (no ViewModel or LiveData).
+        // Support library depends on this lightweight import
+        implementation "android.arch.lifecycle:runtime:$lifecycle_version"
+        annotationProcessor "android.arch.lifecycle:compiler:$lifecycle_version"
+        // alternately - if using Java8, use the following instead of compiler
+        implementation "android.arch.lifecycle:common-java8:$lifecycle_version"
+        // optional - ReactiveStreams support for LiveData
+        implementation "android.arch.lifecycle:reactivestreams:$lifecycle_version"
+        ```
+    5. 实现
+        ```kotlin
+        class MyObserver(var lifecycle: Lifecycle, var callback: Callback) : LifecycleObserver {
+            @OnLifecycleEvent(Lifecycle.Event.ON_CREATE) public fun connectOnCreate() = p("connectOnCreate")
+            @OnLifecycleEvent(Lifecycle.Event.ON_RESUME) public fun connectOnResume() = p("connectOnResume")
+            @OnLifecycleEvent(Lifecycle.Event.ON_RESUME) public fun connectOnDestroy() = p("connectOnDestroy")
+            fun p(string: String) = callback.update(string)
+        }
+        // ...
+        class LifeCyclerActivity : AppCompatActivity(), LifecycleOwner {
+            lateinit var lifecycleRegistry: LifecycleRegistry
+            override fun getLifecycle(): Lifecycle = lifecycleRegistry
+            override fun onCreate(bundle: Bundle?) {
+                lifecycleRegistry = LifecycleRegistry(this)
+                var myObserver = MyObserver(lifecycle, object : CallBack {
+                    override fun update(string: String) = Toast.makeText(this@LifeCyclerActivity, string, Toast.LENGTH_SHORT).show()
+                })
+                lifecycleRegistry.addObserver(myObserver)
+                lifecycleRegistry.markState(Lifecycle.State.CREATED)
+            }
+            override fun onResume() {
+                super.onResume()
+                lifecycleRegistry.markState(Lifecycle.State.RESUMED)
+            }
+            override fun onDestroy() {
+                super.onDestroy()
+                lifecycleRegistry.markState(Lifecycle.State.DESTROYED)
+            }
+        }
+        // 其实SupportActivity本身就实现了LifecycleOwner，LifecyclerActivity中的很多操作都已经在SupportActivity中完成了，即可以
+        class LifeCyclerActivity : AppCompatActivity() {
+            override fun onCreate(savedInstanceState: Bundle?) {
+                super.onCreate(savedInstanceState)
+                setContentView(R.layout.activity_life_cycler)
+                var myObserver = MyObserver(lifecycle, object : CallBack {
+                    override fun update() = Toast.makeText(this@LifeCyclerActivity, "Toast", Toast.LENGTH_SHORT).show()
+                })
+                lifecycle.addObserver(myObserver)
+            }
+        }
+        ```
+    6. 关键类
+        1. androidx.lifecycle.Lifecycle
+        2. androidx.lifecycle.OnLifecycleEvent
+        3. androidx.lifecycle.Lifecycling
+        4. androidx.lifecycle.LifecycleOwner
+        5. androidx.lifecycle.LifecycleObserver
+        6. androidx.lifecycle.LifecycleEventObserver
+        7. androidx.lifecycle.LifecycleRegistry
+        8. androidx.lifecycle.ReportFragment
+        9. androidx.lifecycle.LifecycleObserver
+        10. androidx.lifecycle.DefaultLifecycleObserver
+    7. 生命周期感知组件的最佳实践
+        1. 尽可能保持UI控制器(活动和片段)，不应该在活动或片段中直接获取数据；相反，使用ViewModel来做这件事，并观察LiveData对象，以将更改反映回视图。
+        2. 尝试编写数据驱动的UI，其中UI控制器的职责是在数据更改时更新视图，或将用户操作通知回ViewModel。
+        3. 将数据逻辑放在ViewModel类中。ViewModel应充当UI控制器和应用程序其余部分之间的连接器。
+        4. 使用数据绑定来维护视图和UI控制器之间的干净接口。如BufferKnife。
+        5. 避免引用ViewModel中的视图或活动上下文。
+4. LiveData
+    1. 在产品的开发中我们都有必须的操作就是数据的更新，当用户执行某种操作或服务器数据发生改变后，都要重新获取数据再次刷新界面的UI，每改变一次就要重复一次，从代码封装的角度，有没有一种工具可以监听数据状态，在数据变化的时候自动更新UI呢？LiveData就提供了此项更能，从名字中可以看出这个Data时Live的，不是一个死数据，解决了数据展示和刷新的问题。
+    2. LiveData刷新的使用：只需创建LiveData实例后，为可观察的数据添加观察者，在数据改变时会自动回调观察者
+            ```java
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.activity_main);
+            MutableLiveData<String> mutableLiveData  = new MutableLiveData<>();
+            mutableLiveData.observe(this, s -> ApiManager.LOGGER.d("LiveData", "onChanged:" + s)););
+            mutableLiveData.postValue("Android进阶三部曲");  // postValue可在工作线程调用，而setValue需要在主线程
+            ```
+    3. LiveData的几点注意事项：
+        1. 一个具有声明周期感知特性的可观察的数据保持类，使用LiveData保存数据时，在每次订阅或数据更新时会自动回调设置的观察者从而更新数据，真正的实现了数据驱动的效果
+        2. LiveData认为观察者的生命周期处于STARTED状态或RESUMED状态下，表示观察者处于活动状态，LiveData只通知活跃的观察者去更新数据
+        3. LiveData会在活动处于Destroy时释放观察者，所以开发者无需特别处理
+    4. LiveData原理：内部保存了LifecycleOwner和Observer，利用LifecycleOwner感知并处理声明中期的变化，Observer在数据改变时遍历所有观察者并回调方法
+    5. LiveData的数据源一般是ViewModel，也可以是其它可以更新LiveData的组件。当数据更新后，LiveData 就会通知它的所有观察者，比如Activiy。与RxJava的方法不同的是，LiveData并不是通知所有观察者，它只会通知处于Active状态的观察者，如果一个观察者处于Paused或Destroyed状态，它将不会收到通知。这对于Activiy和Service特别有用，因为它们可以安全地观察LiveData对象而不用担心内存泄漏的问题。开发者也不需要在onPause或onDestroy方法中解除对LiveData的订阅。还有一点需要注意的是一旦观察者重新恢复Resumed状态，它将会重新收到LiveData的最新数据。
+    6. 重要的类
+        1. android.lifecycle.LiveData
+        2. android.lifecycle.**MutableLiveData**
+        3. android.lifecycle.Observer
+        4. android.lifecycle.**ComputableLiveData**
+        5. android.lifecycle.**MediatorLiveData**
+        6. android.lifecycle.**Transformations**
+5. ViewModel
+    1. ViewModel顾名思义，是以感知生命周期的形式来存储和管理视图相关的数据。ViewModel主要有以下的特点：
+        1. 当Activity被销毁时，我们可以使用onSaveInstanceState方法恢复其数据，这种方法仅适用于恢复少量的支持序列化、反序列化的数据，不适用于大量数据，如用户列表或位图。而ViewModel不仅支持大量数据，还不需要序列化、反序列化操作。
+        2. Activity/Fragment(视图控制器)主要用于显示视图数据，如果它们也负责数据库或者网络加载数据等操作，那么一旦逻辑过多，会导致视图控制器臃肿，ViewModel可以更容易，更有效的将视图数据相关逻辑和视图控制器分离开来。
+        3. 视图控制器经常需要一些时间才可能返回的异步调用，视图控制器需要管理这些调用，在合适的时候清理它们，以确保它们的生命周期不会大于自身，避免内存泄漏。而ViewModel恰恰可以避免内存泄漏的发生。
+    2. 使用
+        ```java
+        public class MyViewModel extends ViewModel {
+            private MutableLiveData<String> name;
+            public LiveData<String> getName() {
+                if (name == null) {
+                    name = new MutableLiveData<String>();
+                    addName();
+                }
+                return name;
+            }
+            private void addName() { name.setValue("Android进阶解密"); }
+        }
+        // ...
+        @Override protected void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.activity_main);
+            MyViewModel model = ViewModelProviders.of(this).get(MyViewModel.class);
+            model.getName().observe(this, s -> Log.d(TAG, "畅销书："+s));
+        }
+        ```
+    3. 在旋转设备屏幕时，Activity会被销毁重新创建，而ViewModel却不会这样，它的生命周期如下所示。Activity的生命周期不断变化，经历了被销毁重新创建，而ViewModel的生命周期没有发生变化。直到Activity调用onDestroy时才会被clear。
+        ![ViewModel生命周期](https://s2.ax1x.com/2019/09/11/nda7WT.png)
+    4. 重要的类
+        1. android.lifecycle.ViewModel(注意里面的Factory--要匹配ViewModel的Constructor，默认的Factory使用默认构造函数，还有一个Factory使用只有一个Application的构造函数)
+        2. android.lifecycle.AndroidViewModel
+        3. android.lifecycle.ViewModelProvider
+        4. android.lifecycle.HasDefaultViewModelProviderFactory
+        5. android.lifecycle.ViewModelStore
+        6. android.lifecycle.ViewModelStoreOwner
+    5. 注意事项
+        1. Local and anonymous classes can not be ViewModels
+        2. 注意ViewModel的构造函数
+        3. 
+6. DataBinding
+    1. 
 
-## Android Architecture Components -- paging / room / navigation
+### Android Architecture Components -- paging / room / navigation / workManger
 
-## Android Architecture Components -- WorkManger
+### Android Architecture Components -- appCompat / androidKTX / Multidex / Test
 
-## greendao
+### Android Architecture Components -- downloadManager / media&Playback / sharing / slices
+
+### Android Architecture Components -- notifications / permissions / fragment / layout
+
+### Android Architecture Components -- palette / emoji / animation&Transitions / auto,TV&Wear
+
+### Android Architecture Components -- CameraX
+
+### greendao
 
 1. 
 
-## Hermes
+### Hermes
 
 [](https://github.com/Xiaofei-it/Hermes)
 [Hermes--新颖巧妙易用的Android进程间通信IPC框架](https://www.jianshu.com/p/c18befa71e28)
 [](https://github.com/Xiaofei-it/HermesEventBus)
 [HermesEventBus-饿了么开源的Android跨进程事件分发框架](https://blog.csdn.net/jdsjlzx/article/details/52279314)
 
-## 适配
+### 适配
 
 1. 屏幕适配
     * [](https://github.com/yatoooon/AndroidScreenAdaptation)
@@ -4341,21 +5055,16 @@ https://blog.csdn.net/new_abc/article/details/53006327
         findViewById(R.id.title).setPadding(0, statusBarHeight, 0, 0);
         ```
 
-## KLog
+### KLog
 
 [](https://github.com/ZhaoKaiQiang/KLog)
 
-## 工具
+### 工具
 
 * [UETool](https://github.com/eleme/UETool)
 * [uiautomatorviewer](Android自带的工具吧，可以解析ui)
 
-## SDK
-
-* [Ping SDK](https://www.pingxx.com/docs/overview/)
-* [Share SDK](http://sharesdk.mob.com/)
-
-## 大项目
+### 大项目
 
 * [CloudReader仿网易云音乐](https://jingbin.me/CloudReader/)
     * [github](https://github.com/youlookwhat/CloudReader)
