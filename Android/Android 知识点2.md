@@ -4453,11 +4453,19 @@ https://blog.csdn.net/new_abc/article/details/53006327
 1. links
     1. [dagger2 github](https://github.com/google/dagger)
     2. [神兵利器Dagger2](https://zhuanlan.zhihu.com/p/24454466) finished
+    3. [Android - Dagger2使用详解](https://www.jianshu.com/p/2cd491f0da01) finished
+    4. [系列 -- Android 神兵利器Dagger2使用详解（一）基础使用](https://blog.csdn.net/mq2553299/article/details/73065745) finished
+    5. [Dagger2与AndroidInjector](https://blog.csdn.net/qq_17766199/article/details/73030696)  finished
+    6. [系列 -- Dagger 2应用于Android的完美扩展库-dagger.android](https://blog.csdn.net/IO_Field/article/details/71730248)  finished
+    7. [系列 -- dagger2从入门到放弃-为何放弃](https://blog.sunhapper.tk/sync/dagger2-cong-ru-men-dao-fang-qi-wei-he-fang-qi/)
 2. 使用方法1
     1. 简介: Dagger2起源于Dagger，是一款基于Java注解来实现的完全在编译阶段完成依赖注入的开源库，主要用于模块间解耦、提高代码的健壮性和可维护性。Dagger2在编译阶段通过apt利用Java注解自动生成Java代码，然后结合手写的代码来自动帮我们完成依赖注入的工作。起初Square公司受到Guice的启发而开发了Dagger，但是Dagger这种半静态半运行时的框架还是有些性能问题(虽说依赖注入是完全静态的，但是其有向无环图(Directed Acyclic Graph)还是基于反射来生成的，这无论在大型的服务端应用还是在Android应用上都不是最优方案)。因此Google工程师Fork了Dagger项目，对它进行了改造。于是变演变出了今天我们要讨论的Dagger2，所以说Dagger2其实就是高配版的Dagger。
         ```groovy
         api 'com.google.dagger:dagger:2.x'
+        api 'com.google.dagger:dagger-android:2.x'
+        api 'com.google.dagger:dagger-android-support:2.x'
         annotationProcessor 'com.google.dagger:dagger-compiler:2.x'
+        annotationProcessor 'com.google.dagger:dagger-android-processor:2.x'
         ```
     2. 依赖注入介绍: Java代码中Car类持有了对Engine实例的引用，我们称之为Car类对Engine类有一个依赖。依赖注入则是指通过注入的方式实现类与类之间的依赖，下面是常见的三种依赖注入的方式。
         1. 构造注入：通过构造函数传参给依赖的成员变量赋值，从而实现注入。
@@ -4539,14 +4547,23 @@ https://blog.csdn.net/new_abc/article/details/53006327
         3. Dagger是一种半静态半运行时的DI框架，虽说依赖注入是完全静态的，但是生成有向无环图(DAG)还是基于反射来实现，这无论在大型的服务端应用还是在Android应用上都不是最优方案。升级版的Dagger2解决了这一问题，从半静态变为完全静态，从Map式的API变成申明式API(@Module)，生成的代码更优雅高效；而且一旦出错我们在编译期间就能发现。所以Dagger2对开发者的更加友好了，当然Dagger2也因此丧失了一些灵活性，但总体来说利还是远远大于弊的。
         4. 前面提到这种A B C D E连续依赖的问题，一旦E的创建方式发生了改变就会引发连锁反应，可能会导致A B C D都需要做针对性的修改；但是骚年，你以为为这仅仅是工作量的问题吗？更可怕的是我们创建A时需要按顺序先创建E D C B四个对象，而且必须保证顺序上是正确的。Dagger2就很好的解决了这一问题(不只是Dagger2，在其他DI框架中开发者同样不需要关注这些问题)。
 3. 使用方法2
-    1. Dagger2使用过程中我们通常接触到的注解主要包括：@Inject, @Module, @Provides, @Component, @Qulifier, @Scope, @Singleten。
+    1. Dagger2使用过程中我们通常接触到的注解主要包括：@Inject, @Module, @Provides, @Component, @Qualifier, @Scope, @Singleten。
         1. @Inject: @Inject有两个作用，一是用来标记需要依赖的变量，二是用来标记构造函数，Dagger2通过@Inject注解可以在需要这个类实例的时候来找到这个构造函数并把相关实例构造出来，以此来为被@Inject标记了的变量提供依赖；
         2. @Module: @Module用于标注提供依赖的类。很多时候我们需要提供依赖的构造函数是第三方库的，我们没法给它加上@Inject注解，又比如说提供以来的构造函数是带参数的，不能简单的使用@Inject标记它。@Module正是帮我们解决这些问题的。
         3. @**Provides**: @Provides用于标注Module所标注的类中的方法，该方法在需要提供依赖时被调用，从而把预先提供好的对象当做依赖给标注了@Inject的变量赋值；
         4. @Component: @Component用于标注接口，是依赖需求方和依赖提供方之间的桥梁。被Component标注的接口在编译时会生成该接口的实现类(若接口为CarComponent，则编译期生成的类为DaggerCarComponent)，我们通过调用这个实现类的方法完成注入；
-        5. @Qulifier: @Qulifier用于自定义注解，也就是说@Qulifier就如同Java提供的几种基本元注解一样用来标记注解类。我们在使用@Module来标注提供依赖的方法时，方法名我们是可以随便定义的(虽然我们定义方法名一般以provide开头，但这并不是强制的，只是为了增加可读性而已)。那么Dagger2怎么知道这个方法是为谁提供依赖呢？答案就是返回值的类型，Dagger2根据返回值的类型来决定为哪个被@Inject标记了的变量赋值。但是问题来了，一旦有多个一样的返回类型Dagger2就懵逼了。@Qulifier的存在正式为了解决这个问题，我们使用@Qulifier来定义自己的注解，然后通过自定义的注解去标注提供依赖的方法和依赖需求方(也就是被@Inject标注的变量)，这样Dagger2就知道为谁提供依赖了。----一个更为精简的定义：当类型不足以鉴别一个依赖的时候，我们就可以使用这个注解标示；
+        5. @Qualifier: @Qualifier用于自定义注解，也就是说@Qualifier就如同Java提供的几种基本元注解一样用来标记注解类。我们在使用@Module来标注提供依赖的方法时，方法名我们是可以随便定义的(虽然我们定义方法名一般以provide开头，但这并不是强制的，只是为了增加可读性而已)。那么Dagger2怎么知道这个方法是为谁提供依赖呢？答案就是返回值的类型，Dagger2根据返回值的类型来决定为哪个被@Inject标记了的变量赋值。但是问题来了，一旦有多个一样的返回类型Dagger2就懵逼了。@Qualifier的存在正式为了解决这个问题，我们使用@Qualifier来定义自己的注解，然后通过自定义的注解去标注提供依赖的方法和依赖需求方(也就是被@Inject标注的变量)，这样Dagger2就知道为谁提供依赖了。----一个更为精简的定义：当类型不足以鉴别一个依赖的时候，我们就可以使用这个注解标示；
         6. @Scope: @Scope同样用于自定义注解，我能可以通过@Scope自定义的注解来限定注解作用域，实现局部的单例；
         7. @Singleton: @Singleton其实就是一个通过@Scope定义的注解，我们一般通过它来实现全局单例。但实际上它并不能提前全局单例，是否能提供全局单例还要取决于对应的Component是否为一个全局对象。
+        8. @Named
+        9. @SubComponent
+        10. ``Lazy<T> / Provide<T>``
+        11. @Beta
+        12. @Binds
+        13. @IntoSet / @ElementsIntoSet
+        14. @ClassKey / @IntKey / @LongKey / @StringKey / @IntoMap / @MapKey / @Multibinds
+        15. @ActivityKey
+        16. TODO:
     2. 我们提到@Inject和@Module都可以提供依赖，那如果我们即在构造函数上通过标记@Inject提供依赖，有通过@Module提供依赖Dagger2会如何选择呢？具体规则如下：
         1. 首先查找@Module标注的类中是否存在提供依赖的方法。
         2. 若存在提供依赖的方法，查看该方法是否存在参数。
@@ -4568,7 +4585,7 @@ https://blog.csdn.net/new_abc/article/details/53006327
         }
         @Component public interface CarComponent { void inject(Car car); }
         ```
-    4. 例子2: Inject / Component / Module / Provides
+    4. 例子2: Inject / Component / Provides
         ```java
         public class Car {
             @Inject Engine engine;
@@ -4579,7 +4596,8 @@ https://blog.csdn.net/new_abc/article/details/53006327
             public MarkCarModule() {}
             @Provides Engine provideEngine() { return new Engine("gear"); }
         }
-        @Component(modules = {MarkCarModule.class}) public interface CarComponent { void inject(Car car); }
+        @Component(modules = {MarkCarModule.class})
+        public interface CarComponent { void inject(Car car); }
         public class Engine {
             private String gear;
             public Engine(String gear) { this.gear = gear; }
@@ -4632,8 +4650,20 @@ https://blog.csdn.net/new_abc/article/details/53006327
             }
         }
         ```
-    3. 原理分析1
-5. 源码解析
+    3. 例子5: 
+5. 使用方法4
+    1. 例子6
+    2. 例子7
+    3. 例子8
+6. 坑
+    1. Provide 如果是单例模式 对应的Compnent也要是单例模式
+    2. inject(Activity act)不能放父类
+    3. 即使使用了单利模式，在不同的Activity对象还是不一样的
+    4. 依赖component，component之间的Scoped不能相同
+    5. 子类component依赖父类的component，子类component的Scoped要小于父类的Scoped，Singleton的级别是Application
+    6. 多个Moudle之间不能提供相同的对象实例
+    7. Moudle中使用了自定义的Scoped 那么对应的Compnent使用同样的Scoped
+7. 源码解析
 
 ### ButterKnife
 
@@ -4806,9 +4836,10 @@ https://blog.csdn.net/new_abc/article/details/53006327
 ### Android Architecture Components -- lifecycle / livedata / viewmodel / dataBinding
 
 1. links
-    1. [Android lifecycle 使用详解](https://www.jianshu.com/p/722a9e899c95z)
+    1. [Android lifecycle 使用详解](https://www.jianshu.com/p/722a9e899c95)
     2. **[带你领略Android Jetpack组件的魅力](https://juejin.im/post/5c4e9e8ce51d451bb73ad665)**
     3. [Android Jetpack](http://liuwangshu.cn/tags/Android-Jetpack/)
+    4. **[学习Android Jetpack? 实战和教程这里全都有！](https://www.jianshu.com/p/f32c8939338d)**
 2. 架构整体
     1. Android Jetpack组件的优势：
         1. 轻松管理应用程序的生命周期
@@ -4888,10 +4919,9 @@ https://blog.csdn.net/new_abc/article/details/53006327
             override fun onCreate(savedInstanceState: Bundle?) {
                 super.onCreate(savedInstanceState)
                 setContentView(R.layout.activity_life_cycler)
-                var myObserver = MyObserver(lifecycle, object : CallBack {
+                lifecycle.addObserver(MyObserver(lifecycle, object : CallBack {
                     override fun update() = Toast.makeText(this@LifeCyclerActivity, "Toast", Toast.LENGTH_SHORT).show()
-                })
-                lifecycle.addObserver(myObserver)
+                }))
             }
         }
         ```
@@ -4927,7 +4957,7 @@ https://blog.csdn.net/new_abc/article/details/53006327
         2. LiveData认为观察者的生命周期处于STARTED状态或RESUMED状态下，表示观察者处于活动状态，LiveData只通知活跃的观察者去更新数据
         3. LiveData会在活动处于Destroy时释放观察者，所以开发者无需特别处理
     4. LiveData原理：内部保存了LifecycleOwner和Observer，利用LifecycleOwner感知并处理声明中期的变化，Observer在数据改变时遍历所有观察者并回调方法
-    5. LiveData的数据源一般是ViewModel，也可以是其它可以更新LiveData的组件。当数据更新后，LiveData 就会通知它的所有观察者，比如Activiy。与RxJava的方法不同的是，LiveData并不是通知所有观察者，它只会通知处于Active状态的观察者，如果一个观察者处于Paused或Destroyed状态，它将不会收到通知。这对于Activiy和Service特别有用，因为它们可以安全地观察LiveData对象而不用担心内存泄漏的问题。开发者也不需要在onPause或onDestroy方法中解除对LiveData的订阅。还有一点需要注意的是一旦观察者重新恢复Resumed状态，它将会重新收到LiveData的最新数据。
+    5. LiveData的数据源一般是ViewModel，也可以是其它可以更新LiveData的组件。当数据更新后，LiveData就会通知它的所有观察者，比如Activiy。与RxJava的方法不同的是，LiveData并不是通知所有观察者，它只会通知处于Active状态的观察者，如果一个观察者处于Paused或Destroyed状态，它将不会收到通知。这对于Activiy和Service特别有用，因为它们可以安全地观察LiveData对象而不用担心内存泄漏的问题。开发者也不需要在onPause或onDestroy方法中解除对LiveData的订阅。还有一点需要注意的是一旦观察者重新恢复Resumed状态，它将会重新收到LiveData的最新数据。
     6. 重要的类
         1. android.lifecycle.LiveData
         2. android.lifecycle.**MutableLiveData**
@@ -4936,11 +4966,12 @@ https://blog.csdn.net/new_abc/article/details/53006327
         5. android.lifecycle.**MediatorLiveData**
         6. android.lifecycle.**Transformations**
 5. ViewModel
-    1. ViewModel顾名思义，是以感知生命周期的形式来存储和管理视图相关的数据。ViewModel主要有以下的特点：
+    1. 本质: 配置改变后fragment/activity在onDestroy之后又会调用onCreate，但是它们还是同一个实例，并没有销毁，只是重新调用onCreate这些生命周期函数而已。而ViewModelStore则是在onDestroy中检查了配置修改等情况然后避免被销毁了的属性而已。
+    2. ViewModel顾名思义，是以感知生命周期的形式来存储和管理视图相关的数据。ViewModel主要有以下的特点：
         1. 当Activity被销毁时，我们可以使用onSaveInstanceState方法恢复其数据，这种方法仅适用于恢复少量的支持序列化、反序列化的数据，不适用于大量数据，如用户列表或位图。而ViewModel不仅支持大量数据，还不需要序列化、反序列化操作。
         2. Activity/Fragment(视图控制器)主要用于显示视图数据，如果它们也负责数据库或者网络加载数据等操作，那么一旦逻辑过多，会导致视图控制器臃肿，ViewModel可以更容易，更有效的将视图数据相关逻辑和视图控制器分离开来。
         3. 视图控制器经常需要一些时间才可能返回的异步调用，视图控制器需要管理这些调用，在合适的时候清理它们，以确保它们的生命周期不会大于自身，避免内存泄漏。而ViewModel恰恰可以避免内存泄漏的发生。
-    2. 使用
+    3. 使用
         ```java
         public class MyViewModel extends ViewModel {
             private MutableLiveData<String> name;
@@ -4961,23 +4992,212 @@ https://blog.csdn.net/new_abc/article/details/53006327
             model.getName().observe(this, s -> Log.d(TAG, "畅销书："+s));
         }
         ```
-    3. 在旋转设备屏幕时，Activity会被销毁重新创建，而ViewModel却不会这样，它的生命周期如下所示。Activity的生命周期不断变化，经历了被销毁重新创建，而ViewModel的生命周期没有发生变化。直到Activity调用onDestroy时才会被clear。
+    4. 在旋转设备屏幕时，Activity会被销毁重新创建，而ViewModel却不会这样。Activity的生命周期不断变化，经历了被销毁重新创建，而ViewModel的生命周期没有发生变化。直到Activity调用onDestroy时才会被clear。它的生命周期如下所示。
         ![ViewModel生命周期](https://s2.ax1x.com/2019/09/11/nda7WT.png)
-    4. 重要的类
+    5. 重要的类
         1. android.lifecycle.ViewModel(注意里面的Factory--要匹配ViewModel的Constructor，默认的Factory使用默认构造函数，还有一个Factory使用只有一个Application的构造函数)
         2. android.lifecycle.AndroidViewModel
         3. android.lifecycle.ViewModelProvider
         4. android.lifecycle.HasDefaultViewModelProviderFactory
         5. android.lifecycle.ViewModelStore
         6. android.lifecycle.ViewModelStoreOwner
-    5. 注意事项
+    6. 注意事项
         1. Local and anonymous classes can not be ViewModels
         2. 注意ViewModel的构造函数
-        3. 
 6. DataBinding
     1. 
 
 ### Android Architecture Components -- paging / room / navigation / workManger
+
+1. Navigation
+    1. Navigation是用来管理Fragment的切换，并且可以通过可视化的方式，看见App的交互流程。
+    2. 优点
+        1. 处理Fragment的切换（上文已说过）
+        2. 默认情况下正确处理Fragment的前进和后退
+        3. 为过渡和动画提供标准化的资源
+        4. 实现和处理深层连接
+        5. 可以绑定Toolbar、BottomNavigationView和ActionBar等
+        6. SafeArgs（Gradle插件） 数据传递时提供类型安全性
+        7. ViewModel支持
+    3. Navigation中最关键的三要素，他们是：
+
+        | 名词                               | 解释                                                                                                        |
+        | :--------------------------------- | :---------------------------------------------------------------------------------------------------------- |
+        | Navigation Graph(New XML resource) | 如我们的第一张图所示，这是一个新的资源文件，用户在可视化界面可以看出他能够到达的Destination，以及流程关系。 |
+        | NavHostFragment(Layout XML view)   | 当前Fragment的容器                                                                                          |
+        | NavController(Kotlin/Java object)  | 导航的控制者                                                                                                |
+
+    4. 依赖
+        ```groovy
+        ext.navigationVersion = "2.x"
+        dependencies {
+            //... 
+            implementation "androidx.navigation:navigation-fragment-ktx:$rootProject.navigationVersion"
+            implementation "androidx.navigation:navigation-ui-ktx:$rootProject.navigationVersion"
+        }
+        // 如果需要使用SafeArgs插件
+        buildscript {
+            dependencies {
+                classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$navigationVersion"
+            }
+        }
+        apply plugin: 'kotlin-android-extensions'
+        apply plugin: 'androidx.navigation.safeargs'
+        ```
+    5. 创建
+        1. 创建基础目录：资源文件res目录下创建navigation目录->右击navigation目录New一个Navigation resource file
+        2. 创建一个Destination，如果说navigation是我们的导航工具，Destination是我们的目的地，在此之前，我已经写好了一个WelcomeFragment、LoginFragment和RegisterFragment，添加Destination的操作完成后如下所示：
+            ![destination](https://upload-images.jianshu.io/upload_images/9271486-d8f9627ffe2b9711.png?imageMogr2/auto-orient/strip|imageView2/2/w/1200/format/webp)
+        3. 除了可视化界面之外，我们仍然有必要看一下里面的内容组成，login_navigation.xml
+            ```xml
+            <navigation
+                ...
+                android:id="@+id/login_navigation"
+                app:startDestination="@id/welcome">  <!-- app:startDestination是默认的开始fragment -->
+                <fragment
+                    android:id="@+id/login"
+                    android:name="com.joe.jetpackdemo.ui.fragment.login.LoginFragment"
+                    android:label="LoginFragment"
+                    tools:layout="@layout/fragment_login" />
+                <fragment
+                    android:id="@+id/welcome"
+                    android:name="com.joe.jetpackdemo.ui.fragment.login.WelcomeFragment"
+                    android:label="LoginFragment"
+                    tools:layout="@layout/fragment_welcome">
+                    <action
+                        .../>
+                    <action
+                        .../>
+                </fragment>
+                <fragment
+                    android:id="@+id/register"
+                    android:name="com.joe.jetpackdemo.ui.fragment.login.RegisterFragment"
+                    android:label="LoginFragment"
+                    tools:layout="@layout/fragment_register" >
+                    <argument
+                        .../>
+                </fragment>
+            </navigation>
+            ```
+        4. 建立NavHostFragment
+            ```xml
+            <androidx.constraintlayout.widget.ConstraintLayout
+                ...>
+                <fragment
+                    android:id="@+id/my_nav_host_fragment"
+                    android:name="androidx.navigation.fragment.NavHostFragment"
+                    app:navGraph="@navigation/login_navigation"
+                    app:defaultNavHost="true"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+                    <!-- android:name值必须是androidx.navigation.fragment.NavHostFragment，声明这是一个NavHostFragment -->
+                    <!-- app:navGraph存放的是第二步建好导航的资源文件，也就是确定了Navigation Graph -->
+                    <!-- app:defaultNavHost与系统的返回按钮相关联 -->
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            ```
+        5. 界面跳转、参数传递和动画: 在WelcomeFragment中，点击登录和注册按钮可以分别跳转到LoginFragment和RegisterFragment中。
+            ```kotlin
+            // 一般方法
+            btnLogin.setOnClickListener {
+                // 设置动画参数
+                val navOption = navOptions { anim {
+                        enter = R.anim.slide_in_right
+                        exit = R.anim.slide_out_left
+                        popEnter = R.anim.slide_in_left
+                        popExit = R.anim.slide_out_right
+                } }
+                // 参数设置
+                val bundle = Bundle()
+                bundle.putString("name", "TeaOf")
+                findNavController().navigate(R.id.login, bundle,navOption)
+            }
+            ```
+            ```xml
+            <!-- Safe Args -->
+            <navigation ...>
+                <fragment ... />
+                <fragment android:id="@+id/welcome">
+                    <action
+                        android:id="@+id/action_welcome_to_login"
+                        app:destination="@id/login"/>
+                    <action
+                        android:id="@+id/action_welcome_to_register"
+                        app:enterAnim="@anim/slide_in_right"
+                        app:exitAnim="@anim/slide_out_left"
+                        app:popEnterAnim="@anim/slide_in_left"
+                        app:popExitAnim="@anim/slide_out_right"
+                        app:destination="@id/register"/>
+                </fragment>
+                <fragment android:id="@+id/register" ... >
+                    <argument
+                        android:name="EMAIL"
+                        android:defaultValue="2005@qq.com"
+                        app:argType="string"/>
+                </fragment>
+            </navigation>
+            ```
+            ```kotlin
+            // Safe Args
+            btnRegister.setOnClickListener { findNavController().navigate(WelcomeFragmentDirections.actionWelcomeToRegister().setEMAIL("TeaOf1995@Gamil.com")) }
+            // 另一半的数据接受
+            override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+                super.onViewCreated(view, savedInstanceState)
+                // ...
+                val safeArgs: RegisterFragmentArgs by navArgs()
+                val email = safeArgs.email
+                mEmailEt.setText(email)
+            }
+            ```
+            ```
+            如果不用Safe Args，action可以由Navigation.createNavigateOnClickListener(R.id.next_action, null)方式生成
+            ```
+    6. 配合
+        1. Navigation可以绑定menus、drawers和bottom navigation，这里我们以bottom navigation为例，我先在navigation目录下新创建了main_navigation.xml，接着新建了MainActivity，下面则是activity_main.xml:
+            ```xml
+            <LinearLayout ...>
+                <fragment
+                    android:id="@+id/my_nav_host_fragment"
+                    android:name="androidx.navigation.fragment.NavHostFragment"
+                    android:layout_width="match_parent"
+                    app:navGraph="@navigation/main_navigation"
+                    app:defaultNavHost="true"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+                <com.google.android.material.bottomnavigation.BottomNavigationView
+                    android:id="@+id/navigation_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/white"
+                    app:itemIconTint="@color/colorAccent"
+                    app:itemTextColor="@color/colorPrimary"
+                    app:menu="@menu/menu_main" />
+            </LinearLayout>
+            ```
+        2. MainActivity
+            ```kotlin
+            class MainActivity : AppCompatActivity() {
+                lateinit var bottomNavigationView: BottomNavigationView
+                override fun onCreate(savedInstanceState: Bundle?) {
+                    //...
+                    val host: NavHostFragment = supportFragmentManager.findFragmentById(R.id.my_nav_host_fragment) as NavHostFragment
+                    val navController = host.navController
+                    initWidget()
+                    initBottomNavigationView(bottomNavigationView,navController)
+                }
+                private fun initBottomNavigationView(bottomNavigationView: BottomNavigationView, navController: NavController) {
+                    bottomNavigationView.setupWithNavController(navController)
+                }
+                private fun initWidget() {
+                    bottomNavigationView = findViewById(R.id.navigation_view)
+                }
+            }
+            ```
+2. Paging
+    1. 
+3. Room
+    1. 
+4. WorkManager
+    1. 
 
 ### Android Architecture Components -- appCompat / androidKTX / Multidex / Test
 
