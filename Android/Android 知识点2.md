@@ -2728,6 +2728,14 @@ https://blog.csdn.net/new_abc/article/details/53006327
             }
             ```
         2. ObservableEmitter提供了一个方法用来取消订阅，用一个实际场景来形容一下。想象一个水龙头和水流，这个管道就相当于Observable，从里面能放出水，ObservableEmitter就相当于是水龙头，控制开关，而水龙头连接到管道就是Observable.create()。
+        3. 例子
+            ```java
+            Observable<String> observable = Observable.create((ObservableEmitter<String> emitter) -> {
+                emitter.onNext("1");
+                emitter.onNext("2");
+                emitter.onComplete();
+            });
+            ```
 2. 实例
     1. 创建Observable
         ```java
@@ -2887,7 +2895,7 @@ https://blog.csdn.net/new_abc/article/details/53006327
         * zip/zipArray/zipIterable/zipWith
         * join/groupJoin
         * startWith/startWithArray
-    3. 操作符: Utility
+    3. 操作符: Utility(辅助)
         * using
         * delay
         * delaySubscription
@@ -2899,13 +2907,13 @@ https://blog.csdn.net/new_abc/article/details/53006327
         * timeInterval
         * timestamp
         * timeout
-    4. 操作符: Error Handle
+    4. 操作符: Error Handle(错误处理)
         * onErrorResumeNext
         * onErrorReturn/onErrorReturnItem
         * onExceptionResumeNext
         * retry/retryUntil/retryWhen
 6. RxJava知识4
-    1. 操作符: Conditional and Boolean
+    1. 操作符: Conditional and Boolean(条件和布尔)
         * amb/ambArray/ambWith
         * sequenceEqual
         * all
@@ -2914,39 +2922,191 @@ https://blog.csdn.net/new_abc/article/details/53006327
         * isEmpty
         * defaultIfEmpty
         * switchIfEmpty
-    2. 操作符: Mathematical and Aggregate
+    2. 操作符: Mathematical and Aggregate(算术和聚合)
         * concat/concatDelayError/concatArray/concatArrayDelayError
         * concatEager/concatArrayEager
         * concatWith
         * collect/collectInto
         * count
         * reduce/reduceWith
-    3. Connectable
+    3. Connectable(连接)
         * cache/cacheWithInitialCapacity
         * publish
         * replay
         * share
-7. RxJava总结
+7. Single / Completable / Maybe [RxJava Single Completable Maybe 使用和源码阅读](https://www.jianshu.com/p/f123362718e1)
+    1. Single 用于只发射一次数据就结束了，所以无需通过 onComplete 通知观察者，要么 onSuccess 要么 onError。
+        ```kotlin
+        observerSingle = object : SingleObserver<String> {
+                override fun onSuccess(t: String) {
+                    textView.text = "${textView.text}\n $t"
+                }
+                override fun onSubscribe(d: Disposable) {}
+                override fun onError(e: Throwable) {}
+            }
+        Single.create(SingleOnSubscribe<String> { emitter ->
+            emitter.onSuccess("single success")
+        }).subscribe(observerSingle)
+        // just 和 timer 方法仍然可用
+        Single.just("Single just").subscribe(observerSingle)
+        ```
+    2. Completable 不发送数据，只是给观察者发射一个信号，要么 onComplete 要么 onError。
+        ```kotlin
+        Completable.create(CompletableOnSubscribe { emitter ->
+            emitter.onComplete()
+        }).subscribe(object : CompletableObserver {
+            override fun onComplete() {
+                Log.e("RX", "Completable onComplete")
+            }
+            override fun onSubscribe(d: Disposable) {}
+            override fun onError(e: Throwable) {}
+        })
+        ```
+    3. Maybe 是 Single 和 Completable 的结合。
+        ```kotlin
+        Maybe.create(MaybeOnSubscribe<String> { emitter ->
+            emitter.onSuccess("maybe success")
+            emitter.onComplete()
+        }).subscribe(object : MaybeObserver<String> {
+            override fun onSuccess(t: String) {
+                textView.text = "${textView.text}\n $t"
+            }
+            override fun onComplete() {
+                textView.text = "${textView.text}\n onComplete"
+            }
+            override fun onSubscribe(d: Disposable) {}
+            override fun onError(e: Throwable) {}
+        })
+        // onSuccess 和 onComplete 只能执行一个，即使两个都调用了，比如上面，执行了 onSuccess 后，onComplete 并不能执行到
+        ```
+8. Flowable / Processor [RxJava Flowable Processor](https://www.jianshu.com/p/11c26c9c64c7)
+    1. Backpressure 背压现象指生产者的速度大于消费者的速度。同一个线程生产一个就消费了，不会产生问题，在异步线程中，如果生产者的速度大于消费者的速度，就会产生 Backpressure 问题。比如子线程的被观察者 1 秒生产发送一次，而观察者 2 秒才消费处理一个，造成事件的堆积，最后造成 OOM。在 1.x 中，Backpressure 问题由 Observable 处理，2.x 中由 Flowable 专门来处理。例子
+        ```kotlin
+        val flowable = Flowable.create(FlowableOnSubscribe<Int> { emitter ->
+            emitter.onNext(1)
+            emitter.onNext(2)
+            emitter.onNext(3)
+            emitter.onComplete()
+        }, BackpressureStrategy.ERROR) // 增加了一个参数
+        val subscriber = object : Subscriber<Int> {
+            override fun onSubscribe(s: Subscription) {
+                s.request(java.lang.Long.MAX_VALUE)
+            }
+            override fun onNext(integer: Int?) {}
+            override fun onError(t: Throwable) {}
+            override fun onComplete() {}
+        }
+        flowable.subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.computation())
+                .subscribe(subscriber)
+        ```
+    2. onSubscribe 的参数类型不再是 Disposable，而是 Subscription，可以调用它的 cancel() 切断观察者与被观察者之间的联系。Subscription 还有一个 request(long n) 方法，用来向生产者申请可以消费的事件数量。这样便可以根据本身的消费能力进行消费事件。当调用了 request() 方法后，生产者便发送对应数量的事件供消费者消费。即生产者要求多少，消费者就发多少。如果不显式调用 request 就表示消费能力为 0。request 这个方法若不调用,下游的 onNext 与 OnComplete 都不会调用。
+    3. 处理 Backpressure 的策略是处理 Subscriber 接收事件的方式，并不影响 Flowable 发送事件的方法。即使采用了处理 Backpressure 的策略，Flowable 原来以什么样的速度产生事件，现在还是什么样的速度不会变化，主要处理的是 Subscriber 接收事件的方式。在异步调用时，RxJava 中有个缓存池，用来缓存消费者处理不了暂时缓存下来的数据，缓存池的默认大小为 128，即只能缓存 128 个事件。无论 request() 中传入的数字比 128 大或小，缓存池中在刚开始都会存入 128 个事件。如果本身并没有这么多事件需要发送，则不会存 128 个事件。
+    4. 策略就是创建 Flowable 的第二个参数。
+        1. ERROR: 如果缓存池溢出，就会立刻抛出 MissingBackpressureException 异常。
+            ```kotlin
+            Flowable.create(FlowableOnSubscribe<Int> { emitter ->
+                for (i in 0..129) {
+                    debug("发$i")
+                    emitter.onNext(i)
+                }
+                emitter.onComplete()
+            }, BackpressureStrategy.ERROR) //增加了一个参数
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(object : Subscriber<Int> {
+                        override fun onSubscribe(s: Subscription) {
+                            // s.request(2)
+                        }
+                        override fun onNext(integer: Int?) {
+                            debug("收$integer")
+                        }
+                        override fun onError(t: Throwable) {
+                            error { t.toString() }
+                        }
+                        override fun onComplete() {}
+                    })
+            ```
+        2. BUFFER: 就是把 RxJava 中默认的只能存 128 个事件的缓存池换成一个大的缓存池，支持存很多很多的数据。这样，消费者即使通过 request() 传入一个很大的数字，生产者也会生产事件，并将处理不了的事件缓存。但是这种方式仍然比较消耗内存，除非是我们比较了解消费者的消费能力，能够把握具体情况，不会产生 OOM。
+        3. DROP: 消费者处理不了的事件就丢弃。消费者通过 request() 传入其需求 n，然后生产者把 n 个事件传递给消费者供其消费。其他消费不掉的事件就丢掉。
+        4. LATEST: 与 DROP 功能基本一致。唯一的区别就是 LATEST 总能使消费者能够接收到生产者产生的最后一个事件。
+        5. MISSING: 直接消失了，下游不知道任何情况，不知道有没有溢出。
+    5. 如果 Flowable 对象不是通过 create() 获取的或不是自己创建的，可以采用 onBackpressureBuffer()、onBackpressureDrop()、onBackpressureLatest() 的方式指定背压策略。``Flowable.just(1).onBackpressureBuffer().observeOn(AndroidSchedulers.mainThread())``
+    6. AsyncProcessor / BehaviorProcessor / PublishProcessor / ReplayProcessor / SerializedProcessor / UnicastProcessor
+9. Subject [RxJava 系列-3：使用 Subject](https://juejin.im/post/5b801dfa51882542cb409905)
+    1. Subject 可以同时代表 Observer 和 Observable，允许从数据源中多次发送结果给多个观察者。除了 onSubscribe(), onNext(), onError() 和 onComplete() 之外，所有的方法都是线程安全的。此外，你还可以使用 toSerialized() 方法，也就是转换成串行的，将这些方法设置成线程安全的。
+    2. AsyncSubject:只有当 Subject 调用 onComplete 方法时，才会将 Subject 中的最后一个事件传递给所有的 Observer。比如，在下面的例子中，虽然在发送 "two" 的时候，observer 就进行了订阅，但是只有当 subject 调用了 onComplete() 方法的时候，observer 才收到了 "three" 这一个事件
+        ```java
+         AsyncSubject<String> subject = AsyncSubject.create();
+        subject.onNext("one");
+        subject.onNext("two");
+        subject.subscribe(observer);
+        subject.onNext("three");
+        subject.onComplete();
+        ```
+    3. BehaviorSubject:在创建 BehaviorSuject 的时候可以通过静态的工厂方法指定一个默认值数，也可以不指定。当一个 Observer 使用了 subscribe() 方法对其进行订阅的时候，它只能收到在订阅之前发送出的最后一个结果（或者说最新的值），在这之前的结果是无法被接收到的。比如，下面的例子中，新注册的 observer 只能接收到 "one", "two" 和 "three"，但是无法接收到 "zero"
+        ```java
+         BehaviorSubject<Object> subject = BehaviorSubject.create();
+        subject.onNext("zero");
+        subject.onNext("one");
+        subject.subscribe(observer);
+        subject.onNext("two");
+        subject.onNext("three");
+        ```
+    4. PublishSubject:不会改变事件的发送顺序；在已经发送了一部分事件之后注册的 Observer 不会收到之前发送的事件。比如，在下面的代码中，observer1 会收到所有的 onNext() 和 onComplete() 发出的结果，但是 observer2 只能收到 "three" 和最终的 onComplete()
+        ```java
+         PublishSubject<Object> subject = PublishSubject.create();
+        // observer1 进行订阅
+        subject.subscribe(observer1);
+        subject.onNext("one");
+        subject.onNext("two");
+        // observer2 进行订阅
+        subject.subscribe(observer2);
+        subject.onNext("three");
+        subject.onComplete();
+        ```
+    5. ReplaySubject:无论什么时候注册 Observer 都可以接收到任何时候通过该 Observable 发射的事件。比如，在下面的代码中，observer1 和 observer2 可以收到在它们进行订阅之前的所有的 onNext() 和 onCompete() 事件
+        ```java
+        ReplaySubject<Object> subject = ReplaySubject.create();
+        subject.onNext("one");
+        subject.onNext("two");
+        subject.onNext("three");
+        subject.onComplete();
+        // observer1 和 observer2 进行订阅
+        subject.subscribe(observer1);
+        subject.subscribe(observer2);
+        ```
+    6. UnicastSubject:只允许一个 Observer 进行监听，在该 Observer 注册之前会将发射的所有的事件放进一个队列中，并在 Observer 注册的时候一起通知给它。比如，在下面的例子中，当 observer1 进行订阅的时候，会将 "one" "two" "three" 依次发送给 observer1，而当 observer2 进行订阅的时候会抛出一个异常，因为只能有一个观察者可以订阅
+        ```java
+        UnicastSubject<String> subject = UnicastSubject.create();
+        subject.onNext("one");
+        subject.onNext("two");
+        subject.onNext("three");
+        subject.subscribe(observer1);
+        subject.subscribe(observer2);
+        ```
+    7. SerializedSubject: 线程安全的
+10. RxJava总结
     1. Observable
         1. amb / ambArray / create
     2. public interface Observer<T>
         1. onNext / onComplete / onError / onSubscribe(Disposable d): 刚开始时调用，用于解除订阅。
-    2. public interface Subscriber<T>
+    3. public interface Subscriber<T>
         1. onNext / onComplete / onError
         2. onSubscribe(Subscription s)
-    3. basic
+    4. basic
         1. Disposable: isDispose / dispose
         2. Subscription: request / cancel
         3. SafeSu...
-    4. lambda
+    5. lambda
         1. Consumer: accept
         2. ObservableSource: subscribe
         3. Cancellable: cancel
         4. Action: run
         5. ObservableOnSubscribe: subscribe
-    5. public interface emitter<T>
+    6. public interface emitter<T>
         1. onNext(T t) / onComplete / onError(Throwable t)
-    6. public interface ObservableEmitter<T>
+    7. public interface ObservableEmitter<T>
         1. setDisposable(Disposable d) / isDisposed
         2. setCancellable(Cancellable c)
         3. serialize
