@@ -1333,6 +1333,92 @@ img {
 
 ### 视频
 
+1. links
+    1. [Android自定义视频录制](https://www.jianshu.com/p/4d60900a048b)
+    2. [Android Camera2 教程 · 第一章 · 概览](https://www.jianshu.com/p/9a2e66916fcb)
+    3. [自定义Camera系列之：SurfaceView + Camera2](https://blog.csdn.net/afei__/article/details/86671206)
+2. Camera
+    1. Android 进行录像的一个简单方法是：创建一个MediaStore.ACTION_VIDEO_CAPTURE的Intent来调起一个已有的相机应用。但有时候我们需要自己定义录制界面，或者需要一些高级的功能，那么Intent方式就不能满足我们的要求的。因此，我们可以使用Android framework为我们提供的Camera和Camera2 APIs来直接操作相机设备。
+    2. 权限(Android6.0及以上需动态权限申请)
+        ```xml
+        <uses-permission android:name="android.permission.CAMERA" />
+        <uses-feature android:name="android.hardware.camera" />
+        <!-- 自动对焦和闪光灯 -->
+        <uses-feature android:name="android.hardware.camera.autofocus" android:required="false"/>
+        <uses-feature android:name="android.hardware.camera.flash" android:required="false"/>
+        <uses-permission android:name="android.permission.FLASHLIGHT"/>
+        <!-- 读写(视频)权限 -->
+        <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+        <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+        <!-- 录制视频和音频 -->
+        <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+        <uses-permission android:name="android.permission.RECORD_VIDEO"/>
+        ```
+    3. 常见类:
+        1. Camera: 管理相机API(开启、关闭、预览、拍照、摄像、获取和设置相机参数等等)
+        2. Camera.CameraInfo: 相机信息
+        3. Camera.Parameters: 相机参数
+    4. 获取相机
+        ```java
+        // 获取设备物理可用Camera
+        int count = Camera.getNumberOfCameras();
+        // 检测是哪个相机
+        for (int i = 0; i < count; i++) {
+            Camera.getCameraInfo(i, mCameraInfo);
+            if (mCameraInfo.facing == mFacing) {  // mFacing 可以是 Camera.CameraInfo.CAMERA_FACING_FRONT，也可以是 Camera.CameraInfo.CAMERA_FACING_BACK
+                mCameraId = i;
+                return true;
+            }
+        }
+        // 开启
+        mCamera = Camera.open(mCameraId);
+        ```
+    5. 
+3. Camera2
+    1. 常用类:
+        1. CameraManager：摄像头管理类，用于检测、打开系统摄像头，通过getCameraCharacteristics(cameraId)可以获取摄像头特征
+        2. CameraCharacteristics ：相机特性类，例如，是否支持自动调焦，是否支持zoom，是否支持闪光灯一系列特征
+        3. CameraDevice：相机设备,类似早期的camera类
+        4. CameraRequest：一次捕获的请求，可以设置一些列的参数，用于控制预览和拍照参数，例如：对焦模式，曝光模式，zoom参数等等
+        5. CameraCaptureSession：用于创建预览、拍照的Session类。通过它的setRepeatingRequest()方法请求连续预览 , 通过它的capture()方法控制拍照动作。
+    2. 获取相机
+        ```java
+        // 获取设备物理可用Camera
+        final String[] ids = mCameraManager.getCameraIdList();
+        // 找到我们想要的那个Camera
+        for (String id : ids) {
+            CameraCharacteristics characteristics = mCameraManager.getCameraCharacteristics(id);
+            Integer internal = characteristics.get(CameraCharacteristics.LENS_FACING);
+            if (internal == null) {
+                return false;
+            }
+            if (internal == internalFacing) {
+                mCameraId = id;
+                mCameraCharacteristics = characteristics;
+                return true;
+            }
+        }
+        try {
+            mCameraManager.openCamera(mCameraId, mCameraDeviceCallback, null);
+            return true;
+        } catch (CameraAccessException e) {
+            // throw new RuntimeException("Failed to open camera: " + mCameraId, e);
+            return false;
+        }
+        ```
+4. MediaRecorder
+    1. 用于录制视频和音频的一个类。
+    2. 状态说明：
+        1. Initial：当new MediaRecorder()或者在除Released状态外的其它状态通过调用reset()方法后，MediaRecorder进入Initial状态
+        2. Initialized：在Initial状态下，通过设定视频源setVideoSource()或者音频源setAudioSource()之后，状态切换为Initialized状态
+        3. DataSourceConfigured：在Initialized状态下，可以通过setOutputFormat()方法设置输出格式，此时MediaRecorder转换为DataSourceConfigured状态。 数据源配置状态，这期间可以设定编码方式、输出文件、视频大小、视频帧率、预览显示等等。
+        4. Prepared：装备就绪状态，在DataSourceConfigured状态下，调用prepare()方法进入该状态。
+        5. Recording：录制状态，在Prepared状态下，调用start()方法进入该状态。通过stop()方法或reset()方法回到Initial状态。
+        6. Released：释放状态，可以通过在Initial状态调用release()方法来进入这个状态，这时将会释放和MediaRecorder对象关联的所有资源。
+        7. Error：错误状态，当错误发生的时候进入这个状态，它可以通过reset()方法进入Initial状态。
+        8. 注意：使用MediaRecorder进行视频音频录制时，必须严格按照上面的状态图规定的函1. 数先后调用顺序，在不同的状态调用不同的函数，否则会抛异常IllegalStateException 。
+5. CameraX
+
 ### 音频
 
 ### Protobuf
@@ -5202,6 +5288,8 @@ https://blog.csdn.net/new_abc/article/details/53006327
 ### Android Architecture Components -- appCompat / androidKTX / Multidex / Test
 
 ### Android Architecture Components -- downloadManager / media&Playback / sharing / slices
+
+1. 
 
 ### Android Architecture Components -- notifications / permissions / fragment / layout
 
