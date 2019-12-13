@@ -1630,7 +1630,8 @@ ThreadLocal的作用是提供线程内的局部变量，这种变量在线程的
 // UDP编程
     // 服务端
         DatagramSocket socket = new DatagramSocket(10010);
-        byte[] data = new byte[1024]; DatagramPacket packet = new DatagramPacket(data, data.length);
+        byte[] data = new byte[1024];
+        DatagramPacket packet = new DatagramPacket(data, data.length);
         socket.receive(packet);  // 此方法在接受数据报之前会一致阻塞
         String info = new String(data, 0, data.length); System.out.println("我是服务器，客户端告诉我" + info);
         InetAddress address = packet.getAddress();
