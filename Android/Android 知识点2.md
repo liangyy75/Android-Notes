@@ -3700,10 +3700,10 @@ https://blog.csdn.net/new_abc/article/details/53006327
         ```
     3. 基本的Post
         ```java
-        public static final MediaType JSON = MediaType.parse("application/json;charset=utf-8");
+        public static final MediaType MediaTypeJSON = MediaType.parse("application/json;charset=utf-8");
         OkHttpClient client = new OkHttpClient();
         String post(String url, String json) throws IOException {
-            Request request = new Request.Builder().url(url).post(RequestBody.create(JSON, json)).build();
+            Request request = new Request.Builder().url(url).post(RequestBody.create(MediaTypeJSON, json)).build();
             Response response = client.newCall(request).execute();
             return response.isSuccessful() ? response.body().string() : "empty string";
         }
@@ -3816,12 +3816,10 @@ https://blog.csdn.net/new_abc/article/details/53006327
         ```java
         private static final String IMGUR_CLIENT_ID = "...";
         private static final MediaType MEDIA_TYPE_PNG = MediaType.parse("image/png");
-        // Use the imgur image upload API as documented at
-        https://api.imgur.com/endpoints/image
+        // Use the imgur image upload API as documented at https://api.imgur.com/endpoints/image
         RequestBody requestBody = new MultipartBody().Builder().setType(MultipartBody.FORM)
             .addFormDataPart("title", "Square Logo")
-            .addFormDataPart("image", "logo-square.png",
-                RequestBody.create(MEDIA_TYPE_PNG, new File("website/static/logo-square.png")))
+            .addFormDataPart("image", "logo-square.png", RequestBody.create(MEDIA_TYPE_PNG, new File("website/static/logo-square.png")))
             .build();
         Request request = new Request.Builder()
             .header("Authorization", "Client-ID " + IMGUR_CLIENT_ID)
@@ -3859,7 +3857,10 @@ https://blog.csdn.net/new_abc/article/details/53006327
         }
         ```
 5. OkHttp知识5
-    1. Timeouts(超时): OkHttp支持连接，读取和写入超时。``client = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();``
+    1. Timeouts(超时): OkHttp支持连接，读取和写入超时。
+        ```java
+        client = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
+        ```
     2. Per-call Configuration(每个Call的配置): 使用OkHttpClient，所有的HTTP Client配置包括代理设置、超时设置、缓存设置。当你需要为单个call改变配置的时候，clone一个 OkHttpClient。 这个api将会返回一个浅拷贝(shallow copy)，你可以用来单独自定义。下面的例子中，我们让一个请求是500ms的超时、另一个是3000ms的超时。
         ```java
         private final OkHttpClient client = new OkHttpClient();
@@ -3939,7 +3940,7 @@ https://blog.csdn.net/new_abc/article/details/53006327
         1. 示例
             ```java
             ImageRequest imageRequest = new ImageRequest("http://developer.android.com/images/home/aw_dac.png",
-                response -> imageView.setImageBitmap(response), 0, 0, Config.RGB_565,
+                response -> imageView.setImageBitmap(response, 0, 0, Config.RGB_565),
                 error -> Log.e("TAG", error.getMessage(), error));
             ```
         2. 第三第四个参数分别用于指定允许图片最大的宽度和高度，如果指定的网络图片的宽度或高度大于这里的最大值，则会对图片进行压缩，指定成0的话就表示不管图片有多大，都不会进行压缩。第五个参数用于指定图片的颜色属性，Bitmap.Config下的几个常量都可以在这里使用，其中ARGB_8888可以展示最好的颜色属性，每个图片像素占据4个字节的大小，而RGB_565则表示每个图片像素占据2个字节大小。
@@ -4265,8 +4266,8 @@ https://blog.csdn.net/new_abc/article/details/53006327
         - 相信大家多Context的使用应该是非常谨慎的，非要在非主线程使用Glide的话就将context换成getApplicationContext。
     3. gradle 与 权限
         ```groovy
-        implementation 'com.github.bumptech.glide:glide:4.8.0'
-        annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
+        implementation 'com.github.bumptech.glide:glide:4.9.0'
+        annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
         ```
         ```xml
         <uses-permission android:name="android.permission.INTERNET" />
@@ -5086,6 +5087,7 @@ https://blog.csdn.net/new_abc/article/details/53006327
     2. **[带你领略Android Jetpack组件的魅力](https://juejin.im/post/5c4e9e8ce51d451bb73ad665)**
     3. [Android Jetpack](http://liuwangshu.cn/tags/Android-Jetpack/)
     4. **[学习Android Jetpack? 实战和教程这里全都有！](https://www.jianshu.com/p/f32c8939338d)**
+    5. **[DataBinding学习与实践](https://www.jianshu.com/p/eb14bcfdde32)**
 2. 架构整体
     1. Android Jetpack组件的优势：
         1. 轻松管理应用程序的生命周期
@@ -5251,7 +5253,304 @@ https://blog.csdn.net/new_abc/article/details/53006327
         1. Local and anonymous classes can not be ViewModels
         2. 注意ViewModel的构造函数
 6. DataBinding
-    1. 
+    1. prepare
+        ```groovy
+        // 在Module的build.gradle android模块中添加
+        android {
+            // …
+            dataBinding { enabled = true }
+        }
+        ```
+        ```xml
+        <!-- 在布局Layout外面添加，<layout></layout>标签，示例如下 -->
+        <layout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
+            <RelativeLayout android:id="@+id/activity_main" ...>
+                <TextView android:id="@+id/tvHelloWorld" .../>
+            </RelativeLayout>
+        </layout>
+        ```
+    2. 基本初始化和view使用
+        1. 在Activity、Fragment中如何初始化Binding类
+            ```java
+            @Override protected void onCreate(Bundle savedInstanceState) {
+                super.onCreate(savedInstanceState);
+                // setContentView(R.layout.activity_main);
+                ActivityMainBinding viewDataBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+            }
+            @Nullable @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+                FragmentBinding inflate = DataBindingUtil.inflate(inflater, R.layout.fragment, container, false);
+                return inflate.getRoot();
+            }
+            ```
+        2. 如何自定义生成的Binding类名呢
+            ```xml
+            <layout xmlns:android="http://schemas.android.com/apk/res/android">
+                <data class="CustomBindingName"> <!-- ... --> </data>
+                <!-- ... -->
+            </layout>
+            ```
+        3. 然后我们在生成Binding类之后就可以
+            ```java
+            CustomBindingName inflate = DataBindingUtil.inflate(inflater, R.layout.fragment, container, false);
+            ```
+        4. 初始化完Binding类之后，我们就可以直接使用该layout中定义了id的View，如：
+            ```java
+            viewDataBinding.tvHelloWolrd.setText("厉害了");
+            ```
+    3. 基本数据绑定
+        1. 修改activity_main.xml文件如下（注意：这里不用判断bean！=null，因为DataBinding会自动帮助我们进行空指针的避免，比如@{bean.name}，如果bean是null的话，bean.name则会被赋默认值（null）。age的话，则是0）
+            ```xml
+            <layout xmlns:android="http://schemas.android.com/apk/res/android">
+                <data>
+                    <variable name="bean" type="com.thc.bindingdemo.BindingBean" />
+                </data>
+                <LinearLayout ...>
+                    <TextView android:id="@+id/tvHelloWolrd" .../>
+                    <TextView android:id="@+id/tvName" ... android:text="@{bean.name}" />
+                    <TextView android:id="@+id/tvAge" ... android:text="@{String.valueOf(bean.age)}" />
+                </LinearLayout>
+            </layout>
+            ```
+        2. java中
+            ```java
+            BindingBean bindingBean = new BindingBean("thc",18);
+            // viewDataBinding.setVariable(com.thc.bindingdemo.BR.bean,demoBean);
+            viewDataBinding.setBean(demoBean);
+            ```
+        3. model
+            ```java
+            public class BindingDemoBean extends BaseObservable {
+                private String name;
+                private String school;
+                private String className;
+                public BindingDemoBean(String name, String school,String className) {
+                    this.name = name;
+                    this.school = school;
+                    this.className = className;
+                }
+                public String getName() { return name; }
+                public void setName(String name) {
+                    this.name = name;
+                    // 更新所有的属性
+                    notifyChange();
+                }
+                @Bindable public String getSchool() { return school; }
+                public void setSchool(String school) {
+                    this.school = school;
+                    // 更新单个属性
+                    notifyPropertyChanged(com.thc.bindingdemo.BR.school);
+                }
+                public String getClassName() { return className; }
+                public void setClassName(String className) { this.className = className; }
+            }
+            ```
+    4. 注意事项
+        1. 集合(需要判断一下集合的长度)
+            ```xml
+            <variable name="beans" type="java.util.ArrayList<com.thc.bindingdemo.BindingDemoBean>" />
+            <variable name="strings" type="java.util.ArrayList<String>" />
+            <variable name="map" type="java.util.HashMap<String,String>" />
+            <variable name="str" type="String" />
+            <variable name="num" type="int" />
+            <TextView ... android:text="@{beans.size>0?beans.get(0).name:bean.name}" />
+            ```
+        2. 给TextView setText的时候既有动态又有写死的。注意：方式2使用单引号&&字符个数>2，如果只有一个比如"写"的话会报错
+            ```xml
+            <!--写死的字符+动态字符 方式1-->
+            <TextView ... android:text="@{beans.get(0).name + @string/app_name}" />
+            <!--写死的字符+动态字符 方式2-->
+            <TextView ... android:text='@{"写死的"+beans.get(0).name}' />
+            ```
+    5. 列表绑定
+        ```java
+        // 适配器代码如下
+        class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyHolder> {
+            Context mContext;
+            List<BindingDemoBean> mDatas;
+            public MyAdapter(Context conetxt, List<BindingDemoBean> list) { this.mContext = conetxt; this.mDatas = list; }
+            @Override public MyHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                LayoutInflater inflate = LayoutInflater.from(mContext);
+                ViewDataBinding binding = DataBindingUtil.inflate(inflate, R.layout.item_recyclerview, parent, false);
+                return new MyHolder(binding);
+            }
+            @Override public void onBindViewHolder(MyHolder holder, int position) {
+                ViewDataBinding binding = holder.getBinding();
+                BindingDemoBean bindingDemoBean = mDatas.get(position);
+                // 执行一下executePendingBindings,及时刷新
+                binding.executePendingBindings();
+                binding.setVariable(com.thc.bindingdemo.BR.item, bindingDemoBean);
+            }
+            @Override public int getItemCount() { return mDatas.size(); }
+            public class MyHolder<T extends ViewDataBinding> extends RecyclerView.ViewHolder {
+                private T mBinding;
+                public MyHolder(T mBinding) {
+                    super(mBinding.getRoot());
+                    this.mBinding = mBinding;
+                }
+                public T getBinding() { return mBinding; }
+            }
+        }
+        customBindingName.recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        customBindingName.recyclerView.setAdapter(new MyAdapter(getActivity(),initDatas()));
+        ```
+    6. 事件绑定
+        ```xml
+        <Button ... android:onClick="@{presenter.listenBind}" android:text="单独更新" />
+        <Button ... android:onClick="@{()->presenter.lambda(bean)}" android:text="全部更新" />
+        ```
+        ```java
+        // 事件绑定
+        public class Presenter{
+            /**
+             * 实现单独更新某个属性
+             * 方法绑定:这种方式要求，自定义的方法要和 public void onClick(View v) {} 一样，方法名可以不同，但是参数一定要有
+             */
+            public void listenBind(View view){
+                demoBean.setSchool("北大");
+                demoBean.setClassName("二班");
+            }
+            /**
+             * 更新所有的属性
+             * lambda表达式绑定：这种就可以任意定义了，这里是把绑定到xml的bean，传回来并show出来
+             * 切记：如果使用lambda表达式绑定事件，在xml中调用它的方法的时候要加()
+             */
+            public void lambda(BindingDemoBean bean){
+                demoBean.setName("很强势");
+                demoBean.setClassName("三班");
+                Toast.makeText(MainActivity.this,bean.toString(),Toast.LENGTH_SHORT).show();
+            }
+            public void lambda1(){ Log.e("result","切记lambda表达式调用的时候要加()"); }
+        }
+        viewDataBinding.setPresenter(new Presenter()); // 这一步要记得哦
+        ```
+    7. 使用include及给include中的控件设置数据、绑定变量
+        ```xml
+        <layout xmlns:android="http://schemas.android.com/apk/res/android">
+            <data>
+                <variable name="includeBean" type="com.thc.bindingdemo.BindingDemoBean" />
+                <variable name="presenter" type="com.thc.bindingdemo.MainActivity.Presenter" />
+            </data>
+            <RelativeLayout ...>
+                <TextView android:id="@+id/tvBack" ... android:onClick="@{presenter.finish}" android:text="返回" />
+                <TextView android:id="@+id/tvTitle" ... android:text="标题" />
+                <TextView android:id="@+id/tvOperate" ... android:text="分享" />
+            </RelativeLayout>
+        </layout>
+        ```
+        ```java
+        viewDataBinding.includeBar.setPresenter(new Presenter());
+        viewDataBinding.includeBar.setIncludeBean(demoBean);
+        ```
+        ```xml
+        <LinearLayout ...>
+            <!--将传入外层布局的值，直接传入Include的布局中，-->
+            <include layout="@layout/include_binding_test1" bind:includeBean="@{outterLayoutBean}" bind:presenter="@{outterPresenter}" />
+        </LinearLayout>
+        ```
+    8. 表达式 & 表达式链
+        1. 三元运算符: ``android:visibility="@{bean.age>10?View.VISIBLE:View.GONE}"``
+        2. 空合并运算符: ``android:text="@{beans.get(0).name??bean.name}"`` -- 取两个中不为null的数据
+        3. 表达式链
+            ```xml
+            <!--表达式链，就比如iv1、iv2的显示隐藏都和 bean的age大小有关，那么可以简化为如下方式-->
+            <ImageView android:id="@+id/iv1" android:visibility="@{bean.age>10?View.VISIBLE:View.GONE}" .../>
+            <ImageView android:id="@+id/iv2" android:visibility="@{iv1.visibility}" .../>
+            ```
+    9. 双向绑定
+        1. 直接根据输入内容修改bean对象 ``android:text="@={bean.school}"``
+        2. 监听输入内容（即addTextChanged效果）
+            ```xml
+            <layout ...>
+                <data>
+                    <variable name="inputText" type="String" />
+                    <variable name="presenter" type="com.thc.dialogfragmentdemo.MainActivity.MainPresenter" />
+                </data>
+                <LinearLayout ...>
+                    <EditText android:id="@+id/edtTest" ...
+                        android:afterTextChanged="@{()->presenter.afterTextChanged1(inputText)}"
+                        android:beforeTextChanged="@{()->presenter.beforeTextChanged(inputText)}"
+                        android:onTextChanged="@{()->presenter.onTextChanged(inputText)}"
+                        android:text="@={inputText}" />
+                </LinearLayout>
+            </layout>
+            ```
+            ```java
+              public class MainPresenter {
+                public void onTextChanged(String s) { Log.e(TAG, "MainPresenter+onTextChanged:" + s); }
+                public void afterTextChanged1(String s) { Log.e(TAG, "MainPresenter+afterTextChanged:" + s); }
+                public void beforeTextChanged(String s) { Log.e(TAG, "MainPresenter+beforeTextChanged:" + s); }
+            }
+            ```
+    10. BindAdapter / Setter / BindingConversion
+        1. BindAdapter
+            ```java
+            public class BindAdapter {
+                // 加载网络图片
+                @BindingAdapter({"app:imageUrl", "app:placeholderDraw"})
+                public static void setNetImg(ImageView ivNet, String imgUrl, Drawable placeHodler) {
+                    Glide.with(ivNet.getContext()).load(imgUrl).placeholder(placeHodler).into(ivNet);
+                }
+                // 给将第一个字符变成红色
+                @BindingAdapter("app:text")
+                public static void setSpannelText(TextView textView, String text) {
+                    SpannableString spannableString = new SpannableString(text);
+                    ForegroundColorSpan colorSpan = new ForegroundColorSpan(Color.RED);
+                    spannableString.setSpan(colorSpan, 0,1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    textView.setText(spannableString);
+                }
+            }
+            ```
+            ```xml
+            <!--自定义BindAdapter placeholderDraw和imageUrl必须和你的定义的静态方法中的参数一样的-->
+            <ImageView ... app:imageUrl="@{str}" app:placeholderDraw="@{@drawable/img2}" />
+            <!--自定义BindAdapter text必须和你的定义的静态方法中的参数一样的-->
+            <TextView ... app:text='@{map.get("key")}' />
+            ```
+        2. Setter: 针对自定义View
+            ```
+            public class MyImageView extends ImageView {
+                private String imgUrl;
+                public MyImageView(Context context, AttributeSet attrs) { super(context, attrs); }
+                public void setImgUrl(String imgUrl) {
+                    this.imgUrl = imgUrl;
+                    Glide.with(getContext()).load(imgUrl).into(this);
+                }
+            }
+            <com.thc.bindingdemo.MyImageView app:imgUrl="@{myImageUrl}" android:layout_width="100dp" android:layout_height="100dp"/>
+            ```
+        3. BindingConversion: 用于时间转化
+            ```
+            @BindingConversion
+            public static String convertTime(Date date) {
+                SimpleDateFormat time = new SimpleDateFormat("yyyy-MM-dd");
+                return time.format(date);
+            }
+            <!--BindingConversion-->
+            <TextView android:text="@{time}" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+            // 设置数据
+            viewDataBinding.setTime(new Date());
+            ```
+    11. Component -- https://www.jianshu.com/p/eb14bcfdde32
+        1. 可以通过自定义BindingAdapter 提供View没有的setter方法或者，在执行View自身的setter之前进行一些操作。但是，系统是如何找到我们自定义的BindingAdapter并调用它内部的static静态方法的呢？在build/intermediates/classes下面，可以找到DataBindingComponent类，包名为android.databinding，全局只会有一个该类——此接口在编译时生成，包含了所有用到的实例BindingAdapters的getter方法。当一个BindingAdapter是一个实例方法（instance method），一个实现该方法的类的实例必须被实例化。这个生成的接口会包含每个声明BindingAdapter的类/接口的get方法。命名冲突会简单地加一个数字前缀到get方法前来解决。
+        2. 例子
+            ```java
+            // 白天组件
+            public class DayComponent implements android.databinding.DataBindingComponent {
+                public MyBindingAdapter myBindingAdapter = new DayBindingAdapter();
+                @Override public MyBindingAdapter getMyBindingAdapter() { return myBindingAdapter; }
+            }
+            // 日间Adapter
+            public class DayBindingAdapter extends MyBindingAdapter{
+                @Override public void setBgColor(LinearLayout layout, int llBgColor) { layout.setBackgroundColor(layout.getResources().getColor(R.color.pop_bgcolor)); }
+                @Override public void setTvColor(TextView tv, int tvColor) { tv.setTextColor(tv.getResources().getColor(R.color.white)); }
+            }
+            // Application中 DataBindingUtil.setDefaultComponent(new DayComponent());
+            public void btn5(View v){
+                DataBindingUtil.setDefaultComponent(MyApplication.isDay ? new DayComponent() : new NightComponent());
+                MyApplication.isDay = !MyApplication.isDay;
+                recreate();
+            }
+            ```
 
 ### Android Architecture Components -- paging / room / navigation / workManger
 
@@ -5441,7 +5740,50 @@ https://blog.csdn.net/new_abc/article/details/53006327
 2. Paging
     1. 
 3. Room
-    1. 
+    1. Room 在 SQLite 之上提供了一个抽象层，以便在利用 SQLite 全部功能的同时可以流畅的访问数据库。最常见的用例是缓存有用的数据片段，当设备无法访问网络时，用户仍然可以离线浏览该内容，然后在设备重新联网后，任何用户发起的内容更改都会同步到服务器。由于Room会为我们解决这些问题，因此 Google 强烈建议 我们使用 Room 而不是 SQLite。
+    2. Room 主要有3个部分：
+        1. Database: 包含数据库持有者，并作为应用程序持久关系数据的基础连接的主要访问点。使用 @Database 注解的类应满足以下条件：
+            1. 是一个继承自 RoomDatabase 的抽象类。
+            2. 在注解中包括与数据库关联的实体列表。
+            3. 包含一个没有参数的抽象方法，并返回一个带注解 @Dao 的类 。
+            4. 在运行时，我们可以通过调用 Room.databaseBuilder()或 Room.inMemoryDatabaseBuilder() 来获取 Database 的实例。
+        2. Entity: 表示数据库中的表。
+        3. DAO: 包含用于访问数据库的方法。
+    3. 例子: 
+        ```java
+        public class Address {
+            public String street;
+            public String state;
+            public String city;
+            @ColumnInfo(name = "post_code") public int postCode;
+        }
+        @Entity public class User {
+            @PrimaryKey public int uid;  // @PrimaryKey是必须的，如果实体具有复合主键，则可以 @Entity(primaryKeys = {"first_name", "last_name"})
+            @ColumnInfo(name = "first_name") public String firstName;
+            @ColumnInfo(name = "last_name") public String lastName;
+            @Ingore Bitmap picture;
+            // 为了持久化一个字段，Room 必须能够访问它。我们可以将字段设为 public，也可以为其提供 getter和setter，如果使用getter和setter方法，它们要基于Room中的JavaBeans约定。
+            // 注意：实体类可以有一个空构造函数（如果相应的 DAO类可以访问每个持久化字段），或者一个构造函数，其参数包含与实体中字段匹配的类型和名称。Room也可以使用完整或部分构造函数，例如只接收某些字段的构造函数。
+            // 如果想要修改表名 @Entity(tableName = "users")。警告： SQLite 中的表名称不区分大小写。
+            // 如果想添加索引 @Entity(indices = {@Index("first_name"), @Index(value = {"first_name", "last_name"}, unique = true)})
+            //  @Entity(foreignKeys = @ForeignKey(entity = Card.class, parentColumns = "cid", childColumns = "uid", onDelete = CASCADE))
+            @Embedded public Address address;  // 此时 User 有 uid / first_name / last_name / street / state / city / post_code 这些列
+        }
+        @Dao public interface UserDao {
+            @Query("SELECT * FROM user") List<User> getAll();
+            @Query("SELECT * FROM user WHERE uid IN (:userIds)") List<User> loadAllByIds(int[] userIds);
+            @Query("SELECT * FROM user WHERE first_name LIKE :first AND " + "last_name LIKE :last LIMIT 1") User findByName(String first, String last);
+            @Insert void insertAll(User... users);
+            @Delete void delete(User user);
+        }
+        @Database(entities = {User.class}, version = 1) public abstract class AppDatabase extends RoomDatabase {
+            public abstract UserDao userDao();
+        }
+        // 创建上述文件后，我们将使用以下代码获取已创建数据库的实例：
+        AppDatabase db = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "database-name").build();
+        // 注意：在实例化AppDatabase对象时应遵循单例设计模式 ，因为创建每个 RoomDatabase 实例的代价都是相当高昂的，并且我们很少需要访问多个实例。
+        ```
+    4. 
 4. WorkManager
     1. 
 
@@ -5540,3 +5882,5 @@ https://blog.csdn.net/new_abc/article/details/53006327
     * [Android 关于WebView全方面的使用(项目应用篇)](https://www.jianshu.com/p/163d39e562f0)
     * [Android - 仿网易云音乐歌单详情页](https://www.jianshu.com/p/1995b7135073)
     * [Android 水波纹效果的探究](https://www.jianshu.com/p/13eb4574e988)
+* [从零开始仿写一个抖音App——视频编辑SDK开发(一)](https://juejin.im/post/5dd22ecd5188252a091e9b47#heading-14)
+* [学习Android Jetpack? 实战和教程这里全都有！](https://www.jianshu.com/p/f32c8939338d)
