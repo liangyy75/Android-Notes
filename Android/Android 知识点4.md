@@ -13,6 +13,7 @@ img {
 - [Android i18n](#android-i18n)
 - [Android 小知识](#android-%e5%b0%8f%e7%9f%a5%e8%af%86)
 - [Android java.net](#android-javanet)
+- [Android android.net](#android-androidnet)
 
 ### Android App Bundle
 
@@ -401,6 +402,7 @@ img {
 
 使用的一些例子
 
+1. cookie
 ```java
 CookieManager manager = new CookieManager();
 CookieHandler.setDefault(manager);
@@ -430,5 +432,203 @@ for (HttpCookie cookie : cookies) {
 }
 ```
 
+2. udp
+
+3. tcp
+
+3. httpurlconnection -- get / post
+```java
+private static final String USER_AGENT = "Mozilla/5.0";
+private static final String GET_URL = "http://localhost:9090/SpringMVCExample";
+private static final String POST_URL = "http://localhost:9090/SpringMVCExample/home";
+private static final String POST_PARAMS = "userName=Pankaj";
+private static void sendGET() throws IOException {
+    URL obj = new URL(GET_URL);
+    HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+    con.setRequestMethod("GET");
+    con.setRequestProperty("User-Agent", USER_AGENT);
+    int responseCode = con.getResponseCode();
+    System.out.println("GET Response Code :: " + responseCode);
+    if (responseCode == HttpURLConnection.HTTP_OK) { // success
+        BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+        String inputLine;
+        StringBuffer response = new StringBuffer();
+        while ((inputLine = in.readLine()) != null) {
+            response.append(inputLine);
+        }
+        in.close();
+        // print result
+        System.out.println(response.toString());
+    } else {
+        System.out.println("GET request not worked");
+    }
+}
+private static void sendPOST() throws IOException {
+    URL obj = new URL(POST_URL);
+    HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+    con.setRequestMethod("POST");
+    con.setRequestProperty("User-Agent", USER_AGENT);
+    // For POST only - START
+    con.setDoOutput(true);
+    OutputStream os = con.getOutputStream();
+    os.write(POST_PARAMS.getBytes());
+    os.flush();
+    os.close();
+    // For POST only - END
+    int responseCode = con.getResponseCode();
+    System.out.println("POST Response Code :: " + responseCode);
+    if (responseCode == HttpURLConnection.HTTP_OK) { //success
+        BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+        String inputLine;
+        StringBuffer response = new StringBuffer();
+        while ((inputLine = in.readLine()) != null) {
+            response.append(inputLine);
+        }
+        in.close();
+        // print result
+        System.out.println(response.toString());
+    } else {
+        System.out.println("POST request not worked");
+    }
+}
 ```
+
+4. httpurlconnection -- head
+```java
+// head -- test the existence of a resource and in the same time to check whether a resource has been changed, provided the parameter if_modified_since is non-zero
+URL url = new URL(adr);
+try {
+    URLConnection con = url.openConnection();
+    con.setIfModifiedSince(if_modified_since);
+    if (con instanceof HttpURLConnection) {
+        /* Workaround for https://code.google.com/p/android/issues/detail?id=61013 */
+        con.addRequestProperty("Accept-Encoding", "identity");
+        ((HttpURLConnection) con).setRequestMethod("HEAD");
+        int response = ((HttpURLConnection) con).getResponseCode();
+        if (response == HttpURLConnection.HTTP_UNAVAILABLE)
+            return false;
+        if (response == HttpURLConnection.HTTP_NOT_MODIFIED)
+            return false;
+    }
+    if (if_modified_since != 0) {
+        long modified = OpenOpts.getLastModified(con);
+        if (modified != 0 && if_modified_since >= modified) {
+            return false;
+        }
+    }
+    con.getInputStream().close();
+    return true;
+} catch (FileNotFoundException | UnknownHostException | SocketException x) {
+    return false;
+}
+private static long getLastModified(URLConnection con) throws IOException {
+    if (con instanceof JarURLConnection) {
+        return ((JarURLConnection) con).getJarEntry().getTime();
+    } else {
+        return con.getLastModified();
+    }
+}
 ```
+
+5. httpurlconnection -- put
+```java
+URL url = new URL("http://www.example.com/resource");
+HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
+httpCon.setDoOutput(true);
+httpCon.setRequestMethod("PUT");
+OutputStreamWriter out = new OutputStreamWriter(httpCon.getOutputStream());
+out.write("Resource content");
+out.close();
+httpCon.getInputStream();
+```
+
+6. httpurlconnection -- delete
+```java
+URL url = new URL("http://www.example.com/resource");
+HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
+httpCon.setDoOutput(true);
+httpCon.setRequestProperty("Content-Type", "application/x-www-form-urlencoded" );
+httpCon.setRequestMethod("DELETE");
+httpCon.connect();
+// 或者只是
+// HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+// connection.setRequestMethod("DELETE");
+// int responseCode = connection.getResponseCode();
+```
+
+7. httpurlconnection -- patch
+```java
+public void request(String requestURL, String authorization, JsonObject json) {
+    try {
+        URL url = new URL(requestURL);
+        httpConn = (HttpURLConnection) url.openConnection();
+        httpConn.setRequestMethod("POST");
+        httpConn.setRequestProperty("X-HTTP-Method-Override", "PATCH");
+        httpConn.setRequestProperty("Content-Type", "application/json");
+        httpConn.setRequestProperty("Authorization", authorization);
+        httpConn.setRequestProperty("charset", "utf-8");
+        DataOutputStream wr = new DataOutputStream(httpConn.getOutputStream());
+        wr.writeBytes(json.toString());
+        wr.flush();
+        wr.close();
+        httpConn.connect();
+        String response = finish();
+        if (response != null && !response.equals("")) {
+            created = true;
+        }
+    } 
+    catch (Exception e) {
+        e.printStackTrace();
+    }
+}
+public String finish() throws IOException {
+    String response = "";
+    int status = httpConn.getResponseCode();
+    if (status == HttpURLConnection.HTTP_OK || status == HttpURLConnection.HTTP_CREATED) {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(httpConn.getInputStream()));
+        String line = null;
+        while ((line = reader.readLine()) != null) {
+            response += line;
+        }
+        reader.close();
+        httpConn.disconnect();
+    } else {
+        throw new IOException("Server returned non-OK status: " + status);
+    }
+    return response;
+}
+```
+
+8. httpurlconnection -- options
+```java
+HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+System.out.println(conn.getRequestMethod()); // GET
+conn.setRequestMethod("OPTIONS");
+System.out.println(conn.getHeaderField("Allow")); // depends
+```
+
+9. httpurlconnection -- connect
+```java
+TODO:
+```
+
+10. httpurlconnection -- trace
+```java
+TODO:
+```
+
+11. file
+```java
+```
+
+12. json
+```java
+```
+
+13. xml
+```java
+```
+
+### Android android.net
+
+1. TrafficStats -- 流量监控类

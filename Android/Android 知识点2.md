@@ -44,9 +44,9 @@ img {
 - [Android Architecture Components -- lifecycle / livedata / viewmodel / dataBinding](#android-architecture-components----lifecycle--livedata--viewmodel--databinding)
 - [Android Architecture Components -- paging / room / navigation / workManger](#android-architecture-components----paging--room--navigation--workmanger)
 - [Android Architecture Components -- appCompat / androidKTX / Multidex / Test](#android-architecture-components----appcompat--androidktx--multidex--test)
-- [Android Architecture Components -- downloadManager / media&Playback / sharing / slices](#android-architecture-components----downloadmanager--mediaplayback--sharing--slices)
+- [Android Architecture Components -- downloadManager / media&amp;Playback / sharing / slices](#android-architecture-components----downloadmanager--mediaampplayback--sharing--slices)
 - [Android Architecture Components -- notifications / permissions / fragment / layout](#android-architecture-components----notifications--permissions--fragment--layout)
-- [Android Architecture Components -- palette / emoji / animation&Transitions / auto,TV&Wear](#android-architecture-components----palette--emoji--animationtransitions--autotvwear)
+- [Android Architecture Components -- palette / emoji / animation&amp;Transitions / auto,TV&amp;Wear](#android-architecture-components----palette--emoji--animationamptransitions--autotvampwear)
 - [Android Architecture Components -- CameraX](#android-architecture-components----camerax)
 - [greendao](#greendao)
 - [Hermes](#hermes)
@@ -3916,7 +3916,7 @@ https://blog.csdn.net/new_abc/article/details/53006327
 2. 基本用法
     1. Android系统中主要提供了两种方式来进行HTTP通信，HttpURLConnection和HttpClient，它们的使用率非常高。
     2. 不过HttpURLConnection和HttpClient的用法还是稍微有些复杂的，如果不进行适当封装的话，很容易就会写出不少重复代码。于是乎，一些Android网络通信框架也就应运而生，说 AsyncHttpClient，它把HTTP所有的通信细节全部封装在了内部，我们只需要简单调用几行代码就可以完成通信操作了；如Universal-Image-Loader，它使得在界面上显示网络图片的操作变得极度简单， 开发者不用关心如何从网络上获取图片，也不用关心开启线程、回收图片资源等细节。
-    3. 而Android开发团队也是在2013年Google I/O大会上推出了一个新的网络通信框架——Volley，把AsyncHttpClient和Universal-Image-Loader的优点集于了一身，既可以像AsyncHttpClient一样非 常简单地进行HTTP通信，也可以像Universal-Image-Loader一样轻松加载网络上的图片。除了简单易用之外，Volley在性能方面也进行了大幅度的调整，它的设计目标就是非常适合去进行数据量不大，但通信频繁的网络操作，而对于大数据量的网络操作，比如说下载文件等，Volley的表现就会非常糟糕。
+    3. 而Android开发团队也是在2013年Google I/O大会上推出了一个新的网络通信框架——Volley，把AsyncHttpClient和Universal-Image-Loader的优点集于了一身，既可以像AsyncHttpClient一样非常简单地进行HTTP通信，也可以像Universal-Image-Loader一样轻松加载网络上的图片。除了简单易用之外，Volley在性能方面也进行了大幅度的调整，它的设计目标就是非常适合去进行数据量不大，但通信频繁的网络操作，而对于大数据量的网络操作，比如说下载文件等，Volley的表现就会非常糟糕。
     4. StringRequest的用法
         1. 获得请求队列对象``RequestQueue mQueue = Volley.newRequestQueue(context);``
         2. RequestQueue是一个请求队列对象，它可以缓存所有的HTTP请求，然后按照一定的算法并发地发出这些请求。RequestQueue内部的设计就是非常合适高并发的，因此我们不必为每一次HTTP请求都创建一个RequestQueue对象，这是非常浪费资源的，基本上在每一个需要和网络交互的Activity中创建一个RequestQueue对象就足够了。
