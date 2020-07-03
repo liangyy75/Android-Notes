@@ -1,0 +1,78 @@
+<style>
+    body,dl,dd,h2,ul,h3,p{margin:0;}
+    .box{overflow:hidden;width:280px;padding:10px;background-color:#ccc;text-align:center;position:relative;}
+    .con{float:left;width:100%;}
+    .show{float:left;width:100%;}
+    .con dl{float:left;width:100%;}
+    .con dl *{float:left;}
+    .con dt{font-weight:bold;margin-bottom:5%;width:100%;}
+    .con dd{background-color:rgba(255,255,255,0.3);margin:1%;margin-bottom:5%;cursor:pointer;width:23%;}
+    .show-tit{font:20px/2.5 "宋体";}
+    .show-body{border:1px solid black;border-radius:5%;padding:5%;text-align:center;background-color:pink;}
+    @media (min-width:600px){
+        .con{width:60%;}
+        .show{width:40%;}
+        .box{width:580px;}
+    }
+    #oShow div:before{content:counter(c1);}
+</style>
+<div class="box" id="box">
+    <div class="show">
+        <h2 class="show-tit">简单计数器演示</h2>
+        <div class="show-body" id="sb">
+            <!-- 添加结构单元 -->
+            <div id="oShow">
+                <div>咖啡</div>
+                <div>牛奶</div>
+                <div>茶</div>
+                <div>可乐</div>
+                <div>酒</div>
+            </div>
+            <!-- 添加结构单元结束 -->
+        </div>
+    </div>
+    <div class="con">
+        <dl>
+            <dt>counter-reset</dt>
+            <dd>-1</dd>
+            <dd>0</dd>
+            <dd>1</dd>
+            <dd>2</dd>
+        </dl>
+        <dl>
+            <dt>counter-increment</dt>
+            <dd>-1</dd>
+            <dd>0</dd>
+            <dd>1</dd>
+            <dd>2</dd>
+        </dl>
+    </div>
+</div>
+<script>
+    (function con() {
+        var aDl = document.getElementById('box').getElementsByTagName('dl');
+        var children = document.getElementById('oShow').children;
+        for (var i = 0, leni = aDl.length; i < leni; i++) {
+            var aDd = aDl[i].getElementsByTagName('dd');
+            aDl[i].last = 0;
+            for (var j = 0, lenj = aDd.length; j < lenj; j++) {
+                aDd[j].index = j;
+                aDd[j].onclick = function () {
+                    var oDl = this.parentNode;
+                    var oDt = oDl.getElementsByTagName('dt')[0];
+                    var aDd = oDl.getElementsByTagName('dd');
+                    aDd[oDl.last].style.cssText = 'color: black; background-color: rgba(255,255,255,0.3);';
+                    this.style.cssText = 'color: white; background-color: black;';
+                    if (oDt.innerHTML == 'counter-reset') {
+                        children[0].style[oDt.innerHTML] = 'c1 ' + this.innerHTML;
+                    } else {
+                        for (var k = 1; k < children.length; k++) {
+                            children[k].style[oDt.innerHTML] = 'c1 ' + this.innerHTML;
+                        }
+                    }
+                    oDl.last = this.index;
+                }
+            }
+        }
+    })();
+</script>

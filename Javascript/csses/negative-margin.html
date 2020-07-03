@@ -1,0 +1,175 @@
+<style>
+    body,dl,dd,h2{margin:0;}
+    h2{font-size:20px;}
+    .box{overflow:hidden;width:276px;padding:10px;background-color:#ddd;text-align:center;position:relative;font:18px/1.2 "宋体";}
+    .con{float:left;width:100%;}
+    .show{float:left;width:100%;}
+    .show-body{border:1px solid black;border-radius:5%;padding:5%;}
+    #show-img{min-height:20px;font-size:14px;}
+    .con dl *{float:left;overflow:hidden;}
+    .con dl+dl{margin-top:1%;}
+    .con dt{font-weight:bold;width:100%;}
+    .con dd{background-color:rgba(255,255,255,0.3);margin:1%;cursor:pointer;width:23%;}
+    .con dl.display dd{width:19%;margin:1px;}
+    .con dl.display dd:last-child{width:40%;}
+    @media (min-width:700px) {.con{width:50%;}.show{width:50%;}.box{width:700px;}}
+    ul{margin:0;padding:0;list-style:none;}
+    .l{float:left;}
+    .r{float:right;}
+    .con-ul{display:inline-block;vertical-align:top;width:94%;border:1px solid black;overflow:hidden;padding:2%;border-radius:10px;margin-top:10px;}
+    .con-ul li{height:30px;line-height:30px;font-size:14px;background-color:rgba(0,0,0,0.5);text-align:left;color:white;cursor:pointer;margin:1%;overflow:hidden;}
+    .con-ul li input{width:60px;}
+</style>
+<div class="box" id="box">
+    <div class="show">
+        <h2 class="show-tit">margin负值演示</h2>
+        <div class="show-body" id="sb">
+            <!-- 添加结构单元 -->
+            <div id='oShow1' style="background-color:lightyellow;width:140px;height:40px;line-height:20px;">前块元素/元素一</div>
+            <div id="oShow2" style="background-color:lightblue;width:140px;height:40px;line-height:20px;">测试元素/元素二</div>
+            <div id="oShow3" style="background-color:lightgreen;width:140px;height:40px;line-height:20px;">后块元素/元素三</div>
+            <!-- 添加结构单元结束 -->
+        </div>
+        <div id="show-img"></div>
+        <button id="reset" style="position:absolute;left:0;bottom:0;margin-bottom:20px;">还原</button>
+    </div>
+    <div class="con">
+        <dl>
+            <dt>序号</dt>
+            <dd data-id="oShow1">元素一</dd>
+            <dd data-id="oShow2">元素二</dd>
+            <dd data-id="oShow3">元素三</dd>
+        </dl>
+        <dl class="display">
+            <dt data-attr="display">display</dt>
+            <dd>block</dd>
+            <dd>inline</dd>
+            <dd>none</dd>
+            <dd>inline-block</dd>
+        </dl>
+        <dl>
+            <dt data-attr="vertical-align">vertical-align</dt>
+            <dd>baseline</dd>
+            <dd>top</dd>
+            <dd>bottom</dd>
+            <dd>middle</dd>
+        </dl>
+        <dl>
+            <dt data-attr="float">float</dt>
+            <dd>left</dd>
+            <dd>right</dd>
+            <dd>none</dd>
+        </dl>
+        <dl>
+            <dt data-attr="position">position</dt>
+            <dd>static</dd>
+            <dd>relative</dd>
+            <dd>absolute</dd>
+            <dd>fixed</dd>
+        </dl>
+        <ul class="con-ul" id="conUl">
+            <li data-name="margin-top">
+                <span class="l">margin-top:<b>auto</b></span>
+                <button class="r">auto</button>
+                <input class="r" type="range" min="-100" max="100" step="1" value="0">
+                <input class="r" type="number" min="-100" max="100" value="0">
+            </li>
+            <li data-name="margin-bottom">
+                <span class="l">margin-bottom:<b>auto</b></span>
+                <button class="r">auto</button>
+                <input class="r" type="range" min="-100" max="100" step="1" value="0">
+                <input class="r" type="number" min="-100" max="100" value="0">
+            </li>
+            <li data-name="margin-left">
+                <span class="l">margin-left:<b>auto</b></span>
+                <button class="r">auto</button>
+                <input class="r" type="range" min="-100" max="100" step="1" value="0">
+                <input class="r" type="number" min="-100" max="100" value="0">
+            </li>
+            <li data-name="margin-right">
+                <span class="l">margin-right:<b>auto</b></span>
+                <button class="r">auto</button>
+                <input class="r" type="range" min="-100" max="100" step="1" value="0">
+                <input class="r" type="number" min="-100" max="100" value="0">
+            </li>
+        </ul>
+    </div>
+</div>
+<script>
+    function getCSS(obj, style) {
+        return window.getComputedStyle ? getComputedStyle(obj)[style] :obj.currentStyle[style]
+    }
+    (function con() {
+        var aDl = document.getElementById('box').getElementsByTagName('dl')
+        var oShow1 = document.getElementById('oShow1')
+        var oShow2 = document.getElementById('oShow2')
+        var oShow3 = document.getElementById('oShow3')
+        var oShow = null
+        var oImg = document.getElementById('show-img')
+        var conChildren = conUl.children
+        reset.onclick = () => history.go()
+        for (var i = 0; i < conChildren.length; i++) {
+            var conChild = conChildren[i]
+            conChild.index = i
+            var oFocus = conChild.getElementsByTagName('input')[0]
+            var oFocus2 = conChild.getElementsByTagName('input')[1]
+            conChild.getElementsByTagName('button')[0].onclick =
+            oFocus.onpropertychange = oFocus.oninput = oFocus.onchange =
+            oFocus2.onpropertychange = oFocus2.oninput = oFocus2.onchange = function () {
+                if (oShow == null) {
+                    return
+                }
+                var temp = this.value === '' ? 'auto' :(this.value + 'px')
+                var parent = this.parentNode
+                parent.getElementsByTagName('b')[0].innerHTML = temp
+                oShow.style[parent.dataset ? parent.dataset.name :parent.getAttribute('data-name')] = temp
+                oImg.innerHTML = 'margin：' + getCSS(oShow, 'margin') + '; ' + 'display:' + getCSS(oShow, 'display')
+                if (this.tagName == 'BUTTON') {
+                    parent.getElementsByTagName('input')[0].value = '0'
+                    parent.getElementsByTagName('input')[1].value = '0'
+                } else {
+                    parent.getElementsByTagName('input')[0].value = this.value
+                    parent.getElementsByTagName('input')[1].value = this.value
+                }
+            }
+            conChild.onmouseover = function() { this.style.color = "rgb(39,184,231)" }
+            conChild.onmouseout = function() { this.style.color = "white" }
+        }
+        for (var i = 0, leni = aDl.length; i < leni; i++) {
+            var aDd = aDl[i].getElementsByTagName('dd')
+            aDl[i].last = 0
+            for (var j = 0, lenj = aDd.length; j < lenj; j++) {
+                aDd[j].index = j
+                aDd[j].onclick = function () {
+                    var oDl = this.parentNode
+                    var oDt = oDl.getElementsByTagName('dt')[0]
+                    if (oDt.dataset.attr == null) {
+                        if (oShow != null) {
+                            oShow.style.outline = ''
+                        }
+                        if (this.dataset.id == 'oShow1') {
+                            oShow = oShow1
+                        } else if (this.dataset.id == 'oShow2') {
+                            oShow = oShow2
+                        } else if (this.dataset.id == 'oShow3') {
+                            oShow = oShow3
+                        }
+                        oDl.getElementsByTagName('dd')[oDl.last].style.cssText = 'color:black; background-color:rgba(255,255,255,0.3);'
+                        this.style.cssText = 'color:white; background-color:black;'
+                        oDl.last = this.index
+                        oShow.style.outline = '3px solid black'
+                        return
+                    }
+                    if (oShow == null) {
+                        return
+                    }
+                    oDl.getElementsByTagName('dd')[oDl.last].style.cssText = 'color:black; background-color:rgba(255,255,255,0.3);'
+                    this.style.cssText = 'color:white; background-color:black;'
+                    oDl.last = this.index
+                    oShow.style[oDt.dataset.attr] = this.innerHTML
+                    oImg.innerHTML = 'margin: ' + getCSS(oShow, 'margin') + '; display: ' + getCSS(oShow, 'display') + '; float: ' + getCSS(oShow, 'float') + '; vertical-align: ' + getCSS(oShow, 'vertical-align')
+                }
+            }
+        }
+    })()
+</script>

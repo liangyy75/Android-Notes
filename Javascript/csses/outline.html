@@ -1,0 +1,123 @@
+<style>
+    :root { --interval: 10px; --small-interval: 5px; --large-interval: 20px; }
+    dl, dt, dd, div { margin: 0; padding: 0; }
+    .content { background: #ddd; width: 360px; overflow: hidden; padding: var(--interval); position: relative; }
+    .show { float: left; width: 100%; text-align: center; }
+    .show-wrapper { border: 1px black solid; border-radius: 5%; padding: var(--large-interval); }
+    .control { float: left; width: 100%; }
+    .show-title, .control dt { font-size: larger; font-weight: bold; text-align: center; }
+    .control dd { display: inline-block; margin: var(--small-interval); width: 25%; background: #e7e7e7; cursor: pointer; text-align: center; }
+    .control dd:hover { background: #aaa; color: white; }
+    .control div { background: #999; padding: var(--small-interval); }
+    .control div span { color: white; font-size: small; }
+    .control div input { width: 60px; float: right; margin-left: var(--small-interval); }
+    @media (min-width: 600px) {
+        .content { width: 600px; }
+        .show { width: 38%; }
+        .control { width: 60%; margin-left: 2%; }
+    }
+</style>
+<div class="content">
+    <div class="show">
+        <div class="show-title">outline演示</div>
+        <div class="show-wrapper">
+            <div class="show-body">测试内容</div>
+        </div>
+        <div class="show-tips"></div>
+    </div>
+    <button style="position: absolute; top: 10px; left: 10px;" onclick="history.go()">reset</button>
+    <div class="control">
+        <dl data-attr="outlineStyle">
+            <dt>outline-style</dt>
+            <dd>none</dd>
+            <dd>dotted</dd>
+            <dd>dashed</dd>
+            <dd>solid</dd>
+            <dd>double</dd>
+            <dd>groove</dd>
+            <dd>ridge</dd>
+            <dd>inset</dd>
+            <dd>outset</dd>
+        </dl>
+        <dl data-attr="outlineWidth">
+            <dt>outline-width</dt>
+            <dd>thin</dd>
+            <dd>medium</dd>
+            <dd>thick</dd>
+            <dd>0</dd>
+            <dd>1px</dd>
+            <dd>10px</dd>
+        </dl>
+        <dl data-attr="outlineColor">
+            <dt>outline-color</dt>
+            <dd>red</dd>
+            <dd>green</dd>
+            <dd>blue</dd>
+            <dd>white</dd>
+            <dd>black</dd>
+        </dl>
+        <dl data-attr="color">
+            <dt>color</dt>
+            <dd>red</dd>
+            <dd>green</dd>
+            <dd>blue</dd>
+            <dd>white</dd>
+            <dd>black</dd>
+        </dl>
+        <div data-attr="outlineOffset">
+            <span>outline-offset: <b></b></span>
+            <input type="reset" value="reset"></button>
+            <input type="range" max='100' min='-100' value='0' step='1'>
+            <input type="number" value='0'>
+        </div>
+    </div>
+</div>
+<script>
+    function getCSS(obj, style) {
+        return window.getComputedStyle ? getComputedStyle(obj)[style] :obj.currentStyle[style]
+    }
+    (function() {
+        const showBody = document.getElementsByClassName("show-body")[0]
+        const showTips = document.getElementsByClassName("show-tips")[0]
+        var allControl = document.getElementsByClassName("control")[0]
+        var controls = allControl.getElementsByTagName("dl")
+        for (let index1 = 0; index1 < controls.length; index1++) {
+            var control = controls[index1];
+            control.last = 0
+            var items = control.getElementsByTagName("dd")
+            for (let index2 = 0; index2 < items.length; index2++) {
+                var item = items[index2];
+                item.index = index2
+                item.onclick = function() {
+                    var parent = this.parentNode
+                    parent.getElementsByTagName("dd")[parent.last].style.cssText = 'background: #e7e7e7; color: black;'
+                    this.style.cssText = 'background: black; color: white;'
+                    parent.last = this.index
+                    showBody.style[parent.dataset.attr] = this.innerText
+                    showTips.innerHTML = 'outline: ' + getCSS(showBody, 'outline') + '<br>color: ' + getCSS(showBody, 'color') + '<br>outline-offset: ' + getCSS(showBody, 'outline-offset')
+                }
+            }
+        }
+        var controls2 = allControl.getElementsByTagName("div")
+        for (let index1 = 0; index1 < controls2.length; index1++) {
+            var control = controls2[index1];
+            var inputs = control.getElementsByTagName("input")
+            var reset = inputs[0]
+            var range = inputs[1]
+            var number = inputs[2]
+            reset.onclick = range.onchange = number.onchange = range.onpropertychange = number.onpropertychange = range.oninput = number.oninput = function() {
+                var parent = this.parentNode
+                var value = this.value == '' ? '0' : this.value + 'px'
+                var inputs = parent.getElementsByTagName("input")
+                showBody.style[parent.dataset.attr] = value
+                parent.getElementsByTagName("b")[0].innerText = value
+                if (this.type == 'reset') {
+                    inputs[1].value = inputs[2].value = '0'
+                } else {
+                    inputs[1].value = inputs[2].value = this.value
+                }
+                showTips.innerHTML = 'outline: ' + getCSS(showBody, 'outline') + '<br>color: ' + getCSS(showBody, 'color') + '<br>outline-offset: ' + getCSS(showBody, 'outline-offset')
+            }
+        }
+    })()
+</script>

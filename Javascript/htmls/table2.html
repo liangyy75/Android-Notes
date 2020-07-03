@@ -1,0 +1,115 @@
+<style>
+    body,dl,dd,h2{margin:0;}
+    .box{overflow:hidden;width:280px;padding:10px;background-color:#ccc;text-align:center;}
+    .con{float:left;}
+    .con *{float:left;}
+    .con dl+dl{margin-top:1%;clear:both;}
+    .con dt{font-weight:bold;margin-bottom:5%;width:100%;}
+    .con dd{background-color:rgba(255,255,255,0.3);margin:1%;margin-bottom:5%;cursor:pointer;}
+    .show{float:left;}
+    .show-tit{font:20px/2.5 "宋体";}
+    .show-body{border:1px solid black;border-radius:5%;padding:5%;text-align:initial;}
+    @media (min-width:600px){.con{width:50%;}
+        .show{width:50%;}
+        .box{width:580px;}
+    }
+</style>
+<div class="box" id="box">
+    <div class="con">
+        <!-- 添加测试单元1 -->
+        <dl>
+            <dt style="color: red">cell1-1</dt>
+            <dd>hidden</dd>
+            <dd>none</dd>
+            <dd>dashed</dd>
+            <dd>solid</dd>
+        </dl>
+        <!-- 添加测试单元1结束 -->
+        <!-- 添加测试单元2 -->
+        <dl>
+            <dt style="color: green">cell1-2</dt>
+            <dd>hidden</dd>
+            <dd>none</dd>
+            <dd>dashed</dd>
+            <dd>solid</dd>
+        </dl>
+        <!-- 添加测试单元2结束 -->
+        <!-- 添加测试单元3 -->
+        <dl>
+            <dt style="color: blue">cell2-1</dt>
+            <dd>hidden</dd>
+            <dd>none</dd>
+            <dd>dashed</dd>
+            <dd>solid</dd>
+        </dl>
+        <!-- 添加测试单元3结束 -->
+        <!-- 添加测试单元4 -->
+        <dl>
+            <dt style="color: yellow">cell2-2</dt>
+            <dd>hidden</dd>
+            <dd>none</dd>
+            <dd>dashed</dd>
+            <dd>solid</dd>
+        </dl>
+        <!-- 添加测试单元4结束 -->
+        <!-- 添加测试单元5 -->
+        <dl>
+            <dt style="color: pink">row1</dt>
+            <dd>hidden</dd>
+            <dd>none</dd>
+            <dd>dashed</dd>
+            <dd>solid</dd>
+        </dl>
+        <!-- 添加测试单元5结束 -->
+        <!-- 添加测试单元6 -->
+        <dl>
+            <dt style="color: gray">table</dt>
+            <dd>hidden</dd>
+            <dd>none</dd>
+            <dd>dashed</dd>
+            <dd>solid</dd>
+        </dl>
+        <!-- 添加测试单元6结束 -->
+    </div>
+    <div class="show">
+        <h2 class="show-tit">表格层演示</h2>
+        <div class="show-body" id="sb">
+            <!-- 添加结构单元 -->
+            <table border="1" id="table" style="color: gray;" cellpadding="6">
+                <col id="col1">
+                <tr id="row1" style="color: pink;">
+                    <td id="cell1-1" style="color:red;">row 1, cell 1</td>
+                    <td id="cell1-2" style="color:green;">row 1, cell 2</td>
+                </tr>
+                <tr>
+                    <td id="cell2-1" style="color:blue;">row 2, cell 1</td>
+                    <td id="cell2-2" style="color:yellow;">row 2, cell 2</td>
+                </tr>
+            </table>
+            <!-- 添加结构单元结束 -->
+        </div>
+    </div>
+</div>
+<script>
+    (function con() {
+        var oBox = document.getElementById('box');
+        var aDl = oBox.getElementsByTagName('dl');
+        for (var i = 0, leni = aDl.length; i < leni; i++) {
+            var oDt = aDl[i].getElementsByTagName('dt')[0];
+            var aDd = aDl[i].getElementsByTagName('dd');
+            aDl[i].last = 0;
+            for (var j = 0, lenj = aDd.length; j < lenj; j++) {
+                aDd[j].index = j;
+                aDd[j].onclick = function () {
+                    var oDl = this.parentNode;
+                    var oDt = oDl.getElementsByTagName('dt')[0];
+                    var aDd = oDl.getElementsByTagName('dd');
+                    aDd[oDl.last].style.cssText = 'color: black; background-color: rgba(255,255,255,0.3);';
+                    this.style.cssText = 'color: white; background-color: black;';
+                    document.getElementById(oDt.innerHTML).style.border = this.innerHTML;
+                    oDl.last = this.index;
+                }
+            }
+        }
+    })();
+</script>

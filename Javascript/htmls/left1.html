@@ -1,0 +1,27 @@
+left1.html
+<script>
+    (function start() {
+        var table = document.createElement("table")
+        table.border = "2"
+        table.cellPadding = "5"
+        table.cellSpacing = "3"
+        var name1 = window != null ? window.name : "null"
+        var name2 = top != null ? top.name : "null"
+        var name3 = parent != null ? parent.name : "null"
+        table.innerHTML = `
+            <tr>
+                <td>window.name=</td>
+                <td>${name1}</td>
+            </tr>
+            <tr>
+                <td>top.name=</td>
+                <td>${name2}</td>
+            </tr>
+            <tr>
+                <td>parent.name=</td>
+                <td>${name3}</td>
+            </tr>
+        `
+        document.getElementsByTagName("body")[0].appendChild(table)
+    })();
+</script>

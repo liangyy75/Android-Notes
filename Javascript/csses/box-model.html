@@ -1,0 +1,83 @@
+<style>
+    body,dl,dd,h2{margin:0;}
+    h2{font-size:20px;}
+    .box{overflow:hidden;width:276px;padding:10px;background-color:#ddd;text-align:center;position:relative;font:18px/1.2 "宋体";}
+    .con{float:left;width:100%;}
+    .show{float:left;width:100%;}
+    .show-body{border:1px solid black;border-radius:5%;padding:5%;height:100px;}
+    #show-img{min-height:20px;font-size:14px;}
+    .con dl *{float:left;overflow:hidden;}
+    .con dl+dl{margin-top:1%;}
+    .con dt{font-weight:bold;width:100%;}
+    .con dd{background-color:rgba(255,255,255,0.3);margin:1%;cursor:pointer;width:23%;}
+    @media (min-width:600px){
+        .con{width:50%;}
+        .show{width:50%;}
+        .box{width:580px;}
+    }
+</style>
+<div class="box" id="box">
+    <div class="show">
+        <h2 class="show-tit">最小最大宽度演示</h2>
+        <div class="show-body">
+            <div id="sb" style="background-color: yellowgreen;"></div>
+        </div>
+        <div id="show-img"></div>
+    </div>
+    <div class="con">
+        <dl>
+            <dt>min-width</dt>
+            <dd>0</dd>
+            <dd>20%</dd>
+            <dd>50%</dd>
+            <dd>100%</dd>
+        </dl>
+        <dl>
+            <dt>min-height</dt>
+            <dd>0</dd>
+            <dd>20%</dd>
+            <dd>50%</dd>
+            <dd>100%</dd>
+        </dl>
+        <dl>
+            <dt>max-width</dt>
+            <dd>none</dd>
+            <dd>20%</dd>
+            <dd>50%</dd>
+            <dd>100%</dd>
+        </dl>
+        <dl>
+            <dt>max-height</dt>
+            <dd>none</dd>
+            <dd>20%</dd>
+            <dd>50%</dd>
+            <dd>100%</dd>
+        </dl>
+    </div>
+</div>
+<script>
+    function getCSS(obj, style) {
+        return window.getComputedStyle ? getComputedStyle(obj)[style] : obj.currentStyle[style];
+    };
+    (function con() {
+        var aDl = document.getElementById('box').getElementsByTagName('dl');
+        var oSb = document.getElementById('sb');
+        var oImg = document.getElementById('show-img');
+        for (var i = 0, leni = aDl.length; i < leni; i++) {
+            var aDd = aDl[i].getElementsByTagName('dd');
+            aDl[i].last = 0;
+            for (var j = 0, lenj = aDd.length; j < lenj; j++) {
+                aDd[j].index = j;
+                aDd[j].onclick = function () {
+                    var oDl = this.parentNode;
+                    var oDt = oDl.getElementsByTagName('dt')[0];
+                    oDl.getElementsByTagName('dd')[oDl.last].style.cssText = 'color: black; background-color: rgba(255,255,255,0.3);';
+                    this.style.cssText = 'color: white; background-color: black;';
+                    oSb.style[oDt.innerHTML] = this.innerHTML;
+                    oImg.innerHTML = '测试内容的' + oDt.innerHTML + ':' + getCSS(oSb, oDt.innerHTML);
+                    oDl.last = this.index;
+                }
+            }
+        }
+    })();
+</script>

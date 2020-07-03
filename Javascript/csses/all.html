@@ -1,0 +1,63 @@
+<style>
+    body,dl,dd,h2{margin:0;}
+    .box{overflow:hidden;width:280px;padding:10px;background-color:#ccc;text-align:center;position:relative;}
+    .con{float:left;}
+    .show{float:left;}
+    .con dl *{float:left;}
+    .con dl+dl{margin-top:1%;clear:both;}
+    .con dt{font-weight:bold;margin-bottom:5%;width:100%;}
+    .con dd{background-color:rgba(255,255,255,0.3);margin:1%;margin-bottom:5%;cursor:pointer;width:48%;}
+    .show-tit{font:20px/2.5 "宋体";}
+    .show-body{border:1px solid black;border-radius:5%;padding:5%;text-align:initial;}
+    @media (min-width:600px){.con{width:50%;}
+        .show{width:50%;}
+        .box{width:580px;}
+    }
+    .test{border:1px solid black;padding:20px;color:red;}
+    #show-img{text-align:center;}
+</style>
+<div class="box" id="box">
+    <div class="con">
+        <dl>
+            <dt>all</dt>
+            <dd>initial</dd>
+            <dd>inherit</dd>
+            <dd>unset</dd>
+            <dd>revert</dd>
+        </dl>
+        <button id="reset" style="position: absolute; right:0;bottom:0;">还原</button>
+        <!-- 添加测试单元1结束 -->
+    </div>
+    <div class="show">
+        <h2 class="show-tit">all关键字演示</h2>
+        <div class="test">
+            <div class="in" id="sb">测试文字</div>
+        </div>
+        <div id="show-img"></div>
+    </div>
+</div>
+<script>
+    function getCSS(obj, style) { return window.getComputedStyle ? getComputedStyle(obj)[style] : obj.currentStyle[style]; };
+    (function con() {
+        var aDl = document.getElementById('box').getElementsByTagName('dl');
+        var oSb = document.getElementById('sb');
+        var oImg = document.getElementById('show-img');
+        reset.onclick = () => history.go();
+        oImg.innerHTML = '.in元素的样式为:' + '<br>' + 'padding:' + getCSS(oSb, 'padding') + '<br>' + 'border:' + getCSS(oSb, 'border') + '<br>' + 'color:' + getCSS(oSb, 'color');
+        for (var i = 0, leni = aDl.length; i < leni; i++) {
+            var aDd = aDl[i].getElementsByTagName('dd');
+            aDl[i].last = 0;
+            for (var j = 0, lenj = aDd.length; j < lenj; j++) {
+                aDd[j].index = j;
+                aDd[j].onclick = function() {
+                    var oDl = this.parentNode;
+                    oDl.getElementsByTagName('dd')[oDl.last].style.cssText = 'color: black; background-color: rgba(255,255,255,0.3);';
+                    this.style.cssText = 'color: white; background-color: black;';
+                    oSb.style.all = this.innerHTML;
+                    oImg.innerHTML = '.in元素的样式为:' + '<br>' + 'padding:' + getCSS(oSb, 'padding') + '<br>' + 'border:' + getCSS(oSb, 'border') + '<br>' + 'color:' + getCSS(oSb, 'color');
+                    oDl.last = this.index;
+                }
+            }
+        }
+    })();
+</script>

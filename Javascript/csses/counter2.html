@@ -1,0 +1,168 @@
+<style>
+    body,dl,dd,h2,ul,h3,p{margin:0;}
+    .box{overflow:hidden;width:280px;padding:10px;background-color:#ccc;text-align:center;position:relative;}
+    .con{float:left;width:100%;}
+    .show{float:left;width:100%;}
+    .con dl{float:left;width:100%;}
+    .con dl *{float:left;}
+    .con dt{font-weight:bold;margin-bottom:5%;width:100%;}
+    .con dd{background-color:rgba(255,255,255,0.3);margin:1%;margin-bottom:5%;cursor:pointer;width:23%;}
+    .show-tit{font:20px/2.5 "宋体";}
+    .show-body{border:1px solid black;border-radius:5%;padding:5%;text-align:center;background-color:pink;}
+    @media (min-width:600px){
+        .con{width:60%;}
+        .show{width:40%;}
+        .box{width:580px;}
+    }
+    #jiange dd{width:12%;}
+    #oShow{counter-reset:c2;}
+    #oShow h2{counter-reset:c3 cp;counter-increment:c2;}
+    #oShow h3{counter-increment:c3;counter-reset:cp;}
+    #oShow p{counter-increment:cp;}
+</style>
+<div class="box" id="box">
+    <div class="show">
+        <h2 class="show-tit">层级目录演示</h2>
+        <div class="show-body" id="sb">
+            <!-- 添加结构单元 -->
+            <div id="oShow">
+                <h2>第一章</h2>
+                <h3>第一部分</h3>
+                <p>第一节</p>
+                <p>第二节</p>
+                <h3>第二部分</h3>
+                <p>第一节</p>
+                <h2>第二章</h2>
+                <h3>第一部分</h3>
+                <p>第一节</p>
+                <p>第二节</p>
+                <h3>第二部分</h3>
+                <p>第一节</p>
+                <h2>第三章</h2>
+                <h3>第一部分</h3>
+                <p>第一节</p>
+                <p>第二节</p>
+                <h3>第二部分</h3>
+                <p>第一节</p>
+            </div>
+            <!-- 添加结构单元结束 -->
+        </div>
+    </div>
+    <div class="con">
+        <!-- 添加测试单元1 -->
+        <dl>
+            <dt>章:style-type</dt>
+            <dd>decimal</dd>
+            <dd>lower-roman</dd>
+            <dd>upper-roman</dd>
+            <dd>lower-alpha</dd>
+            <dd>upper-alpha</dd>
+            <dd>lower-greek</dd>
+            <dd style="width:46%">decimal-leading-zero</dd>
+        </dl>
+        <!-- 添加测试单元1结束 -->
+        <!-- 添加测试单元2 -->
+        <dl>
+            <dt>部分:style-type</dt>
+            <dd>decimal</dd>
+            <dd>lower-roman</dd>
+            <dd>upper-roman</dd>
+            <dd>lower-alpha</dd>
+            <dd>upper-alpha</dd>
+            <dd>lower-greek</dd>
+            <dd style="width:46%">decimal-leading-zero</dd>
+        </dl>
+        <!-- 添加测试单元2结束 -->
+        <dl>
+            <dt>节:style-type</dt>
+            <dd>decimal</dd>
+            <dd>lower-roman</dd>
+            <dd>upper-roman</dd>
+            <dd>lower-alpha</dd>
+            <dd>upper-alpha</dd>
+            <dd>lower-greek</dd>
+            <dd style="width:46%">decimal-leading-zero</dd>
+        </dl>
+        <dl id="jiange">
+            <dt>间隔符</dt>
+            <dd>-</dd>
+            <dd>.</dd>
+            <dd>@</dd>
+            <dd>#</dd>
+            <dd>*</dd>
+            <dd>></dd>
+            <dd>&</dd>
+        </dl>
+    </div>
+</div>
+<script>
+    function escape(html) {
+        var elem = document.createElement('div')
+        var txt = document.createTextNode(html)
+        elem.appendChild(txt)
+        return elem.innerHTML;
+    }
+    function unescape(str) {
+        var elem = document.createElement('div')
+        elem.innerHTML = str
+        return elem.innerText || elem.textContent;
+    }
+    function loadStyleString(css) {
+        var style = document.createElement("style");
+        style.type = "text/css";
+        try {
+            style.appendChild(document.createTextNode(css));
+        } catch (ex) {
+            style.styleSheet.cssText = css;
+        }
+        var head = document.getElementsByTagName('head')[0];
+        head.appendChild(style);
+    }
+    loadStyleString('');
+    (function con() {
+        var oBox = document.getElementById('box');
+        var aDl = oBox.getElementsByTagName('dl');
+        var oSb = document.getElementById('sb');
+        var oShow = document.getElementById('oShow');;
+        //变量声明
+        var aC2 = oShow.getElementsByTagName('h2');
+        var aC3 = oShow.getElementsByTagName('h3');
+        var aCp = oShow.getElementsByTagName('p');
+        var oDc2 = oDc3 = oDcp = 'decimal';
+        var oD = ' ';
+        for (var i = 0, leni = aDl.length; i < leni; i++) {
+            var oDt = aDl[i].getElementsByTagName('dt')[0];
+            var aDd = aDl[i].getElementsByTagName('dd');
+            aDl[i].last = 0;
+            for (var j = 0, lenj = aDd.length; j < lenj; j++) {
+                aDd[j].index = j;
+                aDd[j].onclick = function () {
+                    var oDl = this.parentNode;
+                    var oDt = oDl.getElementsByTagName('dt')[0];
+                    var aDd = oDl.getElementsByTagName('dd');
+                    aDd[oDl.last].style.cssText = 'color: black; background-color: rgba(255,255,255,0.3);';
+                    this.style.cssText = 'color: white; background-color: black;';
+                    if (oDt.innerHTML.charAt(0) == '章') {
+                        oDc2 = this.innerHTML;
+                    } else if (oDt.innerHTML.charAt(0) == '部') {
+                        oDc3 = this.innerHTML;
+                    } else if (oDt.innerHTML.charAt(0) == '节') {
+                        oDcp = this.innerHTML;
+                    } else {
+                        oD = '"' + (this.innerText || this.textContent) + '"';
+                    };
+                    var oStyle = document.getElementsByTagName('style')[1];
+                    var temp = "#oShow h2:before{content: counter(c2," + oDc2 + ");}\
+        #oShow h3:before{content: counter(c2,"+ oDc2 + ") " + oD + " counter(c3," + oDc3 + ");}\
+        #oShow p:before{content: counter(c2,"+ oDc2 + ") " + oD + " counter(c3," + oDc3 + ") " + oD + " counter(cp," + oDcp + ");}";
+                    try {
+                        oStyle.innerHTML = temp;
+                    } catch (ex) {
+                        oStyle.styleSheet.cssText = temp;
+                    }
+                    oDl.last = this.index;
+                }
+            }
+        }
+    })();
+</script>

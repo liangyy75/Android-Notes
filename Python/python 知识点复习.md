@@ -231,4 +231,9 @@ plt.ion()   # interactive mode
 
 ### end
 
+## flask
+
+1. [用 Flask 来写个轻博客 (25) — 使用 Flask-Principal 实现角色权限功能](https://blog.csdn.net/jmilk/article/details/53542686)
+2. [django开发例子](https://www.jianshu.com/u/49d1b159b16d)
+
 ## end

@@ -1,0 +1,92 @@
+<style>
+    body,dl,dd,h2{margin:0;}
+    .box{overflow:hidden;width:280px;padding:10px;background-color:#ccc;text-align:center;}
+    .con{float:left;}
+    .show{float:left;}
+    .con *{float:left;}
+    .con dl+dl{margin-top:1%;clear:both;}
+    .con dt{font-weight:bold;margin-bottom:5%;width:100%;}
+    .con dd{background-color:rgba(255,255,255,0.3);margin:1%;margin-bottom:5%;cursor:pointer;width:23%;}
+    .show-tit{font:20px/2.5 "宋体";}
+    .show-body{border:1px solid black;border-radius:5%;padding:5%;text-align:initial;}
+    @media (min-width:600px){.con{width:50%;}
+        .show{width:50%;}
+        .box{width:580px;}
+    }
+</style>
+<div class="box" id="box">
+    <div class="con">
+        <dl>
+            <dt>list-style-type</dt>
+            <dd>none</dd>
+            <dd>disc</dd>
+            <dd>circle</dd>
+            <dd>square</dd>
+            <dd>decimal</dd>
+            <dd>lower-roman</dd>
+            <dd>upper-roman</dd>
+            <dd>lower-alpha</dd>
+            <dd>upper-alpha</dd>
+            <dd>lower-greek</dd>
+            <dd>decimal-leading-zero</dd>
+        </dl>
+        <dl>
+            <dt>list-style-image</dt>
+            <dd>none</dd>
+            <dd>arrow.gif</dd>
+        </dl>
+        <dl>
+            <dt>list-style-position</dt>
+            <dd>inside</dd>
+            <dd>outside</dd>
+        </dl>
+    </div>
+    <div class="show">
+        <h2 class="show-tit">列表项标志演示</h2>
+        <div class="show-body" id="sb">
+            <ol>
+                <li>咖啡</li>
+                <li>牛奶</li>
+                <li>茶</li>
+                <li>可乐</li>
+                <li>酒</li>
+            </ol>
+            <!-- 添加结构单元结束 -->
+        </div>
+    </div>
+</div>
+<script>
+    (function con() {
+        var oBox = document.getElementById('box');
+        var aDl = oBox.getElementsByTagName('dl');
+        var oSb = document.getElementById('sb');
+        var oShow = oSb.getElementsByTagName('ol')[0];
+        for (var i = 0, leni = aDl.length; i < leni; i++) {
+            var oDt = aDl[i].getElementsByTagName('dt')[0];
+            var aDd = aDl[i].getElementsByTagName('dd');
+            aDl[i].last = 0;
+            for (var j = 0, lenj = aDd.length; j < lenj; j++) {
+                aDd[j].index = j;
+                aDd[j].onclick = function () {
+                    var oDl = this.parentNode;
+                    var oDt = oDl.getElementsByTagName('dt')[0];
+                    if (oShow.style[oDt.innerHTML] == this.innerHTML) {
+                        return
+                    }
+                    var aDd = oDl.getElementsByTagName('dd');
+                    aDd[oDl.last].style.cssText = 'color: black; background-color: rgba(255,255,255,0.3);';
+                    this.style.cssText = 'color: white; background-color: black;';
+                    if (this.innerHTML == 'arrow.gif') {
+                        oShow.style.listStyle = 'url("http://sandbox.runjs.cn/uploads/rs/26/ddzmgynp/arrow.gif")';
+                    } else if (this.innerHTML != 'none') {
+                        setTimeout(() => { oShow.style[oDt.innerHTML] = this.innerHTML; }, 0);
+                        oShow.style[oDt.innerHTML] = 'none';
+                    } else {
+                        oShow.style[oDt.innerHTML] = 'none';
+                    }
+                    oDl.last = this.index;
+                }
+            }
+        }
+    })();
+</script>

@@ -1,0 +1,112 @@
+<style>
+    body,dl,dd,h2{margin:0;}
+    .box{overflow:hidden;width:280px;padding:10px;background-color:#ccc;text-align:center;}
+    .con{float:left;}
+    .con *{float:left;}
+    .con dl+dl{margin-top:1%;clear:both;}
+    .con dt{font-weight:bold;margin-bottom:5%;width:100%;}
+    .con dd{background-color:rgba(255,255,255,0.3);margin:1%;margin-bottom:5%;cursor:pointer;width:18%;}
+    .show{float:left;}
+    .show-tit{font:20px/2.5 "宋体";}
+    .show-body{border:1px solid black;border-radius:5%;padding:5%;text-align:initial;}
+    .show-body-code{font:12px/14px "宋体";background-color:rgba(255,255,255,0.3);text-align:left;white-space:pre-line;margin-bottom:5px;}
+    @media (min-width:600px){
+        .con{width:50%;}
+        .show{width:50%;}
+        .box{width:580px;}
+    }
+</style>
+<div class="box" id="box">
+    <div class="con">
+        <!-- 添加测试单元1 -->
+        <dl>
+            <dt>标签名称</dt>
+            <dd>&lt;em&gt;</dd>
+            <dd>&lt;strong&gt;</dd>
+            <dd>&lt;i&gt;</dd>
+            <dd>&lt;b&gt;</dd>
+            <dd>&lt;s&gt;</dd>
+            <dd>&lt;mark&gt;</dd>
+            <dd>&lt;small&gt;</dd>
+            <dd>&lt;dfn&gt;</dd>
+            <dd>&lt;abbr&gt;</dd>
+            <dd>&lt;cite&gt;</dd>
+            <dd>&lt;q&gt;</dd>
+            <dd>&lt;br&gt;</dd>
+            <dd>&lt;wbr&gt;</dd>
+            <dd>&lt;sup&gt;</dd>
+            <dd>&lt;sub&gt;</dd>
+            <dd>&lt;ins&gt;</dd>
+            <dd>&lt;del&gt;</dd>
+            <dd>&lt;time&gt;</dd>
+            <dd>&lt;ruby&gt;</dd>
+            <dd>&lt;rt&gt;</dd>
+            <dd>&lt;rp&gt;</dd>
+            <dd>&lt;bdo&gt;</dd>
+            <dd>&lt;code&gt;</dd>
+            <dd>&lt;kbd&gt;</dd>
+            <dd>&lt;samp&gt;</dd>
+            <dd>&lt;tt&gt;</dd>
+            <dd>&lt;var&gt;</dd>
+        </dl>
+        <!-- 添加测试单元1结束 -->
+    </div>
+    <div class="show">
+        <h2 class="show-tit">HTML文本级元素例子演示</h2>
+        <div class="show-body" id="sb">
+            <div class="show-body-code"></div>
+            <div class="show-body-show"></div>
+        </div>
+    </div>
+</div>
+<script>
+    (function con() {
+        var aDl = document.getElementById('box').getElementsByTagName('dl');
+        var oSb = document.getElementById('sb');
+        var oCode = oSb.getElementsByTagName('div')[0];
+        var oShow = oSb.getElementsByTagName('div')[1];
+        var array = [
+            '<p>I am <em>very</em> worried!</p>',
+            '<strong>warning</strong>',
+            '<p>Simon smirked,"Yes,I am happy to take the garbage out." <i>Ugh,I <em>really</em> do not want to !</i> he thought as he picked up the garbage bag.</p>',
+            '<p>After bringing  <b>water</b> to a boil, add <b>potatoes</b> and <b>carrots</b></p>',
+            '<p><s>37度 </s> <strong>41度</strong></p>',
+            '<p><mark>We are all hoping it rains soon</mark>, some farmers have installed irrigation systems, at <em>considerable</em> expense </p>',
+            '<small>图片仅供参考，请以实物为准</small>',
+            '<p>The term <dfn>organic food</dfn> refers to food produced without synthetic chemicals</p>',
+            '<p>The <dfn><abbr title="Garage Door Operner">GDO</abbr></dfn> id a device allows  off-world teams to open the iris.</p>',
+            '<p>我最喜欢的电影是 <cite>千与千寻</cite></p>',
+            '<p>The judge said <q>You can drink water form  the fish tank</q> but advised against it.</p>',
+            '<b>The City Press</b><br>123 General Street <br>Springfield, OH 45501</p>',
+            '<i>Irrigation<wbr /> Direct</i>',
+            '<p>a<sup>2</sup>+b<sup>2</sup>=c<sup>2</sup></p>',
+            '<p>H<sub>2</sub>SO<sub>4</sub></p>',
+            '<p>一打有 <del datetime="2015-12-30T00:00Z" cite="edit.html">二十</del> <ins>十二</ins> 件。</p>',
+            '<p>一打有 <del datetime="2015-12-30T00:00Z" cite="edit.html">二十</del><ins>十二</ins> 件。</p>',
+            '<p>我在<time datetime="2008-02-14">情人节</time>有个约会。</p>',
+            '<ruby>漢 <rt> ㄏㄢˋ </rt></ruby>',
+            '<ruby>汉<rp>(</rp><rt>hàn</rt><rp>)</rp>语<rp>(</rp><rt>yǔ</rt><rp>)</rp></ruby>',
+            '<ruby>汉<rp>(</rp><rt>hàn</rt><rp>)</rp>语<rp>(</rp><rt>yǔ</rt><rp>)</rp></ruby>',
+            '<p>When rendered by a browser, <bdo dir="rtl">these words</bdo> will appear as "sdroweseht"</p>',
+            '<p><code>Computer code</code><br><kbd>Keyboard input</kbd><br><tt>Teletype text</tt><br><samp>Sample text</samp><br><var>Computer variable</var><br></p>'];
+        for (var i = 0, leni = aDl.length; i < leni; i++) {
+            var aDd = aDl[i].getElementsByTagName('dd');
+            aDl[i].last = 0;
+            for (var j = 0, lenj = aDd.length; j < lenj; j++) {
+                aDd[j].index = j;
+                aDd[j].onclick = function() {
+                    var oDl = this.parentNode;
+                    var aDd = oDl.getElementsByTagName('dd');
+                    aDd[oDl.last].style.cssText = 'color: black; background-color: rgba(255,255,255,0.3);';
+                    this.style.cssText = 'color: white; background-color: black;';
+                    if (this.index >= array.length) {
+                        oShow.innerHTML = oCode.innerText = array[array.length - 1];
+                    } else {
+                        oShow.innerHTML = oCode.innerText = array[this.index];
+                    }
+                    oDl.last = this.index;
+                }
+            }
+        }
+    })();
+</script>

@@ -1,0 +1,210 @@
+<style>
+    .container { width: 600px; background-color: #ddd; padding: 10px; overflow: hidden; }
+    .show { width: calc(40% - 10px); float: left; margin-right: 10px; }
+    .show h1 { font-size: large; font-weight: bold; text-align: center; margin: 5px; padding: 0; }
+    .show div { padding: 10px; border: 2px solid black; border-radius: 5px; }
+    .control { width: 60%; float: left; }
+    .control dl { margin: 10px; padding: 0; text-align: center; }
+    .control dl dt { font-size: large; font-weight: bold; text-align: center; margin: 5px; padding: 0; }
+    .control dl dd { display: inline-block; background-color: #E7E7E7; padding: 5px 20px; margin: 5px; font: 18px/24px '宋体'; cursor: pointer; }
+    .control .control-item { background-color: #aaa; padding: 5px; border-radius: 5px; margin: 10px; color: white; font: 14px/24px '黑体'; }
+    .control .control-item input, .control .control-item button { width: 60px; float: right; margin-left: 5px; }
+    .page-container { height: 400px; overflow: hidden; }
+    .page { width: 100%; height: 100%; }
+    .nav { padding: 10px; width: 60%; float: right; text-align: center; }
+    .nav-in { display: inline-block; width:20px; line-height: 20px; border:1px solid black; background-color: #aaa; color: white; text-decoration: none; }
+</style>
+<div class="container">
+    <div class="show">
+        <h1>多列布局演示</h1>
+        <div>根据气象预测，史上历时最长、强度最强的厄尔尼诺现象将<span style="background-color: chocolate;">跨列测试跨列测试跨列测试</span>持续到今年5月结束，受此影响，2016年中国气象年景可能总体偏差，降水偏多、涝重于旱，珠江流域重现类似1998年洪水、甚至更大规模洪水的可能性很大。</div>
+        <p></p>
+    </div>
+    <div class="control page-container">
+        <div class='page' id='page1'>
+            <dl data-attr='display'>
+                <dt>display</dt>
+                <dd>inline</dd>
+                <dd>block</dd>
+                <dd>table</dd>
+                <dd>inline-block</dd>
+                <dd>table-cell</dd>
+            </dl>
+            <div class="control-item" data-attr="width" data-end='px'>
+                <label for="width">width</label>
+                <input type="number" name="width" id="width">
+                <input type="range" value="100" min="100" max="300"/>
+                <button type="button">auto</button>
+            </div>
+            <div class="control-item" data-attr="height" data-end='px'>
+                <label for="height">height</label>
+                <input type="number" name="height" id="height">
+                <input type="range" value="100" min="100" max="400"/>
+                <button type="button">auto</button>
+            </div>
+            <div class="control-item" data-attr="columnWidth" data-init='100' data-end='px'>
+                <label for="columnWidth">column-width</label>
+                <input type="number" name="columnWidth" id="columnWidth">
+                <input type="range" value="100" min="0" max="270"/>
+                <button type="button">auto</button>
+            </div>
+            <div class="control-item" data-attr="columnCount" data-init="2">
+                <label for="columnCount">column-count</label>
+                <input type="number" name="columnCount" id="columnCount">
+                <input type="range" value="2" min="0" max="5"/>
+                <button type="button">auto</button>
+            </div>
+            <div class="control-item" data-attr="columnGap" data-init="20" data-end='px'>
+                <label for="columnGap">column-gap</label>
+                <input type="number" name="columnGap" id="columnGap">
+                <input type="range" value="20" min="0" max="100"/>
+                <button type="button">normal</button>
+            </div>
+        </div>
+        <div class="page" id="page2">
+            <dl data-attr='column-rule-style'>
+                <dt>column-rule-style</dt>
+                <dd>none</dd>
+                <dd>solid</dd>
+                <dd>dashed</dd>
+                <dd>dotted</dd>
+                <dd>double</dd>
+            </dl>
+            <dl data-attr='column-rule-color'>
+                <dt>column-rule-color</dt>
+                <dd>lightpink</dd>
+                <dd>lightgreen</dd>
+                <dd>lightblue</dd>
+                <dd>lightyellow</dd>
+            </dl>
+            <div class="control-item" data-attr="columnRuleWidth" data-init="3" data-end='px'>
+                <label for="columnRuleWidth">column-rule-width</label>
+                <input type="number" name="columnRuleWidth" id="columnRuleWidth">
+                <input type="range" value="3" min="0" max="20"/>
+                <button type="button">auto</button>
+            </div>
+        </div>
+        <div class="page" id="page3">
+            <dl data-attr='display' data-target='target2'>
+                <dt>display</dt>
+                <dd>inline</dd>
+                <dd>block</dd>
+                <dd>table</dd>
+                <dd>inline-block</dd>
+                <dd>table-cell</dd>
+            </dl>
+            <dl data-attr='position' data-target='target2'>
+                <dt>position</dt>
+                <dd>static</dd>
+                <dd>relative</dd>
+                <dd>absolute</dd>
+                <dd>fixed</dd>
+            </dl>
+            <dl data-attr='float' data-target='target2'>
+                <dt>float</dt>
+                <dd>left</dd>
+                <dd>right</dd>
+                <dd>none</dd>
+            </dl>
+            <dl data-attr='columnSpan' data-target='target2'>
+                <dt>column-span</dt>
+                <dd>none</dd>
+                <dd>all</dd>
+            </dl>
+        </div>
+        <div class="page" id="page4">
+            <dl data-attr='columnFill' data-target='target'>
+                <dt>column-fill</dt>
+                <dd>auto</dd>
+                <dd>balance</dd>
+            </dl>
+        </div>
+    </div>
+    <nav class="nav">
+        <a class="nav-in" href="#page1">1</a>
+        <a class="nav-in" href="#page2">2</a>
+        <a class="nav-in" href="#page3">3</a>
+        <a class="nav-in" href="#page4">4</a>
+    </nav>
+</div>
+<script>
+    (function() {
+        function getCSS(obj, style) { return window.getComputedStyle ? getComputedStyle(obj)[style] : obj.currentStyle[style]; };
+        var show = document.getElementsByClassName("show")[0]
+        var target = show.getElementsByTagName("div")[0]
+        var target2 = target.getElementsByTagName("span")[0]
+        var targets = { 'target': target, 'target2': target2 }
+        var tips = show.getElementsByTagName("p")[0]
+        var control = document.getElementsByClassName("control")[0]
+        var dls = control.getElementsByTagName("dl")
+        Array.prototype.forEach.call(dls, (dl, index, dls) => {
+            dl.index = -1
+            var dds = dl.getElementsByTagName("dd")
+            Array.prototype.forEach.call(dds, (dd, index2, dds) => {
+                dd.index = index2
+                dd.onclick = function() {
+                    var dl = this.parentNode
+                    if (dl.index == this.index) {
+                        return
+                    }
+                    var target = targets[dl.dataset.target ? dl.dataset.target : 'target']
+                    if (getCSS(target, 'border-width') != '0px') {
+                        target.style.padding = this.innerText == 'inline' ? '0' : '10px'
+                    }
+                    target.style[dl.dataset.attr] = this.innerText
+                    tips.innerText = target.style.cssText
+                    this.style.cssText = 'color: white; background-color: black'
+                    if (dl.index >= 0) {
+                        dl.getElementsByTagName("dd")[dl.index].style.cssText = 'color: black; background-color: #e7e7e7'
+                    }
+                    dl.index = this.index
+                }
+            })
+        })
+        var controlItems = control.getElementsByClassName("control-item")
+        Array.prototype.forEach.call(controlItems, (item, index, controlItems) => {
+            var label = item.getElementsByTagName("label")[0]
+            var number = item.getElementsByTagName("input")[0]
+            var range = item.getElementsByTagName("input")[1]
+            var button = item.getElementsByTagName("button")[0]
+            var attr = item.dataset.attr ? item.dataset.attr : label.dataset.attr
+            var target = targets[item.dataset.target ? item.dataset.target : 'target']
+            var value = getCSS(target, attr)
+            button.value = number.value = range.value = value.endsWith('px') ? value.slice(0, -2) : item.dataset.init
+            button.onclick = number.oninput = number.onfocus = number.onclick = range.onfocus = range.oninput = range.onclick = function() {
+                var item = this.parentNode
+                var label = item.getElementsByTagName("label")[0]
+                var number = item.getElementsByTagName("input")[0]
+                var range = item.getElementsByTagName("input")[1]
+                var button = item.getElementsByTagName("button")[0]
+                var attr = item.dataset.attr ? item.dataset.attr : label.dataset.attr
+                var target = targets[item.dataset.target ? item.dataset.target : 'target']
+                if (this instanceof HTMLButtonElement) {
+                    number.value = range.value = button.value
+                    target.style[attr] = button.innerText
+                } else {
+                    var end = item.dataset.end ? item.dataset.end : ''
+                    target.style[attr] = this.value + end
+                    number.value = range.value = this.value
+                }
+                tips.innerText = target.style.cssText
+            }
+        })
+        var navs = document.getElementsByClassName("nav")
+        Array.prototype.forEach.call(navs, (nav, index, navs) => {
+            Array.prototype.forEach.call(nav.getElementsByClassName("nav-in"), (navIn, index2, nav) => {
+                navIn.index = index2
+            })
+            nav.index = 0
+            nav.onclick = function(event) {
+                var target = event.target
+                if (target.classList.contains('nav-in')) {
+                    this.getElementsByClassName("nav-in")[nav.index].style.cssText = 'border: 1px solid black;'
+                    nav.index = target.index
+                    target.style.cssText = 'border: 1px solid blue; box-shadow: lightblue 0px 0px 1px;'
+                }
+            }
+            nav.getElementsByClassName("nav-in")[nav.index].style.cssText = 'border: 1px solid blue; box-shadow: lightblue 0px 0px 1px;'
+        })
+    })()
+</script>

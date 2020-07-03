@@ -1,0 +1,84 @@
+<style>
+    body, div, dl, dt, dd, ol, ul, li { margin: 0; padding: 0; }
+    .container { width: 600px; min-height: 220px; background-color: #CCCCCC; padding: 10px; }
+    .nav { float: left; width: 50%; }
+    .nav dt { text-align: center; font-weight: bold; padding: 5px 0; }
+    .nav dd { display: inline-block; width: 50px; color: black; background-color: rgba(255,255,255,0.3); margin: 5px; padding: 0 5px; text-align: center; cursor: pointer; }
+    .show { float: right; width: 50%; text-align: center; }
+    .show p { font-size: larger; color: rgb(75, 75, 75); font-family: Arial, Helvetica, sans-serif; }
+    .show div { border: 1px solid black; padding: 20px; display: inline-block; border-radius: 10px; }
+</style>
+<div class="container">
+    <dl class="nav">
+        <dt>frame</dt>
+        <dd>border</dd>
+        <dd>void</dd>
+        <dd>above</dd>
+        <dd>below</dd>
+        <dd>hsides</dd>
+        <dd>vsides</dd>
+        <dd>lhs</dd>
+        <dd>rhs</dd>
+        <dd>box</dd>
+        <dt>rules</dt>
+        <dd>all</dd>
+        <dd>none</dd>
+        <dd>groups</dd>
+        <dd>rows</dd>
+        <dd>cols</dd>
+    </dl>
+    <div class="show">
+        <p>frame属性和rules属性</p>
+        <div>
+            <table id="target" border="2" cellpadding="5" cellspacing="3" summary="测试表格">
+                <tr>
+                    <td>row 1, cell 1</td>
+                    <td>row 1, cell 2</td>
+                </tr>
+                <tr>
+                    <td>row 2, cell 1</td>
+                    <td>row 2, cell 2</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    (function start() {
+        var dts = []
+        var isFirst = false
+        var attrNode = null
+        var target = document.getElementById("target")
+        document.getElementsByClassName("nav")[0].childNodes.forEach((node, index, array) => {
+            var nodeName = node.nodeName
+            if (nodeName == "DT") {
+                attrNode = node
+                dts.push([node.innerText, index])
+                node.last = -1
+                isFirst = true
+            } else if (nodeName == "DD") {
+                node.index = index
+                node.onclick = function() {
+                    var childNodes = this.parentNode.childNodes
+                    var msg = dts.find((value, index, array2) => value[1] < this.index)
+                    var attrNode = childNodes[msg[1]]
+                    var last = attrNode.last
+                    if (last == this.index) {
+                        return
+                    } else if (last != -1) {
+                        childNodes[last].style.cssText = "color: black; background-color: rgba(255,255,255,0.3);"
+                    }
+                    this.style.cssText = "color: white; background-color: black;"
+                    attrNode.last = this.index
+                    target[msg[0]] = this.innerText
+                }
+                if (isFirst) {
+                    isFirst = false
+                    node.style.cssText = "color: white; background-color: black;"
+                    attrNode.last = index
+                }
+            }
+        })
+        dts.reverse()
+    })()
+</script>

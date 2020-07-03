@@ -42,6 +42,7 @@ img {
 - [5678新特性](#5678%e6%96%b0%e7%89%b9%e6%80%a7)
 - [新特性](#%e6%96%b0%e7%89%b9%e6%80%a7)
 - [View](#view)
+- [ViewGroup](#viewgroup)
 - [综合技术](#%e7%bb%bc%e5%90%88%e6%8a%80%e6%9c%af)
 <!-- GFM-TOC -->
 
@@ -3521,6 +3522,21 @@ Android 信息.md
             ```
 9. 
 10. 
+
+### ViewGroup
+
+1. links
+    1. [https://blog.csdn.net/alankin/article/details/81001058](ViewGroup 添加移除View 常用几种方式的区别)
+2. 添加移除view的区别
+    1. 主要的方法
+        1. attachViewToParent和DetachViewToparent是直接操作这个数组，不会去调用requestlayout去重绘。
+        2. removeView和addView会主动调用requestlayout和invalidate去强制重绘。
+        3. removeViewInLayout和addViewInLayout不会去调用requestLayout和invalidate所以可以有效的在onlayout方法中调用。
+    2. 区别1：2和3都会通过addViewInner和removeViewInternal去操作；第一种方式通过addInArray和removeFromArray直接去修改子view的数组
+    3. 区别2：如果是通过addviewinner和removeViewInternal会促发layouttransition做动画效果还会触发一些回调并调用子view的attachwindow和detachwindow然后也会进行addInArray和removeFromArray去修改数组。
+    4. 区别3：所以如果只是单纯的数据变化使用attachViewtoParent和detachViewtoParent不会对子view做变化。只是简单的移出viewGroup的显示attach还是最好配合detach使用因为添加一个子view应该还需要做下子viewAttach操作具体相关代码可能在attachInfo之中找到关
+    5. 区别4：然后这个子view数组对viewgroup显示有什么影响呢？viewgroupdispatchdraw会使用这个来对每个子view分派draw事件。所以动态添加view时选择合适的方式进行添加。
+3. 
 
 ### 综合技术
 

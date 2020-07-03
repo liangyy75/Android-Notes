@@ -1,0 +1,99 @@
+<style>
+    .content { background-color: #ddd; padding: 10px; display: inline-block; }
+    .show { float: left; width: 240px; text-align: center; }
+    .show-body { border: 1px solid black; border-radius: 5%; }
+    .show-target { width: 50px; height: 50px; background-color: white; margin: 10px; box-shadow: 0 0 0 5px red; }
+    .control { float: left; font-family: 宋体; font-size: large; margin-left: 10px; }
+    .control dl { margin: 0; }
+    .control dt { font-weight: bold; text-align: center; }
+    .control dd { display: inline-block; text-align: center; width: 50px; height: 20px; background-color: #E7E7E7; margin: 0; cursor: pointer; }
+</style>
+<div class="content">
+    <div class="show">
+        <h3>box-shadow演示</h3>
+        <div class="show-body">
+            <div class="show-target"></div>
+        </div>
+        <div class="show-tips"></div>
+    </div>
+    <div class="control">
+        <dl>
+            <dt>h-shadow</dt>
+            <dd>-2px</dd>
+            <dd>-1px</dd>
+            <dd>0</dd>
+            <dd>1px</dd>
+            <dd>2px</dd>
+        </dl>
+        <dl>
+            <dt>v-shadow</dt>
+            <dd>-2px</dd>
+            <dd>-1px</dd>
+            <dd>0</dd>
+            <dd>1px</dd>
+            <dd>2px</dd>
+        </dl>
+        <dl>
+            <dt>blur</dt>
+            <dd>0</dd>
+            <dd>1px</dd>
+            <dd>2px</dd>
+            <dd>3px</dd>
+            <dd>4px</dd>
+        </dl>
+        <dl>
+            <dt>spread</dt>
+            <dd>-2px</dd>
+            <dd>-1px</dd>
+            <dd>0</dd>
+            <dd>1px</dd>
+            <dd>2px</dd>
+        </dl>
+        <dl>
+            <dt>color</dt>
+            <dd>red</dd>
+            <dd>green</dd>
+            <dd>blue</dd>
+            <dd>black</dd>
+            <dd>white</dd>
+        </dl>
+        <dl>
+            <dt>inset</dt>
+            <dd>out</dd>
+            <dd>in</dd>
+        </dl>
+    </div>
+</div>
+<script>
+    (function () {
+        var target = document.getElementsByClassName("show-target")[0]
+        var tips = document.getElementsByClassName("show-tips")[0]
+        var boxShadow = ['0', '0', '0', '0', 'red', '']
+        var dls = document.getElementsByTagName("dl")
+        for (let index = 0; index < dls.length; index++) {
+            const element = dls[index];
+            var dt = element.getElementsByTagName("dt")[0]
+            dt.last = 0
+            dt.index = index
+            var dds = element.getElementsByTagName("dd")
+            for (let index2 = 0; index2 < dds.length; index2++) {
+                const element2 = dds[index2];
+                element2.index = index2
+                element2.onclick = function() {
+                    var dl = this.parentElement
+                    var dt = dl.getElementsByTagName("dt")[0]
+                    dl.getElementsByTagName("dd")[dt.last].style.cssText = 'background-color: #E7E7E7; color: black;'
+                    this.style.cssText = 'background-color: black; color: white;'
+                    dt.last = this.index
+                    if (dt.innerText == 'inset') {
+                        boxShadow[dt.index] = this.innerText == 'out' ? '' : 'inset'
+                    } else {
+                        boxShadow[dt.index] = this.innerText
+                    }
+                    tips.innerText = boxShadow.join(" ").trim()
+                    target.style.boxShadow = tips.innerText
+                }
+            }
+        }
+    })()
+</script>

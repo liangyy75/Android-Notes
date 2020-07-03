@@ -2,3 +2,23 @@ d:\knowledge\大三下\人工神经网络理论\高等数学.md
 d:\knowledge\大三下\人工神经网络理论\线性代数.md
 d:\knowledge\大三下\人工神经网络理论\人工神经网络理论_notes.md
 d:\knowledge\大三下\数据挖掘导论\数据挖掘导论_notes.md
+
+1. [高等数学复习之一（函数与极限）](https://blog.csdn.net/kkae8643150/article/details/78251763?depth_1-utm_source=distribute.pc_relevant.none-task&utm_source=distribute.pc_relevant.none-task)
+2. [线性代数的本质（一）——什么是向量](https://blog.csdn.net/lfasd97/article/details/82769909)
+3. [考研数学笔记1~5](https://blog.csdn.net/u012292754/article/details/72792470?depth_1-utm_source=distribute.pc_relevant.none-task&utm_source=distribute.pc_relevant.none-task)
+
+1. 代数
+2. 分析
+3. 几何
+
+[职业数学家推荐的数学专业书单](https://zhuanlan.zhihu.com/p/56399394)
+[有什么网站可以下载高中电子版教材？](https://www.zhihu.com/question/311230273)
+[有哪些免费在线下载国内大学教科书的网站推荐？](https://www.zhihu.com/question/310867922/answer/593891754)
+[本科专业⑤：软件工程课表](http://tieba.baidu.com/p/5706896774?pn=4)
+
+1. 计算机图形学
+2. 
+
+[看完你还学不会画画吗？【Glenn Vilppu大师超详细人体结构素描教程】](https://www.bilibili.com/video/av27355709?from=search&seid=468651520466079541)
+[我们花了2000小时设计的这套《素描课》](https://www.bilibili.com/video/av36244606/?spm_id_from=333.788.videocard.1)
+[3dmax2020入门到精通【全套】](https://www.bilibili.com/video/av77101571/?spm_id_from=333.788.videocard.0)
