@@ -1,23 +1,23 @@
 - [links](#links)
 - [basic1](#basic1)
-- [数组与函数](#%e6%95%b0%e7%bb%84%e4%b8%8e%e5%87%bd%e6%95%b0)
-- [函数进阶](#%e5%87%bd%e6%95%b0%e8%bf%9b%e9%98%b6)
-- [Lambda表达式](#lambda%e8%a1%a8%e8%be%be%e5%bc%8f)
-- [关键字表达式](#%e5%85%b3%e9%94%ae%e5%ad%97%e8%a1%a8%e8%be%be%e5%bc%8f)
-- [闭包](#%e9%97%ad%e5%8c%85)
-- [运算符](#%e8%bf%90%e7%ae%97%e7%ac%a6)
-- [字符串](#%e5%ad%97%e7%ac%a6%e4%b8%b2)
-- [区间语句](#%e5%8c%ba%e9%97%b4%e8%af%ad%e5%8f%a5)
-- [集合与映射](#%e9%9b%86%e5%90%88%e4%b8%8e%e6%98%a0%e5%b0%84)
-- [反射](#%e5%8f%8d%e5%b0%84)
-- [注解](#%e6%b3%a8%e8%a7%a3)
-- [构造方法与修饰符](#%e6%9e%84%e9%80%a0%e6%96%b9%e6%b3%95%e4%b8%8e%e4%bf%ae%e9%a5%b0%e7%ac%a6)
-- [类与对象1](#%e7%b1%bb%e4%b8%8e%e5%af%b9%e8%b1%a11)
-- [类与对象2](#%e7%b1%bb%e4%b8%8e%e5%af%b9%e8%b1%a12)
-- [类与对象3](#%e7%b1%bb%e4%b8%8e%e5%af%b9%e8%b1%a13)
-- [常用操作符](#%e5%b8%b8%e7%94%a8%e6%93%8d%e4%bd%9c%e7%ac%a6)
+- [数组与函数](#数组与函数)
+- [函数进阶](#函数进阶)
+- [Lambda表达式](#lambda表达式)
+- [关键字表达式](#关键字表达式)
+- [闭包](#闭包)
+- [运算符](#运算符)
+- [字符串](#字符串)
+- [区间语句](#区间语句)
+- [集合与映射](#集合与映射)
+- [反射](#反射)
+- [注解](#注解)
+- [构造方法与修饰符](#构造方法与修饰符)
+- [类与对象1](#类与对象1)
+- [类与对象2](#类与对象2)
+- [类与对象3](#类与对象3)
+- [常用操作符](#常用操作符)
 - [basic2](#basic2)
-- [Android相关](#android%e7%9b%b8%e5%85%b3)
+- [Android相关](#android相关)
 - [regex](#regex)
 - [io](#io)
 - [xml](#xml)
@@ -32,7 +32,7 @@
 - [async](#async)
 - [log](#log)
 - [image](#image)
-- [工具](#%e5%b7%a5%e5%85%b7)
+- [工具](#工具)
 
 ### links
 
@@ -468,7 +468,7 @@
     }
     // 重点
     println()
-        loop@ for (i in 1..5) {
+    loop@ for (i in 1..5) {
         println()
         for (j in 1..5) {
             print("($i, $j);")
@@ -497,12 +497,12 @@
     ```
 9. 中缀表达式 infix
     ```kt
-    Class Book{
+    class Book{
         infix fun on(any: Any): Boolean{
             return false
         }
     }
-    Class Desk{}
+    class Desk{}
     if (Book on Desk) {
         println("book on the desk")
     }
@@ -735,8 +735,8 @@
         "orange" in items -> println("juicy")
         "apple" in items -> println("apple is fine too")
     }
-    val flag: boolean = items.contains("apple")
-    val flag: boolean = items.containsAll(listOf("apple", "balanace"))
+    val flag: Boolean = items.contains("apple")
+    val flag: Boolean = items.containsAll(listOf("apple", "balanace"))
     ```
 4. List
     ```kt

@@ -1,0 +1,461 @@
+<style>
+    body { font: large '宋体'; }
+    .container { width: 640px; overflow: hidden; background-color: #ddd; margin: 0 auto; padding: 10px; }
+    .show { width: calc(40% - 10px); margin-right: 10px; float: left; text-align: center; }
+    .show-title { margin: 10px; padding: 0; font: bolder larger/24px '宋体'; }
+    .show-main { background-color: #FFBDC8; border-radius: 5%; padding: 10px; }
+    .show-grid-container { background-color: #9ED9E7; margin-bottom: 10px; }
+    .show-grid-item { display: inline-block; border: 1px solid black; background-color: #FFFFE0; cursor: pointer; }
+    .control { width: 60%; float: left; overflow: hidden; }
+    .control dl { margin: 0; padding: 10px; }
+    .control dl > dt { margin-bottom: 10px; padding: 0; font: bolder larger/24px '宋体'; text-align: center; }
+    .control dl > dd { display: inline-block; padding: 5px; background-color: #e7e7e7; margin: 5px; cursor: pointer; }
+    .control .control-item, .control .control-item2 { background-color: #aaa; padding: 5px; border-radius: 5px; margin: 10px; color: white; font: 14px/24px '黑体'; }
+    .control .control-item input, .control .control-item button, .control .control-item2 button { width: 50px; float: right; margin-left: 5px; }
+    .control .control-item2 input { width: 120px; float: right; margin-left: 5px; }
+    .page-container { height: 430px; overflow: hidden; }
+    .page { width: 100%; height: 100%; }
+    .nav { padding: 10px; width: 60%; float: right; text-align: center; }
+    .nav-in { display: inline-block; width:20px; line-height: 20px; border:1px solid black; background-color: #aaa; color: white; text-decoration: none; }
+</style>
+<div class="container">
+    <div class="show">
+        <h1 class="show-title">栅格布局演示</h1>
+        <div class="show-main">
+            <div class="show-grid-container">
+                <div class="show-grid-item">item1</div>
+                <div class="show-grid-item">item2</div>
+                <div class="show-grid-item">item3</div>
+            </div>
+            <span style="background-color: chocolate;">跟随的行内元素</span>
+        </div>
+        <p class="show-info"></p>
+    </div>
+    <div class="control page-container">
+        <div class="page" id="page1">
+            <dl class="select-item" data-attr="display">
+                <dt>display</dt>
+                <dd>block</dd>
+                <dd>inline-block</dd>
+                <dd>grid</dd>
+                <dd>inline-grid</dd>
+            </dl>
+        </div>
+        <div class="page" id="page2">
+            <div class="control-item attr-item" data-attr="height" data-unit='px'>
+                <label for="height">height</label>
+                <input type="number" name="height" id="height">
+                <input type="range" value="100" min="100" max="300"/>
+                <button type="button">auto</button>
+            </div>
+            <div class="control-item attr-item" data-attr="width" data-unit='px'>
+                <label for="width">width</label>
+                <input type="number" name="width" id="width">
+                <input type="range" value="100" min="100" max="300"/>
+                <button type="button">auto</button>
+            </div>
+            <div class="control-item" id="custom-item1">
+                <label for="itemCount">item count</label>
+                <input type="number" name="itemCount" id="itemCount">
+                <input type="range" value="3" min="0" max="10"/>
+                <button type="button">3</button>
+            </div>
+            <div class="control-item" id="custom-item2">
+                <label for="itemIndex">item index</label>
+                <input type="number" name="itemIndex" id="itemIndex">
+                <input type="range" value="0" min="0" max="3"/>
+                <button type="button">0</button>
+            </div>
+            <div class="control-item" id="custom-item3">
+                <label for="lineIndex">line index</label>
+                <input type="number" name="lineIndex" id="lineIndex">
+                <input type="range" value="1" min="1" max="10"/>
+                <button type="button">0</button>
+            </div>
+            <div class="control-item" id="custom-item4">
+                <label for="gridTemplateRows">grid-template-row</label>
+                <input type="number" name="gridTemplateRows" id="gridTemplateRows">
+                <input type="range" value="10" min="10" max="300"/>
+                <button type="button">auto</button>
+            </div>
+            <div class="control-item" id="custom-item5">
+                <label for="gridTemplateColumns">grid-template-column</label>
+                <input type="number" name="gridTemplateColumns" id="gridTemplateColumns">
+                <input type="range" value="10" min="10" max="300"/>
+                <button type="button">auto</button>
+            </div>
+            <div class="control-item2" data-attr="gridTemplateRows">
+                <label for="gridTemplateRows">grid-template-rows</label>
+                <input type="text" name="gridTemplateRows" id="gridTemplateRows">
+                <button type="button">sure</button>
+            </div>
+            <div class="control-item2" data-attr="gridTemplateColumns">
+                <label for="gridTemplateColumns">grid-template-columns</label>
+                <input type="text" name="gridTemplateColumns" id="gridTemplateColumns">
+                <button type="button">sure</button>
+            </div>
+            <div class="control-item2" data-attr="gridTemplateAreas">
+                <label for="gridTemplateAreas">grid-template-areas</label>
+                <input type="text" name="gridTemplateAreas" id="gridTemplateAreas">
+                <button type="button">sure</button>
+            </div>
+        </div>
+        <div class="page" id="page3">
+            <div class="control-item attr-item" data-attr="gridRowGap" data-unit="px" data-init="10">
+                <label for="gridRowGap">grid-row-gap</label>
+                <input type="number" name="gridRowGap" id="gridRowGap">
+                <input type="range" value="0" min="0" max="300"/>
+                <button type="button">auto</button>
+            </div>
+            <div class="control-item attr-item" data-attr="gridColumnGap" data-unit="px" data-init="10">
+                <label for="gridColumnGap">grid-column-gap</label>
+                <input type="number" name="gridColumnGap" id="gridColumnGap">
+                <input type="range" value="0" min="0" max="300"/>
+                <button type="button">auto</button>
+            </div>
+            <div class="control-item attr-item" data-attr="gridGap" data-unit="px" data-init="10">
+                <label for="gridGap">grid-gap</label>
+                <input type="number" name="gridGap" id="gridGap">
+                <input type="range" value="0" min="0" max="300"/>
+                <button type="button">auto</button>
+            </div>
+        </div>
+        <div class="page" id="page4">
+            <div class="control-item attr-item" data-attr="gridRowStart" data-target='selected'>
+                <label for="gridRowStart">grid-row-start</label>
+                <input type="number" name="gridRowStart" id="gridRowStart">
+                <input type="range" value="1" min="1" max="11"/>
+                <button type="button">auto</button>
+            </div>
+            <div class="control-item attr-item" data-attr="gridRowEnd" data-target='selected'>
+                <label for="gridRowEnd">grid-row-end</label>
+                <input type="number" name="gridRowEnd" id="gridRowEnd">
+                <input type="range" value="1" min="1" max="11"/>
+                <button type="button">auto</button>
+            </div>
+            <div class="control-item attr-item" data-attr="gridColumnStart" data-target='selected'>
+                <label for="gridColumnStart">grid-column-start</label>
+                <input type="number" name="gridColumnStart" id="gridColumnStart">
+                <input type="range" value="1" min="1" max="11"/>
+                <button type="button">auto</button>
+            </div>
+            <div class="control-item attr-item" data-attr="gridColumnEnd" data-target='selected'>
+                <label for="gridColumnEnd">grid-column-end</label>
+                <input type="number" name="gridColumnEnd" id="gridColumnEnd">
+                <input type="range" value="1" min="1" max="11"/>
+                <button type="button">auto</button>
+            </div>
+            <div class="control-item2" data-attr="gridRow" data-target='selected'>
+                <label for="gridRow">grid-row</label>
+                <input type="text" name="gridRow" id="gridRow">
+                <button type="button">sure</button>
+            </div>
+            <div class="control-item2" data-attr="gridColumn" data-target='selected'>
+                <label for="gridColumn">grid-column</label>
+                <input type="text" name="gridColumn" id="gridColumn">
+                <button type="button">sure</button>
+            </div>
+            <div class="control-item2" data-attr="gridArea" data-target='selected'>
+                <label for="gridArea">grid-area</label>
+                <input type="text" name="gridArea" id="gridArea">
+                <button type="button">sure</button>
+            </div>
+            <div class="control-item2" data-attr="zIndex" data-target='selected'>
+                <label for="zIndex">z-index</label>
+                <input type="text" name="zIndex" id="zIndex">
+                <button type="button">sure</button>
+            </div>
+        </div>
+        <div class="page" id="page5">
+            <div class="control-item2" data-attr="gridTemplateRows">
+                <label for="gridTemplateRows">grid-template-rows</label>
+                <input type="text" name="gridTemplateRows" id="gridTemplateRows">
+                <button type="button">sure</button>
+            </div>
+            <div class="control-item2" data-attr="gridTemplateColumns">
+                <label for="gridTemplateColumns">grid-template-columns</label>
+                <input type="text" name="gridTemplateColumns" id="gridTemplateColumns">
+                <button type="button">sure</button>
+            </div>
+            <div class="control-item2" data-attr="gridTemplateAreas">
+                <label for="gridTemplateAreas">grid-template-areas</label>
+                <input type="text" name="gridTemplateAreas" id="gridTemplateAreas">
+                <button type="button">sure</button>
+            </div>
+        </div>
+        <div class="page" id="page6">
+            <div class="control-item attr-item" data-attr="gridAutoRows" data-unit='px'>
+                <label for="gridAutoRows">grid-auto-rows</label>
+                <input type="number" name="gridAutoRows" id="gridAutoRows">
+                <input type="range" value="100" min="0" max="300"/>
+                <button type="button">auto</button>
+            </div>
+            <div class="control-item attr-item" data-attr="gridAutoColumns" data-unit='px'>
+                <label for="gridAutoColumns">grid-auto-columns</label>
+                <input type="number" name="gridAutoColumns" id="gridAutoColumns">
+                <input type="range" value="100" min="0" max="300"/>
+                <button type="button">auto</button>
+            </div>
+            <div class="control-item2" data-attr="gridAutoRows">
+                <label for="gridAutoRows">grid-auto-rows</label>
+                <input type="text" name="gridAutoRows" id="gridAutoRows">
+                <button type="button">sure</button>
+            </div>
+            <div class="control-item2" data-attr="gridAutoColumns">
+                <label for="gridAutoColumns">grid-auto-columns</label>
+                <input type="text" name="gridAutoColumns" id="gridAutoColumns">
+                <button type="button">sure</button>
+            </div>
+        </div>
+        <div class="page" id="page7">
+            <dl class="select-item2">
+                <dt>data-attr</dt>
+                <dd>justify-items</dd>
+                <dd>justify-self</dd>
+                <dd>justify-content</dd>
+                <dd>align-items</dd>
+                <dd>align-self</dd>
+                <dd>align-content</dd>
+            </dl>
+            <dl class="select-item select-item2" data-target='selected'>
+                <dt>justify-items</dt>
+                <dd>auto</dd>
+                <dd>normal</dd>
+                <dd>start</dd>
+                <dd>end</dd>
+                <dd>center</dd>
+                <dd>stretch</dd>
+                <dd>baseline</dd>
+                <dd>first baseline</dd>
+                <dd>last baseline</dd>
+            </dl>
+        </div>
+    </div>
+    <nav class="nav">
+        <a class="nav-in" href="#page1">1</a>
+        <a class="nav-in" href="#page2">2</a>
+        <a class="nav-in" href="#page3">3</a>
+        <a class="nav-in" href="#page4">4</a>
+        <a class="nav-in" href="#page5">5</a>
+        <a class="nav-in" href="#page6">6</a>
+        <a class="nav-in" href="#page7">7</a>
+    </nav>
+    <button type="button" onclick='history.go()'>reset</button>
+</div>
+<script>
+    (function() {
+        function getCSS(obj, style) { return window.getComputedStyle ? getComputedStyle(obj)[style] : obj.currentStyle[style]; };
+        var show = document.getElementsByClassName("show")[0]
+        var target = show.getElementsByClassName("show-grid-container")[0]
+        var targets = { 'target': target }
+        var tips = show.getElementsByClassName("show-info")[0]
+        var control = document.getElementsByClassName("control")[0]
+        target.onclick = function(event) {
+            if (targets['selected'] != null) {
+                targets['selected'].style.outline = ''
+            }
+            var target = event.target
+            tips.innerText = target.style.cssText
+            targets['selected'] = target
+            targets['selected'].style.outline = '3px solid lightgreen'
+            getElementFromControlItem(temp)
+            if (target.classList.contains('show-grid-item')) {
+                number.value = range.value = Array.prototype.indexOf.call(this.getElementsByClassName("show-grid-item"), target) + 1
+            } else {
+                number.value = range.value = 0
+            }
+        }
+
+        var dls = control.getElementsByClassName("select-item")
+        Array.prototype.forEach.call(dls, (dl, index, dls) => {
+            dl.index = -1
+            var dds = dl.getElementsByTagName("dd")
+            Array.prototype.forEach.call(dds, (dd, index2, dds) => {
+                dd.index = index2
+                dd.onclick = function() {
+                    var dl = this.parentNode
+                    if (dl.index == this.index) {
+                        return
+                    }
+                    var target = targets[dl.dataset.target ? dl.dataset.target : 'target']
+                    if (getCSS(target, 'border-width') != '0px') {
+                        target.style.padding = this.innerText == 'inline' ? '0' : '10px'
+                    }
+                    target.style[dl.dataset.attr] = this.innerText
+                    tips.innerText = target.style.cssText
+                    this.style.cssText = 'color: white; background-color: black'
+                    if (dl.index >= 0) {
+                        dl.getElementsByTagName("dd")[dl.index].style.cssText = 'color: black; background-color: #e7e7e7'
+                    }
+                    dl.index = this.index
+                }
+            })
+        })
+
+        var dls2 = control.getElementsByClassName("select-item2")
+        Array.prototype.forEach.call(dls2[0].getElementsByTagName("dd"), (dd, index, dl) => {
+            dd.index = index
+        })
+        dls2[0].index = -1
+        dls2[0].onclick = function(event) {
+            var target = event.target
+            if (target.tagName == 'DD' && target.index != this.index) {
+                var sibling = this.nextElementSibling
+                sibling.dataset.attr = target.innerText
+                sibling.getElementsByTagName("dt")[0].innerText = target.innerText
+                if (target.innerText.endsWith("content") && sibling.innerHTML.trim().endsWith("e</dd>")) {
+                    sibling.innerHTML += ' <dd>space-around</dd> <dd>space-between</dd> <dd>space-evenly</dd>'
+                } else if (sibling.innerHTML.trim().endsWith("y</dd>")) {
+                    sibling.innerHTML = sibling.innerHTML.slice(0, -67)
+                }
+                if (sibling.index >= 0) {
+                    sibling.getElementsByTagName("dd")[sibling.index].style.cssText = 'color: black; background-color: #e7e7e7'
+                }
+                sibling.index = -1
+                target.style.cssText = 'color: white; background-color: black'
+                if (this.index >= 0) {
+                    this.getElementsByTagName("dd")[this.index].style.cssText = 'color: black; background-color: #e7e7e7'
+                }
+                this.index = target.index
+            }
+        }
+
+        var controlItems = control.getElementsByClassName("attr-item")
+        var label, number, range, button
+        var getElementFromControlItem = function(controlItem) {
+            label = controlItem.getElementsByTagName("label")[0]
+            number = controlItem.getElementsByTagName("input")[0]
+            range = controlItem.getElementsByTagName("input")[1]
+            button = controlItem.getElementsByTagName("button")[0]
+        }
+        Array.prototype.forEach.call(controlItems, (item, index, controlItems) => {
+            getElementFromControlItem(item)
+            var attr = item.dataset.attr ? item.dataset.attr : label.dataset.attr
+            var target = targets[item.dataset.target ? item.dataset.target : 'target']
+            var value = target ? getCSS(target, attr) : ''
+            button.value = number.value = range.value = value.endsWith('px') ? value.slice(0, -2) : (item.dataset.init ? item.dataset.init : range.value)
+            button.onclick = number.oninput = number.onfocus = number.onclick = range.onfocus = range.oninput = range.onclick = function() {
+                var item = this.parentNode
+                getElementFromControlItem(item)
+                var attr = item.dataset.attr ? item.dataset.attr : label.dataset.attr
+                var target = targets[item.dataset.target ? item.dataset.target : 'target']
+                if (this instanceof HTMLButtonElement) {
+                    target.style[attr] = button.innerText
+                    var value = getCSS(target, attr)
+                    number.value = range.value = value.endsWith('px') ? value.slice(0, -2) : button.value
+                } else {
+                    target.style[attr] = this.value + (item.dataset.unit != null ? item.dataset.unit : '')
+                    number.value = range.value = this.value
+                }
+                tips.innerText = target.style.cssText
+            }
+        })
+
+        var configCustomItem = function(customItem, callback) {
+            getElementFromControlItem(customItem)
+            callback(label, button, number, range)
+        }
+        var temp = document.getElementById("custom-item2")
+        configCustomItem(document.getElementById("custom-item1"), (label, button, number, range) => {
+            button.value = number.value = 3
+            button.onclick = number.oninput = number.onfocus = number.onclick = range.onfocus = range.oninput = range.onclick = function() {
+                var tempRange = temp.getElementsByTagName("input")[1]
+                tempRange.value = Math.min(tempRange.value, this.value)
+                tempRange.click()
+                var innerHTML = ''
+                for (let i = 0; i < this.value; i++) {
+                    innerHTML += '<div class="show-grid-item">item' + (i + 1) + '</div> '
+                }
+                target.innerHTML = innerHTML
+                tempRange.max = number.value = range.value = this.value
+            }
+        })
+        configCustomItem(temp, (label, button, number, range) => {
+            button.value = number.value = 0
+            button.onclick = number.oninput = number.onfocus = number.onclick = number.onpropertychange = range.onfocus = range.oninput = range.onclick = range.onpropertychange = function() {
+                if (targets['selected'] != null) {
+                    targets['selected'].style.outline = ''
+                }
+                targets['selected'] = this.value == 0 ? target : target.getElementsByClassName("show-grid-item")[this.value - 1]
+                targets['selected'].style.outline = '3px solid lightgreen'
+                number.value = range.value = this.value
+            }
+        })
+        var lineIndex = 1
+        configCustomItem(document.getElementById("custom-item3"), (label, button, number, range) => {
+            button.value = number.value = 1
+            button.onclick = number.oninput = number.onfocus = number.onclick = range.onfocus = range.oninput = range.onclick = function() {
+                number.value = range.value = lineIndex = this.value
+            }
+        })
+        var gridRows = []
+        Array.prototype.replace = function(value, newValue) {
+            for (let i = 0; i < this.length; i++) {
+                if (this[i] == value) {
+                    this[i] = newValue
+                }
+            }
+            return this
+        }
+        configCustomItem(document.getElementById("custom-item4"), (label, button, number, range) => {
+            number.value = range.value = 30
+            button.onclick = number.oninput = number.onfocus = number.onclick = range.onfocus = range.oninput = range.onclick = function() {
+                var rowIndex = temp.getElementsByTagName("input")[1].value
+                var flag = this instanceof HTMLButtonElement
+                if (rowIndex > 0) {
+                    gridRows[rowIndex - 1] = flag ? 'auto' : (this.value + 'px')
+                    target.style.gridTemplateRows = gridRows.replace(null, 'auto').join(' ')
+                    tips.innerText = target.style.cssText
+                }
+                if (!flag) {
+                    number.value = range.value = this.value
+                }
+            }
+        })
+        var gridColumns = []
+        configCustomItem(document.getElementById("custom-item5"), (label, button, number, range) => {
+            number.value = range.value = 100
+            button.onclick = number.oninput = number.onfocus = number.onclick = range.onfocus = range.oninput = range.onclick = function() {
+                var flag = this instanceof HTMLButtonElement
+                if (lineIndex > 0) {
+                    gridColumns[lineIndex - 1] = flag ? 'auto' : (this.value + 'px')
+                    target.style.gridTemplateColumns = gridColumns.replace(null, 'auto').join(' ')
+                    tips.innerText = target.style.cssText
+                }
+                if (!flag) {
+                    number.value = range.value = this.value
+                }
+            }
+        })
+
+        var controlItems2 = control.getElementsByClassName("control-item2")
+        Array.prototype.forEach.call(controlItems2, (item, index, controlItems2) => {
+            getElementFromControlItem(item)
+            button.onclick = function() {
+                var item = this.parentNode
+                getElementFromControlItem(item)
+                var attr = item.dataset.attr ? item.dataset.attr : label.dataset.attr
+                var target = targets[item.dataset.target ? item.dataset.target : 'target']
+                target.style[attr] = item.getElementsByTagName("input")[0].value
+                tips.innerText = target.style.cssText
+            }
+        })
+
+        var navs = document.getElementsByClassName("nav")
+        Array.prototype.forEach.call(navs, (nav, index, navs) => {
+            Array.prototype.forEach.call(nav.getElementsByClassName("nav-in"), (navIn, index2, nav) => {
+                navIn.index = index2
+            })
+            nav.index = 0
+            nav.onclick = function(event) {
+                var target = event.target
+                if (target.classList.contains('nav-in')) {
+                    this.getElementsByClassName("nav-in")[nav.index].style.cssText = 'border: 1px solid black;'
+                    nav.index = target.index
+                    target.style.cssText = 'border: 1px solid blue; box-shadow: lightblue 0px 0px 1px;'
+                }
+            }
+            nav.getElementsByClassName("nav-in")[nav.index].style.cssText = 'border: 1px solid blue; box-shadow: lightblue 0px 0px 1px;'
+        })
+    })()
+</script>

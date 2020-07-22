@@ -169,6 +169,9 @@
         - [CSS边框效果](#css边框效果)
         - [CSS背景效果](#css背景效果)
         - [CSS遮罩和毛玻璃效果](#css遮罩和毛玻璃效果)
+- [额外](#额外)
+    - [知识点1](#知识点1)
+        - [知识点1.1](#知识点11)
 - [【重点】、【不是很懂】](#重点不是很懂)
 
 # urls
@@ -5296,29 +5299,751 @@ CSS3新增了多列布局特性，可以让浏览器确定何时结束一列和�
 10. 【对齐】
     1. 【网格项目对齐方式（Box Alignment）】CSS的Box Alignment Module补充了网格项目沿着网格行或列轴对齐方式。
     2. **justify-items** / **justify-self** / **align-items** / **align-self** justify-items和justify-self指定网格项目沿着行轴对齐方式；align-items和align-self指定网格项目沿着列轴对齐方式。justify-items和align-items应用在网格容器上。align-self和justify-self属性用于网格项目自身对齐方式。这四个属性主要接受以下属性值：auto | normal | start | end | center | stretch | baseline | first baseline | last baseline
-    3. 
+    3. 【网格轨道对齐方式】align-content指定网格轨道沿着行轴对齐方式；justify-content指定网格轨道沿着列轴对齐方式。它们支持下面属性：normal | start | end | center | stretch | space-around | space-between | space-evenly | baseline | first baseline | last baseline
+
+```html
+<style>
+    body { font: large '宋体'; }
+    .container { width: 640px; overflow: hidden; background-color: #ddd; margin: 0 auto; padding: 10px; }
+    .show { width: calc(40% - 10px); margin-right: 10px; float: left; text-align: center; }
+    .show-title { margin: 10px; padding: 0; font: bolder larger/24px '宋体'; }
+    .show-main { background-color: #FFBDC8; border-radius: 5%; padding: 10px; }
+    .show-grid-container { background-color: #9ED9E7; margin-bottom: 10px; }
+    .show-grid-item { display: inline-block; border: 1px solid black; background-color: #FFFFE0; cursor: pointer; }
+    .control { width: 60%; float: left; overflow: hidden; }
+    .control dl { margin: 0; padding: 10px; }
+    .control dl > dt { margin-bottom: 10px; padding: 0; font: bolder larger/24px '宋体'; text-align: center; }
+    .control dl > dd { display: inline-block; padding: 5px; background-color: #e7e7e7; margin: 5px; cursor: pointer; }
+    .control .control-item, .control .control-item2 { background-color: #aaa; padding: 5px; border-radius: 5px; margin: 10px; color: white; font: 14px/24px '黑体'; }
+    .control .control-item input, .control .control-item button, .control .control-item2 button { width: 50px; float: right; margin-left: 5px; }
+    .control .control-item2 input { width: 120px; float: right; margin-left: 5px; }
+    .page-container { height: 430px; overflow: hidden; }
+    .page { width: 100%; height: 100%; }
+    .nav { padding: 10px; width: 60%; float: right; text-align: center; }
+    .nav-in { display: inline-block; width:20px; line-height: 20px; border:1px solid black; background-color: #aaa; color: white; text-decoration: none; }
+</style>
+<div class="container">
+    <div class="show">
+        <h1 class="show-title">栅格布局演示</h1>
+        <div class="show-main">
+            <div class="show-grid-container">
+                <div class="show-grid-item">item1</div>
+                <div class="show-grid-item">item2</div>
+                <div class="show-grid-item">item3</div>
+            </div>
+            <span style="background-color: chocolate;">跟随的行内元素</span>
+        </div>
+        <p class="show-info"></p>
+    </div>
+    <div class="control page-container">
+        <div class="page" id="page1">
+            <dl class="select-item" data-attr="display">
+                <dt>display</dt>
+                <dd>block</dd>
+                <dd>inline-block</dd>
+                <dd>grid</dd>
+                <dd>inline-grid</dd>
+            </dl>
+        </div>
+        <div class="page" id="page2">
+            <div class="control-item attr-item" data-attr="height" data-unit='px'>
+                <label for="height">height</label>
+                <input type="number" name="height" id="height">
+                <input type="range" value="100" min="100" max="300"/>
+                <button type="button">auto</button>
+            </div>
+            <div class="control-item attr-item" data-attr="width" data-unit='px'>
+                <label for="width">width</label>
+                <input type="number" name="width" id="width">
+                <input type="range" value="100" min="100" max="300"/>
+                <button type="button">auto</button>
+            </div>
+            <div class="control-item" id="custom-item1">
+                <label for="itemCount">item count</label>
+                <input type="number" name="itemCount" id="itemCount">
+                <input type="range" value="3" min="0" max="10"/>
+                <button type="button">3</button>
+            </div>
+            <div class="control-item" id="custom-item2">
+                <label for="itemIndex">item index</label>
+                <input type="number" name="itemIndex" id="itemIndex">
+                <input type="range" value="0" min="0" max="3"/>
+                <button type="button">0</button>
+            </div>
+            <div class="control-item" id="custom-item3">
+                <label for="lineIndex">line index</label>
+                <input type="number" name="lineIndex" id="lineIndex">
+                <input type="range" value="1" min="1" max="10"/>
+                <button type="button">0</button>
+            </div>
+            <div class="control-item" id="custom-item4">
+                <label for="gridTemplateRows">grid-template-row</label>
+                <input type="number" name="gridTemplateRows" id="gridTemplateRows">
+                <input type="range" value="10" min="10" max="300"/>
+                <button type="button">auto</button>
+            </div>
+            <div class="control-item" id="custom-item5">
+                <label for="gridTemplateColumns">grid-template-column</label>
+                <input type="number" name="gridTemplateColumns" id="gridTemplateColumns">
+                <input type="range" value="10" min="10" max="300"/>
+                <button type="button">auto</button>
+            </div>
+            <div class="control-item2" data-attr="gridTemplateRows">
+                <label for="gridTemplateRows">grid-template-rows</label>
+                <input type="text" name="gridTemplateRows" id="gridTemplateRows">
+                <button type="button">sure</button>
+            </div>
+            <div class="control-item2" data-attr="gridTemplateColumns">
+                <label for="gridTemplateColumns">grid-template-columns</label>
+                <input type="text" name="gridTemplateColumns" id="gridTemplateColumns">
+                <button type="button">sure</button>
+            </div>
+            <div class="control-item2" data-attr="gridTemplateAreas">
+                <label for="gridTemplateAreas">grid-template-areas</label>
+                <input type="text" name="gridTemplateAreas" id="gridTemplateAreas">
+                <button type="button">sure</button>
+            </div>
+        </div>
+        <div class="page" id="page3">
+            <div class="control-item attr-item" data-attr="gridRowGap" data-unit="px" data-init="10">
+                <label for="gridRowGap">grid-row-gap</label>
+                <input type="number" name="gridRowGap" id="gridRowGap">
+                <input type="range" value="0" min="0" max="300"/>
+                <button type="button">auto</button>
+            </div>
+            <div class="control-item attr-item" data-attr="gridColumnGap" data-unit="px" data-init="10">
+                <label for="gridColumnGap">grid-column-gap</label>
+                <input type="number" name="gridColumnGap" id="gridColumnGap">
+                <input type="range" value="0" min="0" max="300"/>
+                <button type="button">auto</button>
+            </div>
+            <div class="control-item attr-item" data-attr="gridGap" data-unit="px" data-init="10">
+                <label for="gridGap">grid-gap</label>
+                <input type="number" name="gridGap" id="gridGap">
+                <input type="range" value="0" min="0" max="300"/>
+                <button type="button">auto</button>
+            </div>
+        </div>
+        <div class="page" id="page4">
+            <div class="control-item attr-item" data-attr="gridRowStart" data-target='selected'>
+                <label for="gridRowStart">grid-row-start</label>
+                <input type="number" name="gridRowStart" id="gridRowStart">
+                <input type="range" value="1" min="1" max="11"/>
+                <button type="button">auto</button>
+            </div>
+            <div class="control-item attr-item" data-attr="gridRowEnd" data-target='selected'>
+                <label for="gridRowEnd">grid-row-end</label>
+                <input type="number" name="gridRowEnd" id="gridRowEnd">
+                <input type="range" value="1" min="1" max="11"/>
+                <button type="button">auto</button>
+            </div>
+            <div class="control-item attr-item" data-attr="gridColumnStart" data-target='selected'>
+                <label for="gridColumnStart">grid-column-start</label>
+                <input type="number" name="gridColumnStart" id="gridColumnStart">
+                <input type="range" value="1" min="1" max="11"/>
+                <button type="button">auto</button>
+            </div>
+            <div class="control-item attr-item" data-attr="gridColumnEnd" data-target='selected'>
+                <label for="gridColumnEnd">grid-column-end</label>
+                <input type="number" name="gridColumnEnd" id="gridColumnEnd">
+                <input type="range" value="1" min="1" max="11"/>
+                <button type="button">auto</button>
+            </div>
+            <div class="control-item2" data-attr="gridRow" data-target='selected'>
+                <label for="gridRow">grid-row</label>
+                <input type="text" name="gridRow" id="gridRow">
+                <button type="button">sure</button>
+            </div>
+            <div class="control-item2" data-attr="gridColumn" data-target='selected'>
+                <label for="gridColumn">grid-column</label>
+                <input type="text" name="gridColumn" id="gridColumn">
+                <button type="button">sure</button>
+            </div>
+            <div class="control-item2" data-attr="gridArea" data-target='selected'>
+                <label for="gridArea">grid-area</label>
+                <input type="text" name="gridArea" id="gridArea">
+                <button type="button">sure</button>
+            </div>
+            <div class="control-item2" data-attr="zIndex" data-target='selected'>
+                <label for="zIndex">z-index</label>
+                <input type="text" name="zIndex" id="zIndex">
+                <button type="button">sure</button>
+            </div>
+        </div>
+        <div class="page" id="page5">
+            <div class="control-item2" data-attr="gridTemplateRows">
+                <label for="gridTemplateRows">grid-template-rows</label>
+                <input type="text" name="gridTemplateRows" id="gridTemplateRows">
+                <button type="button">sure</button>
+            </div>
+            <div class="control-item2" data-attr="gridTemplateColumns">
+                <label for="gridTemplateColumns">grid-template-columns</label>
+                <input type="text" name="gridTemplateColumns" id="gridTemplateColumns">
+                <button type="button">sure</button>
+            </div>
+            <div class="control-item2" data-attr="gridTemplateAreas">
+                <label for="gridTemplateAreas">grid-template-areas</label>
+                <input type="text" name="gridTemplateAreas" id="gridTemplateAreas">
+                <button type="button">sure</button>
+            </div>
+        </div>
+        <div class="page" id="page6">
+            <div class="control-item attr-item" data-attr="gridAutoRows" data-unit='px'>
+                <label for="gridAutoRows">grid-auto-rows</label>
+                <input type="number" name="gridAutoRows" id="gridAutoRows">
+                <input type="range" value="100" min="0" max="300"/>
+                <button type="button">auto</button>
+            </div>
+            <div class="control-item attr-item" data-attr="gridAutoColumns" data-unit='px'>
+                <label for="gridAutoColumns">grid-auto-columns</label>
+                <input type="number" name="gridAutoColumns" id="gridAutoColumns">
+                <input type="range" value="100" min="0" max="300"/>
+                <button type="button">auto</button>
+            </div>
+            <div class="control-item2" data-attr="gridAutoRows">
+                <label for="gridAutoRows">grid-auto-rows</label>
+                <input type="text" name="gridAutoRows" id="gridAutoRows">
+                <button type="button">sure</button>
+            </div>
+            <div class="control-item2" data-attr="gridAutoColumns">
+                <label for="gridAutoColumns">grid-auto-columns</label>
+                <input type="text" name="gridAutoColumns" id="gridAutoColumns">
+                <button type="button">sure</button>
+            </div>
+        </div>
+        <div class="page" id="page7">
+            <dl class="select-item2">
+                <dt>data-attr</dt>
+                <dd>justify-items</dd>
+                <dd>justify-self</dd>
+                <dd>justify-content</dd>
+                <dd>align-items</dd>
+                <dd>align-self</dd>
+                <dd>align-content</dd>
+            </dl>
+            <dl class="select-item select-item2" data-target='selected'>
+                <dt>justify-items</dt>
+                <dd>auto</dd>
+                <dd>normal</dd>
+                <dd>start</dd>
+                <dd>end</dd>
+                <dd>center</dd>
+                <dd>stretch</dd>
+                <dd>baseline</dd>
+                <dd>first baseline</dd>
+                <dd>last baseline</dd>
+            </dl>
+        </div>
+    </div>
+    <nav class="nav">
+        <a class="nav-in" href="#page1">1</a>
+        <a class="nav-in" href="#page2">2</a>
+        <a class="nav-in" href="#page3">3</a>
+        <a class="nav-in" href="#page4">4</a>
+        <a class="nav-in" href="#page5">5</a>
+        <a class="nav-in" href="#page6">6</a>
+        <a class="nav-in" href="#page7">7</a>
+    </nav>
+    <button type="button" onclick='history.go()'>reset</button>
+</div>
+<script>
+    (function() {
+        function getCSS(obj, style) { return window.getComputedStyle ? getComputedStyle(obj)[style] : obj.currentStyle[style]; };
+        var show = document.getElementsByClassName("show")[0]
+        var target = show.getElementsByClassName("show-grid-container")[0]
+        var targets = { 'target': target }
+        var tips = show.getElementsByClassName("show-info")[0]
+        var control = document.getElementsByClassName("control")[0]
+        target.onclick = function(event) {
+            if (targets['selected'] != null) {
+                targets['selected'].style.outline = ''
+            }
+            var target = event.target
+            tips.innerText = target.style.cssText
+            targets['selected'] = target
+            targets['selected'].style.outline = '3px solid lightgreen'
+            getElementFromControlItem(temp)
+            if (target.classList.contains('show-grid-item')) {
+                number.value = range.value = Array.prototype.indexOf.call(this.getElementsByClassName("show-grid-item"), target) + 1
+            } else {
+                number.value = range.value = 0
+            }
+        }
+
+        var dls = control.getElementsByClassName("select-item")
+        Array.prototype.forEach.call(dls, (dl, index, dls) => {
+            dl.index = -1
+            var dds = dl.getElementsByTagName("dd")
+            Array.prototype.forEach.call(dds, (dd, index2, dds) => {
+                dd.index = index2
+                dd.onclick = function() {
+                    var dl = this.parentNode
+                    if (dl.index == this.index) {
+                        return
+                    }
+                    var target = targets[dl.dataset.target ? dl.dataset.target : 'target']
+                    if (getCSS(target, 'border-width') != '0px') {
+                        target.style.padding = this.innerText == 'inline' ? '0' : '10px'
+                    }
+                    target.style[dl.dataset.attr] = this.innerText
+                    tips.innerText = target.style.cssText
+                    this.style.cssText = 'color: white; background-color: black'
+                    if (dl.index >= 0) {
+                        dl.getElementsByTagName("dd")[dl.index].style.cssText = 'color: black; background-color: #e7e7e7'
+                    }
+                    dl.index = this.index
+                }
+            })
+        })
+
+        var dls2 = control.getElementsByClassName("select-item2")
+        Array.prototype.forEach.call(dls2[0].getElementsByTagName("dd"), (dd, index, dl) => {
+            dd.index = index
+        })
+        dls2[0].index = -1
+        dls2[0].onclick = function(event) {
+            var target = event.target
+            if (target.tagName == 'DD' && target.index != this.index) {
+                var sibling = this.nextElementSibling
+                sibling.dataset.attr = target.innerText
+                sibling.getElementsByTagName("dt")[0].innerText = target.innerText
+                if (target.innerText.endsWith("content") && sibling.innerHTML.trim().endsWith("e</dd>")) {
+                    sibling.innerHTML += ' <dd>space-around</dd> <dd>space-between</dd> <dd>space-evenly</dd>'
+                } else if (sibling.innerHTML.trim().endsWith("y</dd>")) {
+                    sibling.innerHTML = sibling.innerHTML.slice(0, -67)
+                }
+                if (sibling.index >= 0) {
+                    sibling.getElementsByTagName("dd")[sibling.index].style.cssText = 'color: black; background-color: #e7e7e7'
+                }
+                sibling.index = -1
+                target.style.cssText = 'color: white; background-color: black'
+                if (this.index >= 0) {
+                    this.getElementsByTagName("dd")[this.index].style.cssText = 'color: black; background-color: #e7e7e7'
+                }
+                this.index = target.index
+            }
+        }
+
+        var controlItems = control.getElementsByClassName("attr-item")
+        var label, number, range, button
+        var getElementFromControlItem = function(controlItem) {
+            label = controlItem.getElementsByTagName("label")[0]
+            number = controlItem.getElementsByTagName("input")[0]
+            range = controlItem.getElementsByTagName("input")[1]
+            button = controlItem.getElementsByTagName("button")[0]
+        }
+        Array.prototype.forEach.call(controlItems, (item, index, controlItems) => {
+            getElementFromControlItem(item)
+            var attr = item.dataset.attr ? item.dataset.attr : label.dataset.attr
+            var target = targets[item.dataset.target ? item.dataset.target : 'target']
+            var value = target ? getCSS(target, attr) : ''
+            button.value = number.value = range.value = value.endsWith('px') ? value.slice(0, -2) : (item.dataset.init ? item.dataset.init : range.value)
+            button.onclick = number.oninput = number.onfocus = number.onclick = range.onfocus = range.oninput = range.onclick = function() {
+                var item = this.parentNode
+                getElementFromControlItem(item)
+                var attr = item.dataset.attr ? item.dataset.attr : label.dataset.attr
+                var target = targets[item.dataset.target ? item.dataset.target : 'target']
+                if (this instanceof HTMLButtonElement) {
+                    target.style[attr] = button.innerText
+                    var value = getCSS(target, attr)
+                    number.value = range.value = value.endsWith('px') ? value.slice(0, -2) : button.value
+                } else {
+                    target.style[attr] = this.value + (item.dataset.unit != null ? item.dataset.unit : '')
+                    number.value = range.value = this.value
+                }
+                tips.innerText = target.style.cssText
+            }
+        })
+
+        var configCustomItem = function(customItem, callback) {
+            getElementFromControlItem(customItem)
+            callback(label, button, number, range)
+        }
+        var temp = document.getElementById("custom-item2")
+        configCustomItem(document.getElementById("custom-item1"), (label, button, number, range) => {
+            button.value = number.value = 3
+            button.onclick = number.oninput = number.onfocus = number.onclick = range.onfocus = range.oninput = range.onclick = function() {
+                var tempRange = temp.getElementsByTagName("input")[1]
+                tempRange.value = Math.min(tempRange.value, this.value)
+                tempRange.click()
+                var innerHTML = ''
+                for (let i = 0; i < this.value; i++) {
+                    innerHTML += '<div class="show-grid-item">item' + (i + 1) + '</div> '
+                }
+                target.innerHTML = innerHTML
+                tempRange.max = number.value = range.value = this.value
+            }
+        })
+        configCustomItem(temp, (label, button, number, range) => {
+            button.value = number.value = 0
+            button.onclick = number.oninput = number.onfocus = number.onclick = number.onpropertychange = range.onfocus = range.oninput = range.onclick = range.onpropertychange = function() {
+                if (targets['selected'] != null) {
+                    targets['selected'].style.outline = ''
+                }
+                targets['selected'] = this.value == 0 ? target : target.getElementsByClassName("show-grid-item")[this.value - 1]
+                targets['selected'].style.outline = '3px solid lightgreen'
+                number.value = range.value = this.value
+            }
+        })
+        var lineIndex = 1
+        configCustomItem(document.getElementById("custom-item3"), (label, button, number, range) => {
+            button.value = number.value = 1
+            button.onclick = number.oninput = number.onfocus = number.onclick = range.onfocus = range.oninput = range.onclick = function() {
+                number.value = range.value = lineIndex = this.value
+            }
+        })
+        var gridRows = []
+        Array.prototype.replace = function(value, newValue) {
+            for (let i = 0; i < this.length; i++) {
+                if (this[i] == value) {
+                    this[i] = newValue
+                }
+            }
+            return this
+        }
+        configCustomItem(document.getElementById("custom-item4"), (label, button, number, range) => {
+            number.value = range.value = 30
+            button.onclick = number.oninput = number.onfocus = number.onclick = range.onfocus = range.oninput = range.onclick = function() {
+                var rowIndex = temp.getElementsByTagName("input")[1].value
+                var flag = this instanceof HTMLButtonElement
+                if (rowIndex > 0) {
+                    gridRows[rowIndex - 1] = flag ? 'auto' : (this.value + 'px')
+                    target.style.gridTemplateRows = gridRows.replace(null, 'auto').join(' ')
+                    tips.innerText = target.style.cssText
+                }
+                if (!flag) {
+                    number.value = range.value = this.value
+                }
+            }
+        })
+        var gridColumns = []
+        configCustomItem(document.getElementById("custom-item5"), (label, button, number, range) => {
+            number.value = range.value = 100
+            button.onclick = number.oninput = number.onfocus = number.onclick = range.onfocus = range.oninput = range.onclick = function() {
+                var flag = this instanceof HTMLButtonElement
+                if (lineIndex > 0) {
+                    gridColumns[lineIndex - 1] = flag ? 'auto' : (this.value + 'px')
+                    target.style.gridTemplateColumns = gridColumns.replace(null, 'auto').join(' ')
+                    tips.innerText = target.style.cssText
+                }
+                if (!flag) {
+                    number.value = range.value = this.value
+                }
+            }
+        })
+
+        var controlItems2 = control.getElementsByClassName("control-item2")
+        Array.prototype.forEach.call(controlItems2, (item, index, controlItems2) => {
+            getElementFromControlItem(item)
+            button.onclick = function() {
+                var item = this.parentNode
+                getElementFromControlItem(item)
+                var attr = item.dataset.attr ? item.dataset.attr : label.dataset.attr
+                var target = targets[item.dataset.target ? item.dataset.target : 'target']
+                target.style[attr] = item.getElementsByTagName("input")[0].value
+                tips.innerText = target.style.cssText
+            }
+        })
+
+        var navs = document.getElementsByClassName("nav")
+        Array.prototype.forEach.call(navs, (nav, index, navs) => {
+            Array.prototype.forEach.call(nav.getElementsByClassName("nav-in"), (navIn, index2, nav) => {
+                navIn.index = index2
+            })
+            nav.index = 0
+            nav.onclick = function(event) {
+                var target = event.target
+                if (target.classList.contains('nav-in')) {
+                    this.getElementsByClassName("nav-in")[nav.index].style.cssText = 'border: 1px solid black;'
+                    nav.index = target.index
+                    target.style.cssText = 'border: 1px solid blue; box-shadow: lightblue 0px 0px 1px;'
+                }
+            }
+            nav.getElementsByClassName("nav-in")[nav.index].style.cssText = 'border: 1px solid blue; box-shadow: lightblue 0px 0px 1px;'
+        })
+    })()
+</script>
+```
+
+<iframe frameborder='0' width='100%' height='500px' src='./csses/grid.html'></iframe>
 
 #### 移动优先的响应式布局
 
+随着移动互联网的兴起，不同设备的分辨率相差较大，如果在不同的设置上显示同一个页面，则用户体验差。响应式网页设计是一种方法，使得一个网站能够兼容多个终端，而不用为每个终端制作特定的版本。它使得一个网站可以在任何类型的屏幕上，都可以被轻松地浏览和使用。采用响应式设计，在不同设备中，网站会重新排列，展现出不同的设计风格，以完美的适配任何尺寸的屏幕
 
+关于响应式设计，有渐进增加和优雅降级两个设计原则
+
+* 渐进增强(progressive enhancement)，是指基本需求得到满足、实现，再根据不同浏览器及不同分辨率设备的特点，利用高级浏览器下的新特性提供更好的体验。比如，圆角、阴影、动画等
+
+* 优雅降级(graceful degradation)则正好相反，现有功能已经开发完备，但需要向下兼容版本和不支持该功能的浏览器。虽然兼容性方案的体验不如常规方案，但保证了功能可用性
+
+移动优先的响应式布局采用的是渐进增强原则，制作响应式网站时，先搞定手机版，然后再去为更大设备去设计和开发更复杂的功能。特征是使用min-width匹配页面宽度。从上到下书写样式时，首先考虑的是移动设备的使用场景，默认查询的是最窄的情况，再依次考虑设备屏幕逐渐变宽的情况。由简入繁易，由繁入简难。如果是桌面优先，布局端是桌面端代码，只有在media中，才是手机端代码，加载了多余的桌面端代码。如果是图片文件，则下载的无用资源更多。无论从界面设计还是代码执行效率的角度而言，移动优先都有明显优势。
+
+**响应式设计包括三个要素：弹性布局、媒体查询和弹性图片**
+
+弹性布局(flex/column/grid)和媒体查询(@media)已经在其他博客中详细介绍，下面来重点介绍下弹性图片。弹性图片，也称为响应式图片，是指图片能够跟随父容器宽度变化而变化，同时宽度受限于父容器，不可按照图片原始尺寸展现。
+
+1. 因此，最简单的响应式图片设置max-width为100%即可。 ``img { max-width: 100%; }``
+2. 只有一张图片的情况下，采用上面代码即可。如果提供了高清图，要根据设备大小加载不同的图片，则需要额外的处理。有如下几种处理方式
+    1. 采用picture元素，IE浏览器、android4.4.4-浏览器不兼容。
+    2. 采用img元素的srcset和sizes属性，IE浏览器、android4.4.4-浏览器不兼容
+    3. 采用js，根据window的resize事件，修改图片的路径
+    4. 后端配置，前端传递给后端当前设备的一些特征，后端通过这些特征决定做怎样的响应。但目录两个后端响应式解决方案Responsive_Images和Adaptive-Images都不再维护
+
+```html
+<!-- 2.1 -->
+<picture>
+    <source media="(min-width:50em)" srcset="img/l.jpg">
+    <source media="(min-width:30em)" srcset="img/m.jpg">
+    <img src="img/s.jpg" alt="#">
+</picture>
+<!-- 2.2 -->
+<img
+    src="img/480.png"
+    srcset="img/480.png 480w,img/800.png 800w, img/1600.png 1600w"
+    sizes="(min-width:800px) 800px,100vw" />
+<!-- 2.3 -->
+<script>
+    function makeImageResponsive() {
+        var width = $(window).width();
+        var img = $('.content img');
+        if (width <= 480) {
+            img.attr('src', 'img/480.png');
+        } else if(width <= 800) {
+            img.attr('src','img/800.png');
+        } else {
+            img.attr('src','img/1600.png');
+        }
+    }
+    $(window).on('resize load', makeImageResponsive);
+</script>
+```
+
+【优点】
+
+1. 减少工作量，网站、设计、代码、内容都只需要一份
+2. 节省时间
+3. 解决了设备之间的差异化展示
+4. 搜索优化　
+5. 更好的用户体验
+
+【缺点】
+
+1. 需要加载更多的样式和脚本资源，加载速度受到影响
+2. 设计比较难精确定位和控制
+3. 老版本浏览器兼容不好
+
+下面介绍四种响应模式
+
+* 【Column Drop 列下沉】手机上每一个大块单独占据一行，随着屏幕尺寸拉伸会在同一行上形成多个 column 列
+* 【Mostly Fulid 基本流体式】基本上跟 Column Drop 一样，但是有一点点“固定布局“的特点：当到达一定宽度后，主体内容部分不再变宽，成为固定宽度
+* 【Layout Shifter 变换式】变换式，也就是不必遵循原有内容顺序，可以根据最佳展示需要来调整大块顺序
+* 【Off Canvas 抽屉式】抽屉式，屏幕不够宽的时候，隐藏，通过按钮呼出。足够宽的屏幕上，始终显示
 
 ### 居中布局
 
 #### 水平居中
 
+* **text-align** text-align: center。适用于block/inline-block。
+    * 若要兼容IE7-浏览器，可使用display:inline;zoom:1;来达到inline-block的效果
+    * 这种方法的不足之处在于，子元素的text-align继承了父元素的center，文字也居中显示，所以需要在子元素中设置text-align:left。
+* **margin** margin: 0 auto
+    * 将子元素的display为table，使子元素成为块级元素，同时table还具有包裹性，宽度由内容撑开。【注意】若要兼容IE7-浏览器，可把目标元素的结构换成``<table class="target">DEMO</table>``
+    * 若子元素定宽，则可以使用绝对定位的盒模型属性，实现居中效果；若不设置宽度时，子元素被拉伸。position: absolute; left: 0; right: 0; margin: 0 auto;
+* **absolute**
+    * 配合translate()位移函数: translate函数的百分比是相对于自身宽度的，所以left:50%配合translateX(-50%)可实现居中效果。【注意】IE9-浏览器不支持
+    * 配合relative: relative数值型的偏移属性是相对于自身的，但百分比却是相对于包含块的。因为子元素已经被设置为absolute，所以若使用relative，则需要增加一层``<div>``结构，使其宽度与子元素宽度相同。
+        * .parent { position: relative; }
+        * .childWrap { position: absolute; left: 50%; }
+        * .child { position: relative; left: -50%; }
+        * ``<div class="parent" style="background-color: gray;height: 20px;"><div class="childWrap"><div class="child" style="background-color: lightblue;">DEMO</div></div></div>``
+    * 配合负margin: margin的百分比是相对于包含块的，所以需要增加一层``<div>``结构。由于宽度width的默认值是auto，当设置负margin时，width也会随着变大。所以此时需要定宽处理。【注意】虽然全兼容，但需要增加页面结构及定宽处理，所以限制了应用场景
+        * .parent{ position: relative; }
+        * .childWrap{ position: absolute; left: 50%; }
+        * .child{ width:50px; margin-left:-50%; }
+        * ``<div class="parent" style="background-color: gray;height: 20px;"><div class="childWrap"><div class="child" style="background-color: lightblue;">DEMO</div></div></div>``
+* **flex** 【注意】IE9-浏览器不支持
+    * 在伸缩容器上设置主轴对齐方式justify-content:center
+    * 在伸缩项目上设置margin: 0 auto
+* **grid** IE10-浏览器不支持
+    * 在网格容器上设置justify-items或justify-content
+    * 在网格项目中设置justify-self或者margin: 0 auto
+
 #### 垂直居中
 
+1. **line-height** 行高line-height实现单行文本垂直居中。行内流传着一种说法，单行文本垂直居中要将高度和行高设置成相同的值，但高度其实没必要设置。实际上，文本本身就在一行中居中显示。在不设置高度的情况下，行高撑开高度
+2. **vertical-align**
+    1. 设置父元素的display为table-cell。通过为table-cell元素设置vertical-align:middle，可使其子元素均实现垂直居中。这和表格里单元格的垂直居中是类似的。【注意】若要IE7-浏览器支持，则可以将其改为``<table>``表格结构。【注意】设置为table-cell的div不能使用浮动或绝对定位，因为浮动或绝对定位会使元素具有块级元素特性，从而丧失了table-cell元素具有的垂直对齐的功能。若需要浮动或绝对定位处理，则需要外面再套一层div
+    2. 若子元素是图片，通过设置父元素的行高来代替高度，且设置父元素的font-size为0。vertical-align:middle的解释是元素的中垂点与父元素的基线加1/2父元素中字母X的高度对齐。由于字符X在em框中并不是垂直居中的，且各个字体的字符X的高低位置不一致。所以，当字体大小较大时，这种差异就更明显。当font-size为0时，相当于把字符X的字体大小设置为0，于是可以实现完全的垂直居中
+    3. 通过新增元素来实现垂直居中的效果。新增元素设置高度为父级高度，宽度为0，且同样设置垂直居中vertical-align:middle的inline-block元素。由于两个元素之间空白被解析，所以需要在父级设置font-size:0，在子级再将font-size设置为所需值；若结构要求不严格，则可以将两个元素一行显示，则不需要设置font-size:0
+3. **absolute**
+    1. 配合translate()位移函数。translate函数的百分比是相对于自身高度的，所以top:50%配合translateY(-50%)可实现居中效果。【注意】IE9-浏览器不支持。【注意】若子元素的高度已知，translate()函数也可替换为margin-top: 负的高度值
+    2. 若子元素定高，结合绝对定位的盒模型属性，实现居中效果。
+    3. <关于增加div层级的说明>在水平居中对齐中，元素外层套一层div并设置absolute，元素设置负margin-left或者relative的负left属性，可以实现水平居中的效果。但由于margin是相对于包含块宽度的，这样margin-top:-50%得到的是宽度而不是高度的-50%，所以不可行；对于relative的百分比取值而言，在包含块高度为auto的情况下，chrome、safari和IE8+浏览器都不支持设置元素的百分比top值，所以也不可行
+4. **flex** [注意]IE9-浏览器不支持
+    1. 在伸缩容器上设置侧轴对齐方式align-items: center
+    2. 在伸缩项目上设置margin: auto 0
+5. **grid** [注意]IE10-浏览器不支持
+    1. 在网格容器上设置align-items或align-content
+    2. 在网格项目中设置align-self或者margin: auto 0
+
+```html
+<!-- 2.3 -->
+<style>
+    .parent { height: 200px; font-size: 0; }
+    .child { width: 150px; display: inline-block; font-size: 20px; vertical-align: middle; }
+    .childSbling { display: inline-block; height: 100%; vertical-align: middle; }
+</style>
+<div class="parent" style="background-color: lightgray; width:200px;">
+    <div class="child" style="background-color: lightblue;">我是比较长的比较长的多行文字</div>
+    <i class="childSbling"></i>
+</div>
+```
+
 #### 水平垂直居中
+
+1. text-align + line-height实现单行文本水平垂直居中
+2. text-align + vertical-align
+    1. 在父元素设置text-align和vertical-align，并将父元素设置为table-cell元素，子元素设置为inline-block元素。[注意]若兼容IE7-浏览器，将结构改为``<table>``结构来实现table-cell的效果；用display:inline;zoom:1;来实现inline-block的效果
+    2. 若子元素是图像，可不使用table-cell，而是其父元素用行高替代高度，且字体大小设为0。子元素本身设置vertical-align:middle
+3. margin + vertical-align 要想在父元素中设置vertical-align，须设置为table-cell元素；要想让margin:0 auto实现水平居中的块元素内容撑开宽度，须设置为table元素。而table元素是可以嵌套在tabel-cell元素里面的，就像一个单元格里可以嵌套一个表格。[注意]若兼容IE7-浏览器，需将结构改为``<table>``结构
+4. absolute
+    1. 利用绝对定位元素的盒模型特性，在偏移属性为确定值的基础上，设置margin:auto
+    2. 利用绝对定位元素的偏移属性和translate()函数的自身偏移达到水平垂直居中的效果
+    3. 在子元素宽高已知的情况下，可以配合margin负值达到水平垂直居中效果
+5. flex [注意]IE9-浏览器不支持
+    1. 在伸缩项目上使用margin:auto
+    2. 在伸缩容器上使用主轴对齐justify-content和侧轴对齐align-items
+6. grid [注意]IE10-浏览器不支持
+    1. 在网格项目中设置justify-self、align-self或者margin:  auto
+    2. 在网格容器上设置justify-items、align-items或justify-content、align-content
 
 ### 常见布局
 
 #### 两端对齐
 
+1. flex ``.justify-content_flex-justify{ -webkit-box-pack: justify; -ms-flex-pack: justify; -webkit-justify-content: space-between; justify-content: space-between; }`` [注意]IE9-浏览器不支持
+2. text-align 水平对齐text-align本身就有一个属性值是两端对齐justify。但是，要注意的是，使用它实现两端对齐，需要注意在元素之间添加空白符(包括空格、换行符、制表符)才起作用。由于HTML结构中，``<li>``元素之间存在换行，所以不需要额外添加空白符。但仅仅是这样，元素也无法实现两端对齐效果。元素必须占满一行才行。
+    1. 这时就需要使用属性text-align-last，该属性用来规定如何对齐文本的最后一行。于是把text-align属性替换成text-align-last。但是，要兼容IE浏览器需要同时设置text-align:justify。[注意]safari浏览器、IOS、androis4.4-浏览器不支持。text-align: justify;text-align-last: justify;
+    2. 使用text-align-last可以实现两端对齐的效果，但是兼容性并不好。通过给父元素设置伪元素:after，并为伪元素设置inline-block，并设置宽度100%，相当于伪元素:after被挤到第二行。从而使原来的元素占满了第一行，触发了两端对齐的效果。这里要注意的是，因为空白会被解析为换行，所以可以通过设置父元素的高度height，并溢出隐藏，来解决多余的换行问题。
+3. column 使用多列布局column也可以实现类似的效果。column-count定义了元素的列数，例子中有3个子元素，所以定义为3列。特别要注意的是，这时需要把子元素设置为block元素才会生效。如果子元素之间需要使用竖线，且竖线高度与子元素高度相同时，使用column-rule可方便的实现需求[注意]IE9-浏览器不支持。
+4. grid 栅格布局使用justify-content的两端对齐属性space-between。[注意]IE10-浏览器不支持
+
+```html
+<!-- 2.1 -->
+<style>
+    body{margin: 0;}
+    ul{margin: 0;padding: 0;list-style: none;}
+    .list{width: 200px;overflow: hidden;border: 1px solid gray;background-color: lightgreen;line-height: 30px;text-align: justify;text-align-last: justify;}
+    .in{background-color: lightblue;padding: 0 10px;display:inline-block;}
+</style>
+<ul class="list ">
+    <li class="in">内容</li>
+    <li class="in">样式</li>
+    <li class="in">行为</li>
+</ul>
+<!-- 2.2 -->
+<style>
+    body{margin: 0;}
+    ul{margin: 0;padding: 0;list-style: none;}
+    .list{width: 200px;height: 30px;overflow: hidden;border: 1px solid gray;background-color: lightgreen;line-height: 30px;text-align: justify;}
+    .in{background-color: lightblue;padding: 0 10px;display:inline-block;}
+    .list:after{content:"";width:100%;display:inline-block;}
+</style>
+```
+
 #### 单列定宽单列自适应布局
+
+1. float 说起两列布局，最常见的就是使用float来实现。float浮动布局的缺点是浮动后会造成文本环绕等效果，以及需要及时清除浮动。如果各浮动元素的高度不同时，可能会出犬牙交错的效果
+    1. float + margin 将定宽的一列使用float，而自适应的一列使用计算后的margin。
+        1. [缺点1]IE6-浏览器下3像素bug，具体表现在右侧首行文字会向右偏移3px。解决办法是在left元素上设置margin-right: -100px
+        2. [缺点2]当右侧容器中有子元素清除浮动时，会使该元素不与左侧浮动元素同行，从而出现文字下沉现象
+        3. 可以在parent使用overflow: hidden;zoom: 1;来清除浮动
+    2. float + margin + (fix) (fix)代表增加结构，为了解决上述方法中的两个缺点，可以通过增加结构来实现。自适应的一列外侧增加一层结构.rightWrap并设置浮动。要实现自适应效果，.rightWrap宽度必须设置为100%。若不设置，float后的元素宽度将由内容撑开。同时再配合盒模型属性的计算，设置计算后的负margin值，使两列元素在同一行显示。同时两列之间的间距由.right的margin值确定。由于右侧元素会层叠在左侧元素之上，.left需要使用relative来提升层级
+    3. float + margin + calc 除了增加结构的方法外，还可以使用calc()[注意]IE8-、android4.3-、IOS5.1-不支持，android4.4+只支持加减运算
+    4. float + overflow 使用overflow属性来触发bfc，来阻止浮动造成的文字环绕效果。由于使用overflow不会改变元素的宽度属性，所以不需要重新设置宽度。由于设置overflow:hidden并不会触发IE6-浏览器的haslayout属性，所以需要设置zoom:1来兼容IE6-浏览器
+2. inline-block inline-block内联块布局的主要缺点是需要设置垂直对齐方式vertical-align，则需要处理换行符解析成空格的间隙问题。IE7-浏览器不支持给块级元素设置inline-block属性，兼容代码是display:inline;zoom:1;
+    1. inline-block + margin + calc 一般来说，要解决inline-block元素之间的间隙问题，要在父级设置font-size为0，然后在子元素中将font-size设置为默认大小。[注意]IE8-、android4.3-、IOS5.1-不支持，android4.4+只支持加减运算
+    2. inline-block + margin + (fix)
+3. table 使用table布局的缺点是元素被设置为table后，内容撑开宽度，所以需要设置width:100%。若要兼容IE7-浏览器，需要改为``<table>``结构。由于table-cell元素无法设置margin，若需要在元素间设置间距，需要增加结构
+4. absolute 缺点是由于父元素需要设置为relative，且子元素设置为absolute，所以父元素的高度并不是由子元素撑开的，需要单独设置。[注意]IE6-不支持相对的偏移属性同时设置
+5. flex [注意]IE9-浏览器不支持 .left{width:100px;margin-right: 20px;} .right{flex:1;}
+6. grid [注意]IE10-浏览器不支持 .parent{display: grid;grid-template-columns: 100px 1fr;grid-gap:20px}
+
+```html
+<!-- 1.1 -->
+<style>
+    p{margin: 0;}
+    .parent{overflow: hidden;zoom: 1;}
+    .left{float: left;width: 100px;}
+    .right{margin-left: 120px;}
+</style>
+<div class="parent" style="background-color: lightgrey;">
+    <div class="left" style="background-color: lightblue;">
+        <p>left</p>
+    </div>
+    <div class="right"  style="background-color: lightgreen;">
+        <p>right</p>
+        <p>right</p>
+    </div>
+</div>
+<!-- 1.2 -->
+<style>
+    p{margin: 0;}
+    .parent{overflow: hidden;zoom: 1;}
+    .left{position: relative;float: left;width: 100px;}
+    .rightWrap{float: left;width: 100%;margin-left: -100px;}
+    .right{margin-left: 120px;}
+</style>
+<!-- 1.3 -->
+<style>
+    p{margin: 0;}
+    .parent{overflow: hidden;zoom: 1;}
+    .left{float: left;width: 100px;margin-right: 20px;}
+    .right{float: left;width: calc(100% - 120px);}
+</style>
+<!-- 1.4 -->
+<style>
+    p{margin: 0;}
+    .parent{overflow: hidden;zoom: 1;}
+    .left{ float: left;width: 100px;margin-right: 20px;}
+    .right{overflow: hidden;zoom: 1;}
+</style>
+```
+
+```css
+/* 2.1 */
+.parent{font-size: 0;}
+.left{display:inline-block;vertical-align:top;width:100px;margin-right:20px;font-size:16px;}
+.right{display:inline-block;vertical-align:top;width:calc(100% - 120px);font-size:16px;}
+/* 3 */
+.parent{display:table;width: 100%;table-layout: fixed;}
+.left,.rightWrap{display:table-cell;}
+.left{width: 100px;}
+.right{margin-left: 20px;}
+```
 
 #### 两列自适应布局
 
+两列自适应布局是指一列由内容撑开，另一列撑满剩余宽度的布局方式。
+
+1. float 在单列定宽单列自适应的两列布局中，经常用float和负margin配合实现布局效果。但由于margin取值只能是固定值，所以在两列都是自适应的布局中就不再适用。而float和overflow配合可实现两列自适应效果。使用overflow属性来触发bfc，来阻止浮动造成的文字环绕效果。由于设置overflow:hidden并不会触发IE6-浏览器的haslayout属性，所以需要设置zoom:1来兼容IE6-浏览器
+    1. .parent{overflow: hidden;zoom: 1;}
+    2. .left{float: left;margin-right: 20px;}
+    3. .right{overflow: hidden;zoom: 1;}
+2. table 若table元素不设置table-layout:fixed，则宽度由内容撑开。在某个table-cell元素的外层嵌套一层div，并设置足够小的宽度如width:0.1%
+    1. .parent{display:table;width:100%;}
+    2. .leftWrap{display:table-cell;width:0.1%;}
+    3. .left{margin-right: 20px;}
+    4. .right{display:table-cell;}
+3. flex  .right { flex: 1; } .left不要设置宽度
+4. grid  grid-template-columns:auto 1fr;
+
 #### 三列布局
+
+三列布局，分为两侧定宽中间自适应、两列定宽一侧自适应、中间定宽两侧自适应、一侧定宽两列自适应和三列自适应这五种情况
+
+https://www.cnblogs.com/xiaohuochai/p/5455905.html
 
 #### 三栏式布局(所谓的圣杯和双飞翼布局)
 
@@ -5336,45 +6061,1487 @@ CSS3新增了多列布局特性，可以让浏览器确定何时结束一列和�
 
 ### 字体
 
+1. font-family 字体系列
+    1. 5种通用字体系列：拥有相似外观的字体系列
+        1. serif字体:字体成比例，且有上下短线(衬线字体)，包括Times\Georgia\New century Schoolbook
+        2. sans-serif字体:字体成比例，且没有上下短线(无衬线字体)，包括Helvetica\Geneva\Verdana\Arial\Univers
+        3. Monospace字体:字体不成比例，等宽字体，包括Courier\Courier New\Andale Mono
+        4. Cursive字体:手写体，包括Zapf Chancery\Author\Comic Sans
+        5. Fantasy字体:无法归类的字体，包括Western\Woodblock\Klingon
+    2. 特定字体系列：具体的字体系列
+        1. font-family:"宋体";
+        2. font-family:"arial";
+    3. 默认字体系列
+        1. chrome/opera:"宋体"
+        2. firefox:"微软雅黑"
+        3. safari/IE:Times,"宋体"
+    4. 中文字体
+        1. 对于中文字体来说，常见的是宋体和微软雅黑。宋体是衬线字体，而微软雅黑是无衬线字体。衬线字体常用于排版印刷，而无衬线字体则常用于网页中
+        2. 一般地，一行中有30-40个文字时，行高为1.5时，有较好的阅读体验。对于标题来说， 更好的样式是取消其加粗设置，并改变其颜色，增加页面的层次感
+2. font-weight 字体加粗
+    1. 常用值 normal bold
+    2. 所有值 normal(正常)/bold(粗体)/bolder(更粗)/lighter(更细) 100/200/300/400/500/600/700/800/900 (100为最细，900为最粗)
+3. font-size 字体大小
+    1. 绝对字体大小 xx-small/x-small/small/medium/large/x-large/xx-large
+    2. 相对字体大小 smaller/larger
+    3. em/% 1em = 100%
+    4. 默认字体大小 chrome/firefox/opera/IE/safari:16px
+    5. 最小字体大小 chrome:12px opera:9px safari/IE/firefox:无
+    6. font-size字体大小设置的是字体中字符em框的高度，实际的字符字形通常比字符em框要矮，与字体类型有关。值: xx-small | x-small | small | medium | large | x-large | xx-large | smaller | larger | <length> | <percentage> | inherit。初始值: medium。百分数: 相对于父元素的字体大小font-size
+4. font-style 字体风格：normal italic(倾斜) oblique(倾斜)
+5. font-variant 字体变形：normal small-caps(小型大写字母)
+6. line-height 行高
+7. font: [[<font-style> || <font-variant> || <font-weight>]? <font-size>[/<line-height>?<font-family>]
+8. CSS标准定义了6个系统字体关键字，如 font: caption：
+    1. caption: 由标题控件使用的字体样式，如按钮和下拉控件
+    2. icon: 系统图标所用的字体样式，如文件夹和文件图标
+    3. menu: 下拉菜单和菜单列表中文本使用的字体样式
+    4. message-box: 对话框中文本使用的字体样式
+    5. small-caption: 由标题小控件的标签使用的字体样式
+    6. status-bar: 窗口状态条中文本使用的字体样式
+9. font-face
+    1. 。
+    2. 两种调用字体的方法
+        1. html(&#x + 小图标对应的unicode编码)
+        2. css(\ + 小图标对应的unicode编码)(不兼容IE7-浏览器)
+    3. 一般地，使用国内的[iconfont](https://www.iconfont.cn/)网站来寻找需要的字体图标，如晴、阴、雨、雪图标，将其新建为一个项目，并将项目文件下载到本地。下载的文件中包含了需要的字体文件及使用范例
+    4. 例子
+
+```css
+/* 1.3 */
+p {
+    font-family:字体系列1,字体系列2 ……
+    /* 【注意】若浏览器识别第一个字体，则以第一个字体显示；如果不识别，则尝试下一个。 */
+    font-family: arial，“宋体”,“微软雅黑”;
+    /* 【注意】若写英文字体，一定要把英文字体写在前面，英文字体会影响到英文、数字和标点符号。 */
+    font-family: Times, 'New Century Schoolbook','New York', serif;
+    /* 【注意】若字体名中有一个或多个空格，要添加引号 */
+}
+/* 9.1 */
+@font-face {
+    font-family: 自定义名称;
+    src: url(../font/test.eot);
+    src: url(../font/test.eot?#iefix) format("embedded-opentype"),
+         url(../font/test.woff) format("woff"),
+         url(../font/test.ttf) format("truetype"),
+         url(../font/test.svg#jq) format("svg");
+}
+/* EOT:IE专用；WOFF:标准；TTF:最常见(safari/android/ios)；SVG:图形格式(IE和firefox不支持) */
+/* 9.2.1 */
+div { font-family: 自定义名称; -webkit-font-smoothing:antialiased;//字体抗锯齿、光滑度属性 -mox-osx-font-smoothing: grayscale;//字体抗锯齿、光滑度属性 }
+/* 9.2.2 */
+div { font-family: 自定义名称; -webkit-font-smoothing:antialiased;//字体抗锯齿、光滑度属性 -mox-osx-font-smoothing: grayscale;//字体抗锯齿、光滑度属性 }
+div:before { content: "\f048"; }
+```
+
+```html
+<!-- 9.2.1 -->
+<div>&#xf048</div>
+<!-- 9.2.2 -->
+<div></div>
+```
+
+```html
+<style>
+    @font-face { font-family: 'iconfont'; src: url('font/iconfont.eot'); src: url('font/iconfont.eot?#iefix') format('embedded-opentype'), url('font/iconfont.woff') format('woff'), url('font/iconfont.ttf') format('truetype'), url('font/iconfont.svg#iconfont') format('svg'); }
+    .weatherBox input { position: absolute; clip: rect(0, 0, 0, 0); pointer-events: none; }
+    .weatherBox label { font-family: 'iconfont'; -webkit-font-smoothing: antialiased; /* 字体抗锯齿、光滑度属性 */ -mox-osx-font-smoothing: grayscale; /* 字体抗锯齿、光滑度属性 */ }
+    .weatherBox label+label { margin-left: 10px; }
+    .weatherBox label:hover { color: lightblue; }
+    .icon-sunny:before { content: "\e601"; }
+    .icon-snowy:before { content: "\e603"; }
+    .icon-cloudy:before { content: "\e605"; }
+    .icon-rainy:before { content: "\e606"; }
+</style>
+<div class="weatherBox">
+    <label class="icon-sunny"><input type="radio" name="weather" id="sunny">晴</label>
+    <label class="icon-cloudy"><input type="radio" name="weather" id="cloudy">阴</label>
+    <label class="icon-rainy"><input type="radio" name="weather" id="rainy">雨</label>
+    <label class="icon-snowy"><input type="radio" name="weather" id="snowy">雪</label>
+</div>
+```
+
 ### 基础文本样式
+
+CSS文本样式是相对于内容进行的样式修饰。由于在层叠关系中，内容要高于背景。所以文本样式相对而言更加重要。有些人对文本和字体样式之间的不同不太了解，简单地讲，文本是内容，而字体则用于显示这个内容。本文将详细介绍文本相关样式
+
+1. text-indent: <length> | <percentage> | inherit 首行缩进。[注意]该属性可以为负值。应用于: 块级元素(包括block和inline-block)
+    1. 【悬挂缩进】div { width: 200px; border: 1px solid black; text-indent: -1em;//关键代码 padding-left: 1em;//关键代码 }
+    2. 【首字下沉】div{ width: 200px; border: 1px solid black; text-indent: 0.5em; } div:first-letter{ font-size: 30px; float: left; }
+2. text-align: left | center | right | justify | inherit 水平对齐。
+    1. 【两端对齐】当水平对齐方式为两端对齐时，word-spacing可能会调整，以便文本在整行中正好放下。如果为letter-spacing指定一个长度值，则letter-spacing不会受两端对齐影响，除非letter-spacing值为normal
+    2. 【IE兼容】对于IE7-浏览器来说，使用text-align不仅会改变文本的水平对齐方式，也会改变后代块级元素的水平对齐方式
+3. word-spacing: <length> | normal | inherit 单词间距。[注意]单词之间用空格分开，单词之间的间距 = word-spacing + 空格大小。[注意]字间隔可为负值。
+4. letter-spacing: <length> | normal | inherit 字母间隔。
+5. text-transform: uppercase(全大写) | lowercase(全小写) | capitalize(首字母大写) | none | inherit 文本转换。
+6. text-decoration: none | [underline(下划线) || overline(上划线) || line-through(中划线)] | inherit 文本修饰。[注意]文本修饰线的颜色与文本颜色相同。
+    1. 文本修饰属性无法继承，意味着子元素文本上的任何修饰线与父元素的颜色相同。子元素文本上的修饰线实际上是父元素的，只是正好"经过"而已。
+    2. [注意]互不冲突的文本修饰线可出现多条。text-decoration: underline overline line-through;
+
+在首行缩进(text-index)、水平对齐(text-align)、字间隔(word-spacing)、字母间隔(letter-spacing)、文本转换(text-transform)、文本修饰(text-decoration)这6种文本样式中，首行缩进(text-index)和水平对齐(text-align)只能够应用于块级元素(包括block和inline-block)
 
 ### 行高与垂直对齐
 
+line-height、font-size、vertical-align是设置行内元素布局的关键属性。这三个属性是相互依赖的关系，改变行间距离、设置垂直对齐等都需要它们的通力合作。在CSS字体里面已经详细介绍了font-size的相关内容，本文将主要介绍line-height与vertical-align。本文涉及到的术语解释参考CSS视觉格式化。
+
+line-height行高是指文本行基线之间的距离。行高line-height实际上只影响行内元素和其他行内内容，而不会直接影响块级元素，也可以为一个块级元素设置line-height，但这个值只是应用到块级元素的内联内容时才会有影响。在应用到块级元素时，line-height定义了元素文本基线之间的最小距离，即最小行高。
+
+[注意]如果块级元素中的某一个子级内联元素设置的行高比最小行高大，则行框以设置行高来渲染；如果小，则以最小行高来渲染。因为，每一个子级内联元素的行高都是行内框的高度，只有一行中所有的行内元素(包括代表父级元素的匿名文本)，最大的行内框高度才能成为整行的行高。下面会有详细解释
+
+https://www.cnblogs.com/xiaohuochai/p/5271217.html 【必要】
+
+vertical-align用来设置垂直对齐方式，所有垂直对齐的元素都会影响行高。应用于: 行内元素、替换元素、表单元格
+
+[注意]IE7-浏览器中vertical-align的百分比值不支持小数行高，且取baseline、middle、text-bottom等值时与标准浏览器在展示效果不一样，常用的解决办法是将行内元素设置display:inline-block
+
+* vertical-align:baseline(元素的基线与父元素的基线对齐)
+* vertical-align:sub(降低元素的基线到父元素合适的下标位置)
+* vertical-align:super(升高元素的基线到父元素合适的上标位置)
+* vertical-align:bottom(把对齐的子元素的底端与行框底端对齐)
+* vertical-align:text-bottom(把元素的底端与父元素内容区域的底端对齐)
+* vertical-align:top(把对齐的子元素的顶端与行框顶端对齐)
+* vertical-align:text-top(把元素的顶端与父元素内容区域的顶端对齐)
+* vertical-align:middle(元素的中垂点与父元素的基线加1/2父元素中字母X的高度对齐)
+* vertical-align:(+-n)px(元素相对于基线上下偏移npx)
+* vertical-align:x%(相对于元素的line-height值)
+* vertical-align:inherit(从父元素继承vertical-align属性的值)
+
+```html
+<style>
+    div { width: 300px; margin: 0 auto; border: 1px solid black; font-size: 20px; line-height: 30px; }
+    div:nth-child(1) img { vertical-align: baseline; }
+    div:nth-child(2) img { vertical-align: sub; }
+    div:nth-child(3) img { vertical-align: super; }
+    div:nth-child(4) img { vertical-align: bottom; }
+    div:nth-child(5) img { vertical-align: text-bottom; }
+    div:nth-child(6) img { vertical-align: top; }
+    div:nth-child(7) img { vertical-align: text-top; }
+    div:nth-child(8) img { vertical-align: middle; }
+</style>
+<div>
+    <img src="https://demo.xiaohuochai.site/backup/vertical-align.png" alt="垂直对齐测试图片" height="10" width="10">
+    <span>亚冠联赛(baseline)</span>
+</div>
+<div>
+    <img src="https://demo.xiaohuochai.site/backup/vertical-align.png" alt="垂直对齐测试图片" height="10" width="10">
+    <span>亚冠联赛(sub)</span>
+</div>
+<div>
+    <img src="https://demo.xiaohuochai.site/backup/vertical-align.png" alt="垂直对齐测试图片" height="10" width="10">
+    <span>亚冠联赛(super)</span>
+</div>
+<div>
+    <img src="https://demo.xiaohuochai.site/backup/vertical-align.png" alt="垂直对齐测试图片" height="10" width="10">
+    <span>亚冠联赛(bottom)</span>
+</div>
+<div>
+    <img src="https://demo.xiaohuochai.site/backup/vertical-align.png" alt="垂直对齐测试图片" height="10" width="10">
+    <span>亚冠联赛(text-bottom)</span>
+</div>
+<div>
+    <img src="https://demo.xiaohuochai.site/backup/vertical-align.png" alt="垂直对齐测试图片" height="10" width="10">
+    <span>亚冠联赛(top)</span>
+</div>
+<div>
+    <img src="https://demo.xiaohuochai.site/backup/vertical-align.png" alt="垂直对齐测试图片" height="10" width="10">
+    <span>亚冠联赛(text-top)</span>
+</div>
+<div>
+    <img src="https://demo.xiaohuochai.site/backup/vertical-align.png" alt="垂直对齐测试图片" height="10" width="10">
+    <span>亚冠联赛(middle)</span>
+</div>
+```
+
+[注意]``<sub>和<sup>``默认携带样式vertical-align:sub/super
+
+inline-block元素在块级元素中留空隙就是因为图像的默认垂直对齐方式是基线对齐(基线对齐在原理上相当于图像底边与匿名文本大写英文字母X的底边对齐)；而匿名文本是有行高的，继承父级元素设置的行高，默认为normal(即font-size的1.2倍)，所以X的底边距离行框有一段距离，这段距离就是图像留出的空隙。于是，解决这个问题有以下几个解决办法
+
+1. display:block 因为垂直对齐方式只能作用于替换元素和行内元素，更改为块级元素，会使垂直对齐方式失效
+2. 父级的line-height: 0 这样使匿名文本与行框的距离为0
+3. vertical-align: top/middle/bottom
+
+应用
+
+1. **【单行文本水平垂直居中】** 仅仅设置line-height就行了
+2. **【图片近似垂直居中】** div { line-height: 200px; text-align: center; } img { vertical-align: middle; } 由于字符X在em框中并不是垂直居中的，且各个字体的字符X的高低位置不一致。所以，当字体大小较大时，这种差异就更明显。[注意]IE7浏览器在写块级元素包含行内元素时一定要写成换行/空格写法，而不要写在一行
+3. **【图片完全垂直居中】** 在方法2的基础上设置块级元素的font-size为0，则可以设置图片完全垂直居中
+4. **【多行文本水平垂直居中】** 由于方法3设置font-size为0的局限性，块级元素里面无法放置文本。方法4主要通过新增元素来实现垂直居中效果，该方法也可用于图片的水平垂直居中
+5. **【图标和文本对齐】**
+    1. 使用长度负值 img { vertical-align: -5px; } 根据实践经验，20*20像素的图标后面跟14px的文字，vertical-align设置为-5px可以达到比较好的对齐效果
+    2. 使用文本底部对齐 img { vertical-align: text-bottom; } 使用baseline会使图标偏上；使用top/bottom会受到其他行内元素影响造成定位偏差；使用middle需要恰好的字体大小且兼容性不高；使用text-bottom较合适，不受行高及其他内联元素影响
+
+```html
+<!-- 4 -->
+<style>
+    div { height: 100px; width: 200px; background-color: pink; text-align: center; }
+    span { display:inline-block; vertical-align: middle; line-height: 20px; width: 100px; }
+    i { display: inline-block; height: 100%; vertical-align: middle; }
+</style>
+<div>
+    <i></i><span>我是特别长的特别长的特别长的特别长的多行文字</span>
+</div>
+```
+
+父元素盒子设置line-height，他的baseline就根据line-height来。如果没设置line-height，他的baseline会根据他line-height变化而变化，主要表现为：
+
+1. 子元素没设置vertical-align，父元素的line-height就根据字体的大小变化。
+2. 子元素设置了vertical-align，父元素的当前行的高度就是子元素的高度（子元素的高度大于父元素的默认行高，否则仍是默认行高），
+
 ### 换行和空白符
 
+CSS3新增了两个换行属性word-wrap和word-break。把空白符和换行放在一起说，是因为实际上空白符是包括换行的，且常用的文本不换行是使用的空白符的属性white-space: nowrap;到底它们还有些什么属性值，以及有什么对应的用法呢？本文就空白符和换行的内容做详细介绍和梳理。
+
+1. 空白符 white-space: normal | nowrap | pre | pre-wrap | pre-line | inherit
+    1. 空白符是指空格、制表符和回车；HTML默认已经把所有空白符合并成一个空格
+    2. normal: 合并空白符，允许自动换行
+    3. nowrap: 合并空白符，不允许自动换行
+    4. pre-line: 合并空白符(不包括换行符)，允许自动换行
+    5. pre: 不合并空白符，不允许自动换行
+    6. pre-wrap: 不合并空白符，允许自动换行(在pre基础上，保留自动换行)
+    7. [注意]``<pre>``元素默认带有样式white-space: pre;
+    8. [注意]IE7-浏览器不支持pre-line和pre-wrap这两个属性值
+    9. 应用于: 所有元素
+2. 文本换行
+    1. 浏览器自身带有文本自动换行的功能，文本容器的右侧可以实现自动换行
+    2. 对于英文来说，浏览器会在半角空格或连字符的地方自动换行，而不会在单词的中间突然换行
+    3. 对于中文来说，可以在任何一个文字后面换行，但浏览器碰到标点符号时，通常将标点符号以及其前一个文字作为一个整体进行换行
+    4. 所以实际上，white-space解决不了长单词或URL地址的换行问题
+    5. word-wrap: normal | break-word 用来实现长单词或URL地址的自动换行
+        1. word-wrap:normal(浏览器只在半角空格或连字符的地方进行换行)
+        2. word-wrap:break-word(截断单词换行，长单词从下一行开始)
+        3. 应用于: 所有元素
+        4. [注意]当white-space的值是nowrap或pre时，word-break和word-wrap属性都失效
+        5. [注意]word-wrap在标准中被改为overflow-wrap，但由于兼容问题，一般还是使用word-wrap
+    6. word-break: normal | break-all | keep-all 决定自动换行的处理方法。通过具体的属性设置，不仅可以让浏览器实现半角空格或连字符后面的换行，而且还可以让浏览器实现任意位置的换行。
+        1. 应用于: 所有元素
+        2. normal: 中文到边界上的汉字换行，英文从整个单词换行
+        3. break-all: 对于英文长单词来说，会截断单词换行，长单词占据当前行剩余空间。但对于中文的处理，各浏览器不一致
+            1. [1]firefox及safari: 中文到边界上的汉字换行，且允许标点置于段首
+            2. [2]IE及chrome: 中文到边界上的汉字换行，但不允许标点置于段首
+        4. keep-all: 对于英文长文本不能换行，但对于中文的处理，各浏览器不一致
+            1. [1]firefox: 在空白符处换行
+            2. [2]IE及chrome: 在空白符及标点处换行
+            3. [3]safari: 不支持
+        5. [注意]移动端目前基本都不支持keep-all值　　
+        6. [注意]当word-break值为break-all时，word-wrap属性失效；否则两个属性都起作用
+3. 对于表单元格的长文本来说，使用word-wrap或word-break来强制换行需要设置table-layout:fixed
+4. 伪元素换行 -- 有一个Unicode字符，是专门代表换行符的:0x000A，在CSS中，写作'\000A'，可以简写为'\A'。但是，由于浏览器会合并空白符。因此，需要使用pre来阻止空白符的合并。
+
+```html
+<style>
+    dt,dd{display:inline;}
+    dd{margin: 0;font-weight:bold;}
+    dd+dt::before{content:'\A';white-space:pre;}
+    dd+dd::before{content:',';font-weight:normal;}
+</style>
+<dl>
+  <dt>姓名:</dt>
+  <dd>小火柴</dd>
+  <dt>邮箱:</dt>
+  <dd>123@qq.com</dd>
+  <dd>123@163.com</dd>
+</dl>
+```
+
+我个人理解，空白符(white-space)最常用的功能是nowrap，即不换行；而CSS3新增的两个属性word-wrap和word-break主要用于解决长文本换行的问题。word-wrap:break-word截断长文本换行，长文本从下一行开始；word-break:break-all也用于截断长文本换行，但长文本会占据当前行剩余空间
+
+当然，空白符(white-space)除了nowrap，还有其他的一些属性值。word-wrap和word-break也有针对中文的处理。但由于浏览器兼容器问题，用的并不是太多
+
 ### 文本溢出和文本阴影
+
+1. 文本溢出。一般地，人们一提到文本溢出，想到的就是文本溢出的经典代码 ``white-space: nowrap; overflow: hidden; text-overflow: ellipsis;`` 但实际上，文本换行不一定非要使用white-space；overflow属性值也不一定非要使用hidden
+    1. 定义 -- text-overflow: clip | ellipsis 应用于: 块级元素、替换元素、表单元格。
+        1. clip: 不显示省略标记(...)，只是简单的裁切，相当于无效果
+        2. ellipsis: 文本溢出时显示省略标记(...)，省略标记插入的位置是最后一个字符
+        3. [注意]当文本溢出属性应用于表单元格时，需要设置table-layout:fixed
+        4. [注意]该属性兼容性很好，兼容IE6+的主流浏览器及移动端iso和android
+    2. 实现 --
+        1. 当存在长英文文本时，text-overflow属性起作用的前提是 ``overflow(或overflow-y或overflow-x):hidden | auto | scroll``
+        2. 当文本为汉字时，text-overflow属性起作用的前提是 实现汉字不自动换行可使用word-break: keep-all; 或 white-space: nowrap; 然后 overflow(或overflow-y或overflow-x):hidden | auto | scroll
+2. 多行文本溢出
+    1. 在webkit浏览器中，有一个不规范的属性-webkit-line-clamp，它可以实现多行文本溢出。它的值是一个\<number>，设置为几，便可以设置相应数字的文本溢出
+    2. 设置多行文本溢出，还需要配合其他样式，样式如下
+    3. [注意]不要显式地设置高度，而应该让其自适应高度，否则会造成如下效果
+3. 文本阴影
+    1. 类似于盒子阴影，文本阴影也有x轴偏移、y轴偏移、模糊半径和阴影颜色这四个值，但是并没有阴影尺寸和内部阴影这两个值 text-shadow: none | (h-shadow v-shadow blur color)+
+        1. h-shadow: 水平阴影位置(必须)
+        2. v-shadow: 垂直阴影位置(必须)
+        3. blur:     模糊距离(该值不能为负值，可选)
+        4. color:    阴影颜色，默认和文本颜色一致(可选)
+    2. [注意]不要加太多层阴影，会有性能问题
+    3. 常见效果
+
+```html
+<style>
+    /* 2.2 */ .test { /*溢出隐藏*/ overflow: hidden; /*旧版本flex*/ display: -webkit-box; /*旧版伸缩流方向为垂直方向*/ -webkit-box-orient: vertical; /*溢出隐藏3行*/ -webkit-line-clamp: 3; }
+</style>
+<div style="width:300px;" class='test'>
+    我是测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字
+</div>
+<!-- 2.3 -->
+<div style="width: 300px; height: 75px;" class='test'>
+    我是测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字
+</div>
+```
+
+```html
+<!-- 3.3 -->
+<style>
+    div { width: 200px; border: 1px solid black; font: 20px/40px "宋体"; }
+    div:nth-child(1) { text-shadow: 5px 5px 5px #60f; }
+    div:nth-child(2) { box-shadow: 1px 1px 2px 2px #ccc; text-shadow: 0 0 10px black; color: rgba(0, 0, 0, 0); }
+    div:nth-child(3) { background-color: #666; color: #fff; text-shadow: 0 0 10px red; }
+    div:nth-child(4) { background-color: #666; color: #fff; text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #fff, 0 0 40px #ff00de, 0 0 70px #ff00de; }
+    div:nth-child(5) { background-color: #666; color: #000; text-shadow: 0 1px 1px #fff; font-weight: bold; }
+    div:nth-child(6) { background-color: #666; color: #fff; text-shadow: -1px -1px 0 #fff, 1px 1px 0 #333, 1px 1px 0 #444; }
+    div:nth-child(7) { color: #fff; text-shadow: 0px 0px 1px black; }
+    div:nth-child(8) { background-color: #666; color: #fff; text-shadow: -1px -1px rgba(197, 223, 248, 0.8), -2px -2px rgba(197, 223, 248, 0.8), -3px -3px rgba(197, 223, 248, 0.8); }
+    div:nth-child(9) { font-weight: bold; color: white; text-shadow: 0 0 4px #fefcc9, 2px -2px 6px #feec85, -4px -4px 8px #ffae34, 4px -8px 10px #ec760c, -4px -12px 12px #cd4606, 0 -16px 14px #973716, 2px -18px 18px #451b0e; }
+</style>
+<div>文字简单阴影效果</div>
+<div>文字毛玻璃效果</div>
+<div>文字外阴影效果</div>
+<div>文字辉光效果</div>
+<div>文字雕刻效果</div>
+<div>文字浮雕效果</div>
+<div>文字空心效果</div>
+<div>文字3D效果</div>
+<div>文字火焰效果</div>
+```
 
 ## 颜色和背景
 
 ### 颜色模式
 
+以前主要采用关键字、16进制和RGB这三种设置颜色的方式。CSS3出现后，增加了RGBA、HSL、HSLA这三种模式，极大地丰富了CSS颜色设置的方式。
+
+CSS颜色关键字包括命名颜色、transparent、currentColor(currentColor顾名思义指当前颜色，准确来讲指当前的文字颜色)属性值。直接使用的名字的颜色值称为命名颜色。CSS支持17种合法命名颜色(标准颜色)：aqua fuchsia lime olive red white black gray maroon orange silver yellow blue green navy purple teal。[注意]浏览器支持140种颜色。[注意]IE7-不支持color:transparent，但支持background-color: transparent和border-color: transparent
+
+web安全颜色是指在256色计算机系统上总能避免抖动的颜色，表示为RGB值20%和51(相应的16进制值为33)的倍数。因此，采用16进制时，使用00\33\66\99\cc\ff认为是Web安全色，一共6*6*6=216种
+
+rgba模式是在RGB基础上增加了alpha通道，用来设置颜色的透明度，其中这个通道值的范围是0-1。0代表完全透明，1代表完全不透明。[注意]IE8-浏览器不支持。<br>
+IE8-浏览器对新增的颜色模式并不支持，需要使用gradient滤镜。gradient滤镜的前两位表示Alpha透明度值(00-ff)，其中00表示全透明，ff表示完全不透明。后六位代表的是RGB模式。如果使用#A6DADC并且透明度为0.6的透明色(0.6*255=153，转换成16进制是99)，用gradient滤镜表示为 filter:progid:DXImageTransform.Microsoft.gradient(enabled = 'true',startColorstr="#99A6DADC",endColorstr="#99A6DADC") 。[注意]IE滤镜只能兼容背景色，而不能兼容前景色。
+
+HSL模式是通过对色调(H)、饱和度(S)、亮度(L)三个颜色通道的变化以及它们相互的叠加得到各式各样的颜色。HSL标准几乎可以包括人类视力所能感知的所有颜色。[注意]IE8-浏览器不支持。<br>
+hsl(h,s,l)
+
+* h:色调(hue)可以为任意整数。0(或360或-360)表示红色，60表示黄色，120表示绿色，180表示青色，240表示蓝色，300表示洋红(当h值大于360时，实际的值等于该值模360后的值)
+* s:饱和度(saturation)，就是指颜色的深浅度和鲜艳程度。取0-100%范围的值，其中0表示灰度(没有该颜色)，100%表示饱和度最高(颜色最鲜艳)
+* l:亮度(lightness)，取0-100%范围的值，其中0表示最暗(黑色)，100%表示最亮(白色)
+
+HSLA模式是HSL的扩展模式，在HSL的基础上增加一个透明通道alpha来设置透明度。[注意]IE8-浏览器不支持。hsla(<length>,<percentage>,<percentage>,<opacity>)
+
 ### 颜色模式转换器
+
+1. 16进制 -> RGB
+
+```js
+function sixteenToRgb(str){
+    var r, g, b, rgb;
+    if (str.length == 7) {
+        r = parseInt(str.substr(1, 2), 16);
+        g = parseInt(str.substr(3, 2), 16);
+        b = parseInt(str.substr(5, 2), 16);
+    } else if (str.length == 4) {
+        r = parseInt('' + str.substr(1, 1) + str.substr(1, 1), 16);
+        g = parseInt('' + str.substr(2, 1) + str.substr(2, 1), 16);
+        b = parseInt('' + str.substr(3, 1) + str.substr(3, 1), 16);
+    } else {
+        return 'false'
+    }
+    rgb = 'rgb(' + r +',' + g +','+b +')';
+    return rgb;
+}
+console.log(sixteenToRgb('#123456'));  // rgb(18,52,86)
+console.log(sixteenToRgb('#123'));  // rgb(17,34,51)
+console.log(sixteenToRgb('#1234'));  // false
+```
+
+2. RGB -> 16进制
+
+```js
+function rgbToSixteen(str){
+    var r16, g16, b16, sixteen;
+    if(/^rgb\( *(\d+)\, *(\d+)\, *(\d+) *\)$/.test(str)){
+           if (RegExp.$1 >= 0 && RegExp.$1 <= 255 || RegExp.$2 >= 0 && RegExp.$2 <= 255 || RegExp.$3 >= 0 && RegExp.$3 <= 255) {
+               r16 = addZero(Number(RegExp.$1).toString(16));
+               g16 = addZero(Number(RegExp.$2).toString(16));
+               b16 = addZero(Number(RegExp.$3).toString(16));
+            　 sixteen = '#' + r16 + g16 + b16 ;
+            　 return sixteen;
+           } else {
+               return 'false';
+           }
+    } else {
+        return 'false';
+    }
+}
+function addZero(str) {
+    return str.length == 1 ? '0' + str : str;
+}
+console.log(rgbToSixteen('rgb(10, 44, 3)'));  // #0a2c03
+console.log(rgbToSixteen('rgb(-10, 44, 3)'));  // false
+console.log(rgbToSixteen('rgb(123)'));  // false
+```
+
+3. HSL -> RGB
+
+```js
+// 参考http://stackoverflow.com/questions/2353211/hsl-to-rgb-color-conversion
+function hslToRgb(str) {
+    var r, g, b;
+    var h, s, l;
+    if (/^hsl\( *(\d+)\, *(\d+)%\, *(\d+)% *\)$/.test(str)) {
+        if (RegExp.$1 >= 0 && RegExp.$1 <= 360 && RegExp.$2 >= 0 && RegExp.$2 <= 100 && RegExp.$3 >= 0 && RegExp.$3 <= 100) {
+            h = RegExp.$1 / 360;
+            s = RegExp.$2 / 100;
+            l = RegExp.$3 / 100;
+            if (s == 0) {
+                r = g = b = l;
+            } else {
+                var hue2rgb = function hue2rgb(p, q, t) {
+                    if (t < 0) t += 1;
+                    if (t > 1) t -= 1;
+                    if (t < 1 / 6) return p + (q - p) * 6 * t;
+                    if (t < 1 / 2) return q;
+                    if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+                    return p;
+                }
+                var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+                var p = 2 * l - q;
+                r = hue2rgb(p, q, h + 1 / 3);
+                g = hue2rgb(p, q, h);
+                b = hue2rgb(p, q, h - 1 / 3);
+            }
+            return 'rgb(' + Math.round(r * 255) + ',' + Math.round(g * 255) + ',' + Math.round(b * 255) + ')';
+        }
+    }
+    return 'false';
+}
+console.log(hslToRgb('hsl(248,64%,39%)'));  // rgb(53,36,163)
+console.log(hslToRgb('hsl(-248,64%,39%)'));  // false
+console.log(hslToRgb('hsl(300,40%,50%)'));  // rgb(179,77,178)
+```
+
+4. RGB -> HSL
+
+```js
+// 参考http://stackoverflow.com/questions/2353211/hsl-to-rgb-color-conversion
+function rgbToHsl(str) {
+    var r, g, b;
+    if (/^rgb\((\d+)\,(\d+)\,(\d+)\)$/.test(str)) {
+        if (RegExp.$1 >= 0 && RegExp.$1 <= 255 && RegExp.$2 >= 0 && RegExp.$2 <= 255 && RegExp.$3 >= 0 && RegExp.$3 <= 255) {
+            r = RegExp.$1 / 255, g = RegExp.$2 / 255, b = RegExp.$3 / 255;
+            var max = Math.max(r, g, b), min = Math.min(r, g, b);
+            var h, s, l = (max + min) / 2;
+
+            if (max == min) {
+                h = s = 0; // achromatic
+            } else {
+                var d = max - min;
+                s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                switch (max) {
+                    case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                    case g: h = (b - r) / d + 2; break;
+                    case b: h = (r - g) / d + 4; break;
+                }
+                h /= 6;
+            }
+            return 'hsl(' + Math.round(h * 360) + ',' + Math.round(s * 100) + '%,' + Math.round(l * 100) + '%)';
+        }
+    }
+    return 'false';
+}
+console.log(rgbToHsl('rgb(53,36,163)'));  // hsl(248,64%,39%)
+console.log(rgbToHsl('rgb(179,77,178)'));  // hsl(301,40%,50%)
+console.log(rgbToHsl('rgb(300,1,1)'));  // false
+```
+
+5. 简单拾色器
+
+```html
+<style>
+    .show { border: 4px solid black; border-radius: 4px; width: 300px; margin-top: 10px; }
+    .show div { height: 40px; line-height: 40px; width: 260px; margin-top: 10px; font-size: 20px; }
+    @media (max-width:700px) { .show { width: 100%; } }
+</style>
+<input id="color" type="color">
+<div class="show">
+    <div id="sixteen">16进制值:#000000</div>
+    <div id="rgb">RGB值:rgb(0,0,0)</div>
+    <div id="hsl">HSL值:hsl(0,0%,0%)</div>
+</div>
+<script>
+    function sixteenToRgb(str) {
+        var r, g, b, rgb;
+        if (str.length == 7) {
+            r = parseInt(str.substr(1, 2), 16);
+            g = parseInt(str.substr(3, 2), 16);
+            b = parseInt(str.substr(5, 2), 16);
+        } else if (str.length == 4) {
+            r = parseInt('' + str.substr(1, 1) + str.substr(1, 1), 16);
+            g = parseInt('' + str.substr(2, 1) + str.substr(2, 1), 16);
+            b = parseInt('' + str.substr(3, 1) + str.substr(3, 1), 16);
+        } else {
+            return 'false'
+        }
+        rgb = 'rgb(' + r + ',' + g + ',' + b + ')';
+        return rgb;
+    }
+    function rgbToHsl(str) {
+        var r, g, b;
+        if (/^rgb\( *(\d+)\, *(\d+)\, *(\d+) *\)$/.test(str)) {
+            if (RegExp.$1 >= 0 && RegExp.$1 <= 255 && RegExp.$2 >= 0 && RegExp.$2 <= 255 && RegExp.$3 >= 0 && RegExp.$3 <= 255) {
+                r = RegExp.$1 / 255, g = RegExp.$2 / 255, b = RegExp.$3 / 255;
+                var max = Math.max(r, g, b),
+                    min = Math.min(r, g, b);
+                var h, s, l = (max + min) / 2;
+                if (max == min) {
+                    h = s = 0; // achromatic
+                } else {
+                    var d = max - min;
+                    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                    switch (max) {
+                        case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                        case g: h = (b - r) / d + 2; break;
+                        case b: h = (r - g) / d + 4; break;
+                    }
+                    h /= 6;
+                }
+                return 'hsl(' + Math.round(h * 360) + ',' + Math.round(s * 100) + '%,' + Math.round(l * 100) + '%)';
+            }
+        }
+        return 'false';
+    }
+    color.onchange = function () {
+        sixteen.innerHTML = '16进制值:' + color.value;
+        rgb.innerHTML = 'RGB值:' + sixteenToRgb(color.value);
+        hsl.innerHTML = 'HSL值:' + rgbToHsl(sixteenToRgb(color.value));
+    }
+</script>
+```
+
+6. 16进制颜色转换器
+
+```html
+<style>
+    ul { margin: 0; padding: 0; list-style: none; }
+    .con { float: left; width: 304px; border: 2px solid black; overflow: hidden; padding: 10px; border-radius: 10px; }
+    .con li { float: left; width: 30px; height: 30px; line-height: 30px; font-size: 24px; background-color: rgba(0, 0, 0, 0.5); text-align: center; color: white; cursor: pointer; margin: 4px; }
+    .show { float: left; width: 200px; height: 100px; line-height: 100px; font-size: 40px; background-color: rgba(0, 0, 0, 0.3); color: black; margin: 0 60px; text-align: center; }
+    .color { border: 4px solid black; border-radius: 4px; width: 360px; margin-top: 10px; padding: 10px; }
+    .color div { height: 40px; line-height: 40px; width: 300px; margin-top: 10px; font-size: 20px; }
+    #btn, #reset { font-size: 18px; height: 30px; line-height: 22px; padding: 4px; }
+    #sixteen { background-color: rgba(0, 0, 0, 0.2); width: 80px; display: inline-block; }
+    @media (max-width:700px) {
+        .box { width: 100%; box-sizing: border-box; }
+        .show, .con { float: none; width: 100%; box-sizing: border-box; margin: 0; }
+        .show { height: 60px; line-height: 60px; font-size: 30px; }
+        .show-body { width: 100%; display: block; }
+        .color { width: 100%; box-sizing: border-box; height: auto; line-height: 30px; }
+        #input { width: 130px; font-size: 12px; }
+        .con dt { margin: 0; }
+        .con dl { margin: 0; width: 100%; }
+        .con dl dd { float: left; width: 23%; margin: 1%; }
+        #conUl { width: 100%; box-sizing: border-box; }
+        .con li { font-size: 14px; }
+        .color { font-size: 12px; }
+    }
+</style>
+<div style="overflow: hidden">
+    <ul class="con" id="con">
+        <li>0</li>
+        <li>1</li>
+        <li>2</li>
+        <li>3</li>
+        <li>4</li>
+        <li>5</li>
+        <li>6</li>
+        <li>7</li>
+        <li>8</li>
+        <li>9</li>
+        <li>a</li>
+        <li>b</li>
+        <li>c</li>
+        <li>d</li>
+        <li>e</li>
+        <li>f</li>
+    </ul>
+    <div class="show" id="show">测试文字</div>
+</div>
+<div class="color">
+    <div>16进制值:
+        <span id="sixteen">#</span>
+        <button id="btn">确定</button>
+        <button id="reset">重置</button>
+    </div>
+    <div>RGB值:
+        <span id="rgb"></span>
+    </div>
+    <div>HSL值:
+        <span id="hsl"></span>
+    </div>
+</div>
+<script>
+    function sixteenToRgb(str) {
+        var r, g, b, rgb;
+        if (str.length == 7) {
+            r = parseInt(str.substr(1, 2), 16);
+            g = parseInt(str.substr(3, 2), 16);
+            b = parseInt(str.substr(5, 2), 16);
+        } else if (str.length == 4) {
+            r = parseInt('' + str.substr(1, 1) + str.substr(1, 1), 16);
+            g = parseInt('' + str.substr(2, 1) + str.substr(2, 1), 16);
+            b = parseInt('' + str.substr(3, 1) + str.substr(3, 1), 16);
+        } else {
+            return 'false'
+        }
+        rgb = 'rgb(' + r + ',' + g + ',' + b + ')';
+        return rgb;
+    }
+    function rgbToHsl(str) {
+        var r, g, b;
+        if (/^rgb\( *(\d+)\, *(\d+)\, *(\d+) *\)$/.test(str)) {
+            if (RegExp.$1 >= 0 && RegExp.$1 <= 255 && RegExp.$2 >= 0 && RegExp.$2 <= 255 && RegExp.$3 >= 0 && RegExp.$3 <= 255) {
+                r = RegExp.$1 / 255, g = RegExp.$2 / 255, b = RegExp.$3 / 255;
+                var max = Math.max(r, g, b), min = Math.min(r, g, b);
+                var h, s, l = (max + min) / 2;
+                if (max == min) {
+                    h = s = 0; // achromatic
+                } else {
+                    var d = max - min;
+                    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                    switch (max) {
+                        case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                        case g: h = (b - r) / d + 2; break;
+                        case b: h = (r - g) / d + 4; break;
+                    }
+                    h /= 6;
+                }
+                return 'hsl(' + Math.round(h * 360) + ',' + Math.round(s * 100) + '%,' + Math.round(l * 100) + '%)';
+            }
+        }
+        return 'false';
+    }
+    var mark = false;
+    var conChildren = con.children;
+    for (var i = 0; i < conChildren.length; i++) {
+        conChildren[i].onclick = function () {
+            if (mark) {
+                sixteen.innerHTML = '#';
+                show.style.color = 'white';
+                mark = false;
+            }
+            sixteen.innerHTML += this.innerHTML;
+        }
+        conChildren[i].onmouseover = function () { this.style.color = "rgb(39,184,231)"; }
+        conChildren[i].onmouseout = function () { this.style.color = "white"; }
+    }
+    reset.onclick = function () {
+        sixteen.innerHTML = '#';
+        rgb.innerHTML = hsl.innerHTML = '';
+        show.style.color = 'white';
+    }
+    btn.onclick = function () {
+        if (sixteen.innerHTML.length == '7' || sixteen.innerHTML.length == '4') {
+            show.style.color = sixteen.innerHTML;
+            rgb.innerHTML = sixteenToRgb(sixteen.innerHTML);
+            hsl.innerHTML = rgbToHsl(rgb.innerHTML);
+            mark = true;
+        } else {
+            alert('输入的位数不正确，请重新输入');
+            sixteen.innerHTML = '#';
+            rgb.innerHTML = hsl.innerHTML = '';
+        }
+    }
+</script>
+```
+
+7. https://www.cnblogs.com/xiaohuochai/p/5235336.html RGB颜色转换器
+8. https://www.cnblogs.com/xiaohuochai/p/5235336.html HSL颜色转换器
 
 ### 前景色和透明度
 
+* 前景是元素的文本，不过前景还包括元素周围的边框。有两种方式直接影响一个元素的前景色，可以使用color属性，也可以使用属性border-color设置边框颜色
+* color是可以继承的，可以把文档中的所有正常文本设置为某种颜色，如通过声明body{color:red;}设置为红色。这会把所有没有其他样式的文本变成红色(如锚就不包含在内，锚有其自己的颜色样式)。但浏览器对表单类元素有预定义的颜色，使body颜色无法继承到表单类元素中
+* opacity是CSS3中专门用来设置透明度的一个属性，opacity只能给整个元素设置一个透明度，并且其透明度直接会继承给其后代元素。值: value | inherit。value:默认值是1，可以取0-1的任意浮点数。其中，1表示完全不透明，0表示完全透明。
+    * IE8-浏览器不支持opacity透明属性，可以使用其专用的滤镜来实现opacity透明属性的透明效果：filter:alpha(opacity=透明值)，该透明值是0-100之间的任意整
+
 ### 背景
 
+1. background-color: \<color> | transparent | inherit
+2. background-image: \<url> | none | inherit  会放在所指定的背景颜色之上。不过对于有alpha通道的图像格式，如PNG，可能会部分或完全透明，这会导致图像与背景色结合。另外，如果出于某种原因无法加载图像，背景色会取代图像
+3. 背景平铺 -- 背景图像默认从一个元素的左上角padding-box开始平铺(background-repeat)，但其从各个方向朝外面平铺，包括border区域。背景平铺的属性值中space和round是CSS3新增的值。space表示背景图像的两端对齐平铺，多出来的空间用空白代替；round也表示背景图像的两端对齐平铺，但多出来的空间通过自身拉伸来填充。
+    1. background-repeat: x-value y-value
+    2. 值: repeat | repeat-x | repeat-y | no-repeat | space | round | inherit
+    3. 初始值: repeat
+    4. 应用于: 所有元素
+    5. [注意]space和round这两个新增属性值firefox、safari和IE9-浏览器不支持
+    6. [注意]背景平铺可以写空格间隔的两个值，分别代表横轴值和纵轴值，但这种写法IE8-浏览器不支持。
+4. background-position
+    1. 值: [[<percentage] | <length> | left | center | right] [<percentage>] | <length> | top | center | bottom ] ? ] || [[left | center | right] || [top | center | bottom]] | inherit
+    2. 初始值: 0% 0%
+    3. 应用于: 全部元素
+    4. 百分数: 相对于元素和原图像的相应点
+    5. x(水平方向):
+        1. left: 图的左侧和元素左侧对齐
+        2. center: 图的中间和元素中间对齐
+        3. right: 图的右侧和元素右侧对齐
+        4. 具体值：正值从左向右移动，负值从右向左移动
+        5. 百分比：背景图像的x%对应元素的x%
+    6. y(垂直方向):
+        1. top: 图的顶部和元素顶部对齐
+        2. center: 图的中间和元素中间对齐
+        3. bottom: 图的底部和元素底部对齐
+        4. 正值从上向下移动，负值从下向上移动
+        5. 背景图像的y%对应元素的y% [注意]若只写了一个值，另一个值将是50%
+    7. [注意]单一关键字：当某一方向的关键字为center时可省略
+    8. [注意]页面左上角为原点(0,0)点。[注意]背景图像移出到元素范围外的部分不显示
+    9. 【新用法】在CSS2.1中，背景定位只支持以左上角为参照进行定位，在CSS3中新增了可以选择参照方向的定位。第一个和第三个参数为要参照的方向，第二个和第四个参数为偏移值。如 background-position: left 10px bottom 10px
+5. background-attachment: scroll(默认) | fixed | inherit
+    1. scroll：背景图片会随着页面其余部分的滚动而移动。但如果它自己是可以滚动的元素，背景图不会随元素内容的滚动而滚动(默认值)
+    2. fixed：原图像不会随文档滚动，且原图像的放置由可视区的大小确定，而不是由包含该图像的元素的大小 或在可视区中的位置决定。在浏览器中，随着用户调整浏览器窗口的大小，可视区可能会改变。这会导致背景的原图像随着窗口大小的改变移动位置。所以某种意义上说，图像并不是固定的，它只是在可视区大小不改变的情况下保持固定
+    3. [注意]IE6-浏览器无法处理非body元素上的固定关系
+    4. local：背景图片会随着页面其余部分的滚动而移动。但如果它自己是可以滚动的元素，背景图会随元素内容的滚动而滚动
+    5. [注意]local属性值IE8-浏览器不支持
+6. background-origin: padding-box || border-box || content-box 决定背景定位属性的参考原点，即决定背景图片定位的起点。[注意]IE8-浏览器不支持
+    1. padding-box: 默认值，决定背景定位起始位置从padding的外边缘开始显示背景图片
+    2. border-box: 决定背景定位起始位置从border的外边缘开始显示背景图片
+    3. content-box: 决定背景定位起始位置从content的外边缘开始显示背景图片
+    4. [注意]如果将background-attachment设置为fixed，background-origin将不起任何作用
+7. background-clip: padding-box || border-box || content-box 定义背景图像的裁剪区域，[注意]IE8-浏览器不支持。在webkit内核下支持text属性，配合-webkit-text-fill-color: transparent;的属性可以使文字颜色呈现背景图像的效果
+8. background-size: auto || \<length> || <percentage> || cover || contain 。 \<percentage>: 取百分比，相对于元素的宽度和padding的总和来计算
+    1. 指定背景图片的尺寸，可以控制背景图片在水平和垂直两个方向的缩放，也可以控制图片拉伸覆盖背景区域的方式，甚至还可以截取背景图片。背景图片能够自适应元素盒子的大小，实现与模块大小完全适应的背景图片，避免了因区块尺寸不同而需要设计不同的背景图片。[注意]IE8-浏览器不支持
+    2. 背景尺寸的特性有如下用途:在流体布局或者响应式布局中，确保背景图像能够始终适配容器大小；对于平铺的重复性背景图像，可以确保背景图像不会有截断效果；在流体布局中缩放背景图像来伪造出多列分栏效果；解决Retina屏幕双倍像素下背景图像模糊问题；使用链接或者列表元素的背景图像能和文本一起进行缩放
+    3. 当背景尺寸属性为固定数值或百分比值时可以设置两个值，也可以设置一个值。只取一个值时，指定了背景图片的宽度，第二个值相当于auto，也就是指定了高度。在这种情况下，auto值设定之后能够让背景图片的高度自动地按照比例缩放
+    4. cover: 将背景图片放大，以适合铺满整个容器。但这种方法会致使背景图片失真。常与background-position: center配合来制作满屏背景效果。缺点是需要制作一张足够大的背景图片，否则在较大分辨率浏览器下会使背景图片失真
+    5. contain: 保持背景图像本身的宽度比例，将背景图像缩放到宽度或高度正好适应所定义背景容器的区域
+9. 【多背景】在使用CSS3之前，每个容器只能指定一张背景图像，因此每当需要增加一张背景图像时，必须至少添加一个容器来容纳它。使用伪元素显示附加图片其实就是嵌套HTML标签实现多背景图像的变身，通过:after和:before等伪元素生成附加元素来放置背景图像，表面上比直接嵌套HTML标签更干净一些，但其实是换汤不换药。[注意]IE8-浏览器不支持
+    1. 通过CSS3的多背景属性，HTML标记就不需要任何修改，在CSS的background-image或者background属性中列出需要使用的所有背景图像，用逗号分隔开。而且每张图片都具有background中的属性。
+    2. CSS3多背景有层次之分，按照浏览器中显示时图像叠放的顺序从上到下指定，最先声明的背景图像将会居于最上层，最后指定的背景图像将置于最底层
+    3. 除了背景颜色之外，其他的属性都可以设置多个属性值，前提是元素有多个背景图像存在
+    4. 对于不兼容多背景的浏览器来说，多背景属性写在单一背景属性的后面，而且还要确保这张单一背景图像确实可用。这是处理兼容CSS3多背景特性兼容的常用方案
+    5. background: [background-image] | [background-color] | [background-position][/background-size] | [background-repeat] | [background-attachment] | [background-origin] | [background-clip],*
+    6. [注意]若background在background-origin和background-clip中仅存在一个值，则该值为background-clip；若存在两个值，则前面为background-origin，后面为background-clip
+10.[注意]所有背景属性都不能继承
+
 ### 光标
+
+cursor: [<uri>,]*[auto | default | pointer | crosshair | move | e-resize | ne-resize | nw-resize | n-resize | se-resize | sw-resize | s-resize | w-resize | text | wait | help | progress]] | inherit
+
+* 标准样式（css2）
+    * url: 自定义光标的URL
+    * default: 默认光标，通常是一个箭头
+    * auto: 浏览器自动识别的光标
+    * crosshair : 十字线
+    * pointer: 手型指针
+    * move: 移动指针
+    * e-resize: 向东移动指针
+    * ne-resize: 向东北移动指针
+    * nw-resize: 向西北移动指针
+    * n-resize: 向北移动指针
+    * se-resize: 向东南移动指针
+    * sw-resize: 向西南移动指针
+    * s-resize: 向南移动指针
+    * w-resize: 向西移动指针
+    * text: 文本指针
+    * wait: 指示程序正忙
+    * help: 帮助指针
+* 拓展样式（css3）[注意]所有拓展样式IE7-浏览器都不支持
+    * cursor:none (not IE8, Safari)
+    * cursor:context-menu (not Safari,Firefox,Chrome)
+    * cursor:cell (not Safari)
+    * cursor:alias (not Safari)
+    * cursor:copy (not IE,Safari)
+    * cursor:grab (not IE,Safari,Chrome)
+    * cursor:grabbing (not IE,Safari,Chrome)
+    * cursor:zoom-in (not IE,Safari)
+    * cursor:zoom-out (not IE,Safari)
+    * cursor:vertical-text
+    * cursor:no-drop
+    * cursor:not-allowed
+    * cursor:all-scroll
+    * cursor:ew-resize
+    * cursor:ns-resize
+    * cursor:nesw-resize
+    * cursor:nwse-resize
+    * cursor:col-resize
+    * cursor:row-resize
+* 私有样式 有些浏览器还提供了增加浏览器前缀的私有样式 [注意]safari将-webkit-grab和-webkit-grabbing都解释为default
+    * cursor:-webkit-grab; cursor: -moz-grab;
+    * cursor:-webkit-grabbing; cursor: -moz-grabbing;
+    * cursor:-webkit-zoom-in; cursor: -moz-zoom-in;
+    * cursor:-webkit-zoom-out; cursor: -moz-zoom-out;
+* 自定义样式 所有浏览器都支持使用后缀名为.cur的文件，chrome、firefox、safari还支持使用普通图片制作光标 [注意]使用URL自定义样式，后面必须跟有一个逗号和某个通用关键字
+    * 错误 cursor: url('m.cur');
+    * 正确 cursor: url('m.cur'),auto;
+* 常见应用
+    * 链接的默认光标是手型指针pointer，通过光标的变化可以让访问者清楚的知道该元素是可点击的
+    * 元素的title属性用来提供元素的额外信息，配合help光标可以得到更好的表现方式
 
 ## 变形和动画
 
 ### 过渡transition
 
+* 过渡transition是一个复合属性，包括transition-property、transition-duration、transition-timing-function、transition-delay这四个子属性。通过这四个子属性的配合来完成一个完整的过渡效果
+    * transition-property: 过渡属性(默认值为all)
+    * transition-duration: 过渡持续时间(默认值为0s) 过渡transition的这四个子属性只有transition-duration是必需值且不能为0。单位是秒s或毫秒ms。[注意]该值为单值时，即所有过渡属性都对应同样时间；该值为多值时，过渡属性按照顺序对应持续时间
+    * transiton-timing-function: 过渡函数(默认值为ease函数)。过渡时间函数共三种取值，分别是关键字、steps函数和bezier函数
+        * 【重点】steps步进函数将过渡时间划分成大小相等的时间时隔来运行 steps(\<integer>[,start | end]?) 第二个参数: 该参数可选，默认是end，表示开始值保持一次；若参数为start，表示开始不保持
+        * 【重点】贝塞尔曲线通过p0-p3四个控制点来控制，其中p0表示(0,0)，p3表示(1,1)。而<transition-timing-function>就是通过确定p1(x1,y1)和p2(x2,y2)的值来确定的 cubic-bezier(x1,y1,x2,y2); [注意]x1,y1,x2,y2都是0到1的值(包括0和1)  【例子】：https://www.cnblogs.com/xiaohuochai/p/5347930.html
+        * ease: 开始和结束慢，中间快。相当于cubic-bezier(0.25,0.1,0.25,1)
+        * linear: 匀速。相当于cubic-bezier(0,0,1,1)
+        * ease-in: 开始慢。相当于cubic-bezier(0.42,0,1,1)
+        * ease-out: 结束慢。相当于cubic-bezier(0,0,0.58,1)
+        * ease-in-out: 和ease类似，但比ease幅度大。相当于cubic-bezier(0.42,0,0.58,1)
+        * step-start: 直接位于结束处。相当于steps(1,start)
+        * step-end: 位于开始处经过时间间隔后结束。相当于steps(1,end)
+    * transition-delay: 过渡延迟时间(默认值为0s)。单位是秒s或毫秒ms
+    * [注意]IE9-不支持该属性，safari3.1-6、IOS3.2-6.1、android2.1-4.3需要添加-webkit-前缀；而其余高版本浏览器支持标准写法
+    * transition: \<transition-property> || \<transition-duration> || \<transition-timing-function> || \<transition-delay>
+    * transition的这四个子属性之间不能用逗号隔开，只能用空格隔开。因为逗号隔开的代表不同的属性(transition属性支持多值，多值部分稍后介绍)；而空格隔开的代表不同属性的四个关于过渡的子属性
+* 不是所有的CSS样式值都可以过渡，只有具有中间值的属性才具备过渡效果
+    * 颜色: color background-color border-color outline-color
+    * 位置: backround-position left right top bottom
+    * 长度:
+        * [1]max-height min-height max-width min-width height width
+        * [2]border-width margin padding outline-width outline-offset
+        * [3]font-size line-height text-indent vertical-align
+        * [4]border-spacing letter-spacing word-spacing
+    * 数字: opacity visibility z-index font-weight zoom
+    * 组合: text-shadow transform box-shadow clip
+    * 其他: gradient
+* 多值
+    * 若不同的transition-property值，对应的transition-delay | transition-timing-function | transition-duration的属性值都相同时，则对应的这些属性设置一个即可
+    * 当transition-property值的个数多于对应的transition-delay | transition-timing-function | transition-duration的属性值(属性值的个数大于1个)时，将按顺序开始取值
+    * 当transition-property值的个数少于对应的transition-delay | transition-timing-function | transition-duration的属性值个数时，多余的属性值将无效
+    * 当transition-property的值中出现一个无效值，它依然按顺序对应transition的其他属性值(其他属性出现无效值，处理情况也类似)
+    * 当transition-property的值中，有些值重复出现多次，则以最后出现的值为准，前面所有出现的值都被认定为无效值，但依然按顺序对应transition的其他属性值
+* 过渡阶段
+    * 【1】过渡开始时间=样式改变的时刻+过渡延迟时间；而过渡结束时间=过渡开始时间+过渡持续时间
+    * 【2】过渡起始值=过渡前的过渡属性值；而过渡结束值=过渡完成后的过渡属性值
+    * 【3】过渡分为两个阶段：前进(forward)和反向(reverse)。若前进阶段进行一段时间后进入反向阶段，则反向阶段的初始值是前进阶段结束时的瞬时值
+    * 【4】以hover为例，若在元素非hover态时设置transition，相当于设置的反向状态。而前进和反向是一致的。而如果在元素hover态设置transition，则前进状态以hover态设置的为准，而反向状态以非hover态设置的为准
+    * 【5 必要，重点，尝试】如果子元素和父元素过渡属性都一致。若触发子元素过渡时，父元素正在过渡，则将父元素过渡的中间态的值作为子元素过渡的初始值
+    * 6】若过渡起始值或过渡开始值为auto，则浏览器不会自己计算成具体数字值，而是不发生过渡效果。所以要过渡某些属性，首先需要将其重置成具体数字值　[注意]低版本webkit内核浏览器存在bug，会产生反向的过渡效果
+    * 【7】隐式过渡是指一个属性改变时引起另一个属性的改变。如border-width是1em，则font-size改变时，border-width也会相应的改变。firefox和IE浏览器支持隐式过渡。而webkit内核浏览器不支持隐式过渡。
+* 触发方式
+    * 一般地，过渡transition的触发有三种方式，分别是伪类触发、媒体查询触发和javascript触发。其中常用伪类触发包括:hover、:focus、:active等
+    * hover 鼠标悬停触发
+    * active 用户单击元素并按住鼠标时触发
+    * focus 获得焦点时触发
+    * @media触发 符合媒体查询条件时触发
+    * 点击事件 用户点击元素时触发
+* api
+    * 关于过渡transition的事件只有一个，是transitionend事件，它发生在过渡事件完成后 [注意]safari3.1-6、ISO3.2-6.1、android2.1-4.3需要使用webkitTransitionEnd事件
+    * transitionEnd的事件对象具有以下3个私有属性
+        * propertyName：发生transition效果的CSS属性名
+        * elapsedTime：代表发生实际效果的持续时间。若完整进行，则返回完整时间；若中途中断，则返回实际时间 [注意]该属性具有兼容性问题，chrome返回持续时间加延迟时间，而其他浏览器只返回持续时间
+        * pseudoElement：如果transition效果发生在伪元素，会返回该伪元素的名称，以“::”开头。如果不发生在伪元素上，则返回一个空字符串'' [注意]若transition效果发生在伪元素上，IE浏览器将不会触发transitionEnd事件
+    * 注意事项
+        * 【1】过渡分为两个阶段：前进阶段和反向阶段。transitionend事件在前进阶段结束时会触发，在反向阶段结束时也会触发
+        * 【2】过渡事件触发的次数与transition-property过渡属性的个数有关。过渡属性有几个就会触发几次
+        * 【3】如果过渡属性是复合属性，如border-width相当于是border-top-width、border-bottom-width、border-left-width和border-right-width这四个属性的集合。则过渡事件触发4次 [注意]在低版本webkit内核浏览器里只触发1次
+        * 【4】如果过渡属性是默认值all，则过渡事件的次数是计算后的非复合的过渡属性的个数。如果发生过渡的属性是border-width和width，则经过计算后过渡事件应该触发5次 [注意]在低版本webkit内核浏览器中处理情况也一致
+        * 【5】如果过渡延迟时间为负值，且绝对值大于等于过渡持续时间时，低版本webkit内核浏览器不会产生过渡效果，但会触发过渡事件；而其他浏览器即不会产生过渡效果，也不会触发过渡事件
+        * 【6】如果过渡属性存在复合属性及该复合属性包含的非复合属性，则浏览器计算复合属性的子属性时，不会重复计算已包含的属性 [注意]低版本webkit内核浏览器会出现bug，不仅复合属性被当作一个属性来触发事件，而且会多触发一次
+        * [注意]当过渡事件执行完后，应及时使用removeEventListener取消绑定，以免对其他效果造成影响
+
+```css
+/* 多值 1 */
+#test1 { transition-property: width,background; transition-delay: 200ms; transition-timing-function: linear; transition-duration: 2s; } /*类似于*/
+#test2 { transition: width 2s linear 200ms,background 2s linear 200ms; }
+/* 多值 2 */
+#test1 { transition-property: width,background,opacity; transition-duration: 2s,500ms; transition-timing-function: linear,ease; transition-delay: 200ms,0s; } /*类似于*/
+#test2 { transition: width 2s linear 200ms,background 500ms ease 0s,opacity 2s linear 200ms; }
+/* 多值 3 */
+#test1 { transition-property: width; transition-duration: 2s,500ms; transition-timing-function: linear,ease; transition-delay: 200ms,0s; } /*类似于*/
+#test2 { transition: width 2s linear 200ms; }
+/* 多值 4 */
+#test1 { transition-property: width,wuxiao,background; transition-duration: 2s,500ms; transition-timing-function: linear,ease; transition-delay: 200ms,0s; } /*类似于*/
+#test2 { transition: width 2s linear 200ms,background 2s linear 200ms; }
+/* 多值 5 */
+#test1 { transition-property: width,width,background; transition-duration: 2s,500ms; transition-timing-function: linear,ease; transition-delay: 200ms,0s; } /*类似于*/
+#test2 { transition: width 500ms ease 0s,background 2s linear 200ms; }
+```
+
+```css
+/* 过渡阶段 4 */
+.test { width: 100px; transition: 3s; }  /* 进入hover时用时0.5s，退出hover用时3s */
+.test:hover { width: 500px; transition: 500ms; }
+/* 过渡阶段 5 */
+.box:hover { font-size: 50px; }
+.test:hover { font-size: 30px; }
+/* 过渡阶段 7 */
+.test { border: 1px solid black; -webkit-transition: font-size 2s; transition:font-size 2s; font: 20px/100px "宋体"; }
+.test:hover{ font-size: 40px; border-right-width: 1em; }
+```
+
 ### 变形transform(2d)
+
+1. transform-origin: x轴 y轴 z轴。初始值: 50% 50%。应用于: 非inline元素(包括block、inline-block、table、table-cell等)。
+    1. [注意]IE9-浏览器不支持，safari3.1-8、android2.1-4.4.4、IOS3.2-8.4都需要添加前缀，其他更高版本浏览器可使用标准写法。
+    2. 2维的变形原点transform-origin是由x轴和y轴两个轴的值共同确定的(不考虑3维的情况，z轴的值默认为0)
+    3. x轴: left | center | right | <length> | <percentage>
+    4. y轴: top | center | bottom | <length> | <percentage>
+2. transform: translate | scale | rotate | skew | matrix | none
+    1. 应用于: 非inline元素(包括block、inline-block、table、table-cell等)
+    2. [注意]transform中出现多个变形函数时用空格分隔
+    3. [注意]位移、缩放、旋转和倾斜这四个操作中除了位移与变形原点无关，其余三个都与变形原点有关
+    4. 实际上，位移、缩放、旋转和倾斜这四个操作都是通过矩阵matrix实现的。matrix(a,b,c,d,e,f)函数有a,b,c,d,e,f这6个参数。而x和y是变形前元素的任意点。通过以下矩阵变换，生成对应的新坐标x'和y'。
+        1. x' = ax + cy + e;
+        2. y' = bx + dy + f;
+    5. 由此可得到默认a、d为1，b、c、e、f为0。a和d控制缩放，且不可为0；c和b控制倾斜；而e和f控制位移
+    6. [注意]matrix()方法的最后两个参数，对于chrome浏览器来说，默认是px单位，可以不写单位。但是，在firefox浏览器下，需要添加单位
+    7. [注意]位移函数相当于matrix(1,0,0,1,x,y) 位移函数还可以接受百分比。其中x%相对于元素水平方向的宽度和，y%相对于元素垂直方向的高度和 [注意]IE10浏览器有bug，元素的位移函数的百分比是相对于元素的可视宽高(不包括边框)而言的
+    8. [注意]缩放函数相当于matrix(x,0,0,y,0,0)
+    9. [注意]倾斜函数相当于matrix(1,tany,tanx,1,0,0)
+    10. rotate(N deg)[注意]当N为正数时，元素进行顺时针旋转；当N为负数时，元素进行逆时针旋转。[注意]旋转函数相当于matrix(cosN,sinN,-sinN,cosN,0,0)
+    11. transform变形可以接受多值，出现多个变形函数时用空格分隔，并且按照从前往后的顺序执行。
+    12. 多个变形函数的先后关系可以转换为多个元素的嵌套关系
+        1. ``<div style="transform:rotate(45deg) translateX(100px)"></div>`` 相当于 ``<div style="transform:rotate(45deg)"><div style="transform:translateX(100px)"></div></div>``
+        2. 变形transform中的多个变形函数的执行顺序是从前向后依次执行
+            1. 第一种情况:旋转45deg后，元素的x轴正向变成右下45deg，所以元素接下来的位移向这个方向移动
+            2. 第二种情况:元素向右移动100px后，元素的原点跟着元素一起平移，并一直在元素的中心位置，所以元素接下来的旋转是原地旋转
+
+```html
+<style>
+    body { font: large '宋体'; }
+    dl, dt, dd { margin: 0; padding: 0; }
+    .container { width: 560px; overflow: hidden; background-color: #ccc; padding: 10px; }
+    .show { width: calc(40% - 10px); float: left; margin-right: 10px; cursor: pointer; }
+    .show .show-title { font: larger '宋体'; text-align: center; margin-bottom: 10px; }
+    .show .show-main { width: 100px; height: 100px; border: 3px solid black; background-color: #f5c3cb; margin: 0 auto 10px; transition-duration: 1s; }
+    .show .show-main:hover { transform: rotate(90deg); }
+    .show .show-tips { color: red; }
+    .control { width: 60%; float: left; }
+    .control dl > dt { font: larger '宋体'; text-align: center; margin-bottom: 10px; }
+    .control dl > dd { display: inline-block; padding: 5px 10px; background-color: #e7e7e7; margin: 0 5px 10px; cursor: pointer; }
+    .control .control-item { font: small '黑体'; color: white; border-radius: 5px; background-color: #888; padding: 5px; }
+    .control .control-item + .control-item { margin-top: 10px; }
+    .control .control-item > button { width: 60px; }
+    .control .control-item > button, .control .control-item > input { float: right; margin-left: 5px; }
+    .control .control2 > input { width: 120px; }
+    .control .control3 > input { width: 60px; }
+    .page-container { height: 430px; overflow: hidden; }
+    .page { width: 100%; height: 100%; }
+    .nav { padding: 10px; width: 60%; float: right; text-align: center; }
+    .nav-in { display: inline-block; width:20px; line-height: 20px; border:1px solid black; background-color: #aaa; color: white; text-decoration: none; }
+</style>
+<div class="container">
+    <div class="show">
+        <div class="show-title">transform</div>
+        <div class="show-main"></div>
+        <div class="show-tips"></div>
+    </div>
+    <div class="control page-container">
+        <div class="page" id="page1">
+            <dl class="select-item select2">
+                <dt>transform-origin-x</dt>
+                <dd>center</dd>
+                <dd>left</dd>
+                <dd>right</dd>
+            </dl>
+            <dl class="select-item select2">
+                <dt>transform-origin-y</dt>
+                <dd>center</dd>
+                <dd>top</dd>
+                <dd>bottom</dd>
+            </dl>
+            <div class="control-item control2" data-attr="transformOrigin">
+                <label for="transformOrigin">transform-origin</label>
+                <button type="button">sure</button>
+                <input type="text" name="transformOrigin" id="transformOrigin">
+            </div>
+            <div class="control-item control3">
+                <label for="transformOriginX">transform-origin-x</label>
+                <button type="button">0px</button>
+                <input type="number" name="transformOriginX" id="transformOriginX">
+                <input type="range" max="100" min="0" value="0">
+            </div>
+            <div class="control-item control3">
+                <label for="transformOriginY">transform-origin-y</label>
+                <button type="button">0px</button>
+                <input type="number" name="transformOriginY" id="transformOriginY">
+                <input type="range" max="100" min="0" value="0">
+            </div>
+            <div class="control-item control3">
+                <label for="transformOriginX2">transform-origin-x</label>
+                <button type="button">0%</button>
+                <input type="number" name="transformOriginX2" id="transformOriginX2">
+                <input type="range" max="100" min="0" value="0">
+            </div>
+            <div class="control-item control3">
+                <label for="transformOriginY2">transform-origin-y</label>
+                <button type="button">0%</button>
+                <input type="number" name="transformOriginY2" id="transformOriginY2">
+                <input type="range" max="100" min="0" value="0">
+            </div>
+        </div>
+        <div class="page" id="page2">
+            <div class="control-item control2" data-attr="transform">
+                <label for="transform">transform</label>
+                <button type="button">sure</button>
+                <input type="text" name="transform" id="transform">
+            </div>
+            <div class="control-item control3">
+                <label for="transformMatrixA">transform-matrix-a</label>
+                <button type="button">1</button>
+                <input type="number" name="transformMatrixA" id="transformMatrixA">
+                <input type="range" max="100" min="0" value="1">
+            </div>
+            <div class="control-item control3">
+                <label for="transformMatrixB">transform-matrix-b</label>
+                <button type="button">0</button>
+                <input type="number" name="transformMatrixB" id="transformMatrixB">
+                <input type="range" max="100" min="0" value="0">
+            </div>
+            <div class="control-item control3">
+                <label for="transformMatrixC">transform-matrix-c</label>
+                <button type="button">0</button>
+                <input type="number" name="transformMatrixC" id="transformMatrixC">
+                <input type="range" max="100" min="0" value="0">
+            </div>
+            <div class="control-item control3">
+                <label for="transformMatrixD">transform-matrix-d</label>
+                <button type="button">1</button>
+                <input type="number" name="transformMatrixD" id="transformMatrixD">
+                <input type="range" max="100" min="0" value="1">
+            </div>
+            <div class="control-item control3">
+                <label for="transformMatrixE">transform-matrix-e</label>
+                <button type="button">0</button>
+                <input type="number" name="transformMatrixE" id="transformMatrixE">
+                <input type="range" max="100" min="0" value="0">
+            </div>
+            <div class="control-item control3">
+                <label for="transformMatrixF">transform-matrix-f</label>
+                <button type="button">0</button>
+                <input type="number" name="transformOriginF" id="transformOriginF">
+                <input type="range" max="100" min="0" value="0">
+            </div>
+        </div>
+    </div>
+    <nav class="nav">
+        <a class="nav-in" href="#page1">1</a>
+        <a class="nav-in" href="#page2">2</a>
+    </nav>
+    <button id="reset" type="button" onclick="history.go();" style="margin-top: 10px;">reset</button>
+</div>
+<script>
+    (function () {
+        var show = document.getElementsByClassName("show")[0]
+        var tips = show.getElementsByClassName("show-tips")[0]
+        var target = show.getElementsByClassName("show-main")[0]
+        show.onclick = function (event) {
+            if (event.target instanceof Text) {
+                return
+            }
+            if (target != null) {
+                target.style.outline = ''
+            }
+            target = event.target
+            target.style.outline = '3px solid lightblue'
+            console.log(target)
+        }
+
+        function attrObj() {
+            var partNames = []
+            var partInits = []
+            Array.prototype.forEach.call(arguments, (item, index, arr) => {
+                if (index > 1) {
+                    (index % 2 == 0 ? partNames : partInits).push(item)
+                }
+            })
+            var result = {
+                'attrName': arguments[0],
+                'separator': arguments[1],
+                'partNames': partNames,
+                'partInits': partInits,
+                handle: function(partName, partValue, start, end) {
+                    var str = ''
+                    this[partName] = partValue
+                    this.partNames.forEach((name, index, names) => str = str + (index == 0 ? '' : this.separator) + (this[name] ? this[name] : this.partInits[index]))
+                    start = start || ''
+                    end = end || ''
+                    str = start + str + end
+                    console.log(str)
+                    target.style[this.attrName] = str
+                    tips.innerText = target.style.cssText
+                }
+            }
+            return result
+        }
+
+        var control = document.getElementsByClassName("control")[0]
+        Array.prototype.forEach.call(control.getElementsByClassName("select-item"), (select, index, selects) => {
+            select.index = 0
+            var items = select.getElementsByTagName("dd")
+            Array.prototype.forEach.call(items, (item, index2, items) => item.index = index2)
+            items[0].style.cssText = 'color: white; background-color: black'
+        })
+        var selectCheck = function (callback) {
+            return function (event) {
+                var eventTarget = event.target
+                if (eventTarget.tagName == 'DD' && eventTarget.index != this.index) {
+                    callback(eventTarget, event)
+                    eventTarget.style.cssText = 'color: white; background-color: black'
+                    if (this.index >= 0) {
+                        this.getElementsByTagName("dd")[this.index].style.cssText = 'color: black; background-color: #e7e7e7'
+                    }
+                    this.index = eventTarget.index
+                }
+            }
+        }
+        Array.prototype.forEach.call(control.getElementsByClassName("select1"), (select, index, selects) =>
+            select.onclick = selectCheck(function (eventTarget) {
+                target.style[this.dataset.attr] = eventTarget.innerText
+                tips.innerText = target.style.cssText
+        }))
+        var selects2 = control.getElementsByClassName("select2")
+        var transformOriginAttr = new attrObj('transformOrigin', ' ', 0, 'center', 1, 'center')
+        selects2[0].onclick = selectCheck((eventTarget) => transformOriginAttr.handle(0, eventTarget.innerText))
+        selects2[1].onclick = selectCheck((eventTarget) => transformOriginAttr.handle(1, eventTarget.innerText))
+
+        Array.prototype.forEach.call(control.getElementsByClassName("control2"), (control, index, controls) =>
+            control.getElementsByTagName("button")[0].onclick = function () {
+                target.style[this.parentNode.dataset.attr] = this.nextElementSibling.value
+                tips.innerText = target.style.cssText
+        })
+
+        var controlHandle = function(control, callback) {
+            var button = control.getElementsByTagName("button")[0]
+            var number = control.getElementsByTagName("input")[0]
+            var range = control.getElementsByTagName("input")[1]
+            button.value = 0
+            number.onclick = range.onclick = number.onfocus = range.onfocus = number.onpropertychange = range.onpropertychange = number.oninput = range.oninput = button.onclick = function() {
+                number.value = range.value = this.value
+                callback(this.value)
+            }
+        }
+        var controls3 = control.getElementsByClassName("control3")
+        controlHandle(controls3[0], (value) => transformOriginAttr.handle(0, value + 'px'))
+        controlHandle(controls3[1], (value) => transformOriginAttr.handle(1, value + 'px'))
+        controlHandle(controls3[2], (value) => transformOriginAttr.handle(0, value + '%'))
+        controlHandle(controls3[3], (value) => transformOriginAttr.handle(1, value + '%'))
+
+        var transformAttr = new attrObj('transform', ',', 0, '1', 1, '0', 2, '0', 3, '1', 4, '0', 5, '0')
+        controlHandle(controls3[4], (value) => transformAttr.handle(0, value, 'matrix(', ')'))
+        controlHandle(controls3[5], (value) => transformAttr.handle(1, value, 'matrix(', ')'))
+        controlHandle(controls3[6], (value) => transformAttr.handle(2, value, 'matrix(', ')'))
+        controlHandle(controls3[7], (value) => transformAttr.handle(3, value, 'matrix(', ')'))
+        controlHandle(controls3[8], (value) => transformAttr.handle(4, value, 'matrix(', ')'))
+        controlHandle(controls3[9], (value) => transformAttr.handle(5, value, 'matrix(', ')'))
+
+        Array.prototype.forEach.call(document.getElementsByClassName("nav"), (nav, index, navs) => {
+            Array.prototype.forEach.call(nav.getElementsByClassName("nav-in"), (navIn, index2, nav) => navIn.index = index2)
+            nav.index = 0
+            nav.onclick = function (event) {
+                var target = event.target
+                if (target.classList.contains('nav-in')) {
+                    this.getElementsByClassName("nav-in")[nav.index].style.cssText = 'border: 1px solid black;'
+                    nav.index = target.index
+                    target.style.cssText = 'border: 1px solid blue; box-shadow: lightblue 0px 0px 1px;'
+                }
+            }
+            nav.getElementsByClassName("nav-in")[nav.index].style.cssText = 'border: 1px solid blue; box-shadow: lightblue 0px 0px 1px;'
+        })
+    })()
+</script>
+```
+
+<iframe frameborder='0' width='100%' height='460px' src='./csses/transform.html'></iframe>
 
 ### 变形transform(3d)
 
+3D变形的坐标轴则是x、y、z三条轴组成的立体空间，x轴正向、y轴正向、z轴正向分别朝向右、下和屏幕外。透视是transform变形3D中最重要的内容。如果不设置透视，元素的3D变形效果将无法实现。
+
+下面以rotateX()旋转函数为例，rotateX(45deg)表示元素以X轴方向为轴沿顺时针旋转45角度<br>
+左图是无变形和透视样式的原始效果，中图是设置变形和透视样式的效果，右图是设置变形但未设置透视样式的效果
+```html
+<style>
+    div { height: 100px; width: 100px; }
+</style>
+<div style="border: 1px solid black; background-color: pink; float:left; margin-right: 10px; ">
+    <div style="background-color: lightblue; "></div>
+</div>
+<div style="border: 1px solid black; background-color: pink; perspective: 200px; float:left; margin-right:10px; ">
+    <div style="background-color: lightblue; transform: rotateX(45deg); "></div>
+</div>
+<div style="border: 1px solid black; background-color: pink; float:left; ">
+    <div style="background-color: lightblue; transform: rotateX(45deg); "></div>
+</div>
+```
+<iframe frameborder='0' width='100%' height='120px' src='./csses/transform3d-1.html'>
+
+由以上三个图可说明，如果不设置透视，那么浏览器会将元素的3D变形操作投射垂直到2D视平面上，最终呈现出来的只是元素的宽高变化。要深入了解透视，需要了解观察者、被透视元素和变形元素这几个概念。
+
+* 首先是变形元素，顾名思义，就是进行transform3D变形的元素，主要进行transform、transform-origin、backface-visibility等属性的设置
+* 观察者是浏览器模拟出来的用来观察被透视元素的一个没有尺寸的点，观察者发出视线，类似于一个点光源发出光线
+* 被透视元素也就是被观察者观察的元素，根据属性设置的不同，它有可能是变形元素本身，也可能是它的父级或祖先元素(后面会详细介绍)，主要进行perspective、perspective-origin等属性的设置
+
+主要属性
+
+1. **透视距离perspective**: none | <length>是指观察者沿着平行于z轴的视线与屏幕之间的距离，简称视距。应用于: 非inline元素(包括block、inline-block、table、table-cell等)
+    1. [注意]透视perspective不可为0和负数，因为观察者与屏幕距离为0时或者在屏幕背面时是不可以观察到被透视元素的正面的
+    2. [注意]透视perspective不可取百分比，因为百分比需要相对的元素，但z轴并没有可相对的元素尺寸
+    3. 一般地，物体离得越远，显得越小。反映在perspective属性上，就是该属性值越大，元素的3d效果越不明显。(就像离一个人很近，甚至可以看到他的毛孔；如果离一个人很远，可能只看到一个轮廓)
+    4. 设置透视perspective属性的元素就是被透视元素。一般地，该属性只能设置在变形元素的父级或祖先级。因为浏览器会为其子级的变形产生透视效果，但并不会为其自身产生透视效果
+2. **透视原点perspective-origin**: 50% 50%是指观察者的位置，一般地，观察者位于与屏幕平行的另一个平面上，观察者始终是与屏幕垂直的。观察者的活动区域是被观察元素的盒模型区域。应用于: 非inline元素(包括block、inline-block、table、table-cell等)
+    1. x轴: left | right | center | <percentage> | <length>
+    2. y轴: top | bottom | center | <percentage> | <length>
+    3. [注意]perspective-origin必须定义在设置perspective的元素上，也就是说必须设置在元素的父元素或祖先元素上
+    4. 当只有一个值时，默认第二个值为center
+3. 介绍完透视之后，接下来详细介绍关于变形3d的变形函数和变形原点。上篇博文详细介绍了2d变形函数。而3d变形函数也类似，包括**位移、旋转和缩放**，没有倾斜。
+    1. [注意]倾斜skew()是二维变形，不能在三维空间变形，元素可能会在x轴和y轴倾斜，但不能在z轴倾斜。
+    2. 3d变形函数位移、旋转和缩放都是通过矩阵设置不同的参数而实现的。相比于2d矩阵martrix()的6个参数而言，3d矩阵matrix3d却有12个参数。其变形规则与2dmatrix()类似，只不过是从3*3矩阵，变成了4*4矩阵。matrix3d(a,b,c,0,d,e,f,0,g,h,i,0,j,k,l,1)
+        1. x2 = ax + by + cz + j
+        2. y2 = dx + ey + fz + k
+        3. z3 = gx + hy + iz + l
+    3. **3d位移**函数主要包括traslateZ(z)和translate3d(x,y,z)。
+        1. [注意]其中，x和y可以是长度值，也可以是百分比，百分比是相对于其本身元素水平方向的宽度和垂直方向的高度和；z只能设置长度值
+    4. [注意]常用-webkit-transform: translateZ(0);来开启硬件加速
+    5. [注意]3d位移函数相当于matrix3d(1,0,0,0,0,1,0,0,0,0,1,0,x,y,z,1)
+    6. **3d缩放**函数主要包括scaleZ()和scale3d()
+        1. [注意]3d缩放函数相当于matrix3d(x,0,0,0,0,y,0,0,0,0,z,0,0,0,0,1)
+        2. [注意]scaleZ()和scale3d()单独使用时没有任何效果
+        3. transform: scaleZ(5) translateZ(-100px)和transform: translateZ(-500px)是等价的
+    7. **3d旋转**函数主要包括rotateX()、rotateY()、rotateZ()、rotate3d()
+        1. [注意]safari浏览器不支持keyframes中改变rotate3d()
+4. 上面详细介绍了透视属性perspective，但透视属性应用在变形元素的父级或祖先级。而**透视函数perspective(length)**是transform变形函数的一个属性值，应用于变形元素本身
+    1. 透视函数perspective(<length>)的参数只能是长度值，长度值只能是正数
+    2. [注意]由于transform属性是从前向后的顺序解析属性值的，所以一定要把perspective()函数写在其他变形函数前面，否则将没有透视效果
+5. **变形原点transform-origin**: x轴 y轴 z轴。初始值: 50% 50%。应用于: 非inline元素(包括block、inline-block、table、table-cell等)。
+    1. [注意]IE9-浏览器不支持，safari3.1-8、android2.1-4.4.4、IOS3.2-8.4都需要添加前缀，其他更高版本浏览器可使用标准写法。
+    2. x轴: left | center | right | <length> | <percentage>
+    3. y轴: top | center | bottom | <length> | <percentage>
+    4. z轴: <length>
+6. **backface-visibility**: visible(默认)|hidden。设置元素背面是否可见
+    1. [注意]若一个元素覆盖于另一个元素上，不仅仅是正面覆盖，背面也是覆盖的
+7. **变形风格transform-style**: flat | preserve-3d允许变形元素及其子元素在3d空间中呈现。变形风格有两个值。flat是默认值，表示2d平面；而perserve-3d表示3d空间。
+    1. [注意]当设置了overflow:非visible或clip:非auto时，transform-style:preserve-3d失效
+    2. 来个rotateX就可以看出很大差别。
+
 ### 变形transform的副作用
+
+变形transform本来是一个用来处理移动、旋转、缩放和倾斜等基本操作的CSS3属性，但该属性除了完成其本职工作之后，还对普通元素造成了意想不到的影响，本文将详细介绍transform对元素造成的四个副作用。
+
+1. z-index
+    1. 在定位中的堆叠z-index中曾经提到过，CSS3的出现对过去的很多规则发出了挑战，对层叠上下文z-index的影响更加显著，其中就包括元素的变形transform不是none的情况。元素的变形transform不是none使该元素可以使用堆叠z-index，从而可以覆盖普通流元素和低级别的定位元素
+    2. 在下面例子中，show2和show1都是普通元素，show2通过设置margin负值，覆盖了show1。但是，通过改变show1的'transform'属性可以改变其层叠效果。
+2. fixed
+    1. 固定定位fixed使元素相对于视窗进行定位，不随着页面滚动条的滚动而滚动。但是，如果在固定定位元素的父级设置transform不为none，则会将固定定位降级为绝对定位absolute。
+        1. 兼容性：IE浏览器无此表现，依然保持fixed状态
+    2. [注意]在chrome浏览器下，将固定定位元素父级的transform属性设置为none，可能会使元素从静态位置移动到left:0、top:0的位置。如果某个父级元素设置为宽度100%，则fixed将保持在原来位置不会改变。
+3. overflow
+    1. 给设置overflow的元素使用transform或在设置overflow的元素与溢出元素之间的元素设置transform，可以解决overflow失效(子元素为position: absolute)的问题
+    2. 兼容性：在chrome和safari浏览器下，只有设置overflow的元素与溢出元素之间的元素设置transform时，才有效；而IE9+和firefox浏览器，对于以上两种设置都有效
+    3. [注意]在chrome浏览器下，将元素的transform属性设置为none，可能会使元素从静态位置移动到left:0、top:0的位置
+4. 定位父级
+    1. 一般地，绝对定位元素设置宽度百分比时，参照的是定位父级。定位父级是第一个position值为非static值的祖先元素。但是，如果祖先元素中存在设置了transform元素不为none的元素，也可以成为定位父级
+        1. width/height等等也会变得适应过去
+    2. 这也正是解决overflow失效的原因。
 
 ### 线性渐变
 
+渐变实际上是两种或多种颜色之间的平滑过渡。而线性渐变是多种颜色沿着一条直线(称为渐变线)过渡。渐变的实现由两部分组成：渐变线和色标。渐变线用来控制发生渐变的方向；色标包含一个颜色值和一个位置，用来控制渐变的颜色变化。浏览器从每个色标的颜色淡出到下一个，以创建平滑的渐变，通过确定多个色标可以制作多色渐变效果。<br>
+[注意]safari4-5、IOS3.2-4.3、android2.1-3只支持线性渐变，且需要添加-webkit-；safari5.1-6、IOS5.1-6.1、android4-4.3支持线性和径向渐变，且需要添加-webkit-；IE10+及其他高版本浏览器支持标准写法。<br>
+``<linear-gradient> = linear-gradient([ [ <angle> | to <side-or-corner> ] ,]? <color-stop>[, <color-stop>]+) <side-or-corner> = [left | right] || [top | bottom]``
+
+1. **渐变线**：渐变的第一个参数用于指定渐变线，默认是to bottom。有两种方式指定渐变线方向。0deg表示沿着元素的中心线由下向上的方向(类似于y轴)，且正角度表示顺时针旋转。
+    1. [注意]对于-webkit-旧版本浏览器，如windows系统下的safari浏览器来说，0deg表示沿着元素中心线从左向右的方向(类似于x轴)，且正角度表示逆时针旋转。所以-webkit-旧版本浏览器与标准浏览器的之间线性渐变的角度关系为：-webkit-浏览器 = 90deg - 标准浏览器
+    2. 相当于 -webkit-linear-gradient(90deg,red,blue) = linear-gradient(0deg,red,blue)
+    3. [注意]对于webkit内核的浏览器来说，使用javascript改变元素的样式。当带-webkit-的私有样式和不带-webkit-的标准样式同时存在的时候，并不一定是后面覆盖前面。所以如果两种写法产生的效果相同，但参数不同时，要使用浏览器识别来分别写不同的情况。
+    4. 关键字
+        1. to top -> 0deg
+        2. to right -> 90deg
+        3. to bottom -> 180deg
+        4. to left -> -90deg(或270deg)
+        5. to top left -> -45deg(或315deg)
+        6. to top right -> 45deg
+        7. to bottom left -> -135deg(或225deg)
+        8. to bottom right -> 135deg
+    5. [注意]window系统的safari浏览器并不支持'to'加方向的关键字，如to left。它只支持方向关键字，如left。当然了left 和 to left 方向是正好相反的
+2. **色标**：浏览器对于色标并没有默认值，且必须设置至少两个色标。色标由颜色和位置组成。颜色使用任何一种颜色模式都可以，而位置可以使用百分比或数值。
+    1. [注意]颜色的位置也可以设置负值
+    2. 必须是颜色在前，位置在后
+        1. 正确 background-image: linear-gradient(red 0%,blue 100%);
+        2. 错误 background-image: linear-gradient(0% red,100% blue);
+    3. 位置可以省略，浏览器默认会把第一个颜色的位置设置为0%，把最后一个颜色的位置设置为100%
+        1. background-image: linear-gradient(red 0%,blue 100%);
+        2. 等价于上一个 background-image: linear-gradient(red,blue);
+    4. 若渐变只有两种颜色，且第一个颜色的位置设置为n%，第二个颜色的位置设置为m%。则浏览器会将0%-n%的范围设置为第一个颜色的纯色，n%-m%的范围设置为第一个颜色到第二个颜色的过渡，m%-100%的范围设置为第二个颜色的纯色
+        1. background-image: linear-gradient(red 30%,blue 60%);
+        2. 等价于上一个 background-image: linear-gradient(red 0%,red 30%,blue 60%,blue 100%);
+    5. 若渐变颜色没有指定位置，则它们会均匀分布
+        1. background-image: linear-gradient(red,yellow,green,blue);
+        2. 等价于 background-image: linear-gradient(red 0%, yellow 33.3%, green 66.6%, blue 100%)
+    6. 若多色占据同一个位置，例a、b、c三色均占据n%这一位置，则0%-n%为前一种颜色与a颜色的颜色渐变；然后是n%-n%的a颜色与c颜色的颜色突变；n%-100%是c颜色与后一种颜色的颜色渐变。因此，中间的b是无用的
+        1. background-image: linear-gradient(red,yellow 50%,white 50%,black 50%,blue);
+        2. 等价于上一个 background-image: linear-gradient(red,yellow 50%,black 50%,blue);
+3. **重复渐变**：可以实现线性渐变的重复效果，使色标在渐变线方向上无限重复，实现一些特殊的效果
+    1. [注意]只有当首尾两颜色位置不在0%或100%时，重复渐变才生效
+    2. background-image: -webkit-repeating-linear-gradient(blue 20%,green 50%);
+    3. background-image: repeating-linear-gradient(blue 20%,green 50%);
+    4. 【纸张效果】使用重复渐变可以实现横线纸张效果 ``div { height: 200px; width:200px; font: 14px/20px '宋体'; text-indent: 2em; background-image: -webkit-repeating-linear-gradient(#f9f9f9,#f9f9f9 9%,#ccc 10%); background-image: repeating-linear-gradient(#f9f9f9,#f9f9f9 9%,#ccc 10%); }``
+4. **多背景**：使用多背景属性，利用带有透明度的渐变颜色给图片添加渐变的透明效果
+        1. background: linear-gradient(rgba(255,255,255,0),rgba(255,255,255,0.8)),url('http://sandbox.runjs.cn/uploads/rs/26/ddzmgynp/img1.gif');
+        2. https://www.cnblogs.com/xiaohuochai/p/5370446.html
+5. **应用场景**：在CSS样式中，渐变相当于背景图片，在理论上可在任何使用url()值的地方采用。比如最常见的background-image、list-style-image以及border-image。但目前为止，仅在背景图片中得到完美的支持
+    1. background-image
+        1. background-image: -webkit-linear-gradient(pink,lightblue,lightgreen);
+        2. background-image: linear-gradient(pink,lightblue,lightgreen);
+        3. [注意]渐变框的大小由background-size决定，默认是padding box
+    2. list-style-image
+        1. list-style-image: -webkit-linear-gradient(red,blue);
+        2. list-style-image: linear-gradient(red,blue);
+        3. font-size: 50px;
+        4. [注意]渐变框的大小由font-size决定，默认是1em
+        5. [注意]firefox不支持在list-style-image中设置
+    3. border-image
+        1. -webkit-border-image:  -webkit-linear-gradient(black,green) 1/10px;
+        2. border-image:  linear-gradient(black,green) 1/10px;
+        3. [注意]渐变框的大小由borer-width决定，safari浏览器始终实现的都是带有fill参数的表现
+6. **IE兼容**
+    1. IE兼容 -- IE9-浏览器并不支持该属性，但可以使用IE准专有的滤镜语法来实现兼容。 ``filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr='#color', endColorstr='#color');``
+        1. GradientType代表渐变线方向，0为垂直(默认)，1为水平
+        2. #color代表色标，格式是#aarrggbb，其中aa为透明度，rrggbb为rgb模式的颜色
+        3. startColorstr的默认值是#ff0000ff
+        4. endColorstr的默认值是#ff000000
+    2. [注意]由于IE滤镜只支持首尾两个位置，且方向只可以为垂直和水平，所以有很大的局限性
+
+```html
+<!-- 4 -->
+<style>
+div { width: 200px; height: 200px; display: inline-block; }
+.test1, .test2 { background-image: linear-gradient(45deg,red 25%,transparent 25%), linear-gradient(-45deg,red 25%,transparent 25%), linear-gradient(45deg,transparent 75%,red 75%), linear-gradient(-45deg,transparent 75%,red 75%); }
+.test2 { background-size: 20% 20%; }
+</style>
+<div class="test1"></div>
+<div class="test2"></div>
+```
+
 ### 径向渐变
+
+径向渐变，实际上就是椭圆渐变，圆只是一种特殊的椭圆而已。径向渐变从圆心点以椭圆形状向外扩散，渐变的实现由两部分组成：椭圆和色标。椭圆部分用来控制径向渐变的位置、大小和形状等。而色标部分包含一个颜色值和一个位置，用来控制渐变的颜色变化。[注意]safari4-5、IOS3.2-4.3、android2.1-3只支持线性渐变，且需要添加-webkit-；safari5.1-6、IOS5.1-6.1、android4-4.3支持线性和径向渐变，且需要添加-webkit-；IE10+及其他高版本浏览器支持标准写法
+
+```css
+//标准写法
+radial-gradient([[<shape>||<size>]?[at <position>,]?<color-stop>[,<color-stop>]+)
+//-webkit-老版本径向渐变的写法
+-webkit-radial-gradient([<position>||<angle>,]? [<shape>||<size>,]>?<color-stop>[,<color-stop>]+)
+.example {
+    background-image: radial-gradient(at right bottom, rgb(255, 0, 0), rgb(0, 0, 255))
+}
+```
+
+径向渐变方式主要由``<position>、<shape>、<size>``这三个参数影响，分别控制椭圆的圆心、形状和大小
+
+* **position**: 定义渐变的圆心，默认是center center。
+    * x轴:<length> | <percentage> | left | center | right
+    * y轴:<length> | <percentage> | top | center | bottom
+    * [注意]和线性渐变类似，旧版本-webkit-内核浏览器并不支持at <position>的写法，只支持<position>的写法
+    * x轴数值表示在x轴上离0点(渐变框左上角)的偏移量；y轴数值表示在y轴上离0点的偏移量
+    * x轴的百分比相对于渐变框的宽度，而y轴的百分比相对于渐变框的高度。渐变框的宽高由background-size决定
+    * 当只有一个值时，默认第二个值为center
+* **shape**: 定义渐变的形状是圆circle或椭圆ellipse。默认是椭圆
+* **size**: closest-side | closest-corner | farthest-side | farthest-corner。定义渐变的大小。默认是farthest-corner
+    * closest-side:半径为从圆心到最近边
+    * closest-corner:半径为从圆心到最近角
+    * farthest-side:半径为从圆心到最远边
+    * farthest-corner:半径为从圆心到最远角
+    * 如果``<shape>``是circle，则``<size>``可以设置为``<length>``，表示直径，0%表示圆心，100%表示距离圆心为半径的点
+        * [注意]不能为负值也不可以设置百分比
+        * [注意]webkit内核浏览器支持使用CSS设置圆的<length>型的<size>，但并不支持javascript改变其值；对于safari浏览器来说，只有半径写在circle关键字前面才识别
+    * 如果``<shape>``是ellipse或不设置时，则``<size>``可以设置为``<length>或<percentage>``，第一个值表示水平直径，第二个值表示垂直直径。百分比相对于径向渐变容器的尺寸
+        * [注意]若只有一个值，则表示水平和垂直直径相同，因为圆是特殊的椭圆，所以一个值时不可以为百分比
+        * [注意]和圆类似，``<size>``值不能为负值，因为其表示的是直径
+        * [重要]由于webkit浏览器在使用circle或ellipse关键字时渲染不正常，所以若使用circle时，可以不写shape(默认为ellipse)，用水平和垂直直径相同的椭圆替代
+
+**色标**：与线性渐变的色标相同的部分不再重复，这里只说明不同的部分。由于位置处于100%的色标有时并不会占满渐变区域，则浏览器会默认使用最后一个色标的颜色铺满渐变区域``<color-stop> = <color> [ <percentage> | <length> ]?``
+**重复渐变**：重复渐变可以实现径向渐变的重复效果，使色标在椭圆方向上无限重复，实现一些特殊的效果。[注意]只有当首尾两颜色位置不在0%或100%时，重复渐变才生效。
+```css
+background-image: -webkit-repeating-radial-gradient(blue 20%,green 50%);
+background-image: repeating-radial-gradient(blue 20%,green 50%);
+```
+**其他**：关于线性渐变的多背景和应用场景，径向渐变与之类似。但径向渐变无法实现IE兼容。
 
 ### 动画animation
 
+transition过渡是通过初始和结束两个状态之间的平滑过渡实现简单动画的；而animation则是通过关键帧@keyframes来实现更为复杂的动画效果。本文将介绍关于animation动画的相关知识
+
+和transition类似，animation也是一个复合属性，包括animation-name、animation-duration、animation-timing-function、animation-delay、animation-iteration-count、animation-direction、animation-play-state、animation-fill-mode共8个子属性[注意]IE9-不支持；safari4-8、IOS3.2-8.4、android2.1-4.4.4需要添加-webkit-前缀
+
+* animation-name: 动画名称(默认值为none) name1, name2, ... 。
+    * 如果多个动画试图修改相同的属性，那么动画列表的后面覆盖前面
+    * 如果动画的其他7个子属性和动画名称的长度不同，动画名称列表的长度决定最终的长度，多余的值无余，缺少的值按照顺序进行重复
+* animation-duration: 持续时间(默认值为0)
+    * 设置为负值，将使得整个动画持续时间都失效，失去动画效果
+* animation-timing-function: 时间函数(默认值为ease)
+    * animation的时间函数类似于transition的时间函数。时间函数可以应用于整个动画中，也可以应用于关键帧的某两个百分比之间
+* animation-delay: 延迟时间(默认值为0)
+* animation-iteration-count: 循环次数(默认值为1): infinite | <number>[,infinite | <number>]*
+* animation-direction: 动画方向(默认值为normal)
+    * normal: 正向播放
+    * reverse: 反向播放
+    * alternate: 若动画只播放一次，则和正向播放一样。若播放两次以上，偶数次效果为反向播放
+    * alternate-reverse: 若动画只播放一次，则和反向播放一样。若播放两次以上，偶数次效果为正向播放
+* animation-play-state: 播放状态(默认值为running): running | paused[,running | paused]*
+* animation-fill-mode: 填充模式(默认值为none) 定义动画开始帧之前和结束帧之后的动作
+    * [注意]android2.1-3不支持animation-fill-mode
+    * none: 动画结束后，元素移动到初始状态 [注意]初始状态并不是指0%的元素状态，而是元素本身属性值
+    * forwards: 元素停在动画结束时的位置 [注意]动画结束时的位置并不一定是100%定义的位置，因为动画有可能反向运动，也有可能动画的次数是小数
+    * backwards: 在animation-delay的时间内，元素立刻移动到动画开始时的位置。若元素无animation-delay时，与none的效果相同 [注意]动画开始时的位置也不一定是0%定义的位置，因为动画有可能反向运动。
+    * both: 同时具有forwards和backwards的效果
+    * [注意]当持续时间animation-duration为0s时，animation-fill-mode依然适用，当animation-fill-mode的值为backwards时，动画填充在任何animation-delay的阶段。当animation-fill-mode的值为forwards时，动画将保留在100%的关键帧上
+
+```css
+div {
+    width: 300px;
+    height: 100px;
+    background-color: pink;
+    animation-name: test;
+    animation-duration: 3s;
+    animation-timing-function: ease;
+    animation-delay: 0s;
+    animation-iteration-count: infinite;
+    animation-direction: normal;
+    animation-play-state: running;
+    animation-fill-mode: none;
+}
+/* 百分比顺序不一定非要从0%到100%排列，最终浏览器会自动按照0%-100%的顺序进行解析;
+   如果存在负百分数或高于100%的百分数，则该关键帧将被忽略;
+   如果0%或100%不指定关键帧，将使用该元素默认的属性值;
+   若存在多个@keyframes，浏览器只识别最后一个@keyframes里面的值;
+   空的keyframes规则是有效的，它们会覆盖前面有效的关键帧规则  */
+@keyframes test {
+    0% { background-color: lightblue; /* 可以animation-timing-function: ease; */ }  /* 0%可以用from代替 */
+    30% { background-color: lightgreen; }
+    60% { background-color: lightgray; }
+    100% { background-color: black; }  /* 100%可以用to代替 */
+}
+```
+
+animation涉及到的事件有animationstart、animationend、animationiteration三个。这三个事件的bubbles都是yes，cancelable都是no。[注意]对于safari浏览器，animation的事件为webkitAnimationStart、webkitAnimationEnd、webkitAnimationIteration。[注意]动画事件只支持DOM2级事件处理程序的写法
+
+* animationstart 发生在动画开始时
+    * 【1】如果存在delay，且delay为正值，则元素等待延迟完毕后，再触发该事件
+    * 【2】如果delay为负值，则元素先将初始值变为delay的绝对值时，再触发该事件
+* animationend 发生在动画结束时
+* animationiteration 发生在动画的一次循环结束时，只有当iteration-count循环次数大于1时，触发该事件
+* 只有改变animation-name时，才会使animation动画效果重新触发
+* 这三个事件的事件对象，都有animationName和elapsedTime属性这两个私有属性
+    * animationName属性:返回产生过渡效果的CSS属性名
+    * elapsedTime属性:动画已经运行的秒数
+    * [注意]对于animationstart事件，elapsedTime属性等于0，除非animation-delay属性等于负值
+
 ### 动画animation的三个应用(漂浮的白云、旋转的星球和正方体合成)
 
+
+
 ### animate.css的使用
+
+
 
 ## 渲染属性
 
@@ -5411,6 +7578,22 @@ CSS3新增了多列布局特性，可以让浏览器确定何时结束一列和�
 ### CSS背景效果
 
 ### CSS遮罩和毛玻璃效果
+
+# 额外
+
+## 知识点1
+
+### 知识点1.1
+
+1. [css overflow:hidden为什么会失效](https://my.oschina.net/xuqianwen/blog/540587) -- position: absolute;
+    1. 溢出将在满足下列条件之一时出现：
+        1. 一个不换行的行元素宽度超出了容器盒子宽度。
+        2. 一个宽度固定的块元素放在了比它窄的容器盒子内。
+        3. 一个元素的高度超出了容器盒子的高度。
+        4. 一个子孙元素，由负边距值引起的部分内容在盒子外部。
+        5. text-indent属性引起的行内元素在盒子的左右边界外。
+        6. 一个绝对定位的子孙元素，部分内容在盒子外。但超出的部分不是总会被剪裁。子孙元素的内容就不会被子孙元素和其包含块之间的祖先元素的overflow的设置所剪裁。
+    2. 当溢出发生时，overflow属性约定了容器盒子是否剪裁掉超出其内边界的部分，并且决定是否出现滚动条来访问被剪裁掉的内容。它会影响到元素所 有内容的剪裁，但有个例外情况，即上面第6条所提到的：元素的子孙元素的包含块（Containing blocks）是整个视窗（viewport）或是该元素的祖先元素，内容将不会被剪裁。包含块是什么呢？简单的说，就是可以决定一个元素位置和大小的 块。通常一个元素的包含块由离它最近的块级祖先元素的内容边界决定。但当元素被设置成绝对定位时，包含块由最近的position不是static的祖先 元素决定。
 
 # 【重点】、【不是很懂】
 

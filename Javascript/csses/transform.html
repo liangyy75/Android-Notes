@@ -1,0 +1,243 @@
+<style>
+    body { font: large '宋体'; }
+    dl, dt, dd { margin: 0; padding: 0; }
+    .container { width: 560px; overflow: hidden; background-color: #ccc; padding: 10px; }
+    .show { width: calc(40% - 10px); float: left; margin-right: 10px; cursor: pointer; }
+    .show .show-title { font: larger '宋体'; text-align: center; margin-bottom: 10px; }
+    .show .show-main { width: 100px; height: 100px; border: 3px solid black; background-color: #f5c3cb; margin: 0 auto 10px; transition-duration: 1s; }
+    .show .show-main:hover { transform: rotate(90deg); }
+    .show .show-tips { color: red; }
+    .control { width: 60%; float: left; }
+    .control dl > dt { font: larger '宋体'; text-align: center; margin-bottom: 10px; }
+    .control dl > dd { display: inline-block; padding: 5px 10px; background-color: #e7e7e7; margin: 0 5px 10px; cursor: pointer; }
+    .control .control-item { font: small '黑体'; color: white; border-radius: 5px; background-color: #888; padding: 5px; }
+    .control .control-item + .control-item { margin-top: 10px; }
+    .control .control-item > button { width: 60px; }
+    .control .control-item > button, .control .control-item > input { float: right; margin-left: 5px; }
+    .control .control2 > input { width: 120px; }
+    .control .control3 > input { width: 60px; }
+    .page-container { height: 430px; overflow: hidden; }
+    .page { width: 100%; height: 100%; }
+    .nav { padding: 10px; width: 60%; float: right; text-align: center; }
+    .nav-in { display: inline-block; width:20px; line-height: 20px; border:1px solid black; background-color: #aaa; color: white; text-decoration: none; }
+</style>
+<div class="container">
+    <div class="show">
+        <div class="show-title">transform</div>
+        <div class="show-main"></div>
+        <div class="show-tips"></div>
+    </div>
+    <div class="control page-container">
+        <div class="page" id="page1">
+            <dl class="select-item select2">
+                <dt>transform-origin-x</dt>
+                <dd>center</dd>
+                <dd>left</dd>
+                <dd>right</dd>
+            </dl>
+            <dl class="select-item select2">
+                <dt>transform-origin-y</dt>
+                <dd>center</dd>
+                <dd>top</dd>
+                <dd>bottom</dd>
+            </dl>
+            <div class="control-item control2" data-attr="transformOrigin">
+                <label for="transformOrigin">transform-origin</label>
+                <button type="button">sure</button>
+                <input type="text" name="transformOrigin" id="transformOrigin">
+            </div>
+            <div class="control-item control3">
+                <label for="transformOriginX">transform-origin-x</label>
+                <button type="button">0px</button>
+                <input type="number" name="transformOriginX" id="transformOriginX">
+                <input type="range" max="100" min="0" value="0">
+            </div>
+            <div class="control-item control3">
+                <label for="transformOriginY">transform-origin-y</label>
+                <button type="button">0px</button>
+                <input type="number" name="transformOriginY" id="transformOriginY">
+                <input type="range" max="100" min="0" value="0">
+            </div>
+            <div class="control-item control3">
+                <label for="transformOriginX2">transform-origin-x</label>
+                <button type="button">0%</button>
+                <input type="number" name="transformOriginX2" id="transformOriginX2">
+                <input type="range" max="100" min="0" value="0">
+            </div>
+            <div class="control-item control3">
+                <label for="transformOriginY2">transform-origin-y</label>
+                <button type="button">0%</button>
+                <input type="number" name="transformOriginY2" id="transformOriginY2">
+                <input type="range" max="100" min="0" value="0">
+            </div>
+        </div>
+        <div class="page" id="page2">
+            <div class="control-item control2" data-attr="transform">
+                <label for="transform">transform</label>
+                <button type="button">sure</button>
+                <input type="text" name="transform" id="transform">
+            </div>
+            <div class="control-item control3">
+                <label for="transformMatrixA">transform-matrix-a</label>
+                <button type="button">1</button>
+                <input type="number" name="transformMatrixA" id="transformMatrixA">
+                <input type="range" max="100" min="0" value="1">
+            </div>
+            <div class="control-item control3">
+                <label for="transformMatrixB">transform-matrix-b</label>
+                <button type="button">0</button>
+                <input type="number" name="transformMatrixB" id="transformMatrixB">
+                <input type="range" max="100" min="0" value="0">
+            </div>
+            <div class="control-item control3">
+                <label for="transformMatrixC">transform-matrix-c</label>
+                <button type="button">0</button>
+                <input type="number" name="transformMatrixC" id="transformMatrixC">
+                <input type="range" max="100" min="0" value="0">
+            </div>
+            <div class="control-item control3">
+                <label for="transformMatrixD">transform-matrix-d</label>
+                <button type="button">1</button>
+                <input type="number" name="transformMatrixD" id="transformMatrixD">
+                <input type="range" max="100" min="0" value="1">
+            </div>
+            <div class="control-item control3">
+                <label for="transformMatrixE">transform-matrix-e</label>
+                <button type="button">0</button>
+                <input type="number" name="transformMatrixE" id="transformMatrixE">
+                <input type="range" max="100" min="0" value="0">
+            </div>
+            <div class="control-item control3">
+                <label for="transformMatrixF">transform-matrix-f</label>
+                <button type="button">0</button>
+                <input type="number" name="transformOriginF" id="transformOriginF">
+                <input type="range" max="100" min="0" value="0">
+            </div>
+        </div>
+    </div>
+    <nav class="nav">
+        <a class="nav-in" href="#page1">1</a>
+        <a class="nav-in" href="#page2">2</a>
+    </nav>
+    <button id="reset" type="button" onclick="history.go();" style="margin-top: 10px;">reset</button>
+</div>
+<script>
+    (function () {
+        var show = document.getElementsByClassName("show")[0]
+        var tips = show.getElementsByClassName("show-tips")[0]
+        var target = show.getElementsByClassName("show-main")[0]
+        show.onclick = function (event) {
+            if (event.target instanceof Text) {
+                return
+            }
+            if (target != null) {
+                target.style.outline = ''
+            }
+            target = event.target
+            target.style.outline = '3px solid lightblue'
+            console.log(target)
+        }
+
+        function attrObj() {
+            var partNames = []
+            var partInits = []
+            Array.prototype.forEach.call(arguments, (item, index, arr) => {
+                if (index > 1) {
+                    (index % 2 == 0 ? partNames : partInits).push(item)
+                }
+            })
+            var result = {
+                'attrName': arguments[0],
+                'separator': arguments[1],
+                'partNames': partNames,
+                'partInits': partInits,
+                handle: function(partName, partValue, start, end) {
+                    var str = ''
+                    this[partName] = partValue
+                    this.partNames.forEach((name, index, names) => str = str + (index == 0 ? '' : this.separator) + (this[name] ? this[name] : this.partInits[index]))
+                    start = start || ''
+                    end = end || ''
+                    str = start + str + end
+                    console.log(str)
+                    target.style[this.attrName] = str
+                    tips.innerText = target.style.cssText
+                }
+            }
+            return result
+        }
+
+        var control = document.getElementsByClassName("control")[0]
+        Array.prototype.forEach.call(control.getElementsByClassName("select-item"), (select, index, selects) => {
+            select.index = 0
+            var items = select.getElementsByTagName("dd")
+            Array.prototype.forEach.call(items, (item, index2, items) => item.index = index2)
+            items[0].style.cssText = 'color: white; background-color: black'
+        })
+        var selectCheck = function (callback) {
+            return function (event) {
+                var eventTarget = event.target
+                if (eventTarget.tagName == 'DD' && eventTarget.index != this.index) {
+                    callback(eventTarget, event)
+                    eventTarget.style.cssText = 'color: white; background-color: black'
+                    if (this.index >= 0) {
+                        this.getElementsByTagName("dd")[this.index].style.cssText = 'color: black; background-color: #e7e7e7'
+                    }
+                    this.index = eventTarget.index
+                }
+            }
+        }
+        Array.prototype.forEach.call(control.getElementsByClassName("select1"), (select, index, selects) => 
+            select.onclick = selectCheck(function (eventTarget) {
+                target.style[this.dataset.attr] = eventTarget.innerText
+                tips.innerText = target.style.cssText
+        }))
+        var selects2 = control.getElementsByClassName("select2")
+        var transformOriginAttr = new attrObj('transformOrigin', ' ', 0, 'center', 1, 'center')
+        selects2[0].onclick = selectCheck((eventTarget) => transformOriginAttr.handle(0, eventTarget.innerText))
+        selects2[1].onclick = selectCheck((eventTarget) => transformOriginAttr.handle(1, eventTarget.innerText))
+
+        Array.prototype.forEach.call(control.getElementsByClassName("control2"), (control, index, controls) =>
+            control.getElementsByTagName("button")[0].onclick = function () {
+                target.style[this.parentNode.dataset.attr] = this.nextElementSibling.value
+                tips.innerText = target.style.cssText
+        })
+
+        var controlHandle = function(control, callback) {
+            var button = control.getElementsByTagName("button")[0]
+            var number = control.getElementsByTagName("input")[0]
+            var range = control.getElementsByTagName("input")[1]
+            button.value = 0
+            number.onclick = range.onclick = number.onfocus = range.onfocus = number.onpropertychange = range.onpropertychange = number.oninput = range.oninput = button.onclick = function() {
+                number.value = range.value = this.value
+                callback(this.value)
+            }
+        }
+        var controls3 = control.getElementsByClassName("control3")
+        controlHandle(controls3[0], (value) => transformOriginAttr.handle(0, value + 'px'))
+        controlHandle(controls3[1], (value) => transformOriginAttr.handle(1, value + 'px'))
+        controlHandle(controls3[2], (value) => transformOriginAttr.handle(0, value + '%'))
+        controlHandle(controls3[3], (value) => transformOriginAttr.handle(1, value + '%'))
+
+        var transformAttr = new attrObj('transform', ',', 0, '1', 1, '0', 2, '0', 3, '1', 4, '0', 5, '0')
+        controlHandle(controls3[4], (value) => transformAttr.handle(0, value, 'matrix(', ')'))
+        controlHandle(controls3[5], (value) => transformAttr.handle(1, value, 'matrix(', ')'))
+        controlHandle(controls3[6], (value) => transformAttr.handle(2, value, 'matrix(', ')'))
+        controlHandle(controls3[7], (value) => transformAttr.handle(3, value, 'matrix(', ')'))
+        controlHandle(controls3[8], (value) => transformAttr.handle(4, value, 'matrix(', ')'))
+        controlHandle(controls3[9], (value) => transformAttr.handle(5, value, 'matrix(', ')'))
+
+        Array.prototype.forEach.call(document.getElementsByClassName("nav"), (nav, index, navs) => {
+            Array.prototype.forEach.call(nav.getElementsByClassName("nav-in"), (navIn, index2, nav) => navIn.index = index2)
+            nav.index = 0
+            nav.onclick = function (event) {
+                var target = event.target
+                if (target.classList.contains('nav-in')) {
+                    this.getElementsByClassName("nav-in")[nav.index].style.cssText = 'border: 1px solid black;'
+                    nav.index = target.index
+                    target.style.cssText = 'border: 1px solid blue; box-shadow: lightblue 0px 0px 1px;'
+                }
+            }
+            nav.getElementsByClassName("nav-in")[nav.index].style.cssText = 'border: 1px solid blue; box-shadow: lightblue 0px 0px 1px;'
+        })
+    })()
+</script>

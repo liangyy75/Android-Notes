@@ -6,10 +6,10 @@ img {
 </style>
 
 <!-- GFM-TOC -->
-- [基础知识](#%e5%9f%ba%e7%a1%80%e7%9f%a5%e8%af%86)
-- [基础知识2](#%e5%9f%ba%e7%a1%80%e7%9f%a5%e8%af%862)
-- [基础知识3](#%e5%9f%ba%e7%a1%80%e7%9f%a5%e8%af%863)
-- [基础知识4(构建相关)](#%e5%9f%ba%e7%a1%80%e7%9f%a5%e8%af%864%e6%9e%84%e5%bb%ba%e7%9b%b8%e5%85%b3)
+- [基础知识](#基础知识)
+- [基础知识2](#基础知识2)
+- [基础知识3](#基础知识3)
+- [基础知识4(构建相关)](#基础知识4构建相关)
 - [Activity](#activity)
 - [Service](#service)
 - [BroadcastReceiver](#broadcastreceiver)
@@ -20,30 +20,30 @@ img {
 - [Binder](#binder)
 - [Messenger](#messenger)
 - [AIDL](#aidl)
-- [系统启动](#%e7%b3%bb%e7%bb%9f%e5%90%af%e5%8a%a8)
-- [消息](#%e6%b6%88%e6%81%af)
-- [数据存储](#%e6%95%b0%e6%8d%ae%e5%ad%98%e5%82%a8)
-- [事件响应](#%e4%ba%8b%e4%bb%b6%e5%93%8d%e5%ba%94)
-- [函数响应式](#%e5%87%bd%e6%95%b0%e5%93%8d%e5%ba%94%e5%bc%8f)
-- [网络请求](#%e7%bd%91%e7%bb%9c%e8%af%b7%e6%b1%82)
-- [消息通知](#%e6%b6%88%e6%81%af%e9%80%9a%e7%9f%a5)
-- [图片相关](#%e5%9b%be%e7%89%87%e7%9b%b8%e5%85%b3)
-- [视频音频](#%e8%a7%86%e9%a2%91%e9%9f%b3%e9%a2%91)
-- [动画](#%e5%8a%a8%e7%94%bb)
+- [系统启动](#系统启动)
+- [消息](#消息)
+- [数据存储](#数据存储)
+- [事件响应](#事件响应)
+- [函数响应式](#函数响应式)
+- [网络请求](#网络请求)
+- [消息通知](#消息通知)
+- [图片相关](#图片相关)
+- [视频音频](#视频音频)
+- [动画](#动画)
 - [Drawable](#drawable)
-- [自定义View](#%e8%87%aa%e5%ae%9a%e4%b9%89view)
-- [性能优化](#%e6%80%a7%e8%83%bd%e4%bc%98%e5%8c%96)
-- [内存泄露](#%e5%86%85%e5%ad%98%e6%b3%84%e9%9c%b2)
-- [安全漏洞](#%e5%ae%89%e5%85%a8%e6%bc%8f%e6%b4%9e)
-- [源码阅读](#%e6%ba%90%e7%a0%81%e9%98%85%e8%af%bb)
-- [Android NDK 与 Java JNI](#android-ndk-%e4%b8%8e-java-jni)
+- [自定义View](#自定义view)
+- [性能优化](#性能优化)
+- [内存泄露](#内存泄露)
+- [安全漏洞](#安全漏洞)
+- [源码阅读](#源码阅读)
+- [Android NDK 与 Java JNI](#android-ndk-与-java-jni)
 - [Support Annotation Library](#support-annotation-library)
 - [Androidx](#androidx)
-- [5678新特性](#5678%e6%96%b0%e7%89%b9%e6%80%a7)
-- [新特性](#%e6%96%b0%e7%89%b9%e6%80%a7)
+- [5678新特性](#5678新特性)
+- [新特性](#新特性)
 - [View](#view)
 - [ViewGroup](#viewgroup)
-- [综合技术](#%e7%bb%bc%e5%90%88%e6%8a%80%e6%9c%af)
+- [综合技术](#综合技术)
 <!-- GFM-TOC -->
 
 保活后台服务(priority persistent startForeground Android系统广播Intent.action_time_tick start_sticky ondestroy中重启)
@@ -3520,7 +3520,11 @@ Android 信息.md
                 llRemoteViews.addView(view);
             }
             ```
-9. 
+9. requestLayout vs invalidate
+    1. requestLayout：会直接递归调用父窗口的requestLayout，直到ViewRootImpl,然后触发peformTraversals，由于mLayoutRequested为true，会导致onMeasure和onLayout被调用。不一定会触发OnDraw。requestLayout触发onDraw可能是因为在在layout过程中发现l,t,r,b和以前不一样，那就会触发一次invalidate，所以触发了onDraw，也可能是因为别的原因导致mDirty非空（比如在跑动画）
+    2. invalidate：不会导致ViewRootImpl的invalidate被调用，而是递归调用父view的invalidateChildInParent，直到ViewRootImpl的invalidateChildInParent，然后触发peformTraversals，会导致当前view被重绘,由于mLayoutRequested为false，不会导致onMeasure和onLayout被调用，而OnDraw会被调用
+    3. postInvalidate： 是在非UI线程中调用，invalidate则是在UI线程中调用。
+    4. 一般来说，只要刷新的时候就调用invalidate，需要重新measure就调用requestLayout，后面再跟个invalidate（为了保证重绘），这是我个人的理解。
 10. 
 
 ### ViewGroup
