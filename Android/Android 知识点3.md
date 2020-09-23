@@ -26,9 +26,12 @@ img {
     - [ColorMatrix与滤镜效果](#colormatrix与滤镜效果)
     - [ColorFilter](#colorfilter)
     - [setXfermode](#setxfermode)
+    - [Layer](#layer)
 - [build-timer](#build-timer)
+- [other](#other)
 - [进程保活](#进程保活)
 - [AndroidShell](#androidshell)
+- [](#)
 
 ## Vector
 
@@ -1460,8 +1463,48 @@ new float[] {
     * OVERLAY
         * (\alpha_{out} = \alpha_{src} + \alpha_{dst} - \alpha_{src} * \alpha_{dst})
         * (\begin{equation} C_{out} = \begin{cases} 2 * C_{src} * C_{dst} & 2 * C_{dst} \lt \alpha_{dst} \\ \alpha_{src} * \alpha_{dst} - 2 (\alpha_{dst} - C_{src}) (\alpha_{src} - C_{dst}) & otherwise \end{cases} \end{equation})
+* https://juejin.im/post/5bf20e49e51d453427606cc5
+* https://www.jianshu.com/p/d11892bbe055
+
+### Layer
+
+1. 获得canvas对象。
+    1. 自定义view时， 重写onDraw、dispatchDraw方法
+        1. onDraw、dispatchDraw在传入的参数中都有一个canvas对象。这个canvas对象是View中的Canvas对象，利用这个canvas对象绘图，效果会直接反应在View中；
+        2. onDraw()的意思是绘制视图自身
+        3. dispatchDraw()是绘制子视图
+        4. 无论是View还是ViewGroup对它们俩的调用顺序都是onDraw()->dispatchDraw()。但在ViewGroup中，当它有背景的时候就会调用onDraw()方法，否则就会跳过onDraw()直接调用dispatchDraw()；所以如果要在ViewGroup中绘图时，往往是重写dispatchDraw()方法。在View中，onDraw()和dispatchDraw()都会被调用的，所以我们无论把绘图代码放在onDraw()或者dispatchDraw()中都是可以得到效果的，但是由于dispatchDraw()的含义是绘制子控件，所以原则来上讲，在绘制View控件时，我们是重写onDraw()函数
+        5. 在绘制View控件时，需要重写onDraw()函数，在绘制ViewGroup时，需要重写dispatchDraw()函数。
+    2. 使用Bitmap创建
+        1. Canvas c = new Canvas(bitmap);
+        2. Canvas c = new Canvas(); c.setBitmap(bitmap);
+        3. 创建bitmap
+            1. 方法一：新建一个空白bitmap. Bitmap bmp = Bitmap.createBitmap(width ,height Bitmap.Config.ARGB_8888);
+            2. 方法二：从图片中加载. Bitmap bmp = BitmapFactory.decodeResource(getResources(),R.drawable.wave_bg,null);
+            3. 这两个方法是最常用的，除了这两个方法以外，还有其它几个方法（比如构造一个具有matrix的图像副本——前面示例中的倒影图像），这里就不再涉及了，大家可以去查看Bitmap的构造函数。
+        4. 在onDraw()中使用
+            1. mBmp = Bitmap.createBitmap(500 ,500 , Bitmap.Config.ARGB_8888);
+            2. mBmpCanvas = new Canvas(mBmp);
+            3. mBmpCanvas.drawText("启舰大SB",0,100,mPaint);
+            4. canvas.drawBitmap(mBmp,0,0,mPaint);
+    3. SurfaceHolder.lockCanvas() <!-- TODO: -->
+2. 图层与画布
+    1. 保存指定矩形区域的canvas内容
+        1. public int saveLayer(RectF bounds, Paint paint, int saveFlags)
+        2. public int saveLayer(float left, float top, float right, float bottom,Paint paint, int saveFlags)
+        3. int saveFlags：取值有：ALL_SAVE_FLAG、MATRIX_SAVE_FLAG、CLIP_SAVE_FLAG、HAS_ALPHA_LAYER_SAVE_FLAG、FULL_COLOR_LAYER_SAVE_FLAG、CLIP_TO_LAYER_SAVE_FLAG总共有这六个，其中ALL_SAVE_FLAG表示保存全部内容
+    2. https://blog.csdn.net/harvic880925/article/details/51317746
+
+**图层(Layer)**：每一次调用canvas.drawXXX系列函数时，都会生成一个透明图层来专门来画这个图形，比如我们上面在画矩形时的透明图层就是这个概念。<br>
+**画布(bitmap)**：每一个画布都是一个bitmap，所有的图像都是画在bitmap上的！我们知道每一次调用canvas.drawxxx函数时，都会生成一个专用的透明图层来画这个图形，画完以后，就盖在了画布上。所以如果我们连续调用五个draw函数，那么就会生成五个透明图层，画完之后依次盖在画布上显示。画布有两种，第一种是view的原始画布，是通过onDraw（Canvas canvas）函数传进来的，其中参数中的canvas就对应的是view的原始画布，控件的背景就是画在这个画布上的！
+另一种是人造画布，通过saveLayer()、new Canvas(bitmap)这些方法来人为新建一个画布。尤其是saveLayer()，一旦调用saveLayer()新建一个画布以后，以后的所有draw函数所画的图像都是画在这个画布上的，只有当调用restore()、resoreToCount()函数以后，才会返回到原始画布上绘制。<br>
+**Canvas**:这个概念比较难理解，我们可以把Canvas理解成画板，Bitmap理解成透明画纸，而Layer则理解成图层；每一个draw函数都对应一个图层，在一个图形画完以后，就放在画纸上显示。而一张张透明的画纸则一层层地叠加在画板上显示出来。我们知道画板和画纸都是用夹子夹在一起的，所以当我们旋转画板时，所有画纸都会跟着旋转！当我们把整个画板裁小时，所以的画纸也都会变小了！这一点非常重要，当我们利用saveLayer来生成多个画纸时，然后最上层的画纸调用canvas.rotate(30)是把画板给旋转了，所有的画纸也都被旋转30度！这一点非常注意另外，如果最上层的画纸调用canvas.clipRect()将画板裁剪了，那么所有的画纸也都会被裁剪。唯一能够恢复的操作是调用canvas.revert()把上一次的动作给取消掉！但在利用canvas绘图与画板不一样的是，画布的影响只体现在以后的操作上，以前画上去的图像已经显示在屏幕上是不会受到影响的。
 
 ## build-timer
+
+## other
+
+[我的ZXing快如闪电！](https://www.jianshu.com/p/d10e147a2709)
 
 ## 进程保活
 
@@ -1474,3 +1517,26 @@ new float[] {
 
 public static CommandResult run(String shell, String... commands)
 public static CommandResult run(String shell, @NonNull String[] commands, @Nullable String[] env)
+
+## 
+
+https://www.jianshu.com/p/0bb98711ab75
+
+黑色：\u001b[30m
+红色：\u001b[31m
+绿色：\u001b[32m
+黄色：\u001b[33m
+蓝色：\u001b[34m
+洋红色：\u001b[35m
+青色：\u001b[36m
+白色：\u001b[37m
+重置：\u001b[0m
+
+亮黑色：\u001b[30;1m
+亮红色：\u001b[31;1m
+亮绿色：\u001b[32;1m
+亮黄色：\u001b[33;1m
+亮蓝色：\u001b[34;1m
+亮洋红色：\u001b[35;1m
+亮青色：\u001b[36;1m
+亮白色：\u001b[37;1m
