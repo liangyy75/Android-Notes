@@ -118,6 +118,23 @@
         - [对象的属性描述符](#对象的属性描述符)
         - [对象拷贝](#对象拷贝)
 - [难点重点](#难点重点)
+    - [作用域](#作用域)
+    - [闭包](#闭包)
+    - [this](#this)
+    - [继承实现](#继承实现)
+    - [模块化](#模块化)
+- [DOM -- 节点](#dom----节点)
+- [DOM -- 脚本化CSS](#dom----脚本化css)
+- [DOM -- 表单脚本](#dom----表单脚本)
+- [DOM -- 元素尺寸](#dom----元素尺寸)
+- [DOM -- 事件](#dom----事件)
+- [动画 -- 拖拽](#动画----拖拽)
+- [动画 -- 运动](#动画----运动)
+- [动画 -- canvas](#动画----canvas)
+- [动画 -- svg](#动画----svg)
+- [ajax](#ajax)
+- [存储](#存储)
+- [BOM](#bom)
 - [【空闲】【必要】](#空闲必要)
 
 # 基础语法
@@ -2324,18 +2341,380 @@ javascript中**所有函数的参数都是按值传递的**。也就是说，把
 
 ### 函数节流和函数防抖
 
+javascript中的函数大多数情况下都是由用户主动调用触发的，除非是函数本身的实现不合理，否则一般不会遇到跟性能相关的问题。但在一些少数情况下，函数的触发不是由用户直接控制的。在这些场景下，函数有可能被非常频繁地调用，而造成大的性能问题。解决性能问题的处理办法就是函数节流和函数防抖。本文将详细介绍函数节流和函数防抖
+
+1. 常见场景
+    1. mousemove事件。如果要实现一个拖拽功能，需要一路监听 mousemove 事件，在回调中获取元素当前位置，然后重置 dom 的位置来进行样式改变。如果不加以控制，每移动一定像素而触发的回调数量非常惊人，回调中又伴随着 DOM 操作，继而引发浏览器的重排与重绘，性能差的浏览器可能就会直接假死。
+    2. window.onresize事件。为window对象绑定了resize事件，当浏览器窗口大小被拖动而改变的时候，这个事件触发的频率非常之高。如果在window.onresize事件函数里有一些跟DOM节点相关的操作，而跟DOM节点相关的操作往往是非常消耗性能的，这时候浏览器可能就会吃不消而造成卡顿现象
+    3. 射击游戏的 mousedown/keydown 事件（单位时间只能发射一颗子弹）
+    4. 搜索联想（keyup事件）
+    5. 监听滚动事件判断是否到页面底部自动加载更多（scroll事件）
+    6. 对于这些情况的解决方案就是函数节流（throttle）或函数去抖（debounce），核心其实就是限制某一个方法的频繁触发
+2. 定时器管理 -- 两种机制
+    1. 只要当前函数没有执行完成，任何新触发的函数都会被忽略，可以实现在持续触发事件的情况下，一段时间内只执行一次事件的效果，即函数节流
+    2. 只要有新触发的函数，就立即停止执行当前函数，转而执行新函数，可以实现在持续触发事件的情况下，一定在事件触发n秒后执行，如果n秒内又触发了这个事件，则以新的事件的时间为准，还是n秒后执行，即函数防抖，简易代码如下
+3. 函数防抖：利用函数来防止抖动。在执行触发事件的情况下，元素的位置或尺寸属性快速地发生变化，造成页面回流，出现元素抖动的现象。通过函数防抖，使得元素的位置或尺寸属性延迟变化，从而减少页面回流。简单的防抖函数代码如下，该函数接受2个参数，第一个参数为需要被延迟执行的函数，第二个参数为延迟执行的时间
+4. 函数节流：即限制函数的执行频率，在持续触发事件的情况下，间断地执行函数；实现方法对应定时器管理的第一种策略，只要当前函数没有执行完成，任何新触发的函数都会被忽略
+5. 数组分块
+    1. 在前面关于函数节流和函数防抖的讨论中，提供了限制函数被频繁调用的解决方案。下面将遇到另外一个问题，某些函数确实是用户主动调用的，但因为一些客观的原因，这些函数会严重地影响页面性能
+    2. 一个例子是创建WebQQ的QQ好友列表。列表中通常会有成百上千个好友，如果一个好友用一个节点来表示，在页面中渲染这个列表的时候，可能要一次性往页面中创建成百上千个节点
+    3. 这个问题的解决方案之一是数组分块技术，下面的timeChunk函数让创建节点的工作分批进行，比如把1秒钟创建1000个节点，改为每隔200毫秒创建8个节点
+    4. 数组分块是一种使用定时器分割循环的技术，为要处理的项目创建一个队列，然后使用定时器取出下一个要处理的项目进行处理，接着再设置另一个定时器
+    5. 在数组分块模式中，array变量本质上就是一个“待办事宜”列表，它包含了要处理的项目。使用shift()方法可以获取队列中下一个要处理的项目，然后将其传递给某个函数。如果在队列中还有其他项目，则设置另一个定时器，并通过arguments.callee调用同一个匿名函数
+    6. 数组分块的重要性在于它可以将多个项目的处理在执行队列上分开，在每个项目处理之后，给予其他的浏览器处理机会运行，这样就可能避免长时间运行脚本的错误。一旦某个函数需要花50ms以上的时间完成，那么最好看看能否将任务分割为一系列可以使用定时器的小任务
+
+```js
+// 2.1
+function fn(method, context) {
+    if (method.tId) {
+        return false  // 忽略新函数
+    }
+    method.tId = setTimeout(() => method.call(context), 1000)
+}
+// 2.2
+function fn(method, context) {
+    clearTimeout(method.tId)
+    method.tId = setTimeout(() => method.call(context), 1000)
+}
+// 3
+const debounce = (fn, wait=30) => {
+    return () => {
+        clearTimeout(fn.timer)
+        fn.timer = setTimeout(fn.bind(this, ...arguments), wait)
+    }
+}
+// 4
+const throttle = (fn, wait=100) =>{
+    return function() {
+        if (fn.timer) {
+            return
+        }
+        fn.timer = setTimeout(() => {
+            fn.apply(this, arguments)
+            fn.timer = null
+        }, wait)
+    }
+}
+// 5
+function chunk(array, process, context) {
+    setTimeout(function() {
+        // 取出下一个条目并处理
+        var item = array.shift();
+        process.call(context, item);
+        // 若还有条目，再设置另一个定时器
+        if (array.length > 0) {
+            setTimeout(arguments.callee, 100);
+        }
+    }, 100);
+}
+// 5.2 -- 第1个参数是创建节点时需要用到的数据，第2个参数是封装了创建节点逻辑的函数，第3个参数表示每一批创建的节点数量
+var timeChunk = function (ary, fn, count) {
+    var start = function () {
+        for (var i = 0; i < Math.min(count || 1, ary.length); i++) {
+            var obj = ary.shift();
+            fn(obj);
+        }
+    };
+    return function () {
+        var t = setInterval(function () {
+            if (ary.length === 0) { // 如果全部节点都已经被创建好
+                return clearInterval(t);
+            }
+            start();
+        }, 200);    // 分批执行的时间间隔，也可以用参数的形式传入
+    };
+};
+```
+
 ### 惰性函数
+
+惰性函数表示函数执行的分支只会在函数第一次调用的时候执行，在第一次调用过程中，该函数会被覆盖为另一个按照合适方式执行的函数，这样任何对原函数的调用就不用再经过执行的分支了。本文将详细介绍惰性函数
+
+1. **使用背景**：因为各浏览器之间的行为的差异，经常会在函数中包含了大量的if语句，以检查浏览器特性，解决不同浏览器的兼容问题。比如，最常见的为dom节点添加事件的函数。这个过程，在addEvent函数每次调用的时候都要走一遍，其实，如果浏览器支持其中的一种方法，那么它就会一直支持了，就没有必要再进行其他分支的检测了。也就是说，if语句不必每次都执行，代码可以运行的更快一些。解决方案就是惰性载入
+2. **函数重写**
+3. **惰性函数**的本质就是函数重写。所谓惰性载入，指函数执行的分支只会发生一次，有两种实现惰性载入的方式
+    1. 第一种是在函数被调用时，再处理函数。函数在第一次调用时，该函数会被覆盖为另外一个按合适方式执行的函数，这样任何对原函数的调用都不用再经过执行的分支了。但是，这种方法有个缺点，如果函数名称有所改变，修改起来比较麻烦
+    2. 第二种是声明函数时就指定适当的函数。把嗅探浏览器的操作提前到代码加载的时候，在代码加载的时候就立刻进行一次判断，以便让addEvent返回一个包裹了正确逻辑的函数
+
+```js
+// 1
+function addEvent(type, element, fun) {
+    if (element.addEventListener) {
+        element.addEventListener(type, fun, false);
+    } else if (element.attachEvent) {
+        element.attachEvent('on' + type, fun);
+    } else {
+        element['on' + type] = fun;
+    }
+}
+// 2
+function a(){
+    console.log('a');
+    a = () => console.log('b');
+}
+// 3.1
+function addEvent(type, element, fun) {
+    if (element.addEventListener) {
+        addEvent = (type2, element2, fun2) => element.addEventListener(type, fun, false)
+    } else if (element.attachEvent) {
+        addEvent = (type2, element2, fun2) => element.attachEvent('on' + type, fun)
+    } else {
+        addEvent = (type2, element2, fun2) => element['on' + type] = fun
+    }
+    return addEvent(type, element, fun)
+}
+// 3.2
+var addEvent = (function() {
+    if (document.addEventListener) {
+        return (type, element, fun) => element.addEventListener(type, fun, false)
+    } else if (document.attachEvent) {
+        return (type, element, fun) => element.attachEvent('on' + type, fun)
+    } else {
+        return (type, element, fun) => element['on' + type] = fun
+    }
+})();
+```
 
 ## 对象
 
 ### 初识对象
 
+1. 对象创建
+    1. new构造函数：使用new操作符后跟Object构造函数用以初始化一个新创建的对象。[注意]undefined和null会转换为一个空对象。Object()函数不通过new而直接使用，则相当于转换方法，可以把任意值转换为对象
+    2. 对象直接量：new构造函数的语法糖，使用对象字面量的方法来定义对象，属性名会自动转换成字符串。[注意]一般地，对象字面量的最后一个属性后的逗号将忽略，但在IE7-浏览器中导致错误
+    3. Object.create()。ES5定义了一个名为Object.create()的方法，它创建一个新对象，第一个参数就是这个对象的原型，第二个可选参数用以对对象的属性进行进一步描述。
+        1. 可以通过传入参数null来创建一个没有原型的新对象，但通过这种方式创建的对象不会继承任何东西，甚至不包括基础方法。比如toString()和valueOf()。
+        2. 如果想创建一个普通的空对象(比如通过{}或new Object()创建的对象)，需要传入Object.prototype。
+        3. Object.create()方法的第二个参数是属性描述符
+2. 对象组成：对象是属性的无序集合，由键名和属性值组成
+    1. 对象的所有键名都是字符串，所以加不加引号都可以，如果不是字符串也会自动转换成字符串
+    2. [注意]如果键名不符合标识符命名规则，则必须加上引号，否则会报错
+    3. 属性值可以是任何类型的表达式，最终表达式的结果就是属性值的结果
+    4. 如果属性值为函数，则通常把这个属性称为“方法”
+    5. 由于对象的方法就是函数，因此也有name属性。方法的name属性返回紧跟在function关键字后面的函数名。如果是匿名函数，ES5环境会返回undefined，ES6环境会返回方法名
+3. 引用对象：如果不同的变量名指向同一个对象，那么它们都是这个对象的引用，也就是说指向同一个内存地址。修改其中一个变量，会影响到其他所有变量
+4. 实例方法
+    1. valueOf()：返回当前对象
+    2. toString()：返回当前对象对应的字符串形式。一般地，使用Object.prototype.toString()来获取对象的类属性，进行类型识别
+    3. toLocaleString()：并不做任何本地化自身的操作，它仅调用toString()方法并返回对应值。[注意]Date和Number类对toLocaleString()方法做了本地化定制
+5. 判断为空
+    1. for-in
+    2. JSON.stringify
+    3. Object.keys
+
+```js
+// 1.1
+var person = new Object();  // 如果不给构造函数传递参数可以不加括号 var person = new Object;
+person.name = 'bai';
+person.age = 29;
+var o1 = { a: 1 };
+var o2 = new Object(o1);
+console.log(o1 === o2);  // true
+var uObj = Object(undefined);
+var nObj = Object(null);
+console.log(Object.keys(nObj));  // []
+console.log(Object.keys(uObj));  // []
+function isObject(o) { return o == Object(o) }
+// 1.2
+var person = {
+    name : 'bai',
+    age : 29,
+    5 : true
+};
+// 1.3.1
+var o2 = Object.create(null); // o2不继承任何属性和方法
+var o1 = {};
+console.log(Number(o1));  // NaN
+console.log(Number(o2));  // Uncaught TypeError: Cannot convert object to primitive value
+// 1.3.3
+var o1 = Object.create({ z: 3 }, {
+    y: { value: 2, writable: false, enumerable: true, configurable: true },
+    x: { value: 1, writable: false, enumerable: true, configurable: true },
+});
+console.log(o1.x, o1.y, o1.z);  // 1 2 3
+// 5.1
+let isEmpty = (obj) => {
+    for (let i in obj) {
+        return false
+    }
+    return true
+}
+console.log(isEmpty({}))  // true
+console.log(isEmpty({ a: 1 }))  // false
+// 5.2
+let isEmpty = (obj) => JSON.stringify(obj) === '{}'
+// 5.3
+let isEmpty = (obj) => !Object.keys(obj).length
+```
+
 ### 对象的属性操作
+
+对于对象来说，属性操作是绕不开的话题。类似于“增删改查”的基本操作，属性操作分为属性查询、属性设置、属性删除，还包括属性继承。本文是对象系列的第二篇——属性操作
+
+1. 属性查询
+    1. 点运算符
+    2. 方括号运算符
+    3. [注意]变量中可以存在中文，因为中文相当于字符，与英文字符同样对待，因此可以写成person.白或person['白']
+    4. [注意]可计算属性名。var person = { [a + 3]: 'abc' };
+    5. [注意]查询一个不存在的属性不会报错，而是返回undefined
+2. 属性设置
+    1. 点运算符
+    2. 方括号运算符
+3. 属性删除
+    1. 使用delete运算符可以删除对象属性(包括数组元素)
+    2. [注意]给对象属性置null或undefined，并没有删除该属性
+    3. 使用delete删除数组元素时，不会改变数组长度
+    4. delete运算符只能删除自有属性，不能删除继承属性(要删除继承属性必须从定义这个属性的原型对象上删除它，而且这会影响到所有继承自这个原型的对象)
+    5. delete操作符的返回值是个布尔值true或false
+        1. 当使用delete操作符删除对象属性或数组元素删除成功时，返回true
+        2. 当使用delete操作符删除不存在的属性或非左值时，返回true
+        3. 当使用delete操作符删除变量时，返回false，严格模式下会抛出ReferenceError错误
+        4. 当使用delete操作符删除不可配置的属性时，返回false，严格模式下会抛出TypeError错误
+4. 属性继承
+    1. 每一个javascript对象都和另一个对象相关联。“另一个对象”就是我们熟知的原型，每一个对象都从原型继承属性。所有通过对象直接量创建的对象都具有同一个原型对象，并可以通过Object.prototype获得对原型对象的引用。console.log({}.__proto__ === Object.prototype);// true
+    2. [注意]Object.prototype的原型对象是null，所以它不继承任何属性。console.log(Object.prototype.__proto__ === null);//true
+    3. 对象本身具有的属性叫自有属性(own property)，从原型对象继承而来的属性叫继承属性
+    4. in操作符可以判断属性在不在该对象上，但无法区别自有还是继承属性
+    5. 通过for-in循环可以遍历出该对象中所有可枚举属性　
+    6. 通过hasOwnProperty()方法可以确定该属性是自有属性还是继承属性。console.log(obj.hasOwnProperty('a'));//false
+    7. Object.keys()方法返回所有可枚举的自有属性
+    8. 与Object.keys()方法不同，Object.getOwnPropertyNames()方法返回所有自有属性(包括不可枚举的属性)
 
 ### 对象的属性描述符
 
+1. 对象属性描述符的类型分为两种：数据属性和访问器属性
+    1. 数据属性
+        1. Configurable(可配置性)：可配置性决定是否可以使用delete删除属性，以及是否可以修改属性描述符的特性，默认值为true。[注意]使用var命令声明变量时，变量的configurable为false。一般地，设置Configurable:false后，将无法再使用defineProperty()方法来修改属性描述符。有一个例外，设置Configurable:false后，只允许writable的状态从true变为false
+        2. Enumerable(可枚举性)：可枚举性决定属性是否出现在对象的属性枚举中，比如是否可以通过for-in循环返回该属性，默认值为true。用户定义的普通属性默认是可枚举的，而原生继承的属性默认是不可枚举的。propertyIsEnumerable()方法用于判断对象的属性是否可枚举。console.log(o.propertyIsEnumerable('a'));//true
+        3. Writable(可写性)：可写性决定是否可以修改属性的值，默认值为true。[注意]设置writable:false后，通过Object.defineProperty()方法改变属性value的值不会受影响，因为这也意味着在重置writable的属性值为false
+        4. Value(属性值)：属性值包含这个属性的数据值，读取属性值的时候，从这个位置读；写入属性值的时候，把新值保存在这个位置。默认值为undefined
+    2. 访问器属性
+        1. Configurable(可配置性)：可配置性决定是否可以使用delete删除属性，以及是否可以修改属性描述符的特性，默认值为true。[注意]使用var命令声明变量时，变量的configurable为false。一般地，设置Configurable:false后，将无法再使用defineProperty()方法来修改属性描述符。有一个例外，设置Configurable:false后，只允许writable的状态从true变为false
+        2. Enumerable(可枚举性)：可枚举性决定属性是否出现在对象的属性枚举中，比如是否可以通过for-in循环返回该属性，默认值为true。用户定义的普通属性默认是可枚举的，而原生继承的属性默认是不可枚举的。propertyIsEnumerable()方法用于判断对象的属性是否可枚举。console.log(o.propertyIsEnumerable('a'));//true
+        3. getter：在读取属性时调用的函数。默认值为undefined
+        4. setter：在写入属性时调用的函数。默认值为undefined
+        5. 和数据属性不同，访问器属性不具有可写性(Writable)。如果属性同时具有getter和setter方法，那么它是一个读/写属性。如果它只有getter方法，那么它是一个只读属性。如果它只有setter方法，那么它是一个只写属性。读取只写属性总是返回undefined
+2. 前面介绍了属性描述符，要想设置它们，就需要用到描述符方法。描述符方法总共有以下4个：
+    1. Object.getOwnPropertyDescriptor(o, name)：用于查询一个属性的描述符，并以对象的形式返回
+        1. 查询obj.a属性时，可配置性、可枚举性、可写性都是默认的true，而value是a的属性值1
+        2. 查询obj.b属性时，因为obj.b属性不存在，该方法返回undefined
+    2. Object.defineProperty(o, name, desc)方法用于创建或配置对象的一个属性的描述符，返回配置后的对象。使用该方法创建或配置对象属性的描述符时，如果不针对该属性进行描述符的配置，则该项描述符默认为false
+    3. Object.defineProperties(o, descriptors)方法用于创建或配置对象的多个属性的描述符，返回配置后的对象。Object.defineProperties(o, {a: {writeable: false}})
+    4. Object.create(proto, descriptors)方法使用指定的原型和属性来创建一个对象
+3. get和set
+    1. get是一个隐藏函数，在获取属性值时调用。set也是一个隐藏函数，在设置属性值时调用，它们的默认值都是undefined。Object.definedProperty()中的get和set对应于对象字面量中get和set方法
+    2. [注意]getter和setter取代了数据属性中的value和writable属性
+    3. 给只设置get方法，没有设置set方法的对象赋值会静默失败，在严格模式下会报错
+    4. 只设置set方法，而不设置get方法，则对象属性值为undefined
+    5. 一般地，set和get方法是成对出现的
+4. 对象状态：属性描述符只能用来控制对象中一个属性的状态。而如果要控制对象的状态，就要用到下面的6种方法
+    1. Object.preventExtensions(o)(禁止扩展)：使一个对象无法再添加新的属性，并返回当前对象。在严格模式下，给禁止扩展的对象添加属性会报TypeError错误。Object.preventExtensions()方法并不改变对象中属性的描述符状态
+    2. Object.isExtensible(o)(测试扩展)：Object.isExtensible()方法用来检测该对象是否可以扩展
+    3. Object.seal()(对象封印)：使一个对象不可扩展并且所有属性不可配置，并返回当前对象
+    4. Object.isSealed()(测试封印)：用来检测该方法是否被封印
+    5. Object.freeze()(对象冻结)：使一个对象不可扩展，不可配置，也不可改写，变成一个仅可以枚举的只读常量，并返回当前对象
+    6. Object.isFrozen()(检测冻结)：用来检测一个对象是否被冻结
+
+```js
+// 3.3
+var o = { get a() { return 2; }}
+console.log(o.a);  // 2
+o.a = 3;  // 由于没有设置set方法，所以o.a=3的赋值语句会静默失败
+console.log(o.a);  // 2
+Object.defineProperty(o, 'a', {get: function() { return 2; }})  // 一样的不行，因为没有设置set
+```
+
 ### 对象拷贝
 
+1. 浅拷贝
+    1. 简单拷贝：新建一个空对象，使用for-in循环，将对象的所有属性复制到新建的空对象中
+    2. 使用属性描述符：通过对象的原型，建立一个空的实例对象。通过forEach语句，获取到对象的所有属性的属性描述符，将其作为参数，设置到新建的空实例对象中
+    3. 使用jquery的extend()方法
+2. 深拷贝
+    1. 遍历复制：复制对象的属性时，对其进行判断，如果是数组或对象，则再次调用拷贝函数；否则，直接复制对象属性
+    2. json：用JSON全局对象的parse和stringify方法来实现深复制算是一个简单讨巧的方法，它能正确处理的对象只有Number、String、Boolean、Array、扁平对象，即那些能够被json直接表示的数据结构
+    3. 使用jquery的extend()方法
+
+```js
+// 1.1
+function simpleClone1(obj) {
+    if (typeof obj != 'object') {
+        return false;
+    }
+    var cloneObj = {};
+    for (var i in obj) {
+        cloneObj[i] = obj[i];
+    }
+    return cloneObj;
+}
+// 1.2
+function simpleClone2(orig) {
+    var copy = Object.create(Object.getPrototypeOf(orig));
+    Object.getOwnPropertyNames(orig).forEach((propKey) => Object.defineProperty(copy, propKey, Object.getOwnPropertyDescriptor(orig, propKey)));
+    return copy;
+}
+// 1.3
+var obj2 = $.extend({}, obj1);
+// 2.1
+function deepClone1(obj, cloneObj) {
+    if (typeof obj != 'object') {
+        return false;
+    }
+    cloneObj = cloneObj || {};
+    for (var i in obj) {
+        if (typeof obj[i] === 'object') {
+            cloneObj[i] = (obj[i] instanceof Array) ? [] : {};
+            arguments.callee(obj[i], cloneObj[i]);
+        } else {
+            cloneObj[i] = obj[i];
+        }
+    }
+    return cloneObj;
+}
+// 2.2
+function jsonClone(obj) {
+    return JSON.parse(JSON.stringify(obj));
+}
+// 2.3
+var obj2 = $.extend(true, {}, obj1);
+```
+
 # 难点重点
+
+## 作用域
+
+1. 
+
+## 闭包
+
+## this
+
+## 继承实现
+
+## 模块化
+
+# DOM -- 节点
+
+# DOM -- 脚本化CSS
+
+# DOM -- 表单脚本
+
+# DOM -- 元素尺寸
+
+# DOM -- 事件
+
+# 动画 -- 拖拽
+
+# 动画 -- 运动
+
+# 动画 -- canvas
+
+# 动画 -- svg
+
+# ajax
+
+# 存储
+
+# BOM
 
 # 【空闲】【必要】

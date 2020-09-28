@@ -20,7 +20,7 @@ img {
     - [Canvas](#canvas)
     - [矩形工具类RectF与Rect](#矩形工具类rectf与rect)
     - [Path](#path)
-    - [Range](#range)
+    - [Region](#region)
     - [FontMetrics与FontMetricsInt](#fontmetrics与fontmetricsint)
     - [贝塞尔曲线与手势轨迹、水波纹效果](#贝塞尔曲线与手势轨迹水波纹效果)
     - [ColorMatrix与滤镜效果](#colormatrix与滤镜效果)
@@ -996,7 +996,7 @@ canvas.drawTextOnPath(text, CWRectpath, 0, 18, paint);//顺时针生成
 
 后面两个从路径加载难度不大，而我们一般也不会用到，这里我们说说从Asset文件中加载；首先在Asset下建一个文件夹，命名为Fonts，然后将字体文件jian_luobo.ttf放入其中。Typeface.createFromAsset(mgr, "fonts/jian_luobo.ttf");
 
-### Range
+### Region
 
 构造函数
 
