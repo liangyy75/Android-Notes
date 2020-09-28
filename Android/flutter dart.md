@@ -1,16 +1,16 @@
 - [links](#links)
-- [基础](#%e5%9f%ba%e7%a1%80)
-- [常量与变量](#%e5%b8%b8%e9%87%8f%e4%b8%8e%e5%8f%98%e9%87%8f)
-- [类型](#%e7%b1%bb%e5%9e%8b)
-- [操作符](#%e6%93%8d%e4%bd%9c%e7%ac%a6)
-- [控制语句](#%e6%8e%a7%e5%88%b6%e8%af%ad%e5%8f%a5)
-- [函数](#%e5%87%bd%e6%95%b0)
-- [异常](#%e5%bc%82%e5%b8%b8)
-- [导包](#%e5%af%bc%e5%8c%85)
-- [级联调用](#%e7%ba%a7%e8%81%94%e8%b0%83%e7%94%a8)
-- [异步支持](#%e5%bc%82%e6%ad%a5%e6%94%af%e6%8c%81)
-- [类](#%e7%b1%bb)
-- [注解](#%e6%b3%a8%e8%a7%a3)
+- [基础](#基础)
+- [常量与变量](#常量与变量)
+- [类型](#类型)
+- [操作符](#操作符)
+- [控制语句](#控制语句)
+- [函数](#函数)
+- [异常](#异常)
+- [导包](#导包)
+- [级联调用](#级联调用)
+- [异步支持](#异步支持)
+- [类](#类)
+- [注解](#注解)
 - [collection](#collection)
 - [regex](#regex)
 - [io](#io)
@@ -21,9 +21,9 @@
 - [json](#json)
 - [xml](#xml)
 - [database](#database)
-- [作业: 贪吃蛇](#%e4%bd%9c%e4%b8%9a-%e8%b4%aa%e5%90%83%e8%9b%87)
-- [作业: dart client / dart server](#%e4%bd%9c%e4%b8%9a-dart-client--dart-server)
-- [作业: dart charts](#%e4%bd%9c%e4%b8%9a-dart-charts)
+- [作业: 贪吃蛇](#作业-贪吃蛇)
+- [作业: dart client / dart server](#作业-dart-client--dart-server)
+- [作业: dart charts](#作业-dart-charts)
 
 ### links
 
@@ -67,8 +67,8 @@
     ```
 2. Dart没有public、protected、和private关键字，标识符(_)表示私有的意思，其余默认表示public
 3. final和const都表示常量的意思，其值都不可修改，两者最大的区别
-    1. final属于运行时变量，在初始化的时候去创建的变量
-    2. const属于编译时变量，在编译期间就被创建的变量
+    1. final属于运行时变量，在初始化的时候去创建的变量，可以用变量来初始化
+    2. const属于编译时变量，在编译期间就被创建的变量，只能用编译时常量来初始化
     3. 示例
         ```dart
         final a = 10;
@@ -78,6 +78,11 @@
             // 如果const变量在类中，需要加上static
             // 因为类未初始化，该值无法被视为编译时变量，否则会报错
             static const b = 10;
+        }
+        void main() {
+            const a = [1, 2, 3, Point()];  // Error
+            const b = [1, 2, 3, 4, ];  // Success
+            final c = [1, 2, 3, Point()];  // Success
         }
         ```
 4. dart语法的const相当于java这种写法
@@ -101,6 +106,7 @@
     * maps
     * runes
     * symbols
+    * "abc" is String
 2. number
     * 运算符: +、-、*、/、~/、%
     * 常用属性: isNaN、isEven、isOdd
@@ -135,6 +141,13 @@
     print(str3 == str4);  // 相等
     print(str3[0]);  // 获取字符
     print('a + b = c ==> $a + $b = ${a + b}');  // 插值表达式
+    // --- StringBuffer
+    StringBuffer sb = new StringBuffer();
+    sb.write("Use a StringBuffer ");
+    sb.writeAll(['for ', 'efficient ', 'string ', 'creation ']);
+    sb..write('if you are ')..write('building lots of string.');
+    print(sb.toString());
+    sb.clear();
     ```
 5. list
     ```dart
@@ -142,24 +155,55 @@
     var list = const [1,2,3];  // 定义不可变列表
     var list = new List();
     var list = new List<String>.generate(1000, (i) => "Item $i");
+    list..add(4)..addAll([5, 6]);
+    assert(list.length == 6);
+    assert(list[0] == 1);
+    assert(list.indexOf(6) == 5);
+    list.sort((a, b) => a.compareTo(b));  // return <0 表示小于，0表示相同，>0表示大于
+    list..removeAt(5)..clear();
     ```
-6. map
+6. set // 其实与java/c++中的set非常类似
+    ```dart
+    var ingredients = new Set();
+    ingredients.addAll(['gold', 'titanium', 'xenon']);
+    // 添加已存在的元素无效
+    ingredients.add('gold');
+    assert(ingredients.length == 3);
+    // 删除元素
+    ingredients.remove('gold');
+    // 检查在Set中是否包含某个元素
+    assert(ingredients.contains('titanium'));
+    // 检查在Set中是否包含多个元素
+    assert(ingredients.containsAll(['titanium', 'xenon']));
+    ingredients.addAll(['gold', 'titanium', 'xenon']);
+    // 获取两个集合的交集
+    var nobleGases = new Set.from(['xenon', 'argon']);
+    var intersection = ingredients.intersection(nobleGases);
+    assert(intersection.contains('xenon') && intersection.length == 1);
+    // 检查一个Set是否是另一个Set的子集
+    var allElements = ['hydrogen', 'helium', 'lithium', 'beryllium', 'gold', 'titanium', 'xenon'];
+    assert(ingredients.isSubsetOf(allElements));
+    ```
+7. map
     ```dart
     var map = {'1':'c','2':'java'};
     var map = const {'1':'c','2':'java'};  // 定义不可变映射
     var map = new Map();
+    var map = new Map<int, String>();
     ```
-7. dynamic
+8. Set、List、Map都继承自Iterable，是可以迭代的
+    1. collection.forEach((x) => print(x));//forEach的参数为Function
+9.  dynamic
     ```dart
     dynamic a = 10;  // 任意类型变量
     var list = new List<dynamic>();  // 任意类型列表
     ```
-8. runes: 代表字符串的Unicode编码
+10. runes: 代表字符串的Unicode编码
     ```dart
     Runes input = new Runes('\u2665  \u{1f605}  \u{1f60e}  \u{1f47b}  \u{1f596}  \u{1f44d}');
     print(new String.fromCharCodes(input));  //输出一排表情
     ```
-9. enum
+11. enum
     ```dart
     enum Color {red,green,blue}  // 枚举的定义
     assert(Color.red.index == 0);  // 枚举索引获取
@@ -449,6 +493,86 @@ switch (command) {
         hello.printGreeting();
     }
     ```
+4. library 定义这个库的名字，但并不影响导入，因为import语句用的是字符串Uri
+5. part和part of
+    1. 为了维护一个库，我们可以把各个功能放到各个dart文件中。但part of所在文件不能包括import、library等关键字，可以包含在part关键字所在文件中
+    2. 建议避免使用part和part of语句，因为那样会使代码很难阅读、修改，可以多用library。part加字符串类型的Uri类似include，表示包含某个文件。part of加库名表示该文件属于那个库
+    3. 例子
+        ```dart
+        // math.dart文件开头
+        library math;
+        part 'point.dart';
+        part 'random.dart';
+        // point.dart文件开头
+        part of math;
+        // random.dart文件开头
+        part of math;
+        ```
+6. export
+    1. 你可以使用export关键字导出一个更大的库
+        ```dart
+        library math;
+        export 'random.dart';
+        export 'point.dart';
+        ```
+    2. 也可以导出部分组合成一个新库
+        ```dart
+        library math;
+        export 'random.dart' show Random;
+        export 'point.dart' hide Sin;
+        ```
+7. 利用Pub管理自己的库
+    1. 一种方式：import 'lib/student/student.dart';
+    2. 另一种使用yaml来管理版本的
+        1. 新建库student。其中根目录的命名为”库名-版本号“，如student-0.0.1。根目录中包含一个pubspec.yaml文件和一个lib文件夹
+            ```yaml
+            name: student
+            version: 0.0.1
+            ```
+        2. lib文件夹中有一个dart文件，命名为”库名.dart”(如student.dart)，以及一个src文件夹
+            ```dart
+            library student;
+            export 'src/person.dart';
+            export 'src/student.dart';
+            ```
+        3. 在src文件夹中，包含两个dart文件
+            ```dart
+            // person.dart
+            library student.src.person;
+            class Person {
+                String name;
+                Person(this.name);
+                String toString() => name;
+            }
+            // student.dart
+            library student.src.student;
+            import 'person.dart';
+            class Student extends Person {
+                Student(String name): super(name);
+                String id = '';
+                String toString() => 'Name:$name  ID:$id';
+            }
+            ```
+    3. 在其他项目中配置方法
+        1. main.dart
+            ```dart
+            import 'dart:math';
+            import 'package:args/args.dart';
+            import 'package:student/student.dart';
+            void main(List<String> args) {
+                Point point = new Point(0, 0);
+                print(point);
+                var parser = new ArgParser();
+                var results = parser.parse(args);
+                print(results.arguments);
+                Student student = new Student('Wang');
+                student.id = '060806110006';
+                print(student);
+            }
+            ```
+        2. pubspec.yaml中添加student库，并连接库的路径  http://www.cndartlang.com/696.html  TODO:
+        3. 当配置好yaml后，目录树中就可以看到新添加的包以及版本号了
+    4. 这里只是理了一下库的引用方法，没有放到Pub\Cache\hosted\pub.dartlang.org文件夹中。如果放到缓存文件夹中，yaml设置hosted，可以更好的控制版本
 
 ### 级联调用
 

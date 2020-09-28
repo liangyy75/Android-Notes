@@ -9,7 +9,6 @@ img {
 - [ViewPager](#viewpager)
 - [性能优化](#性能优化)
 - [热更新/热修复](#热更新热修复)
-- [自定义View](#自定义view)
 - [蓝牙/wifi](#蓝牙wifi)
 - [传感器](#传感器)
 - [视频](#视频)
@@ -170,7 +169,7 @@ img {
     ```java
     public class MainActivity extends AppCompatActivity {
         @Override
-        protected void onCreate(@Nullable Bundle savedInstanceState) {
+        protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_test_recyclerview);
             int size = 30;
@@ -1210,108 +1209,6 @@ img {
         * [Android热修复手动实现](https://blog.csdn.net/Small_Lee/article/details/80770450)
 2. 
 3. 
-
-### 自定义View
-
-0. 链接
-    0. [Android layout属性大全](https://blog.csdn.net/ican87/article/details/37566679)
-1. 从种类上看所有View:
-    1. View implements Drawable.Callback, KeyEvent.Callback, AccessibilityEventSource:
-        1. id/size: id / layout_height / layout_width / maxheight / minheight / maxwidth / minwidth / layout_margin / layout_padding
-        2. 内容: 
-            0. foregroundGravity / background / contentDescription / theme / tag / gravity / layout_gravity / saveEnabled(是否保存内容，需要设置id) / visibility
-            1. **foreground**(只在Android6版本以上以及FrameLayout本身及其子类才有效，可以设置单击时的前景)
-            2. **drawingCacheQuality**(绘制view时需要的质量:auto/high/low)
-            3. **duplicateParentState**(是否直接从父容器中获取绘图状态(光标，按下等，但不包括事件))
-            4. **fitsSystemWindows**(设置布局调整时是否考虑系统窗口(如状态栏))
-        3. scroll: 
-            0. fadingEdgeLength / scrollbars(none/vertical/horizontal) / scrollbarSize / scrollbarStyle / scrollbarThumbVertical / scrollbarTrackVertical / scrollbarAlwaysDrawVerticalTrack
-            1. **fadingEdge**(设置滚动时边框渐变的方向:none/horizontal/vertical)
-            2. **requiresFadingEdge**(定义滚动时边缘是否褪色)
-            3. **fadeScrollbars**(滚动条是否自动隐藏)
-            4. **overScrollMode**(滑动到边界时样式)
-            5. **verticalScrollbarPosition**(垂直滚动条的位置:left/right/none/defaultPosition)
-            6. **scrollbarFadeDuration**
-            7. **scrollbarThumbHorizontal**(设置水平滚动条的drawable)
-            8. **scrollbarTrackHorizontal**(设置水平滚动条背景(轨迹)的色drawable)
-            9. **scrollbarAlwaysDrawHorizontalTrack**(设置水平滚动条是否含有轨道) 
-        4. focus:
-            0. focusable / nextFocusUp / nextFocusLeft / nextFocusRight / nextFocusForward(设置指定视图获得下一个焦点，必须是id)
-            1. **focusableInTouchMode**(https://blog.csdn.net/u010015108/article/details/52796785 https://www.jianshu.com/p/c90c8e502028)
-            2. **nextFocusDown**
-        6. touch: 
-            1. **soundEffectsEnabled**(点击或触摸是否有声音效果)
-            2. **hapticFeedbackEnabled**(触力反馈https://blog.csdn.net/love_xsq/article/details/50290485)
-            3. **importantForAccessibility**(控制View是否能启用无障碍功能，false是不能启用无障碍功能，为视觉障碍用户提供朗读服务子类的)
-            4. **filterTouchesWhenObscured**(https://www.jianshu.com/p/06574d8f10bf 如果该view被一个view覆盖了，则点击上面的view时不会发生点击穿透bug)
-        7. child: 
-            0. layout_gravity
-            1. **clipChildren**(设置为false后子控件的绘制可以超出父控件的范围)
-            2. **clipToPadding**(false后子控件可以在父控件padding内绘制)
-        5. 属性: 
-            0. clickable / longClickable / onClick / onLongClick / alpha / rotation / rotationX / rotationY / scaleX / scaleY / scrollX / scrollY / style / transformX / transformY / transformPivotY / 
-            2. **transformPivotX**(相对于一点的水平方向偏转量)
-        6. 应用:
-            1. View淡入淡出设置(ScrollView/ListView等都适用): lvArticle.setVerticalFadingEdgeEnabled(true); lvArticle.setFadingEdgeLength(100);
-            2. listview在拖动的时候背景图片消失变成黑色背景。等到拖动完毕我们自己的背景图片才显示出来: android:scrollingCache="false" / android:cacheColorHint="#00000000"
-            3. listview的上边和下边有黑色的阴影: android:fadingEdge="none" / android:overScrollMode="never"
-            4. lsitview的每一项之间需要设置一个图片做为间隔: android:divider="@drawable/list_driver"
-            5. 默认会显示选中的item为橙黄底色，有时候我们需要去掉这种效果: listSelector="@android:color/transparent"
-            6. 在项目中，一进入一个页面, EditText默认就会自动获取焦点: 在EditText的父级控件中找一个，设置成android:focusable="true"; android:focusableInTouchMode="true"; 可以截断EditText默认的行为
-    2. Common:
-        1. TextView extends View implements ViewTreeObserver.OnPreDrawListener [Android 9.0关于字体的新特性](https://blog.csdn.net/u013894711/article/details/81532638)
-            1. drawable: drawableBottom / drawableTop / drawableStart / drawableEnd / drawableRight / drawableLeft / drawablePadding
-            2. style:
-                1. **textAllCaps**(自动将字符变为大写，但是Spannable就会失效???)
-                2. **bufferType**(normal/spannable/editable 指定getText()方式取得的文本类别，其中editable可通过获取文本为textview追加内容???)
-                3. **capitalize**(设置英文字母大写类型。此处无效果，需要弹出输入法才能看得到)
-                4. **cursorVisible**(光标是否显示)
-            3. font:
-                0. fontFamily
-            3. text1:
-                0. editable | enable | lastBaselineToBottomHeight | inputType | marqueenRepeatLimit | maxEms | minEms | maxLength
-                1. **digits**(设置允许输入哪些字符，如"1234567890.+-*/% ()")
-                2. **editorExtras**(设置文本的额外的输入数据)
-                3. **ellipsize**(start(省略号位置)/end/middle/marquee(跑马灯) 当文字过长时,该控件该如何显示)
-                4. **ems**(将对应的控件宽度设为指定个数字符的宽度)
-                5. **firstBaselineToTopHeight**(https://blog.csdn.net/u013894711/article/details/81532638 TextView上边界和第一条baseline间的距离，该属性可替代top padding)
-                6. **inputMethod**(为文本指定输入法，需要完全限定名(完整的包名))
-                7. **scrollHorizontally**(文本超出TextView的宽度的情况下，是否出现横拉条)
-            4. text2:
-                0. hint | text | textColor | textColorHint | textColorLink | textSize | textStyle | textCursorDrawable | textIsSelectable | textScaleX
-                1. **freezesText**(设置保存文本的内容以及光标的位置)
-                2. **numeric**(如果被设置，该TextView有一个数字输入法。此处无用，设置后唯一效果是TextView有点击效果)
-                3. **password**(以小点"."显示文本)
-                4. **phoneNumber**(设置为电话号码的输入方式)
-                5. **selectAllOnFocus**(如果文本是可选择的，让他获取焦点而不是将光标移动为文本的开始位置或者末尾位置。 TextView中设置后无效果)
-                6. **textColorHighlight**(被选中文字的底色，默认为蓝色)
-                7. **typeface**(设置文本字体)
-            5. ime(软键盘):
-                1. **imeActionId**(设置要获取的软键盘的view的id)
-                2. **imeActionLabel**(设置获取的id的值)
-                3. **imeOptions**(actionGo/actionSend/actionSearch/actionDone/normal/actionUnspecified/actionPrevious/actionNext/actionNone/... https://blog.csdn.net/lastdream/article/details/24365633)
-                4. **privatedImeOptions**(设置输入法选项，此处无用，在EditText将进一步讨论)
-            6. line:
-                0. lineHight(API 28) | maxLines | minLines | singleLine
-                1. **lineSpacingExtra**(行间距，而且是不包括字体大小等等的，是添加的间距，5.0后对最后一行无效)
-                2. **lineSpacingMultiplier**(将行间距设定为行高的倍数，5.0后对最后一行无效 https://blog.csdn.net/etwge/article/details/72818859)
-                3. **lines**(设置文本的行数，设置两行就显示两行，即使第二行没有数据)
-            7. auto: 
-                0. autoSizeMinTextSize | linksClickable
-                1. **autoText**(如果设置，将自动执行输入值的拼写纠正。此处无效果，在显示输入法并输入的时候起作用)
-                2. **autoLink**(none/web/email/phone/map/all https://www.jianshu.com/p/d3bef8449960)
-                3. **autoSizeMaxTextSize**(自动设置字体大小时最大的字体大小，需要配合autoSizeStepGranularity与autoSizeTextType)
-                4. **autoSizePresetSizes**(@array/autosize_text_sizes，配合autoSizeTextType使用)
-                5. **autoSizeStepGranularity**(字体大小变化的粒度)
-                6. **autoSizeTextType**(none/uniform(字体大小自适应width与height，如果没有其他属性会占据整个width与height))
-            8. shadow:
-                0. shadowColor(需要与shadowRadius一起使用) | shadowDy
-                1. **shadowDx**(设置阴影横向坐标开始位置)
-                2. **shadowRadius**(设置阴影的半径。设置为0.1就变成字体的颜色了，一般设置为3.0的效果比较好)
-        2. Button extends TextView
-            1. 
-2. 从继承上看所有View:
-    1. 
 
 ### 蓝牙/wifi
 
@@ -5738,7 +5635,131 @@ https://blog.csdn.net/new_abc/article/details/53006327
             }
             ```
 2. Paging
-    1. 
+    1. 源码
+        1. public PageResult\<T>
+            1. private static final PageResult EMPTY_RESULT
+                1. package getter
+            2. private static final PageResult INVALID_RESULT
+                1. package getter
+            3. @IntDef({INIT, APPEND, PREPEND, TILE}) @interface ResultType
+            4. public final List\<T> page
+            5. public final int leadingNulls
+            6. public final int trailingNulls
+            7. public final int positionOffset
+            8. public boolean isInvalid()
+            9. abstract static Receiver\<T>
+                1. abstract void onPageResult(@ResultType int type, PageResult<\T> pageResult)
+        2. public abstract DataSource\<K,V>
+            1. public static abstract Factory\<K,V>
+                1. public abstract DataSource\<K,V> create();
+                2. public \<TV> DataSource.Factory\<K,V> map(Function\<V,TV> function)
+                3. public \<TV> DataSource.Factory\<K,V> mapByPage(final Function\<List\<V>, List\<TV>> function)
+            2. static \<X,Y> Function\<List\<X>, List<Y>> createListFunction(final Function\<X,Y> innerFunc)
+            3. static \<A,B> List\<B> convert(Function\<List\<A>, List\<B>> function, List\<A> source)
+            4. public abstract \<TV> DataSource\<K,TV> mapByPage(Function\<List\<V>, List\<TV>> function)
+            5. public abstract \<TV> DataSource\<K,TV> map(Function\<V,TV> function);
+            6. abstract boolean isContiguous()
+            7. static LoadCallbackHelper\<T>
+                1. static void validateInitialLoadParams(List<?> data, int position, int totalCount)
+                2. LoadCallbackHelper(DataSource dataSource, @PageResult.ResultType int resultType, Executor mainThreadExecutor, PageResult.Receiver\<T> receiver)
+                3. void setPostExecutor(Executor postExecutor)
+                4. boolean dispatchInvalidResultIfInvalid()
+                5. void dispatchResultToReceiver(final PageResult\<T> result)
+            8. public interface InvalidatedCallback
+                1. void onInvalidated()
+            9. private AtomicBoolean mInvalid = AtomicBoolean(false)
+            10. private CopyOnWriteArrayList\<InvalidatedCallback> mOnInvalidatedCallbacks
+            11. public void addInvalidatedCallback(InvalidatedCallback onInvalidatedCallback)
+            12. public void removeInvalidatedCallback(InvalidatedCallback onInvalidatedCallback)
+            13. public void invalidate()
+            14. public boolean isInvalid()
+        3. abstract ContiguousDataSource\<K,V> : DataSource\<K,V>
+            1. abstract void dispatchLoadInitial(K key, int initialLoadSize, int pageSize, boolean enablePlaceholders, Executor mainThreadExecutor, PageResult.Receiver\<V> receiver);
+            2. abstract void dispatchLoadAfter(int currentEndIndex, V currentEndItem, int pageSize, Executor mainThreadExecutor, PageResult.Receiver\<V> receiver)
+            3. abstract void dispatchLoadBefore(int currentBeginIndex, V currentBeginItem, int pageSize, Executor mainThreadExecutor, PageResult.Receiver\<V> receiver)
+            4. abstract K getKey(int position, V item)
+            5. boolean supportsPageDropping() = true
+        4. public abstract **PageKeyedDataSource**\<K,V> : ContiguousDataSource\<K,V>
+            1. private final Object mKeyLock
+            2. private K mNextKey, mPreviousKey
+                1. package setter, private getter
+            3. void initKeys(K previousKey, K nextKey)
+            4. public static **LoadInitialParams**\<K>
+                1. public final int requestedLoadSize
+                2. public final boolean placeholdersEnabled
+            5. public static **LoadParams**\<K>
+                1. public final K key
+                2. public final int requestedLoadSize
+            6. public abstract static **LoadInitialCallback**\<K,V>
+                1. public abstract void onResult(List\<V> data, int position, int totalCount, K previousPageKey, K nextPageKey)
+                2. public abstract void onResult(List\<V> data, K previousPageKey, K nextPageKey)
+            7. public abstract static **LoadCallback**\<K,V>
+                1. public abstract void onResult(List\<V> data, K adjacentPageKey)
+            8. static LoadInitialCallbackImpl\<K,V> extends LoadInitialCallback\<K,V>
+                1. LoadInitialCallbackImpl(PageKeyedDataSource\<K,V> dataSource, boolean countingEnabled, PageResult.Receiver\<V> receiver)
+            9. static class LoadCallbackImpl\<K,V> extends LoadCallback\<K,V>
+                1. LoadCallbackImpl(PageKeyedDataSource\<K,V> dataSource, @PageResult.ResultType int type, Executor mainThreadExecutor, PageResult.Receiver\<V> receiver)
+            10. override boolean supportsPageDropping() = false
+            11. public abstract void loadInitial(LoadInitialParams\<K> params, LoadInitialCallback\<K,V> callback)
+            12. public abstract void loadBefore(LoadParams\<K> params, LoadCallback\<K,V> callback)
+            13. public abstract void loadAfter(LoadParams\<K> params, LoadCallback\<K,V> callback)
+        5. WrapperPageKeyedDataSource\<K,A,B> : PageKeyedDataSource\<K,B>
+        6. public abstract **ItemKeyedDataSource**\<K,V> : ContiguousDataSource\<K,V>
+            1. public static **LoadInitialParams**\<K>
+                1. public final K requestedInitialKey
+                2. public final int requestedLoadSize
+                3. public final boolean placeholdersEnabled
+            2. public static class **LoadParams**\<K>
+                1. public final K key
+                2. public final int requestedLoadSize
+            3. public abstract static **LoadInitialCallback**\<V> extends LoadCallback\<V>
+                1. public abstract void onResult(List\<V> data, int position, int totalCount)
+            4. public abstract static **LoadCallback**\<V>
+                1. public abstract void onResult(List\<V> data)
+            5. ...
+            6. public abstract void loadInitial(LoadInitialParams\<K> params, LoadInitialCallback\<V> callback)
+            7. public abstract void loadAfter(LoadParams\<K> params, LoadCallback\<V> callback)
+            8. public abstract void loadBefore(LoadParams\<K> params, LoadCallback\<V> callback)
+            9. public abstract K getKey(V item)
+        7. WrapperItemKeyedDataSource\<K,A,B> : ItemKeyedDataSource\<K,B>
+        8. public abstract PositionalDataSource\<T> : DataSource\<Integer,T>
+            1. public static **LoadInitialParams**(public final int requestedStartPosition, public final int requestedLoadSize, public final int pageSize, public final boolean placeholdersEnabled)
+            2. public static **LoadRangeParams**(public final int startPosition, public final int loadSize)
+            3. public abstract static **LoadInitialCallback**\<T>
+                1. public abstract void onResult(List\<T> data, int position, int totalCount)
+                2. public abstract void onResult(List\<T> data, int position)
+            4. public abstract static **LoadRangeCallback**\<T>
+                1. public abstract void onResult(List\<T> data)
+            5. public abstract void loadInitial(LoadInitialParams params, LoadInitialCallback\<T> callback)
+            6. public abstract void loadRange(LoadRangeParams params, LoadRangeCallback<T> callback)
+            7. static ContiguousWithoutPlaceholdersWrapper\<V> : ContiguousDataSource\<Integer,V>
+        9. class ListDataSource\<T> extends PositionalDataSource\<T>
+            1. 
+        10. public abstract **PagedList**\<T> : AbstractList\<T>
+            1. public abstract static class **BoundaryCallback**\<T>
+                1. public void onZeroItemsLoaded()
+                2. public void onItemAtFrontLoaded(T itemAtFront)
+                3. public void onItemAtEndLoaded(T itemAtEnd)
+            2. data class **Config**(val pageSize: Int, val prefetchDistance: Int, val enablePlaceholders: Boolean, val maxSize: Int, val initialLoadSizeHint: Int)
+                1. Builder
+            3. public abstract static class **Callback**
+                1. public abstract void onChanged(int position, int count)
+                2. public abstract void onInserted(int position, int count)
+                3. public abstract void onRemoved(int position, int count)
+            4. final Executor mMainThreadExecutor, mBackgroundThreadExecutor
+            5. final BoundaryCallback\<T> mBoundaryCallback
+            6. final Config mConfig
+            7. final PagedStorage\<T> mStorage
+            8. int mLastLoad = 0
+            9. T mLastItem = null
+            10. final int mRequiredRemainder
+            11. boolean mBoundaryCallbackBeginDeferred = false, mBoundaryCallbackEndDeferred = false
+            12. private int mLowestIndexAccessed = Integer.MAX_VALUE, int mHighestIndexAccessed = Integer.MIN_VALUE
+            13. private final AtomicBoolean mDetached = new AtomicBoolean(false)
+            14. private final ArrayList\<WeakReference\<Callback>> mCallbacks = new ArrayList<>()
+            15. Builder
+            16. public T get(int index)
+            17. public void loadAround(int index)
 3. Room
     1. Room 在 SQLite 之上提供了一个抽象层，以便在利用 SQLite 全部功能的同时可以流畅的访问数据库。最常见的用例是缓存有用的数据片段，当设备无法访问网络时，用户仍然可以离线浏览该内容，然后在设备重新联网后，任何用户发起的内容更改都会同步到服务器。由于Room会为我们解决这些问题，因此 Google 强烈建议 我们使用 Room 而不是 SQLite。
     2. Room 主要有3个部分：

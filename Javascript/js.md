@@ -223,7 +223,7 @@ var y = x + f(a+b).toString
 ```
 
 因此，为了能让上述代码解析成两条不同的语句，必须手动填写行尾的显式分号<br>
-【**重点**】通常来讲，如果一条语句以'('、'['、'/'、'+'、'-'等符号开始，那么它极有可能和前一条语句合一起解析
+【**重点**】**通常来讲，如果一条语句以'('、'['、'/'、'+'、'-'等符号开始，那么它极有可能和前一条语句合一起解析**
 
 如果当前语句和下一行语句无法合并解析，javascript会在第一行后填补分号，这是通用规则，但有两个例外<br>
 第一个例外是涉及return、break、continue、throw语句的场景中。如果这四个关键字后紧跟着换行，javascript会在换行处填补分号<br>
@@ -244,12 +244,12 @@ var y = x + f(a+b).toString
 声明后不初始化的变量是undefined<br>
 javascript允许遗漏声明，即直接对变量赋值而无需事先声明，赋值操作将自动声明该变量。但是，在ECMAScript5严格模式中，给一个没有声明的变量赋值会报错<br>
 
-变量在声明之前甚至已经可用。javascript这个特性被非正式地称为声明提升(hoisting)，javascript函数里声明的所有变量(不涉及赋值)都被提前到函数体的顶部<br>
-除了变量提升，函数也被提升
+变量在声明之前甚至已经可用。javascript这个特性被非正式地称为**声明提升**(hoisting)，javascript函数里声明的所有变量(**不涉及赋值**)都被提前到函数体的顶部<br>
+除了变量提升，**函数也被提升**
 
-当声明一个javascript全局变量时，实际上是定义了全局对象window的一个属性<br>
-当使用var声明一个变量时，创建的这个变量是不可配置的，也就是说这个变量无法通过delete运算符删除<br>
-如果没有使用严格模式并给一个未声明的变量赋值的话，javascript会自动创建一个全局变量，以这种方式创建的变量是全局对象的正常的可配置属性，并可以删除它们<br>
+**当声明一个javascript全局变量时，实际上是定义了全局对象window的一个属性**<br>
+**当使用var声明一个变量时，创建的这个变量是不可配置的，也就是说这个变量无法通过delete运算符删除**<br>
+**如果没有使用严格模式并给一个未声明的变量赋值的话，javascript会自动创建一个全局变量，以这种方式创建的变量是全局对象的正常的可配置属性，并可以删除它们**<br>
 【注意】IE8-浏览器下，如果删除window属性时，不论该属性是如何创建的，都会报错
 ```js
 window.fakevar1 = 10;
@@ -2331,13 +2331,419 @@ javascript中**所有函数的参数都是按值传递的**。也就是说，把
 
 【方法】
 
+* apply()和call()：每个函数都包含两个非继承而来的方法：apply()和call()。这两个方法的用途都是在特定的作用域中调用函数，实际上等于函数体内this对象的值。
+    * 要想以对象o的方法来调用函数f()，可以这样使用call()和apply()：``f.call(o); f.apply(o);`` 假设o中不存在m方法，则等价于: ``o.m = f; o.m(); delete o.m;`` 。
+    * apply()方法接收两个参数：一个是在其中运行函数的作用域(或者可以说成是要调用函数的母对象，它是调用上下文，在函数体内通过this来获得对它的引用)，另一个是参数数组。其中，第二个参数可以是Array的实例，也可以是arguments对象
+    * call()方法与apply()方法的作用相同，它们的区别仅仅在于接收参数的方式不同。对于call()方法而言，第一个参数是this值没有变化，变化的是其余参数都直接传递给函数。换句话说，在使用call()方法时，传递给函数的参数必须逐个列举出来
+    * 在非严格模式下，使用函数的call()或apply()方法时，null或undefined值会被转换为全局对象。而在严格模式下，函数的this值必须得是指定的值
+    * 应用
+        * 调用对象的原生方法
+        * 找出数组最大元素
+        * 将类数组对象转换成真正的数组
+        * 将一个数组的值push到另一个数组中
+        * 绑定回调函数的对象：由于apply方法（或者call方法）不仅绑定函数执行时所在的对象，还会立即执行函数，因此不得不把绑定语句写在一个函数体内。更简洁的写法是采用下面介绍的bind方法
+* bind()
+    * 当在函数f()上调用bind()方法并传入一个对象o作为参数，这个方法将返回一个新的函数。以函数调用的方式调用新的函数将会把原始的函数f()当做o的方法来调用，传入新函数的任何实参都将传入原始函数
+    * [注意]IE8-浏览器不支持。兼容代码
+        ```js
+        Function.prototype.bind = function(context){
+            var self = this, context = [].shift.call(arguments), args = [].slice.call(arguments);
+            return function() { return self.apply(context, [].concat.call(args, [].slice.call(arguments))); }
+        }
+        ```
+    * bind()方法不仅是将函数绑定到一个对象，它还附带一些其他应用：除了第一个实参之外，传入bind()的实参也会绑定到this，这个附带的应用是一种常见的函数式编程技术，有时也被称为'柯里化'(currying)
+    * 使用bind()方法实现柯里化可以对函数参数进行拆分
+* toString: 函数的toString()实例方法返回函数代码的字符串，而静态toString()方法返回一个类似'[native code]'的字符串作为函数体
+* toLocaleString: 函数的toLocaleString()方法和toString()方法返回的结果相同
+* valueOf: 函数的valueOf()方法返回函数本身
+
+```js
+// 1.5.1 调用对象的原生方法
+var obj = {};
+obj.hasOwnProperty('toString');  // false
+obj.hasOwnProperty = function (){ return true; };
+obj.hasOwnProperty('toString');  // true
+Object.prototype.hasOwnProperty.call(obj, 'toString');  // false
+// 1.5.2
+var a = [10, 2, 4, 15, 9];
+Math.max.apply(null, a);  // 15
+// 1.5.3
+Array.prototype.slice.apply({0: 1, length: 1});  // [1]
+[].prototype.slice.apply({0: 1, length: 1});  // [1]
+// 1.5.4
+var a = [];
+Array.prototype.push.apply(a, [1, 2, 3]);
+console.log(a);  // [1,2,3]
+Array.prototype.push.apply(a, [2, 3, 4]);
+console.log(a);  // [1,2,3,2,3,4]
+// 如果使用ES6中的不定参数则非常简单
+var a  = [...[1,2,3],...[2,3,4]];
+console.log(a);//[1,2,3,2,3,4]
+// 1.5.5
+var o = {};
+o.f = function () { console.log(this === o); }
+var f = function (){ o.f.apply(o); };
+$('#button').on('click', f);
+// 2.1
+function f(y) { return this.x + y; }
+var o = {x: 1};
+f.bind(o)(2)  // 2
+// 2.3
+function getConfig(colors,size,otherOptions) { console.log(colors,size,otherOptions); }
+var defaultConfig = getConfig.bind(null,'#c00','1024*768');
+defaultConfig('123');//'#c00 1024*768 123'
+defaultConfig('456');//'#c00 1024*768 456'
+```
+
 ### ES6函数扩展
+
+ES6标准关于函数扩展部分，主要涉及以下四个方面：参数默认值、rest参数、扩展运算符和箭头函数
+
+1. **参数默认值**
+    1. 一般地，为参数设置默认值需进行如下设置 ``function test(x) { x = x || 'world' }``
+    2. 但这样设置实际上是有问题的，如果y的值本身是假值(包括false、undefined、null、''、0、-0、NaN)，则无法取得本身值
+    3. ES6允许为函数的参数设置默认值，即直接写在参数定义的后面
+    4. [注意]参数变量是默认声明的，所以不能用let或const再次声明
+    5. **尾参数**: 通常情况下，定义了默认值的参数，应该是函数的尾参数。因为这样比较容易看出来，到底省略了哪些参数。如果非尾部的参数设置默认值，实际上这个参数是没法省略的
+    6. 如果传入undefined，将触发该参数等于默认值，null则没有这个效果
+    7. 指定了默认值以后，函数的length属性，将返回没有指定默认值的参数个数
+    8. [注意]如果设置了默认值的参数不是尾参数，那么length属性也不再计入后面的参数了
+    9. 作用域
+        1. 如果参数默认值是一个变量，则该变量所处的作用域，与其他变量的作用域规则是一样的，即先是当前函数的作用域，然后才是全局作用域 ``function f(x, y = x) {}  // 这里的y默认值就是前面的x``
+        2. 如果函数调用时，函数作用域内部的变量x没有生成，则x指向全局变量
+    10. 应用
+        1. 利用参数默认值，可以指定某一个参数不得省略，如果省略就抛出一个错误 ``function e() { throw new Error("missing parameters") } function(x = e) {}``
+        2. [注意]将参数默认值设为undefined，表明这个参数可以省略
+2. ES6引入rest参数(形式为“...变量名”)，用于获取函数的多余参数，这样就不需要使用arguments对象了。rest参数搭配的变量是一个数组，该变量将多余的参数放入数组中
+    1. function add(...values) {}
+    2. rest参数中的变量代表一个数组，所以数组特有的方法都可以用于这个变量
+    3. 函数的length属性不包括rest参数
+    4. [注意]rest参数之后不能再有其他参数
+3. 扩展运算符(spread)是三个点(...)。它好比rest参数的逆运算，将一个数组转为用逗号分隔的参数序列。该运算符主要用于函数调用。该运算符主要用于函数调用。扩展运算符可以将字符串转为真正的数组
 
 ### 函数式编程
 
+和Lisp、Haskell不同，javascript并非函数式编程语言，但在javascript中可以操控对象一样操控函数，也就是说可以在javascript中应用函数式编程技术。ES5中的数组方法(如map()和reduce())就可以非常适合用于函数式编程风格。本文将详细介绍函数式编程
+
+1. 函数处理数组
+    1. 假设有一个数组，数组元素都是数字，想要计算这些元素的平均值和标准差。
+    2. 可以使用数组方法map()和reduce()实现同样的计算，这种实现极其简洁
+    3. 在ES3中，并不包含这些数组方法，需要自定义map()和reduce()函数
+2. 不完全函数
+    1. 不完全函数是一种函数变换技巧，即把一次完整的函数调用拆成多次函数调用，每次传入的实参都是完整实参的一部分，每个拆分开的函数叫做不完全函数，每次函数调用叫做不完全调用。这种函数变换的特点是每次调用都返回一个函数，直到得到最终运行结果为止
+    2. 函数f()的bind()方法返回一个新函数，给新函数传入特定的上下文和一组指定的参数，然后调用函数f()。bind()方法只是将实参放在完整实参列表的左侧，也就是说传入bind()的实参都是放在传入原始函数的实参列表开始的位置，但有时希望将传入bind()的实参放在完整实参列表的右侧
+    3. 可以使用不完全调用的组合来重新组织求平均数和标准差的代码，这种编码风格是非常纯粹的函数式编程
+3. 记忆
+    1. 将上次的计算结果缓存起来，在函数式编程中，这种缓存技巧叫做记忆(memorization)。记忆只是一种编程技巧，本质上是牺牲算法的空间复杂度以换取更优的时间复杂度，在客户端javascript中代码的执行时间复杂度往往成为瓶颈，因此在大多数场景下，这种牺牲空间换取时间的做法以提升程序执行效率的做法是非常可取的
+    2. memorize()函数创建一个新的对象，这个对象被当作缓存的宿主，并赋值给一个局部变量，因此对于返回的函数来说它是私有的。所返回的函数将它的实参数组转换成字符串，并将字符串用做缓存对象的属性名。如果在缓存中存在这个值，则直接返回它；否则，就调用既定的函数对实参进行计算，将计算结果缓存起来并返回
+4. 连续调用单参函数
+
+```js
+// 1.1
+var data = [1,1,3,5,5];
+var total = 0;
+for(var i = 0 ; i < data.length; i++){
+    total += data[i];
+}
+var mean = total/data.length;
+total = 0;
+for(var i = 0; i < data.length; i++){
+    var deviation = data[i] - mean;
+    total += deviation * deviation;
+}
+var stddev = Math.sqrt(total/(data.length-1));
+// 1.2
+Math.sum = function() { return Array.prototype.slice.call(arguments).reduce((pre, cur, index, arr) => pre + cur); }
+Math.avg = function() { return Math.sum(...arguments) / arguments.length; }
+Math.stdDev = function() {
+    var avgNum = Math.avg(...arguments);
+    return Math.sqrt(Array.prototype.reduce.call(arguments, (pre, cur, index, arr) => pre + Math.pow(cur - avgNum, 2), 0) / (arguments.length - 1));
+}
+Math.stdDev(1, 1, 3, 5, 5)
+// 1.3
+Array.prototype.map = Array.prototype.map ? Array.prototype.map : function (callback) {
+    var result = []
+    for(var i = 0, len = this.length; i < len; i++) {
+        if (i in this) {
+            result[i] = callback.call(null, this[i], i, this)
+        }
+    }
+    return result
+}
+Array.prototype.reduce = Array.prototype.reduce ? Array.prototype.reduce : function (callback, initial) {
+    var i = 0, len = this.length
+    if (arguments.length == 1) {
+        if (len == 0) {
+            throw TypeError()
+        }
+        while (i < lne) {
+            if (i in this) {
+                initial = this[i++]
+                break
+            } else {
+                i++
+            }
+        }
+        if (len == i) {
+            throw TypeError()
+        }
+    }
+    while (i < len) {
+        if (i in a) {
+            initial = f.call(undefined, initial, this[i], i, this)
+        }
+        i++
+    }
+    return initial
+}
+```
+
+```js
+// 实现一个工具函数将类数组对象(或对象)转换为真正的数组
+function array(a, n) { return Array.prototype.slice.call(a, n || 0); }
+// 这个函数的实参传递到左侧
+function partialLeft(f) {
+    var args = arguments;
+    return function() {
+        var a = array(args, 1);
+        a = a.concat(array(arguments));
+        return f.apply(this, a);
+    };
+}
+// 这个函数的实参传递到右侧
+function partialRight(f){
+    var args = arguments;
+    return function() {
+        var a = array(arguments);
+        a = a.concat(array(args, 1));
+        return f.apply(this, a);
+    };
+}
+// 这个函数的实参被用作模板，实参列表中的undefined值都被填充
+function partial(f) {
+    var args = arguments;
+    return function() {
+        var a = array(args, 1);
+        var i = 0, j = 0;
+        // 遍历args，从内部实参填充undefined值
+        for(;i < a.length; i++){
+            if (a[i] === undefined) {
+                a[i] = arguments[j++];
+            }
+            // 现在将剩下的内部实参都追加进去
+        };
+        a = a.concat(array(arguments, j));
+        return f.apply(this, a);
+    }
+}
+// 这个函数有三个实参
+var f = function(x, y, z) { return x * (y - z); }
+// 注意这三个不完全调用之间的区别
+partialLeft(f, 2)(3, 4);  // 2*(3-4)=-2
+partialRight(f, 2)(3, 4);  // 3*(4-2)=6
+partial(f, undefined, 2)(3, 4);  // 3*(2-4)=-6
+
+var data = [1, 1, 3, 5, 5];
+var sum = function(x, y) { return x + y; }
+var product = function(x, y) {return x * y; }
+var neg = partial(product, -1);
+var square = partial(Math.pow, undefined, 2);
+var sqrt = partial(Math.pow, undefined, .5);
+var reciprocal = partial(Math.pow, undefined, -1);
+var mean = product(reduce(data, sum), reciprocal(data.length));
+var stdDev = sqrt(product(reduce(map(data, compose(square, partial(sum, neg(mean)))), sum), reciprocal(sum(data.length, -1))));
+```
+
+```js
+// 返回f()的带有记忆功能的版本
+// 只有当f()的实参的字符串表示都不相同时它才会工作
+function memorize(f) {
+    var cache = {};  // 将值保存到闭包内
+    return function() {
+        // 将实参转换为字符串形式，并将其用做缓存的键
+        var key = arguments.length + Array.prototype.join.call(arguments, ",");
+        if (key in cache) {
+            return cache[key];
+        } else {
+            return cache[key] = f.apply(this,arguments);
+        }
+    }
+}
+//返回两个整数的最大公约数
+function gcd(a,b) {
+    var t;
+    if (a < b) {
+        t = b, b = a, a = t;
+    }
+    while (b != 0) {
+        t = b, b = a % b, a = t;
+    }
+    return a;
+}
+var gcdMemo = memorize(gcd);
+gcdMemo(85, 187);  // 17
+```
+
+```js
+function add(n) {
+    return function f(m) {
+        if (m === undefined) {
+            return n;
+        } else {
+            n += m;
+            return f;
+        }
+    }
+}
+// or
+function add(n) {
+    function f(m) {
+        n += m;
+        return f;
+    };
+    f.toString = f.valueOf = function () { return n }
+    return f;
+}
+```
+
 ### 高阶函数
 
+高阶函数(higher-order function)指操作函数的函数，一般地，有以下两种情况
+
+1. 函数可以作为参数被传递
+2. 函数可以作为返回值输出
+
+javascript中的函数显然满足高阶函数的条件，在实际开发中，无论是将函数当作参数传递，还是让函数的执行结果返回另外一个函数，这两种情形都有很多应用场景。下面将对这两种情况进行详细介绍
+
+1. **把函数当作参数传递**，代表可以抽离出一部分容易变化的业务逻辑，把这部分业务逻辑放在函数参数中，这样一来可以分离业务代码中变化与不变的部分。其中一个常见的应用场景就是回调函数。
+2. 相比把函数当作参数传递，**函数当作返回值输出**的应用场景也有很多。让函数继续返回一个可执行的函数，意味着运算过程是可延续的
+
+```js
+var isString = function(obj) { return Object.prototype.toString.call(obj) === '[object String]'; };
+var isArray = function(obj) { return Object.prototype.toString.call(obj) === '[object Array]'; };
+var isNumber = function(obj) { return Object.prototype.toString.call(obj) === '[object Number]'; };
+// ==>
+var isType = function(type) { return function(obj) { return Object.prototype.toString.call( obj ) === '[object '+ type +']'; }};
+var isString = isType('String');
+var isArray = isType('Array');
+var isNumber = isType('Number');
+```
+
+3. **AOP（面向切面编程）**的主要作用是把一些跟核心业务逻辑模块无关的功能抽离出来，这些跟业务逻辑无关的功能通常包括日志统计、安全控制、异常处理等。把这些功能抽离出来之后，再通过“动态织入”的方式掺入业务逻辑模块中。这样做的好处首先是可以保持业务逻辑模块的纯净和高内聚性，其次是可以很方便地复用日志统计等功能模块。通常，在javascript中实现AOP，都是指把一个函数“动态织入”到另外一个函数之中。下面通过扩展Function.prototype来实现。
+
+```js
+Function.prototype.before = function(beforeFn) {
+    var _this = this;  // 保存原函数的引用
+    return function() {  // 返回包含了原函数和新函数的"代理"函数
+        beforeFn.apply(this, arguments);  // 先执行新函数，修正this
+        return _this.apply(this, arguments);  // 再执行原函数
+    }
+};
+Function.prototype.after = function(afterFn) {
+    var _this = this;
+    return function() {
+        var ret = _this.apply(this, arguments);  // 先执行原函数
+        afterFn.apply(this, arguments);  // 再执行新函数
+        return ret;
+    }
+};
+var func = () => console.log(2);
+func = func.before(function() {
+    console.log(1);
+}).after(function() {
+    console.log(3);
+});
+func();
+```
+
+4. 其他应用
+    1. 【not】返回参数的返回值的逻辑非
+    2. 【mapper】返回的新函数将一个数组映射到另一个使用这个函数的数组上
+    3. 【compose】接收两个函数f()和g()，并返回一个新函数用以计算f(g())
+
+```js
+// 1
+function not(f) {
+    return () => !(f.apply(this, arguments));
+}
+var even = (x) => x % 2 === 0;
+var odd = not(even);
+[1, 1, 3, 5, 5].every(odd);
+// 2
+function mapper(f) {
+    return (a) => Array.prototype.map.call(a, f);
+}
+var increment = (x) => x + 1;
+var incrementer = mapper(increment);
+increment([1,2,3]);//[2,3,4]
+// 3
+function compose(f, g) {
+    return () => f.call(this, g.apply(this, arguments));
+}
+```
+
 ### 函数柯里化
+
+currying又称部分求值。一个currying的函数首先会接受一些参数，接受了这些参数之后，该函数并不会立即求值，而是继续返回另外一个函数，刚才传入的参数在函数形成的闭包中被保存起来。待到函数被真正需要求值的时候，之前传入的所有参数都会被一次性用于求值
+
+1. 例子：每月开销函数
+
+```js
+var cost = (function() {
+    var args = [];
+    return function() {
+        // 如果没有参数，则计算args数组中的和
+        if (arguments.length === 0) {
+            var money = 0;
+            for (var i = 0, l = args.length; i < l; i++) {
+                money += args[i];
+            }
+            return money;
+            // 如果有参数，则只能是将数据传到args数组中
+        } else {
+            [].push.apply(args, arguments);
+        }
+    }
+})();
+cost(100); // 未真正求值
+cost(200); // 未真正求值
+cost(300); // 未真正求值
+console.log(cost()); // 求值并输出：600
+```
+
+2. 通用函数
+
+```js
+var currying = function(fn) {
+    var args = [];
+    return function() {
+        if (arguments.length === 0) {
+            return fn.apply(this, args);
+        } else {
+            [].push.apply(args, arguments);
+            return arguments.callee;
+        }
+    }
+};
+var cost = (function() {
+    var money = 0;
+    return function() {
+        for (var i = 0, l = arguments.length; i < l; i++) {
+            money += arguments[i];
+        }
+        return money;
+    }
+})();
+var cost = currying(cost); // 转化成 currying 函数
+cost(100); // 未真正求值
+cost(200); // 未真正求值
+cost(300); // 未真正求值
+alert(cost()); // 求值并输出：600
+```
+
+3. 可穿参函数
+4. 求值柯里化
+5. 反柯里化
 
 ### 函数节流和函数防抖
 
@@ -2425,6 +2831,7 @@ var timeChunk = function (ary, fn, count) {
     };
 };
 ```
+1. 
 
 ### 惰性函数
 
