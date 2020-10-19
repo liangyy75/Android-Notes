@@ -131,8 +131,33 @@
         - [this绑定优先级](#this绑定优先级)
         - [箭头函数](#箭头函数)
     - [继承实现](#继承实现)
+        - [一张图理解prototype、proto和constructor的三角关系](#一张图理解prototypeproto和constructor的三角关系)
+        - [构造函数和原型对象](#构造函数和原型对象)
+        - [创建对象的5种模式](#创建对象的5种模式)
+        - [实现继承的3种形式](#实现继承的3种形式)
+        - [面向对象的6个概念](#面向对象的6个概念)
     - [模块化](#模块化)
 - [DOM -- 节点](#dom----节点)
+    - [节点类型](#节点类型)
+        - [12种DOM节点类型概述](#12种dom节点类型概述)
+        - [文本节点](#文本节点)
+        - [注释节点和文档类型节点](#注释节点和文档类型节点)
+        - [文档片段节点](#文档片段节点)
+        - [元素节点](#元素节点)
+        - [特性节点](#特性节点)
+        - [文档节点](#文档节点)
+    - [获取节点](#获取节点)
+        - [元素选择器](#元素选择器)
+        - [getElementsByClassName](#getelementsbyclassname)
+        - [selector选择器](#selector选择器)
+        - [动态集合](#动态集合)
+    - [节点操作](#节点操作)
+        - [节点关系](#节点关系)
+        - [节点操作](#节点操作-1)
+        - [节点内容](#节点内容)
+        - [节点遍历](#节点遍历)
+        - [节点范围](#节点范围)
+        - [区分元素特性和对象属性](#区分元素特性和对象属性)
 - [DOM -- 脚本化CSS](#dom----脚本化css)
 - [DOM -- 表单脚本](#dom----表单脚本)
 - [DOM -- 元素尺寸](#dom----元素尺寸)
@@ -3288,9 +3313,734 @@ this的四种绑定规则：默认绑定、隐式绑定、显式绑定和new绑�
 
 ## 继承实现
 
+### 一张图理解prototype、proto和constructor的三角关系
+
+javascript里的关系又多又乱。作用域链是一种单向的链式关系，还算简单清晰；this机制的调用关系，稍微有些复杂；而关于原型，则是 ![prototype、proto和constructor的三角关系](https://pic.xiaohuochai.site/blog/JS_ECMA_grammer_proto.png)
+
+**【概念】**
+
+上图中的复杂关系，实际上来源就两行代码
+
+```js
+function Foo(){};
+var f1 = new Foo;
+```
+
+1. 构造函数
+2. 实例对象
+3. 原型对象及prototype: 构造函数有一个prototype属性，指向实例对象的原型对象。通过同一个构造函数实例化的多个对象具有相同的原型对象。经常使用原型对象来实现继承
+4. constructor: 原型对象有一个constructor属性，指向该原型对象对应的构造函数。
+5. proto: 实例对象有一个__proto__属性，指向该实例对象对应的原型对象。
+
+```js
+// 3
+function Foo(){};
+Foo.prototype.a = 1;
+var f1 = new Foo;
+var f2 = new Foo;
+console.log(Foo.prototype.a);//1
+console.log(f1.a);//1
+console.log(f2.a);//1
+// 4
+function Foo(){};
+console.log(Foo.prototype.constructor === Foo);//true
+var f1 = new Foo;
+console.log(f1.constructor === Foo);//true
+```
+
+**【说明】**
+
+1. 第一部分： Foo
+    1. 实例对象f1是通过构造函数Foo()的new操作创建的。构造函数Foo()的原型对象是Foo.prototype；实例对象f1通过__proto__属性也指向原型对象Foo.prototype
+    2. 实例对象f1本身并没有constructor属性，但它可以继承原型对象Foo.prototype的constructor属性
+2. 第二部分： Object
+    1. Foo.prototype是f1的原型对象，同时它也是实例对象。实际上，任何对象都可以看做是通过Object()构造函数的new操作实例化的对象。所以，Foo.prototype作为实例对象，它的构造函数是Object()，原型对象是Object.prototype。相应地，构造函数Object()的prototype属性指向原型对象Object.prototype；实例对象Foo.prototype的proto属性同样指向原型对象Object.prototype
+    2. 实例对象Foo.prototype本身具有constructor属性，所以它会覆盖继承自原型对象Object.prototype的constructor属性
+    3. 如果Object.prototype作为实例对象的话，其原型对象是什么，结果是null。私以为，这可能也是typeof null的结果是'object'的原因之一吧
+3. 第三部分： Function
+    1. 前面已经介绍过，函数也是对象，只不过是具有特殊功能的对象而已。任何函数都可以看做是通过Function()构造函数的new操作实例化的结果
+    2. 如果把函数Foo当成实例对象的话，其构造函数是Function()，其原型对象是Function.prototype；类似地，函数Object的构造函数也是Function()，其原型对象是Function.prototype
+    3. 原型对象Function.prototype的constructor属性指向构造函数Function()；实例对象Object和Foo本身没有constructor属性，需要继承原型对象Function.prototype的constructor属性
+    4. 所有的函数都可以看成是构造函数Function()的new操作的实例化对象。那么，Function可以看成是调用其自身的new操作的实例化的结果。所以，如果Function作为实例对象，其构造函数是Function，其原型对象是Function.prototype
+    5. 如果Function.prototype作为实例对象的话，其原型对象是什么呢？和前面一样，所有的对象都可以看成是Object()构造函数的new操作的实例化结果。所以，Function.prototype的原型对象是Object.prototype，其原型函数是Object()
+
+```js
+// 1
+function Foo(){};
+var f1 = new Foo;
+console.log(f1.__proto === Foo.prototype);  // true
+console.log(Foo.prototype.constructor === Foo);  // true
+console.log(f1.constructor === Foo);  // true
+console.log(f1.hasOwnProperty('constructor'));  // false
+// 2
+function Foo(){};
+var f1 = new Foo;
+console.log(Foo.prototype.__proto__ === Object.prototype);  // true
+function Foo(){};
+var f1 = new Foo;
+console.log(Foo.prototype.constructor === Foo);//true
+console.log(Object.prototype.constructor === Object);//true
+console.log(Foo.prototype.hasOwnProperty('constructor'));//true
+// 3
+function Foo(){};
+var f1 = new Foo;
+console.log(Foo.__proto__ === Function.prototype);//true
+console.log(Object.__proto__ === Function.prototype);//true
+```
+
+**【总结】**
+
+1. 【1】函数(Function也是函数)是new Function的结果，所以函数可以作为实例对象，其构造函数是Function()，原型对象是Function.prototype
+2. 【2】对象(函数也是对象)是new Object的结果，所以对象可以作为实例对象，其构造函数是Object()，原型对象是Object.prototype
+3. 【3】Object.prototype的原型对象是null
+
+### 构造函数和原型对象
+
+**【构造函数】**
+
+1. 构造函数是用new创建对象时调用的函数，与普通唯一的区别是构造函数名应该首字母大写
+2. 根据需要，构造函数可以接受参数
+3. 如果没有参数，可以省略括号
+4. 如果忘记使用new操作符，则this将代表全局对象window
+5. **instanceof**操作符可以用来鉴别对象的类型
+6. 每个对象在创建时都自动拥有一个构造函数属性**constructor**，其中包含了一个指向其构造函数的引用。而这个constructor属性实际上继承自原型对象，而constructor也是原型对象唯一的自有属性
+7. 虽然对象实例及其构造函数之间存在这样的关系，但是还是建议使用instanceof来检查对象类型。这是因为构造函数属性可以被覆盖，并不一定完全准确
+8. 针对丢失new的构造函数的解决办法是在构造函数内部使用instanceof判断是否使用new命令，如果发现没有使用，则直接使用return语句返回一个实例对象
+9. 使用构造函数的好处在于所有用同一个构造函数创建的对象都具有同样的属性和方法
+10. 构造函数允许给对象配置同样的属性，但是构造函数并没有消除代码冗余。使用构造函数的主要问题是每个方法都要在每个实例上重新创建一遍。在上面的例子中，每一个对象都有自己的sayName()方法。这意味着如果有100个对象实例，就有100个函数做相同的事情，只是使用的数据不同
+11. 可以通过把函数定义转换到构造函数外部来解决问题
+12. 但是，在全局作用域中定义的函数实际上只能被某个对象调用，这让全局作用域有点名不副实。而且，如果对象需要定义很多方法，就要定义很多全局函数，严重污染全局空间，这个自定义的引用类型没有封装性可言了。如果所有的对象实例共享同一个方法会更有效率，这就需要用到下面所说的原型对象
+
+```js
+// 8
+function Person(){
+    if(!(this instanceof Person)){
+        return new Person();
+    }
+    this.age = 30;
+}
+var person1 = Person();
+console.log(person1.age);//30
+var person2 = new Person();
+console.log(person2.age);//30
+// 10
+function Person(name){
+    this.name = name;
+    this.sayName = function(){
+        console.log(this.name);
+    }
+}
+// 11
+function Person(name){
+    this.name = name;
+    this.sayName = sayName;
+}
+function sayName(){
+    console.log(this.name);
+}
+```
+
+**【原型对象】**
+
+1. 通过构造函数的new操作创建实例对象后，会自动为构造函数创建prototype属性，该属性指向实例对象的原型对象。通过同一个构造函数实例化的多个对象具有相同的原型对象
+2. 原型对象默认只会取得一个constructor属性，指向该原型对象对应的构造函数。至于其他方法，则是从Object继承来的
+3. 由于实例对象可以继承原型对象的属性，所以实例对象也拥有constructor属性，同样指向原型对象对应的构造函数
+4. 实例对象内部包含一个proto属性(IE10-浏览器不支持该属性)，指向该实例对象对应的原型对象
+5. 一般地，可以通过**isPrototypeOf**()方法来确定对象之间是否是实例对象和原型对象的关系
+6. ES5新增了**Object.getPrototypeOf()**方法，该方法返回实例对象对应的原型对象。实际上，Object.getPrototypeOf()方法和__proto__属性是一回事，都指向原型对象
+7. **属性查找**：当读取一个对象的属性时，javascript引擎首先在该对象的自有属性中查找属性名字。如果找到则返回。如果自有属性不包含该名字，则javascript会搜索proto中的对象。如果找到则返回。如果找不到，则返回undefined
+8. **in**操作符可以判断属性在不在该对象上，但无法区别自有还是继承属性
+9. 通过**hasOwnProperty**()方法可以确定该属性是自有属性还是继承属性
+10. 当一个函数被创建时，该原型对象的constructor属性自动创建，并指向该函数。当使用对象字面形式改写原型对象Person.prototype时，需要在改写原型对象时手动重置其constructor属性
+11. 由于默认情况下，原生的constructor属性是不可枚举的，更妥善的解决方法是使用Object.defineProperty()方法，改变其属性描述符中的枚举性enumerable
+
+```js
+// 5
+function Foo(){};
+var f1 = new Foo;
+console.log(f1.__proto__ === Foo.prototype);//true
+console.log(Foo.prototype.isPrototypeOf(f1));//true
+// 10
+function Person(name){
+    this.name = name;
+}
+Person.prototype = {
+    constructor: Person,
+    sayName: function(){
+        console.log(this.name);
+    },
+    toString : function(){
+        return '[person ' + this.name + ']'
+    }
+};
+// 11
+Object.defineProperty(Person.prototype,'constructor',{
+    enumerable: false,
+    value: Person
+});
+```
+
+**【总结】**
+
+1. 构造函数、原型对象和实例对象之间的关系是实例对象和构造函数之间没有直接联系
+
+### 创建对象的5种模式
+
+1. 对象字面量
+    1. 虽然对象字面量可以用来创建单个对象，但如果要创建多个对象，会产生大量的重复代码
+2. 工厂模式
+    1. 为了解决上述问题，人们开始使用工厂模式。该模式抽象了创建具体对象的过程，用函数来封装以特定接口创建对象的细节
+    2. 工厂模式虽然解决了创建多个相似对象的问题，但没有解决对象识别的问题，因为使用该模式并没有给出对象的类型
+3. 构造函数
+    1. 可以通过创建自定义的构造函数，来定义自定义对象类型的属性和方法。创建自定义的构造函数意味着可以将它的实例标识为一种特定的类型，而这正是构造函数模式胜过工厂模式的地方。该模式没有显式地创建对象，直接将属性和方法赋给了this对象，且没有return语句
+    2. 使用构造函数的主要问题是每个方法都要在每个实例上重新创建一遍，创建多个完成相同任务的方法完全没有必要，浪费内存空间
+    3. 构造函数拓展模式：在构造函数模式的基础上，把方法定义转移到构造函数外部，可以解决方法被重复创建的问题
+    4. 现在，新问题又来了。在全局作用域中定义的函数实际上只能被某个对象调用，这让全局作用域有点名不副实。而且，如果对象需要定义很多方法，就要定义很多全局函数，严重污染全局空间，这个自定义的引用类型没有封装性可言了
+    5. 寄生构造函数模式：该模式的基本思想是创建一个函数，该函数的作用仅仅是封装创建对象的代码，然后再返回新创建的对象。该模式是工厂模式和构造函数模式的结合。寄生构造函数模式与构造函数模式有相同的问题，每个方法都要在每个实例上重新创建一遍，创建多个完成相同任务的方法完全没有必要，浪费内存空间。还有一个问题是，使用该模式返回的对象与构造函数之间没有关系。因此，使用instanceof运算符和prototype属性都没有意义。所以，该模式要尽量避免使用。
+    6. 稳妥构造函数模式：所谓稳妥对象指没有公共属性，而且其方法也不引用this的对象。稳妥对象最适合在一些安全环境中(这些环境会禁止使用this和new)或者在防止数据被其他应用程序改动时使用。稳妥构造函数与寄生构造函数模式相似，但有两点不同：一是新创建对象的实例方法不引用this；二是不使用new操作符调用构造函数。与寄生构造函数模式相似，使用稳妥构造函数模式创建的对象与构造函数之间也没有什么关系，因此instanceof操作符对这种对象也没有什么意义
+4. 原型模式
+    1. 使用原型对象，可以让所有实例共享它的属性和方法。换句话说，不必在构造函数中定义对象实例的信息，而是可以将这些信息直接添加到原型对象中
+    2. 原型模式问题在于引用类型值属性会被所有的实例对象共享并修改，这也是很少有人单独使用原型模式的原因
+5. 组合模式
+    1. 组合使用构造函数模式和原型模式是创建自定义类型的最常见方式。构造函数模式用于定义实例属性，而原型模式用于定义方法和共享的属性，这种组合模式还支持向构造函数传递参数。实例对象都有自己的一份实例属性的副本，同时又共享对方法的引用，最大限度地节省了内存。该模式是目前使用最广泛、认同度最高的一种创建自定义对象的模式
+
+```js
+// 1
+var person1 = { name: "bai", age: 29, job: "Software Engineer", sayName: function() { alert(this.name); } };
+// 2
+function createPerson(name, age, job) {
+    var o = new Object();
+    o.name = name;
+    o.age = age;
+    o.job = job;
+    o.sayname = function() {
+        alert(this.name);
+    }
+    return o;
+}
+var person1 = createPerson('bai', 29, 'software Engineer');
+var person2 = createPerson('hu', 25, 'software Engineer');
+// 3.5
+var person1 = new createPerson("bai",29,"software Engineer");
+var person2 = new createPerson("hu",25,"software Engineer");
+// 3.6
+function Person(name, age, job) {
+    //创建要返回的对象
+    var o = new Object();
+    //可以在这里定义私有变量和函数
+    //添加方法
+    o.sayName = function () {
+        console.log(name);
+    };
+    //返回对象
+    return o;
+}
+//在稳妥模式创建的对象中，除了使用sayName()方法之外，没有其他方法访问name的值
+var friend = Person("bai", 29, "Software Engineer");
+friend.sayName();//"bai"
+```
+
+### 实现继承的3种形式
+
+1. 类式继承
+    1. 大多数面向对象的编程语言都支持类和类继承的特性，而JS却不支持这些特性，只能通过其他方法定义并关联多个相似的对象，如new和instanceof。不过在后来的ES6中新增了一些元素，比如class关键字，但这并不意味着javascript中是有类的，class只是构造函数的语法糖而已
+    2. 类式继承的主要思路是，通过构造函数实例化对象，通过原型链将实例对象关联起来。下面将对类式继承进行详细解释
+    3. 【原型链继承】javascript使用原型链作为实现继承的主要方法，实现的本质是重写原型对象，代之以一个新类型的实例。下面的代码中，原来存在于SuperType的实例对象中的属性和方法，现在也存在于SubType.prototype中了
+    4. 原型链最主要的问题在于包含引用类型值的原型属性会被所有实例共享，而这也正是为什么要在构造函数中，而不是在原型对象中定义属性的原因。在通过原型来实现继承时，原型实际上会变成另一个类型的实例。于是，原先的实例属性也就顺理成章地变成了现在的原型属性了
+    5. 原型链的第二个问题是，在创建子类型的实例时， 不能向超类型的构造函数中传递参数。实际上，应该说是没有办法在不影响所有对象实例的情况下，给超类型的构造函数传递参数。再加上包含引用类型值的原型属性会被所有实例共享的问题，在实践中很少会单独使用原型链继承
+    6. 【借用构造函数继承】借用构造函数(constructor stealing)的技术(有时候也叫做伪类继承或经典继承)。基本思想相当简单，即在子类型构造函数的内部调用超类型构造函数，通过使用apply()和call()方法在新创建的对象上执行构造函数
+    7. 相对于原型链而言，借用构造函数有一个很大的优势，即可以在子类型构造函数中向超类型构造函数传递参数。但是，如果仅仅是借用构造函数，那么也将无法避免构造函数模式存在的问题——方法都在构造函数中定义，因此函数复用就无从谈起了
+    8. 【组合继承】组合继承(combination inheritance)有时也叫伪经典继承，指的是将原型链和借用构造函数的技术组合到一块，从而发挥二者之长的一种继承模式。其背后的思路是使用原型链实现对原型属性和方法的继承，而通过借用构造函数来实现对实例属性的继承。这样，既通过在原型上定义方法实现了函数复用，又能够保证每个实例都有它自己的属性
+    9. 组合继承有它自己的问题。那就是无论什么情况下，都会调用两次父类型构造函数：一次是在创建子类型原型的时候，另一次是在子类型构造函数内部。子类型最终会包含父类型对象的全部实例属性，但不得不在调用子类型构造函数时重写这些属性
+    10. 【寄生组合继承】解决两次调用的方法是使用寄生组合式继承。寄生组合式继承与组合继承相似，都是通过借用构造函数来继承不可共享的属性，通过原型链的混成形式来继承方法和可共享的属性。只不过把原型继承的形式变成了寄生式继承。使用寄生组合式继承可以不必为了指定子类型的原型而调用父类型的构造函数，从而寄生式继承只继承了父类型的原型属性，而父类型的实例属性是通过借用构造函数的方式来得到的
+    11. 【ES6中的class】
+2. 原型继承
+    1. 【原型继承】原型继承，在《你不知道的javascript》中被翻译为委托继承。道格拉斯·克罗克福德(Douglas Crockford)在2006年写了一篇文章，《javascript中的原型式继承》。在这篇文章中，他介绍了一种实现继承的方式，这种方式并没有使用严格意义上的构造函数。他的想法是借助原型可以基于已有的对象来创建新对象，同时不必因此创建自定义类型。在object()函数内部，先创建了一个临时性的构造函数，然后将传入的对象作为这个构造函数的原型，最后返回了这个临时类型的一个新实例。从本质上讲，object()对传入其中的对象执行了一次浅复制。
+    2. 
+3. 拷贝继承
+
+```js
+// 1.3
+function Super(){
+    this.value = true;
+}
+Super.prototype.getValue = function(){
+    return this.value;
+};
+function Sub(){}
+//Sub继承了Super
+Sub.prototype = new Super();
+Sub.prototype.constructor = Sub;
+
+var instance = new Sub();
+console.log(instance.getValue());//true
+// 1.4
+function Super() {
+    this.colors = ['red', 'blue', 'green'];
+}
+function Sub() { };
+//Sub继承了Super
+Sub.prototype = new Super();
+var instance1 = new Sub();
+instance1.colors.push('black');
+console.log(instance1.colors);//'red,blue,green,black'
+var instance2 = new Sub();
+console.log(instance2.colors);//'red,blue,green,black'
+```
+
+```js
+// 1.6
+function Super() {
+    this.colors = ['red', 'blue', 'green'];
+}
+function Sub() {
+    //继承了Super
+    Super.call(this);
+}
+var instance1 = new Sub();
+instance1.colors.push('black');
+console.log(instance1.colors);// ['red','blue','green','black']
+var instance2 = new Sub();
+console.log(instance2.colors);// ['red','blue','green']
+// 1.9
+function Super(name) {
+    this.name = name;
+    this.colors = ["red", "blue", "green"];
+}
+Super.prototype.sayName = function () {
+    return this.name;
+};
+function Sub(name, age) {
+    // 第二次调用Super()，Sub.prototype又得到了name和colors两个属性，并对上次得到的属性值进行了覆盖
+    Super.call(this, name);
+    this.age = age;
+}
+//第一次调用Super()，Sub.prototype得到了name和colors两个属性
+Sub.prototype = new Super();
+Sub.prototype.constructor = Sub;
+Sub.prototype.sayAge = function () {
+    return this.age;
+};
+```
+
+```js
+// 1.10
+function Super(name) {
+    this.name = name;
+    this.colors = ["red", "blue", "green"];
+}
+Super.prototype.sayName = function () {
+    return this.name;
+};
+
+function Sub(name, age) {
+    Super.call(this, name);
+    this.age = age;
+}
+if (!Object.create) {
+    Object.create = function (proto) {
+        function F() { };
+        F.prototype = proto;
+        return new F;
+    }
+}
+Sub.prototype = Object.create(Super.prototype);
+Sub.prototype.constructor = Sub;
+
+var instance1 = new Sub("bai", 29);
+instance1.colors.push("black");
+console.log(instance1.colors);//['red','blue','green','black']
+instance1.sayName();//"bai"
+
+var instance2 = new Sub("hu", 27);
+console.log(instance2.colors);//['red','blue','green']
+instance2.sayName();//"hu"
+```
+
+```js
+// 1.11
+class Super {
+    constructor(name) {
+        this.name = name;
+        this.colors = ["red", "blue", "green"];
+    }
+    sayName() {
+        return this.name;
+    }
+}
+
+class Sub extends Super {
+    constructor(name, age) {
+        super(name);
+        this.age = age;
+    }
+}
+
+var instance1 = new Sub("bai", 29);
+instance1.colors.push("black");
+console.log(instance1.colors);//['red','blue','green','black']
+instance1.sayName();//"bai"
+
+var instance2 = new Sub("hu", 27);
+console.log(instance2.colors);//['red','blue','green']
+instance2.sayName();//"hu"
+```
+
+```js
+// 2.1
+function object(o){
+    function F(){};
+    F.prototype = o;
+    return new F();
+}
+var superObj = {
+    init: function(value){
+        this.value = value;
+    },
+    getValue: function(){
+        return this.value;
+    }
+}
+var subObj = object(superObj);
+subObj.init('sub');
+console.log(subObj.getValue());//'sub'
+```
+
+### 面向对象的6个概念
+
+
+
 ## 模块化
 
 # DOM -- 节点
+
+## 节点类型
+
+### 12种DOM节点类型概述
+
+DOM是javascript操作网页的接口，全称为文档对象模型(Document Object Model)。它的作用是将网页转为一个javascript对象，从而可以使用javascript对网页进行各种操作(比如增删内容)。浏览器会根据DOM模型，将HTML文档解析成一系列的节点，再由这些节点组成一个树状结构。DOM的最小组成单位叫做节点(node)，文档的树形结构(DOM树)由12种类型的节点组成。本文将主要说明DOM节点类型。
+
+一般地，节点至少拥有nodeType、nodeName和nodeValue这三个基本属性。节点类型不同，这三个属性的值也不相同。DOM定义了一个Node接口，这个接口在javascript中是作为Node类型实现的，而在IE8-浏览器中的所有DOM对象都是以COM对象的形式实现的。所以，IE8-浏览器并不支持Node对象的写法。
+
+nodeType：
+```js
+元素节点              Node.ELEMENT_NODE(1)
+属性节点              Node.ATTRIBUTE_NODE(2)
+文本节点              Node.TEXT_NODE(3)
+CDATA节点             Node.CDATA_SECTION_NODE(4)
+实体引用名称节点      Node.ENTRY_REFERENCE_NODE(5)
+实体名称节点          Node.ENTITY_NODE(6)
+处理指令节点          Node.PROCESSING_INSTRUCTION_NODE(7)
+注释节点              Node.COMMENT_NODE(8)
+文档节点              Node.DOCUMENT_NODE(9)
+文档类型节点          Node.DOCUMENT_TYPE_NODE(10)
+文档片段节点          Node.DOCUMENT_FRAGMENT_NODE(11)
+DTD声明节点           Node.NOTATION_NODE(12)
+```
+
+1. 元素节点：对应网页的HTML标签元素，nodeType值是1，nodeName值是大写的标签名，nodeValue值是null。
+2. 特性节点：对应网页中HTML标签的属性，只存在于元素的attributes属性中，并不是DOM文档树的一部分，nodeType值是2，nodeName值是属性名，nodeValue值是属性值
+3. 文本节点：代表网页中的HTML标签内容，nodeType值是3，nodeName值是'#text'，nodeValue值是标签内容值
+4. CDATA节点：只针对基于XML的文档，只出现在XML文档中，表示的是CDATA区域，格式一般为 <![CDATA[ ... ]]> 。nodeType的值为4，nodeName的值为'#cdata-section'，nodevalue的值是CDATA区域中的内容
+5. 实体引用名称节点：
+    1. 实体是一个声明，指定了在XML中取代内容或标记而使用的名称。 实体包含两个部分， 首先，必须使用实体声明将名称绑定到替换内容。 实体声明是使用 <!ENTITY name "value"> 语法在文档类型定义(DTD)或XML架构中创建的。其次，在实体声明中定义的名称随后将在 XML 中使用。 在XML中使用时，该名称称为实体引用。
+    2. nodeType的值为5，nodeName的值为实体引用的名称，nodeValue的值为null
+6. 实体名称节点：nodeType的值为6，nodeName的值为实体名称，nodeValue的值为null
+7. 处理指令节点：nodeType的值为7，nodeName的值为target，nodeValue的值为entire content excluding the target
+8. 注释节点：nodeType的值为8，nodeName的值为'#comment'，nodeValue的值为注释的内容
+9. 文档节点：nodeType的值为9，nodeName的值为'#document'，nodeValue的值为null
+10. 文档类型节点：nodeType的值为10，nodeName的值为doctype的名称，nodeValue的值为null
+11. 文档片段节点：nodeType的值为11，nodeName的值为'#document-fragment'，nodeValue的值为null
+12. DTD声明节点：nodeType的值为12，nodeName的值为符号名称，nodeValue的值为null
+
+```js
+console.log(document.body.nodeType,document.body.nodeName,document.body.nodeValue)  // 1 'BODY' null
+var attr = document.getElementById('test').attributes.id
+console.log(attr.nodeType,attr.nodeName,attr.nodeValue)  // 2 'id' 'test'
+console.log(text.nodeType,text.nodeName,text.nodeValue)  // 3 '#text' '文本内容'
+
+<!ENTITY publisher "Microsoft Press">  //实体名称
+<pubinfo>Published by &publisher;</pubinfo>  //实体名称引用
+
+var com = document.getElementById('myDiv').firstChild;  /* <div id="myDiv"><!-- 我是注释内容 --></div> */
+console.log(com.nodeType,com.nodeName,com.nodeValue)  //8 '#comment' '我是注释内容'
+console.log(document.nodeType,document.nodeName,document.nodeValue)  //9 "#document" null
+```
+
+### 文本节点
+
+1. 空白文本节点：IE8-浏览器不识别空白文本节点，而其他浏览器会识别空白文本节点
+2. 属性
+    1. data属性与nodeValue属性相同
+    2. wholeText属性将当前Text节点与毗邻的Text节点，作为一个整体返回。大多数情况下，wholeText属性的返回值，与data属性和textContent属性相同。但是，某些特殊情况会有差异。[注意]IE8-浏览器不支持
+    3. length属性保存着节点字符的数目，而且nodeValue.length、data.length也保存着相同的值
+3. 方法
+    1. createTextNode()方法用于创建文本节点，这个方法接收一个参数——要插入节点中的文本
+    2. normalize()方法的作用是合并相邻的文本节点，该方法在文本节点的父节点——元素节点上调用。[注意]IE9+浏览器无法正常使用该方法
+    3. splitText()方法将一个文本节点分成两个文本节点，即按照指定的位置分割nodeValue值。原来的文本节点将包含从开始到指定位置之前的内容。这个方法会返回一个新文本节点，包含剩下的文本。splitText()方法返回的节点与原节点的parentNode相同
+    4. appendData(text)方法将text添加到节点的末尾，该方法无返回值
+    5. deleteData(offset,count)方法从offset指定的位置开始删除count个字符，无返回值
+    6. insertData(offset,text)方法在offset指定的位置插入text，无返回值
+    7. replaceData(offset,count,text)方法用text替换从offset指定位置开始到offset+count为止的文本，无返回值
+    8. substringData(offset,count)方法提取从offset指定的位置开始到offset+count为止处的字符串，并返回该字符串。原来的文本节点无变化
+4. 性能
+    1. 通过上面的方法介绍，我们会发现，文本节点的操作与字符串的操作方法相当类似。一般地，我们获取文本都用innerHTML，然后再去字符串的操作方法去操作。下面对两者的性能进行对比分析
+    2. 首先，对replaceData()和replace()这两个方法进行比较。replace()方法又分为两个方法，一个是在循环中直接对innerHTML进行赋值；另一个是在循环中对变量进行赋值，最后再赋值给innerHTML。
+        1. var temp = divNode.innerHTML
+        2. divNode.innerHTML = temp.replace(1,Math.floor(Math.random() * 9 + 1));  // 2351ms
+        3. temp.innerHTML = temp.replace(1,Math.floor(Math.random() * 9 + 1));  // 408ms
+        4. txtNode.replaceData(1,1,Math.floor(Math.random() * 9 + 1))  // 327ms
+        5. 从结果中可以看出，在100万次的循环中，直接操作innerHTML开销较大，操作文本节点的的开销最小
+    3. 对substring()和substringData()方法进行比较，这两种方法都用于提取子串。从结果中可以看出，在1000万次的循环中，使用substringData()方法比substring()方法的开销较大
+
+```html
+<!-- 1 -->
+<div id="box">
+    <div>1</div>
+</div>
+<script>
+    //标准浏览器输出[text, div, text]，text表示空白文本节点
+    //IE8-浏览器输出[div]，并不包含空白文本节点
+    console.log(box.childNodes);
+</script>
+
+<!-- 2.2 -->
+<div id="test">123</div>
+<script>
+    console.log(test.firstChild.wholeText);//123
+    console.log(test.firstChild.data);//123
+    //以索引1为指定位置分割为两个文本节点
+    test.firstChild.splitText(1);
+    console.log(test.firstChild.wholeText);//123
+    console.log(test.firstChild.data);//1
+</script>
+
+<!-- 3.1 -->
+<div id="box">123</div>
+<script>
+    var oBox = document.getElementById('box');
+    var oText = document.createTextNode('<strong>hello</strong> world!');
+    oBox.appendChild(oText);
+    //'123&lt;strong&gt;hello&lt;/strong&gt; world!'
+    console.log(oBox.innerHTML);
+    //此时，页面中有两个文本节点
+    console.log(oBox.childNodes.length);
+</script>
+
+<!-- 3.2 -->
+<div id="box">0</div>
+<script>
+    var oText1 = document.createTextNode('1');
+    var oText2 = document.createTextNode('2');
+    box.appendChild(oText1);
+    box.appendChild(oText2);
+    console.log(box.childNodes);//[text, text, text]
+    console.log(box.childNodes.length);//3
+    box.normalize();
+    //IE9+浏览器返回[text,text]，而其他浏览器返回[text]
+    console.log(box.childNodes);
+    //IE9+浏览器返回'01'，而其他浏览器返回'012'
+    console.log(box.childNodes[0]);
+    //IE9+浏览器返回2，使用该方法时只能将所有的文本节点减1；其他浏览器正常，返回2
+    console.log(box.childNodes.length);//1
+</script>
+```
+
+### 注释节点和文档类型节点
+
+1. [注意]所有浏览器都识别不出位于``</html>``后面的注释
+2. 注释节点Comment与文本节点Text继承自相同的基类，因此它拥有除了splitText()之外的所有字符串操作方法。与Text类型相似，也可以通过nodeValue或data属性来取得注释的内容
+3. createComment()方法用于创建注释节点，这个方法接收一个参数——要插入节点中的注释文本：document.createComment(text)
+4. 文档类型节点有一个快捷写法是document.doctype，但是该写法IE8-浏览器不支持
+5. 文档类型节点DocumentType对象有3个属性:name、entities、notations
+    1. name表示文档类型的名称，与nodeName的属性相同
+    2. entities表示由文档类型描述的实体的NamedNodeMap对象
+    3. notations表示由文档类型描述的符号的NamedNodeMap对象。通常浏览器中的文档使用的都是HTML或XHTML文档类型，因而entites和notations都是空列表(列表中的项来自行内文档类型声明)
+6. IE8-浏览器将标签名为"!"的元素视作注释节点，所以文档声明也被视作注释节点
+
+### 文档片段节点
+
+1. 创建文档片段，要使用document.createDocumentFragment()方法。文档片段继承了Node的所有方法，通常用于执行那些针对文档的DOM操作
+2. 我们经常使用javascript来操作DOM元素，比如使用appendChild()方法。每次调用该方法时，浏览器都会重新渲染页面。如果大量的更新DOM节点，则会非常消耗性能，影响用户体验。
+    1. javascript提供了一个文档片段DocumentFragment的机制。如果将文档中的节点添加到文档片段中，就会从文档树中移除该节点。把所有要构造的节点都放在文档片段中执行，这样可以不影响文档树，也就不会造成页面渲染。当节点都构造完成后，再将文档片段对象添加到页面中，这时所有的节点都会一次性渲染出来，这样就能减少浏览器负担，提高页面渲染速度。
+    2. 若使用IE浏览器，则使用文档片段DocumentFragment的性能并不会更好，反而变差；若使用chrome和firefox浏览器，使用文档片段DocumentFragment可以提升性能
+    3. 由于文档片段的优点在IE浏览器下并不明显，反而可能成为多此一举。所以，该类型的节点并不常用
+
+```html
+<!-- 2.1.1 -->
+<ul id="list1"></ul>
+<script>
+    var list1 = document.getElementById('list1');
+    console.time("time");
+    var fragment = document.createDocumentFragment();
+    for(var i = 0; i < 500000; i++){
+        fragment.appendChild(document.createElement('li'));
+    }
+    list1.appendChild(fragment);
+    console.timeEnd('time');
+</script>
+<!-- 2.1.2 -->
+<ul id="list"></ul>
+<script>
+    var list = document.getElementById('list');
+    console.time("time");
+    for(var i = 0; i < 500000; i++){
+        list.appendChild(document.createElement('li'));
+    }
+    console.timeEnd('time');
+</script>
+```
+
+### 元素节点
+
+1. 父节点parentNode指向包含该元素节点的元素节点Element或文档节点Document
+2. 要访问元素的标签名可以使用nodeName，也可以使用tagName属性，这两个属性会返回相同的值
+3. 元素可以有任意数目的子节点和后代节点，因为元素可以是其他元素的子节点。元素的childNodes属性中包含了它的所有子节点，这些子节点可能是元素、文本、注释、处理指令节点
+4. 特性操作：hasAttribute()、getAttribute('name')、setAttribute('name', 'value')、removeAttribute()，可以针对任何特性使用，包括那些以HTMLElement类型属性的形式定义的特性。
+    1. [注意]IE7-浏览器不支持hasAttribute()方法
+    2. [注意]通过setAttrbute()方法设置的特性名会统一转换成小写形式
+    3. IE7-浏览器设置class、style、for、cellspacing、cellpadding、tabindex、readonly、maxlength、rowspan、colspan、usemap、frameborder、contenteditable这13个特性没有任何效果
+5. attributes属性
+    1. getNamedItem(name)方法返回nodeName属性等于name的节点
+    2. removeNamedItem(name)方法从列表中移除nodeName属性等于name的节点，并返回该节点
+    3. setNamedItem(node)方法向列表中添加节点，该方法无返回值
+    4. item(pos)方法返回位于数字pos位置处的节点，也可以用方括号法[]简写
+    5. attributes属性主要用于特性遍历。在需要将DOM结构序列化为HTML字符串时，多数都会涉及遍历元素特性
+    6. 针对attributes对象中的特性，不同浏览器返回的顺序不同。IE7-浏览器会返回HTML元素中所有可能的特性，包括没有指定的特性。可以利用特性节点的specified属性来解决IE7-浏览器的这个问题。如果specified属性的值为true，则意味着该属性被设置过。在IE中，所有未设置过的特性的该属性值都是false。而在其他浏览器中，任何特性节点的specified值始终为true。
+
+```html
+<!-- 4.3 -->
+<div id="box">123</div>
+<script>
+    var oBox = document.getElementById('box');
+    oBox.setAttribute("class","testClass");
+    oBox.setAttribute("style","height: 100px; background: red;");
+    //IE7下oBox.className的值为undefined
+    if(!oBox.className){
+        oBox.setAttribute("className","testClass");
+        oBox.style.setAttribute("cssText","height: 100px; background: red;");
+    }
+</script>
+
+<!-- 5.6 -->
+<div id="box" name="abc" index="123" title="test"></div>
+<script>
+    var oBox = document.getElementById('box');
+    var yesItem = oBox.attributes.getNamedItem("index");
+    var noItem = oBox.attributes.getNamedItem("onclick");
+    //所有浏览器浏览器都返回true
+    console.log(yesItem.specified);
+    //IE7-浏览器返回false，而其他浏览器报错，noItem不存在
+    console.log(noItem.specified);
+</script>
+```
+
+### 特性节点
+
+1. [注意]关于特性节点是否存在子节点，各个浏览器表现不一致
+2. 属性
+    1. name是特性名称，与nodeName的值相同
+    2. value是特性的值，与nodeValue的值相同
+    3. specified是一个布尔值，用以区别特性是在代码中指定的，还是默认的。这个属性的值如果为true，则意味着要么是在HTML中指定了相应特性，要么是通过setAttribute()方法设置了该属性。在IE中，所有未设置过的特性的该属性值都为false，而在其他浏览器中，所有设置过的特性的该属性值都是true，未设置过的特性，如果强行为其设置specified属性，则报错。
+3. 方法
+    1. createAttribute()：方法传入特性名称并创建新的特性节点
+    2. setAttributeNode()：方法传入特性节点并将特性添加到元素上，无返回值
+    3. getAttributeNode()：方法传入特性名并返回特性节点
+    4. removeAttributeNode()：方法传入特性名删除并返回删除的特性节点，但IE7-浏览器下无法删除
+
+```html
+<div id="box"></div>
+<script>
+    var oBox = document.getElementById('box');
+    var oAttr = oBox.attributes;
+    //(chrome\safari\IE9+\firefox) 2 id box null
+    //(IE7-) 2 onmsanimationiteration null null
+    console.log(oAttr[0].nodeType,oAttr[0].nodeName,oAttr[0].value,oAttr[0].parentNode)
+    //(chrome\firefox) undefined
+    //(safari) Text
+    //(IE9+) box
+    //(IE8-) 报错
+    console.log(oAttr[0].childNodes[0])
+</script> 
+```
+
+### 文档节点
+
+1. 由于它是根节点，所以其父节点parentNode指向null，ownerDocument也指向null
+2. 快捷访问
+    1. 子节点
+        1. **document.documentElement**属性始终指向HTML页面中的``<html>``元素
+        2. **document.body**属性指向``<body>``元素
+        3. **document.doctype**属性指向``<!DOCTYPE>``标签。[注意]IE8-不识别，输出null，因为IE8-浏览器将其识别为注释节点
+        4. **document.head**属性指向文档的``<head>``元素
+    2. 文档信息
+        1. ``<title>``元素显示在浏览器窗口的标题栏或标签页上，**document.title**包含着``<title>``元素中的文本，这个属性可读可写
+        2. **URL、domain、referrer**
+            1. URL：页面的完整地址
+            2. domain：domain与URL是相互关联的，包含页面的域名
+            3. referrer：表示链接到当前页面的上一个页面的URL，在没有来源页面时，可能为空
+            4. [注意]上面这些信息都来自请求的HTTP头部，只不过可以通过这三个属性在javascript中访问它而已
+            5. 在这3个属性中，只有domain是可以设置的。但由于安全方面的限制，也并非可以给domain设罝任何值。如果URL中包含一个子域名，例如home.cnblogs.com,那么就只能将domain设置为"cnblogs.com"。不能将这个属性设置为URL中不包含的域。
+        3. **document.baseURI**返回``<base>``标签中的URL，如果没有设置``<base>``，则该值与document.URL相同
+        4. **document.charset**表示文档中实际使用的字符集
+        5. **document.defaultView**保存着一个指针，指向拥有给定文档的窗口或框架。IE8-浏览器不支持defaultView属性，但IE中有一个等价的属性名叫parentWindow。var parentWindow = document.defaultView || document.parentWindow;
+        6. **document.compatMode**表示文档的模式，在标准模式下值为"CSS1Compat"，在兼容模式下值为"BackCompat"
+        7. **document.documentMode**属性表示当前的文档模式，[注意]该属性只有IE11-浏览器支持。IE11返回11，IE10返回10，IE9返回9，IE8返回8，IE7返回7，IE6返回6
+        8. **document.lastModified**属性返回当前文档最后修改的时间戳，格式为字符串
+    3. 节点集合
+        1. **document.anchors**包含文档中所有带name特性的``<a>``元素
+        2. **document.links**包含文档中所有带href特性的``<a>``元素
+        3. **document.forms**包含文档中所有的``<form>``元素，与document.getElementsByTagName("form")结果相同
+        4. **document.images**包含文档中所有的``<img>``元素，与document.getElementsByTagName('img')结果相同
+        5. **document.scripts**属性返回当前文档的所有脚本(即script标签)
+        6. 由于HTMLCollection实例可以用HTML元素的id或name属性引用，因此如果一个元素有id或name属性，就可以在上面这五个属性上引用：console.log(document.myForm === document.forms.myForm); // true
+3. 文档写入方法
+    1. write()和writeln()方法都接收一个字符串参数，即要写入到输出流中的文本。write()会原样写入，而writeln()则在字符串的末尾添加一个换行符(\n)，但换行符会被页面解析为空格。在页面被加载的过程中，可以使用这两个方法向页面中动态地加入内容。注意，这些好像是完全的替换，本来的内容会消失掉
+    2. open()和close()方法分别用于打开和关闭网页的输出流。open()方法实际上等于清除当前文档。close()方法用于关闭open方法所新建的文档。一旦关闭，write方法就无法写入内容了。如果再调用write方法，就等同于又调用open方法，新建一个文档，再写入内容。所以，实际上，close()只是和open()方法配套使用而已。
+    3. 一般地，先使用open()方法用于新建一个文档，然后使用write()和writeln()方法写入文档，最后使用close()方法，停止写入。
+    4. [注意]如果是在页面加载期间使用write()和writeln()方法，则不需要用到这两个方法
+
+```js
+// 2.2.2
+console.log(document.URL);//http://www.cnblogs.com/xiaohuochai/
+console.log(document.domain);//www.cnblogs.com
+console.log(document.referrer);//http://home.cnblogs.com/followees/
+```
+
+```html
+<button id="btn">替换内容</button>
+<script>
+    btn.onclick = function() {
+        document.write('123');
+        document.writeln('abc');
+        document.write('456');
+    }
+</script>
+```
+
+## 获取节点
+
+### 元素选择器
+
+### getElementsByClassName
+
+### selector选择器
+
+### 动态集合
+
+## 节点操作
+
+### 节点关系
+
+### 节点操作
+
+### 节点内容
+
+### 节点遍历
+
+### 节点范围
+
+### 区分元素特性和对象属性
 
 # DOM -- 脚本化CSS
 
