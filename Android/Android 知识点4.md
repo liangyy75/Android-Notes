@@ -7,13 +7,18 @@ img {
 
 - [Android App Bundle](#android-app-bundle)
 - [Android MultiDex](#android-multidex)
-- [Android 声明式UI](#android-%e5%a3%b0%e6%98%8e%e5%bc%8fui)
+- [Android 声明式UI](#android-声明式ui)
 - [Android debugger](#android-debugger)
-- [Android 优化](#android-%e4%bc%98%e5%8c%96)
+- [Android 优化](#android-优化)
 - [Android i18n](#android-i18n)
-- [Android 小知识](#android-%e5%b0%8f%e7%9f%a5%e8%af%86)
+- [Android 小知识](#android-小知识)
 - [Android java.net](#android-javanet)
 - [Android android.net](#android-androidnet)
+- [android 8 新技术](#android-8-新技术)
+- [android 9 新技术](#android-9-新技术)
+    - [PrecomputedText](#precomputedtext)
+- [android customView](#android-customview)
+    - [ViewDragHelper](#viewdraghelper)
 
 ### Android App Bundle
 
@@ -632,3 +637,17 @@ TODO:
 ### Android android.net
 
 1. TrafficStats -- 流量监控类
+
+### android 8 新技术
+
+https://developer.android.com/about/versions/oreo/android-8.0?hl=zh-cn
+
+### android 9 新技术
+
+https://zhuanlan.zhihu.com/p/43547594
+
+#### PrecomputedText
+
+### android customView
+
+#### ViewDragHelper

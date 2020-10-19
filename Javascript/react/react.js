@@ -16,4 +16,3 @@ document.querySelectorAll('.like_button_container').forEach(domContainer => {
     ReactDOM.render(e(LikeButton, { commentID: commentID }), domContainer);
 });
 
-
