@@ -228,7 +228,7 @@ QtPy==1.8.0
 redis==3.3.2
 requests==2.22.0
 rope==0.14.0
-rsa==4.0
+rsa==4.1
 ruamel-yaml==0.15.46
 Rx==3.0.1
 scikit-image==0.15.0
