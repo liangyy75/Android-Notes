@@ -27,7 +27,8 @@
 
 ### links
 
-* [dart学习笔记](http://www.cndartlang.com/user/2)
+* [dart学习笔记](http://www.cndartlang.com/user/2) -- 暂时不行了
+* [github dart 学习笔记](https://github.com/konieshadow/dart-tour)
 * [dart 官网](https://dart.dev/guides)
 * [语法基础——Dart语法基础](https://blog.csdn.net/qq_30379689/article/details/87260932)
 * [Flutter中文网](https://book.flutterchina.club)

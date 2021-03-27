@@ -1,8 +1,0 @@
-{
-    "editor.fontSize": 13,
-    "editor.wordWrap": "on",
-    "markdown.extension.list.indentationSize": "inherit",
-    "editor.renderWhitespace": "all",
-    "editor.formatOnSave": true,
-    "java.home": "/Users/bytedance/.sdkman/candidates/java/11.0.7.hs-adpt"
-}
